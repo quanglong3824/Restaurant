@@ -11,11 +11,12 @@ define('APP_LANG', 'vi');
 
 // Paths
 define('BASE_PATH', dirname(__DIR__));
-if ($_SERVER['HTTP_HOST'] === 'localhost') {
-    define('BASE_URL', '/Github/AURORA HOTEL PLAZA/Restaurant');
-} else {
-    define('BASE_URL', '/Restaurant');
-}
+// Tự động xác định BASE_URL (đường dẫn tương đối từ root tên miền)
+// Ví dụ: nếu chạy ở http://localhost/project/index.php thì BASE_URL là /project
+// Nếu chạy ở http://aurora.com/index.php thì BASE_URL là (rỗng)
+$scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+define('BASE_URL', ($scriptDir === '/' || $scriptDir === '\\') ? '' : rtrim($scriptDir, '/'));
+
 define('UPLOAD_PATH', BASE_PATH . '/public/uploads/');
 define('UPLOAD_URL', BASE_URL . '/public/uploads/');
 
