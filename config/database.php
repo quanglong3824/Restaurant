@@ -4,11 +4,20 @@
 // Aurora Restaurant — Digital Menu & Order System
 // ============================================================
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Tự động chuyển đổi cấu hình Database theo môi trường
+if ($_SERVER['HTTP_HOST'] === 'localhost') {
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+} else {
+    // Thông số host người dùng cung cấp
+    define('DB_HOST', 'localhost'); // Cổng 3306 là mặc định nên không cần ghi :3306 trừ khi khác
+    define('DB_USER', 'auroraho_longdev');
+    define('DB_PASS', '@longdev3824');
+}
 define('DB_NAME', 'auroraho_restaurant');
 define('DB_CHARSET', 'utf8mb4');
+
 
 function getDB(): PDO
 {
