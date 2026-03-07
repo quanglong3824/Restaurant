@@ -69,9 +69,10 @@ class Order extends Model
     /** Thêm món vào order (hoặc tăng số lượng nếu đã có) */
     public function addItem(int $orderId, int $menuItemId, string $itemName, float $itemPrice, int $qty = 1, string $note = ''): void
     {
+        // Chỉ gộp chung với các món đang ở trạng thái nháp ('draft')
         $existing = $this->findOne(
             "SELECT id, quantity FROM order_items
-             WHERE order_id = ? AND menu_item_id = ? AND note = ?",
+             WHERE order_id = ? AND menu_item_id = ? AND note = ? AND status = 'draft'",
             [$orderId, $menuItemId, $note]
         );
 
@@ -82,8 +83,8 @@ class Order extends Model
             );
         } else {
             $this->execute(
-                "INSERT INTO order_items (order_id, menu_item_id, item_name, item_price, quantity, note)
-                 VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO order_items (order_id, menu_item_id, item_name, item_price, quantity, note, status)
+                 VALUES (?, ?, ?, ?, ?, ?, 'draft')",
                 [$orderId, $menuItemId, $itemName, $itemPrice, $qty, $note]
             );
         }
