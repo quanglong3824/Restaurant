@@ -87,6 +87,10 @@
                         <i class="fas fa-users"></i>
                         <span>Quản lý User</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
+                        <i class="fas fa-database"></i>
+                        <span>Dữ liệu (Backup)</span>
+                    </a>
                 </div>
             <?php endif; ?>
 

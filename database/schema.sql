@@ -144,15 +144,81 @@ INSERT INTO `users` (`name`, `username`, `pin`, `role`) VALUES
 
 -- Bàn mẫu
 INSERT INTO `tables` (`name`, `area`, `capacity`, `sort_order`) VALUES
-('Bàn 01', 'Trong', 4, 1),
-('Bàn 02', 'Trong', 4, 2),
-('Bàn 03', 'Trong', 6, 3),
-('Bàn 04', 'Trong', 4, 4),
-('Bàn 05', 'Ngoài', 4, 5),
-('Bàn 06', 'Ngoài', 2, 6),
-('Bàn 07', 'Ngoài', 6, 7),
-('VIP 1', 'VIP', 8, 8),
-('VIP 2', 'VIP', 10, 9);
+-- Khu A1
+('A1.01', 'Khu A1', 4, 1),
+('A1.02', 'Khu A1', 4, 2),
+('A1.03', 'Khu A1', 4, 3),
+('A1.04', 'Khu A1', 4, 4),
+('A1.05', 'Khu A1', 4, 5),
+('A1.06', 'Khu A1', 4, 6),
+('A1.07', 'Khu A1', 4, 7),
+('A1.08', 'Khu A1', 4, 8),
+('A1.09', 'Khu A1', 4, 9),
+('A1.10', 'Khu A1', 4, 10),
+
+-- Khu B1
+('B1.01', 'Khu B1', 4, 11),
+('B1.02', 'Khu B1', 4, 12),
+('B1.03', 'Khu B1', 4, 13),
+('B1.04', 'Khu B1', 4, 14),
+('B1.05', 'Khu B1', 4, 15),
+('B1.06', 'Khu B1', 4, 16),
+('B1.07', 'Khu B1', 4, 17),
+('B1.08', 'Khu B1', 4, 18),
+('B1.09', 'Khu B1', 4, 19),
+('B1.10', 'Khu B1', 4, 20),
+
+-- Khu C1
+('C1.01', 'Khu C1', 4, 21),
+('C1.02', 'Khu C1', 4, 22),
+('C1.03', 'Khu C1', 4, 23),
+('C1.04', 'Khu C1', 4, 24),
+('C1.05', 'Khu C1', 4, 25),
+('C1.06', 'Khu C1', 4, 26),
+('C1.07', 'Khu C1', 4, 27),
+('C1.08', 'Khu C1', 4, 28),
+('C1.09', 'Khu C1', 4, 29),
+('C1.10', 'Khu C1', 4, 30),
+
+-- Nhà Hàng Á - Khu Vip 1
+('Vip 1.1', 'Nhà Hàng Á - Vip 1', 8, 31),
+('Vip 1.2', 'Nhà Hàng Á - Vip 1', 8, 32),
+('Vip 1.3', 'Nhà Hàng Á - Vip 1', 8, 33),
+('Vip 1.4', 'Nhà Hàng Á - Vip 1', 8, 34),
+('Vip 1.5', 'Nhà Hàng Á - Vip 1', 8, 35),
+
+-- Nhà Hàng Á - Khu Vip 2
+('Vip 2.1', 'Nhà Hàng Á - Vip 2', 8, 36),
+('Vip 2.2', 'Nhà Hàng Á - Vip 2', 8, 37),
+('Vip 2.3', 'Nhà Hàng Á - Vip 2', 8, 38),
+('Vip 2.4', 'Nhà Hàng Á - Vip 2', 8, 39),
+('Vip 2.5', 'Nhà Hàng Á - Vip 2', 8, 40),
+
+-- Nhà Hàng Á - Khu Vip 3
+('Vip 3.1', 'Nhà Hàng Á - Vip 3', 8, 41),
+('Vip 3.2', 'Nhà Hàng Á - Vip 3', 8, 42),
+('Vip 3.3', 'Nhà Hàng Á - Vip 3', 8, 43),
+('Vip 3.4', 'Nhà Hàng Á - Vip 3', 8, 44),
+('Vip 3.5', 'Nhà Hàng Á - Vip 3', 8, 45),
+
+-- Nhà Hàng Á - Khu Vip 4
+('Vip 4.1', 'Nhà Hàng Á - Vip 4', 8, 46),
+('Vip 4.2', 'Nhà Hàng Á - Vip 4', 8, 47),
+('Vip 4.3', 'Nhà Hàng Á - Vip 4', 8, 48),
+('Vip 4.4', 'Nhà Hàng Á - Vip 4', 8, 49),
+('Vip 4.5', 'Nhà Hàng Á - Vip 4', 8, 50),
+
+-- Nhà Hàng Âu
+('Âu 01', 'Nhà Hàng Âu', 4, 51),
+('Âu 02', 'Nhà Hàng Âu', 4, 52),
+('Âu 03', 'Nhà Hàng Âu', 4, 53),
+('Âu 04', 'Nhà Hàng Âu', 4, 54),
+('Âu 05', 'Nhà Hàng Âu', 4, 55),
+('Âu 06', 'Nhà Hàng Âu', 4, 56),
+('Âu 07', 'Nhà Hàng Âu', 4, 57),
+('Âu 08', 'Nhà Hàng Âu', 4, 58),
+('Âu 09', 'Nhà Hàng Âu', 4, 59),
+('Âu 10', 'Nhà Hàng Âu', 4, 60);
 
 -- Danh mục món
 INSERT INTO `menu_categories` (`name`, `name_en`, `icon`, `sort_order`) VALUES

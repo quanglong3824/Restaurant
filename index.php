@@ -71,4 +71,8 @@ $router->post('/it/users/store', 'SettingController', 'storeUser');
 $router->post('/it/users/update', 'SettingController', 'updateUser');
 $router->post('/it/users/delete', 'SettingController', 'deleteUser');
 
+// ── IT: Database Backup ───────────────────────────────────
+$router->get('/it/database', 'SettingController', 'database');
+$router->get('/it/database/backup', 'SettingController', 'backup');
+
 $router->dispatch();

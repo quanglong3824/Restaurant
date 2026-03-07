@@ -125,4 +125,70 @@ class SettingController extends Controller
         }
         $this->redirect('/it/users');
     }
+
+    /** GET /it/database */
+    public function database(): void
+    {
+        Auth::requireRole(ROLE_IT);
+        $this->view('layouts/admin', [
+            'view' => 'it/database',
+            'pageTitle' => 'Cơ sở dữ liệu',
+            'pageSubtitle' => 'Quản lý sao lưu và phục hồi hệ thống',
+        ]);
+    }
+
+    /** GET /it/database/backup */
+    public function backup(): void
+    {
+        Auth::requireRole(ROLE_IT);
+
+        try {
+            $db = getDB();
+            $tables = [];
+            $result = $db->query('SHOW TABLES');
+            while ($row = $result->fetch(PDO::FETCH_NUM)) {
+                $tables[] = $row[0];
+            }
+
+            $sql = "-- Aurora Restaurant Database Backup\n";
+            $sql .= "-- Generated: " . date('Y-m-d H:i:s') . "\n\n";
+            $sql .= "SET NAMES utf8mb4;\n";
+            $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
+
+            foreach ($tables as $table) {
+                // Table structure
+                $result = $db->query("SHOW CREATE TABLE `$table`")->fetch();
+                $sql .= "DROP TABLE IF EXISTS `$table`;\n";
+                $sql .= $result['Create Table'] . ";\n\n";
+
+                // Table data
+                $result = $db->query("SELECT * FROM `$table` ");
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                    $sql .= "INSERT INTO `$table` VALUES (";
+                    $values = [];
+                    foreach ($row as $value) {
+                        if ($value === null) {
+                            $values[] = "NULL";
+                        } else {
+                            $values[] = $db->quote($value);
+                        }
+                    }
+                    $sql .= implode(', ', $values) . ");\n";
+                }
+                $sql .= "\n";
+            }
+
+            $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n";
+
+            $filename = 'backup_' . DB_NAME . '_' . date('Ymd_His') . '.sql';
+
+            header('Content-Type: application/sql');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            echo $sql;
+            exit;
+        } catch (Exception $e) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi sao lưu: ' . $e->getMessage()];
+            $this->redirect('/it/database');
+        }
+    }
 }

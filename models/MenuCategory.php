@@ -12,11 +12,11 @@ class MenuCategory extends Model
         );
     }
 
-    /** Lấy tất cả danh mục đang hoạt động, gom nhóm tên */
+    /** Lấy tất cả danh mục đang hoạt động */
     public function getActive(): array
     {
         return $this->findAll(
-            "SELECT * FROM (SELECT * FROM menu_categories WHERE is_active = 1 ORDER BY id ASC) as t GROUP BY name ORDER BY sort_order"
+            "SELECT * FROM menu_categories WHERE is_active = 1 ORDER BY sort_order, id ASC"
         );
     }
 

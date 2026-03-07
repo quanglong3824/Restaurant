@@ -20,11 +20,7 @@ class MenuItem extends Model
     public function getActive(): array
     {
         return $this->findAll(
-            "SELECT i.*, c.name AS category_name,
-               (SELECT GROUP_CONCAT(img.image_url SEPARATOR '|') 
-                FROM menu_item_images img 
-                WHERE img.menu_item_id = i.id 
-                ORDER BY img.sort_order) AS gallery
+            "SELECT i.*, c.name AS category_name
              FROM menu_items i
              LEFT JOIN menu_categories c ON c.id = i.category_id
              WHERE i.is_active = 1
@@ -59,15 +55,14 @@ class MenuItem extends Model
     {
         $this->execute(
             "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, stock, image, is_available, is_active, tags, sort_order)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1, ?, ?)",
+             (category_id, name, name_en, description, price, image, is_available, is_active, tags, sort_order)
+             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?)",
             [
                 $data['category_id'],
                 $data['name'],
                 $data['name_en'] ?? null,
                 $data['description'] ?? null,
                 $data['price'],
-                $data['stock'] ?? -1,
                 $data['image'] ?? null,
                 $data['tags'] ?? null,
                 $data['sort_order'] ?? 0,
@@ -81,7 +76,7 @@ class MenuItem extends Model
         $this->execute(
             "UPDATE menu_items
              SET category_id = ?, name = ?, name_en = ?, description = ?,
-                 price = ?, stock = ?, tags = ?, sort_order = ?, is_active = ?
+                 price = ?, tags = ?, sort_order = ?, is_active = ?
              WHERE id = ?",
             [
                 $data['category_id'],
@@ -89,7 +84,6 @@ class MenuItem extends Model
                 $data['name_en'] ?? null,
                 $data['description'] ?? null,
                 $data['price'],
-                $data['stock'] ?? -1,
                 $data['tags'] ?? null,
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,
@@ -101,11 +95,6 @@ class MenuItem extends Model
     public function updateImage(int $id, string $image): void
     {
         $this->execute("UPDATE menu_items SET image = ? WHERE id = ?", [$image, $id]);
-    }
-
-    public function addGalleryImage(int $id, string $image): void
-    {
-        $this->execute("INSERT INTO menu_item_images (menu_item_id, image_url) VALUES (?, ?)", [$id, $image]);
     }
 
     /** Toggle hết hàng / còn hàng */
