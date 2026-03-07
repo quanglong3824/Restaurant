@@ -31,7 +31,7 @@ class MenuController extends Controller
         // Lấy categories theo menu type
         $categories = $categoryModel->getActiveByType($menuType);
         $grouped = $itemModel->getGroupedByCategory($menuType);
-        
+
         // Lấy sets nếu là alacarte
         $sets = [];
         if ($menuType === 'alacarte') {
@@ -96,7 +96,8 @@ class MenuController extends Controller
             'orderItems' => $orderItems,
             'orderTotal' => $orderTotal,
             'allTables' => $allTables,
-            'isCustomer' => !Auth::isLoggedIn()
+            'isCustomer' => !Auth::isLoggedIn(),
+            'tableModel' => $tableModel,
         ]);
     }
 }
