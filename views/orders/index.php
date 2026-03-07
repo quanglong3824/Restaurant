@@ -471,6 +471,7 @@ if (!empty($items)) {
         </div>
         <form id="targetForm" method="POST" action="<?= BASE_URL ?>/tables/merge" class="modal-body">
             <input type="hidden" name="parent_id" value="<?= $table['id'] ?? '' ?>">
+            <input type="hidden" name="redirect" value="/orders?table_id=<?= $table['id'] ?? '' ?>&order_id=<?= $order['id'] ?? '' ?>">
             <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
                 Chọn bàn trống để ghép chung với <?= isset($table['name']) ? e($table['name']) : '' ?>:
             </p>

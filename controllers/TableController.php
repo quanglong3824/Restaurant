@@ -69,10 +69,11 @@ class TableController extends Controller
 
         $childId = (int) $this->input('child_id');
         $parentId = (int) $this->input('parent_id');
+        $redirectUrl = (string) $this->input('redirect', '/tables');
 
         if ($childId === $parentId) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Không thể ghép bàn với chính nó.'];
-            $this->redirect('/tables');
+            $this->redirect($redirectUrl);
         }
 
         $ok = $this->tableModel->mergeTable($childId, $parentId);
@@ -81,7 +82,8 @@ class TableController extends Controller
         } else {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bàn đang có khách, không thể ghép.'];
         }
-        $this->redirect('/tables');
+
+        $this->redirect($redirectUrl);
     }
 
     /** POST /tables/unmerge — Hủy ghép bàn */
@@ -90,10 +92,12 @@ class TableController extends Controller
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
 
         $childId = (int) $this->input('table_id');
+        $redirectUrl = (string) $this->input('redirect', '/tables');
+
         $this->tableModel->unmergeTable($childId);
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tách bàn.'];
-        $this->redirect('/tables');
+        $this->redirect($redirectUrl);
     }
 
     /** POST /tables/transfer — Chuyển bàn */
