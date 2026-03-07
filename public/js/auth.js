@@ -72,11 +72,48 @@
   }
 
   function checkReady() {
+    const isSpecialRole = (selectedRole === 'admin' || selectedRole === 'it');
+    const hasShift = isSpecialRole || selectedShift.trim().length > 0;
+    
     const ready = pin.length === 4 &&
                   selectedUsername.trim().length > 0 &&
-                  selectedShift.trim().length > 0;
+                  hasShift;
     submitBtn.disabled = !ready;
-    console.log('checkReady:', { ready, pinLength: pin.length, hasUsername: selectedUsername.trim().length > 0, hasShift: selectedShift.trim().length > 0 });
+    console.log('checkReady:', { ready, pinLength: pin.length, hasUsername: selectedUsername.trim().length > 0, hasShift });
+  }
+
+  let selectedRole = "";
+
+  // ── Step Navigation ─────────────────────────────────────
+  function checkSteps() {
+    console.log('checkSteps called:', { selectedUsername, selectedShift, selectedRole, pinLength: pin.length });
+    
+    // Step 1 -> Step 2
+    if (selectedUsername) {
+      if (selectedRole === 'admin' || selectedRole === 'it') {
+        shiftSection.classList.add("u-hidden");
+        pinSection.classList.remove("u-hidden");
+        console.log('Skip shift, showing PIN section');
+      } else {
+        shiftSection.classList.remove("u-hidden");
+        console.log('Showing shift section');
+      }
+    } else {
+      shiftSection.classList.add("u-hidden");
+      pinSection.classList.add("u-hidden");
+    }
+
+    // Step 2 -> Step 3 (Only for waiters)
+    if (selectedUsername && selectedRole === 'waiter') {
+      if (selectedShift) {
+        pinSection.classList.remove("u-hidden");
+        console.log('PIN section shown');
+      } else {
+        pinSection.classList.add("u-hidden");
+      }
+    }
+
+    checkReady();
   }
 
   // ── Step 1: User selection ──────────────────────────────
@@ -84,22 +121,31 @@
     document.querySelectorAll(".user-chip").forEach((c) => c.classList.remove("is-selected"));
     el.classList.add("is-selected");
     selectedUsername = el.dataset.username;
+    selectedRole = el.dataset.role || "waiter";
     usernameField.value = selectedUsername;
-    console.log('User selected:', selectedUsername);
+    console.log('User selected:', selectedUsername, 'Role:', selectedRole);
 
     // Reset following steps
-    selectedShift = "";
-    shiftField.value = "";
-    document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
     pin = "";
     pinField.value = "";
     syncDots();
 
+    if (selectedRole === 'admin' || selectedRole === 'it') {
+      selectedShift = "-1"; // Placeholder for non-shift roles
+      shiftField.value = "-1";
+      document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
+    } else {
+      selectedShift = "";
+      shiftField.value = "";
+      document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
+    }
+
     checkSteps();
     
-    // Scroll to shift section smoothly
+    // Scroll smoothly to next visible section
     setTimeout(() => {
-      shiftSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      const nextSection = (selectedRole === 'admin' || selectedRole === 'it') ? pinSection : shiftSection;
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
   }
 

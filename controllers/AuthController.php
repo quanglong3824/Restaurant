@@ -58,8 +58,8 @@ class AuthController extends Controller
         $pin = trim($this->input('pin', ''));
         $shiftId = (int) $this->input('shift_id', 0);
 
-        if (empty($username) || empty($pin) || $shiftId === 0) {
-            $_SESSION['login_error'] = 'Vui lòng chọn nhân viên, ca trực và nhập PIN.';
+        if (empty($username) || empty($pin)) {
+            $_SESSION['login_error'] = 'Vui lòng nhập tên đăng nhập và mã PIN.';
             $this->redirect('/auth/login');
         }
 
@@ -68,6 +68,12 @@ class AuthController extends Controller
 
         if (!$user) {
             $_SESSION['login_error'] = 'PIN không đúng. Vui lòng thử lại.';
+            $this->redirect('/auth/login');
+        }
+
+        // Kiểm tra ca trực (Chỉ bắt buộc với Waiter)
+        if ($user['role'] === ROLE_WAITER && $shiftId <= 0) {
+            $_SESSION['login_error'] = 'Vui lòng chọn ca trực của bạn.';
             $this->redirect('/auth/login');
         }
 

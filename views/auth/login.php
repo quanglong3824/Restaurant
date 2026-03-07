@@ -53,7 +53,8 @@
                 </p>
                 <div class="user-grid" role="listbox">
                     <?php foreach ($staff as $w): ?>
-                        <button type="button" class="user-chip" data-username="<?= e($w['username']) ?>">
+                        <button type="button" class="user-chip" data-username="<?= e($w['username']) ?>"
+                            data-role="<?= e($w['role']) ?>">
                             <?php if ($w['role'] === 'admin'): ?>
                                 <i class="fas fa-user-shield" style="margin-right:5px; color:var(--gold);"></i>
                             <?php elseif ($w['role'] === 'it'): ?>
