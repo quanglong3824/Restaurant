@@ -154,6 +154,42 @@ sort($allAreas);
     </div>
 </div>
 
+<!-- Modal: Ghép/Chuyển Bàn (Target Selection) -->
+<div class="modal-backdrop" id="modalSelectTarget">
+    <div class="modal modal-premium" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3 id="targetModalTitle" class="playfair">Chọn bàn đích</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="targetForm" method="POST" class="modal-body">
+            <input type="hidden" name="source_table_id" id="sourceTableId">
+            <p id="targetModalDesc" class="small text-muted mb-3">Vui lòng chọn một bàn trống để thực hiện thao tác này.
+            </p>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Danh sách bàn khả dụng</label>
+                <select name="target_id" id="targetSelect" class="form-control" required>
+                    <option value="">-- Chọn bàn --</option>
+                    <?php foreach ($grouped as $area => $tables): ?>
+                        <optgroup label="<?= e($area) ?>">
+                            <?php foreach ($tables as $t): ?>
+                                <?php if ($t['status'] === 'available' && empty($t['parent_id'])): ?>
+                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?> (<?= $t['capacity'] ?> ghế)</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" id="targetSubmitBtn" class="btn btn-gold py-3 fw-bold">XÁC NHẬN</button>
+                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
     /* Luxury Floor Plan Styles */
     .summary-shelf {
@@ -299,7 +335,10 @@ sort($allAreas);
     }
 
     .guest-option input {
-        display: none;
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
     }
 
     .guest-option span {

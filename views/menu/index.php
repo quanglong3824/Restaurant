@@ -596,77 +596,65 @@
 
 <!-- Set/Combo Detail Modal -->
 <div class="modal-backdrop" id="modalSetDetail">
-    <div class="modal" style="max-width:600px; padding:0; overflow:hidden; border-radius:20px;">
-        <div id="modalSetHeader"
-            style="padding:1.5rem; background:var(--gold-light); border-bottom:1px solid var(--border-gold);">
-            <button class="modal-close" data-modal-close
-                style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:36px; height:36px;"><i
-                    class="fas fa-times"></i></button>
-            <h2 id="modalSetName" style="margin:0; font-weight:800; font-size:1.4rem; color:var(--gold-dark);"></h2>
-            <div id="modalSetPrice" style="font-weight:800; font-size:1.2rem; color:var(--danger); margin-top:5px;">
+    <div class="modal modal-premium" style="max-width:600px;">
+        <div class="modal-header">
+            <div class="d-flex flex-column">
+                <h3 id="modalSetName" class="playfair"></h3>
+                <div id="modalSetPrice" class="text-gold fw-800"></div>
             </div>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
-        <div style="padding:1.5rem; max-height:60vh; overflow-y:auto;">
-            <p id="modalSetDesc" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;"></p>
-            <h4
-                style="font-size:0.85rem; font-weight:800; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
-                <i class="fas fa-list-check"></i> Các món trong Set/Combo:
-            </h4>
-            <div id="modalSetItemsList" style="display:flex; flex-direction:column; gap:0.75rem;">
+        <div class="modal-body">
+            <p id="modalSetDesc" class="text-muted small mb-4"></p>
+            <h4 class="form-label mb-3"><i class="fas fa-list-check me-2"></i> Thành phần trong Combo</h4>
+            <div id="modalSetItemsList" class="d-flex flex-column gap-2 mb-4">
                 <!-- Set items will be injected here -->
             </div>
-        </div>
-        <div
-            style="padding:1.25rem; border-top:1px solid var(--border); background:var(--surface-2); display:flex; align-items:center; gap:1rem;">
-            <button class="btn btn-outline" data-modal-close style="flex:1;">CANCEL</button>
-            <button onclick="confirmAddSetToOrder()" class="btn btn-gold" style="flex:2; height:50px; font-weight:800;">
-                THÊM COMBO VÀO BILL
-            </button>
+            <div class="d-grid gap-3 mt-4">
+                <button onclick="confirmAddSetToOrder()" class="btn btn-gold py-3 fw-bold">
+                    <i class="fas fa-plus-circle me-2"></i> THÊM COMBO VÀO ĐƠN HÀNG
+                </button>
+                <button class="btn btn-ghost" data-modal-close>ĐÓNG</button>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Item Detail Modal -->
 <div class="modal-backdrop" id="modalItemDetail">
-    <div class="modal" style="max-width:500px; padding:0; overflow:hidden; border-radius:20px;">
-        <div style="width:100%; height:250px; background:var(--surface-2); position:relative;" id="modalItemImg">
-            <button class="modal-close" data-modal-close
-                style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:36px; height:36px;"><i
-                    class="fas fa-times"></i></button>
-            <div id="modalItemImgPlaceholder"
-                style="display:flex;align-items:center;justify-content:center;height:100%;font-size:3.5rem;color:var(--text-dim);">
-                <i class="fas fa-image"></i>
+    <div class="modal modal-premium" style="max-width:500px;">
+        <div class="modal-header p-0 border-0" style="height: 250px; position: relative;" id="modalItemImgContainer">
+            <div id="modalItemImg" style="width: 100%; height: 100%;">
+                <div id="modalItemImgPlaceholder"
+                    class="d-flex align-items-center justify-content-center h-100 bg-light text-muted opacity-30">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
             </div>
+            <button class="modal-close" data-modal-close
+                style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.4); color: #fff;"><i
+                    class="fas fa-times"></i></button>
         </div>
-        <div style="padding:1.5rem;">
-            <h2 id="modalItemName" style="margin:0; font-weight:800; font-size:1.6rem;"></h2>
-            <div id="modalItemPrice"
-                style="color:var(--gold-dark); font-weight:800; font-size:1.3rem; margin:0.5rem 0 1.25rem;"></div>
-            <p id="modalItemDesc" style="font-size:0.95rem; color:var(--text-muted); line-height:1.6;"></p>
+        <div class="modal-body pt-4">
+            <h3 id="modalItemName" class="playfair mb-1"></h3>
+            <div id="modalItemPrice" class="text-gold fw-800 mb-3 fs-4"></div>
+            <p id="modalItemDesc" class="text-muted small mb-4"></p>
 
-            <div id="orderControlsSection"
-                style="display:none; border-top:1px dashed var(--border); padding-top:1.25rem; margin-top:1.25rem;">
-                <label
-                    style="font-weight:700; font-size:0.85rem; color:var(--text-muted); display:block; margin-bottom:0.5rem;">GHI
-                    CHÚ MÓN:</label>
-                <input type="text" id="modalItemNote" class="form-control" placeholder="Không hành, ít cay..."
-                    style="background:var(--surface-2); border:none; padding:12px 15px;">
+            <div id="orderControlsSection" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label">Ghi chú (Note)</label>
+                    <input type="text" id="modalItemNote" class="form-control"
+                        placeholder="Ví dụ: Không hành, ít cay...">
+                </div>
 
-                <div style="display:flex; align-items:center; margin-top:1.5rem; gap:1.25rem;">
-                    <div
-                        style="display:flex; align-items:center; background:var(--surface-2); border-radius:50px; padding:4px;">
-                        <button onclick="changeModalQty(-1)"
-                            style="width:40px; height:40px; border:none; background:none; cursor:pointer; font-size:1.1rem;"><i
+                <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
+                    <div class="qty-stepper d-flex align-items-center bg-light rounded-pill p-1">
+                        <button onclick="changeModalQty(-1)" class="btn btn-icon-sm"><i
                                 class="fas fa-minus"></i></button>
-                        <span id="modalItemQty"
-                            style="width:36px; text-align:center; font-weight:800; font-size:1.2rem;">1</span>
-                        <button onclick="changeModalQty(1)"
-                            style="width:40px; height:40px; border:none; background:none; cursor:pointer; font-size:1.1rem;"><i
-                                class="fas fa-plus"></i></button>
+                        <span id="modalItemQty" class="px-3 fw-800">1</span>
+                        <button onclick="changeModalQty(1)" class="btn btn-icon-sm"><i class="fas fa-plus"></i></button>
                     </div>
-                    <button onclick="confirmAddToOrder()" class="btn btn-gold"
-                        style="flex:1; height:50px; font-weight:800; font-size:1.05rem;">
-                        THÊM <span id="modalBtnTotal" style="margin-left:8px;"></span>
+                    <button onclick="confirmAddToOrder()" class="btn btn-gold flex-fill py-3 fw-bold">
+                        GỌI MÓN: <span id="modalBtnTotal" class="ms-1"></span>
                     </button>
                 </div>
             </div>

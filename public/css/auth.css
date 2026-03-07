@@ -32,10 +32,10 @@
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-border: rgba(239, 68, 68, 0.3);
 
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
-  --radius-xl: 0px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 
   --transition: 0.15s ease;
 }
@@ -46,9 +46,8 @@ html {
 
 body {
   font-family:
-    "Inter",
+    "Outfit",
     system-ui,
-    -apple-system,
     sans-serif;
   background: var(--bg);
   color: var(--text);
@@ -119,7 +118,8 @@ body {
 }
 
 .auth-logo__title {
-  font-size: 1.4rem;
+  font-family: "Playfair Display", serif;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--gold);
   letter-spacing: -0.5px;
