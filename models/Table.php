@@ -7,15 +7,39 @@ class Table extends Model
 {
     protected string $table = 'tables';
 
+    /** Lấy bàn theo ID */
+    public function findById(int $id): ?array
+    {
+        return $this->findOne(
+            "SELECT t.*, p.name as parent_name
+             FROM tables t
+             LEFT JOIN tables p ON t.parent_id = p.id
+             WHERE t.id = ?",
+            [$id]
+        );
+    }
+
     /** Tất cả bàn đang active, sắp xếp theo khu vực + thứ tự */
     public function getAll(): array
     {
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name 
-             FROM tables t 
+            "SELECT t.*, p.name as parent_name
+             FROM tables t
              LEFT JOIN tables p ON t.parent_id = p.id
-             WHERE t.is_active = 1 
-             ORDER BY t.area, t.sort_order, t.name"
+             WHERE t.is_active = 1
+             ORDER BY 
+                CASE t.area
+                    WHEN 'A1' THEN 1
+                    WHEN 'B1' THEN 2
+                    WHEN 'C1' THEN 3
+                    WHEN 'VIP 1' THEN 4
+                    WHEN 'VIP 2' THEN 5
+                    WHEN 'VIP 3' THEN 6
+                    WHEN 'VIP 4' THEN 7
+                    WHEN 'Âu' THEN 8
+                    ELSE 99
+                END,
+                t.sort_order, t.name"
         );
     }
 
@@ -149,5 +173,28 @@ class Table extends Model
             $result[$r['status']] = (int) $r['cnt'];
         }
         return $result;
+    }
+
+    /** Lấy tất cả bàn cho Admin (bao gồm cả inactive) */
+    public function getAllForAdmin(): array
+    {
+        return $this->findAll(
+            "SELECT t.*, p.name as parent_name
+             FROM tables t
+             LEFT JOIN tables p ON t.parent_id = p.id
+             ORDER BY 
+                CASE t.area
+                    WHEN 'A1' THEN 1
+                    WHEN 'B1' THEN 2
+                    WHEN 'C1' THEN 3
+                    WHEN 'VIP 1' THEN 4
+                    WHEN 'VIP 2' THEN 5
+                    WHEN 'VIP 3' THEN 6
+                    WHEN 'VIP 4' THEN 7
+                    WHEN 'Âu' THEN 8
+                    ELSE 99
+                END,
+                t.sort_order, t.name"
+        );
     }
 }
