@@ -6,17 +6,17 @@
 /**
  * Format giá tiền VND
  */
-function formatPrice(int|float $amount): string
+function formatPrice(int|float|null $amount): string
 {
-    return number_format($amount, 0, ',', '.') . '₫';
+    return number_format((float) $amount, 0, ',', '.') . '₫';
 }
 
 /**
  * Escape HTML
  */
-function e(string $value): string
+function e(?string $value): string
 {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
 /**
