@@ -36,15 +36,15 @@ class AuthController extends Controller
 
         // Lấy danh sách nhân viên
         $userModel = new User();
-        $waiters = $userModel->getActiveWaiters();
-        
+        $staff = $userModel->getActiveStaff();
+
         // Lấy danh sách ca trực
         $db = getDB();
         $shifts = $db->query("SELECT * FROM shifts")->fetchAll();
 
         $this->view('auth/login', [
             'pageTitle' => 'Đăng nhập',
-            'waiters' => $waiters,
+            'staff' => $staff,
             'shifts' => $shifts,
         ]);
     }
@@ -74,7 +74,7 @@ class AuthController extends Controller
         // Lưu thông tin ca trực vào session
         Auth::login($user);
         $_SESSION['user_shift_id'] = $shiftId;
-        
+
         $this->home();
     }
 

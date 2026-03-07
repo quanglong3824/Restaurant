@@ -19,12 +19,12 @@ class User extends Model
     }
 
     /**
-     * Lấy danh sách phục vụ đang hoạt động (để hiển thị nhanh trên màn login iPad)
+     * Lấy danh sách nhân viên đang hoạt động (để hiển thị nhanh trên màn login iPad)
      */
-    public function getActiveWaiters(): array
+    public function getActiveStaff(): array
     {
         return $this->findAll(
-            "SELECT id, name, username FROM users WHERE role = 'waiter' AND is_active = 1 ORDER BY name"
+            "SELECT id, name, username, role FROM users WHERE is_active = 1 ORDER BY role DESC, name ASC"
         );
     }
 
