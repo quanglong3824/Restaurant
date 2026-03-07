@@ -55,7 +55,14 @@ class TableController extends Controller
             $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
 
             if ((int) $guestCount > (int) $table['capacity']) {
-                $_SESSION['flash'] = ['type' => 'warning', 'message' => "Số khách ($guestCount) vượt quá sức chứa ({$table['capacity']}). Gợi ý: Tại màn hình Order, bạn có thể nhấn Thêm Bàn/Ghép Bàn để mở rộng!"];
+                $extraGuests = (int) $guestCount - (int) $table['capacity'];
+                // Giả định mỗi bàn ghép thêm có sức chứa mặc định là 4
+                $tableNeeded = ceil($extraGuests / 4);
+
+                $_SESSION['flash'] = [
+                    'type' => 'warning',
+                    'message' => "Số khách ($guestCount) vượt quá sức chứa. Gợi ý: Tại màn hình Order, hãy ấn 'Ghép bàn' thêm $tableNeeded bàn nữa để đủ chỗ!"
+                ];
             }
 
             // Redirect to orders page
