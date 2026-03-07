@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <p style="margin:0; opacity:0.8; font-size:0.85rem;">Bàn đang phục vụ</p>
+                            <p style="margin:0; opacity:0.8; font-size:0.85rem;">Bàn đang ăn</p>
                             <h2 style="margin:0; font-weight:800;"><?= $counts['occupied'] ?></h2>
                         </div>
                         <i class="fas fa-utensils" style="font-size:2rem; opacity:0.3;"></i>
@@ -45,118 +45,144 @@
         </div>
     </div>
 
-    <!-- Active Tables Grid/List -->
-    <div class="row" id="realtimeGrid">
-        <?php if (empty($orders)): ?>
-            <div class="col-12">
-                <div class="card" style="padding: 3rem; text-align: center; border-style: dashed;">
-                    <i class="fas fa-mug-hot" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i>
-                    <h3 style="color: var(--text-muted);">Hiện tại không có bàn nào đang hoạt động</h3>
-                </div>
-            </div>
-        <?php else: ?>
-            <?php foreach ($orders as $order):
-                $isClosed = ($order['status'] === 'closed');
-                ?>
-                <div class="col-md-6 col-xl-4 mb-4 order-card-wrapper" id="order-card-<?= $order['id'] ?>"
-                    data-id="<?= $order['id'] ?>">
-                    <div class="card h-100"
-                        style="border-radius:15px; overflow:hidden; border: 1px solid <?= $isClosed ? 'var(--success)' : 'var(--border-gold)' ?>; position: relative;">
-                        <!-- Dismiss Button -->
-                        <button onclick="dismissOrder(<?= $order['id'] ?>)"
-                            style="position: absolute; top: 10px; right: 10px; z-index: 10; border: none; background: rgba(0,0,0,0.1); width: 28px; height: 28px; border-radius: 50%; color: #666; cursor: pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
+    <!-- Active Orders List (Accordion Style) -->
+    <div class="card" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border);">
+        <div class="card-header" style="background: #f8f9fa; font-weight: 800; padding: 1rem 1.5rem;">
+            DANH SÁCH GIÁM SÁT TRỰC TIẾP
+        </div>
+        <div class="card-body p-0">
+            <div id="realtimeListContainer">
+                <?php if (empty($orders)): ?>
+                    <div style="padding: 3rem; text-align: center;">
+                        <i class="fas fa-coffee" style="font-size: 2.5rem; color: var(--border); margin-bottom: 1rem;"></i>
+                        <p style="color: var(--text-muted); margin:0;">Hiện tại không có bàn nào cần giám sát.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="accordion accordion-flush" id="realtimeAccordion">
+                        <?php foreach ($orders as $index => $order): 
+                            $isClosed = ($order['status'] === 'closed');
+                        ?>
+                            <div class="accordion-item" id="order-row-<?= $order['id'] ?>" style="border-bottom: 1px solid #eee;">
+                                <div class="accordion-header d-flex align-items-center" style="padding: 10px 15px;">
+                                    <button class="accordion-button collapsed p-0" type="button" 
+                                            data-bs-toggle="collapse" data-bs-target="#collapse-<?= $order['id'] ?>" 
+                                            style="background:none; border:none; box-shadow:none; width: auto; flex: 1; text-align: left; display: flex; align-items:center;">
+                                        
+                                        <div style="width: 40px; text-align: center; margin-right: 15px;">
+                                            <i class="fas fa-chevron-right arrow-icon" style="transition: transform 0.2s;"></i>
+                                        </div>
 
-                        <div class="card-header"
-                            style="background: <?= $isClosed ? '#f0fdf4' : '#fffcf0' ?>; border-bottom: 1px solid <?= $isClosed ? '#dcfce7' : 'var(--gold-light)' ?>; padding-right: 45px;">
-                            <div>
-                                <h4 style="margin:0; font-weight:800; color:<?= $isClosed ? '#15803d' : 'var(--gold-dark)' ?>;">
-                                    <?= e($order['full_name']) ?>
-                                    <?php if ($isClosed): ?>
-                                        <span class="badge"
-                                            style="background:#15803d; color:white; font-size:0.6rem; vertical-align:middle; margin-left:5px;">ĐÃ
-                                            THANH TOÁN</span>
-                                    <?php endif; ?>
-                                </h4>
-                                <small style="color:var(--text-muted);">
-                                    <i class="fas fa-user-friends"></i> <?= e($order['guest_count']) ?> khách |
-                                    <i class="fas fa-clock"></i>
-                                    <?= $isClosed ? 'Dứt điểm: ' . date('H:i', strtotime($order['closed_at'])) : 'Mở lúc: ' . date('H:i', strtotime($order['opened_at'])) ?>
-                                </small>
-                            </div>
-                        </div>
-                        <div class="card-body" style="padding: 1.25rem;">
-                            <!-- Items list -->
-                            <div class="realtime-items-list"
-                                style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
-                                <?php foreach ($order['items'] as $it): ?>
-                                    <div
-                                        style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.9rem; padding-bottom: 5px; border-bottom: 1px dotted #eee;">
-                                        <div style="flex:1;">
-                                            <span style="font-weight:700;">x<?= $it['quantity'] ?></span> <?= e($it['item_name']) ?>
-                                            <?php if ($it['note']): ?>
-                                                <div style="font-size: 0.75rem; color: var(--danger); font-style: italic;">
-                                                    <i class="fas fa-comment-dots"></i> <?= e($it['note']) ?>
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                                <span style="font-weight: 800; font-size: 1.1rem; color: var(--dark);"><?= e($order['full_name']) ?></span>
+                                                
+                                                <?php if ($isClosed): ?>
+                                                    <span class="badge" style="background:#15803d; color:white; font-size:0.7rem;">ĐÃ THANH TOÁN</span>
+                                                <?php else: ?>
+                                                    <span class="badge" style="background:#eab308; color:white; font-size:0.7rem;">CHƯA THANH TOÁN</span>
+                                                <?php endif; ?>
+
+                                                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                                    <i class="fas fa-user-friends"></i> <?= e($order['guest_count']) ?> |
+                                                    <i class="fas fa-clock"></i> <?= $isClosed ? 'Xong: '.date('H:i', strtotime($order['closed_at'])) : 'Vào: '.date('H:i', strtotime($order['opened_at'])) ?>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div style="text-align: right; margin: 0 20px;">
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">TỔNG TIỀN</div>
+                                            <div style="font-weight: 800; color: <?= $isClosed ? '#15803d' : 'var(--danger)' ?>; font-size: 1.1rem;">
+                                                <?= formatPrice($order['total']) ?>
+                                            </div>
+                                        </div>
+                                    </button>
+
+                                    <!-- Quick Dismiss Button (Always visible) -->
+                                    <button onclick="dismissOrder(<?= $order['id'] ?>)" 
+                                            class="btn btn-sm btn-ghost" 
+                                            style="color: var(--text-muted); padding: 5px 10px;"
+                                            title="Ẩn khỏi danh sách">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </div>
+
+                                <div id="collapse-<?= $order['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#realtimeAccordion">
+                                    <div class="accordion-body" style="background: #fafafa; border-top: 1px solid #f0f0f0; padding: 1.5rem;">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h6 style="font-weight: 800; color: var(--gold-dark); border-bottom: 2px solid var(--gold-light); display: inline-block; padding-bottom: 3px; margin-bottom: 1rem;">
+                                                    DANH SÁCH MÓN ĐÃ GỌI
+                                                </h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-borderless">
+                                                        <thead>
+                                                            <tr style="font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid #eee;">
+                                                                <th>TÊN MÓN</th>
+                                                                <th style="text-align: center;">S.L</th>
+                                                                <th style="text-align: right;">ĐƠN GIÁ</th>
+                                                                <th style="text-align: right;">THÀNH TIỀN</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($order['items'] as $it): ?>
+                                                                <tr style="font-size: 0.9rem; border-bottom: 1px dotted #eee;">
+                                                                    <td>
+                                                                        <div style="font-weight: 700;"><?= e($it['item_name']) ?></div>
+                                                                        <?php if ($it['note']): ?>
+                                                                            <div style="font-size: 0.8rem; color: var(--danger); font-style: italic;">
+                                                                                <i class="fas fa-comment-dots"></i> <?= e($it['note']) ?>
+                                                                            </div>
+                                                                        <?php endif; ?>
+                                                                    </td>
+                                                                    <td style="text-align: center; font-weight: 700;">x<?= $it['quantity'] ?></td>
+                                                                    <td style="text-align: right;"><?= formatPrice($it['item_price'] / 1000) ?>k</td>
+                                                                    <td style="text-align: right; font-weight: 700;"><?= formatPrice(($it['item_price'] * $it['quantity'])) ?></td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                            <?php endif; ?>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #eee;">
+                                                    <h6 style="font-weight: 800; margin-bottom: 1rem;">THÔNG TIN PHỤ</h6>
+                                                    <p style="font-size: 0.85rem; margin-bottom: 8px;">
+                                                        <span style="color: var(--text-muted);">Nhân viên:</span> 
+                                                        <span style="font-weight: 700;"><?= e($order['waiter_name'] ?? 'N/A') ?></span>
+                                                    </p>
+                                                    <p style="font-size: 0.85rem; margin-bottom: 8px;">
+                                                        <span style="color: var(--text-muted);">Đợt gọi món:</span> 
+                                                        <span class="badge badge-info" style="font-weight: 800;"><?= $order['rounds'] ?> đợt</span>
+                                                    </p>
+                                                    <p style="font-size: 0.85rem; margin-bottom: 8px;">
+                                                        <span style="color: var(--text-muted);">Khu vực:</span> 
+                                                        <span style="font-weight: 700;"><?= e($order['table_area']) ?></span>
+                                                    </p>
+                                                    <div style="margin-top: 1rem;">
+                                                        <button onclick="dismissOrder(<?= $order['id'] ?>)" class="btn btn-sm btn-success style="width: 100%;"">
+                                                            <i class="fas fa-check"></i> Xác nhận Hoàn tất & Đóng
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
-                            </div>
-
-                            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                                <div style="color:var(--text-muted); font-size:0.8rem;">
-                                    <i class="fas fa-user"></i> PV: <?= e($order['waiter_name'] ?? 'N/A') ?>
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">TỔNG TIỀN</div>
-                                    <div
-                                        style="font-size:1.4rem; font-weight:800; color:<?= $isClosed ? '#15803d' : 'var(--danger)' ?>;">
-                                        <?= formatPrice($order['total']) ?>
-                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <?php if ($isClosed): ?>
-                            <div class="card-footer"
-                                style="padding: 0.75rem 1.25rem; background:#f8f9fa; display: flex; gap: 0.5rem;">
-                                <button onclick="dismissOrder(<?= $order['id'] ?>)" class="btn btn-sm btn-success"
-                                    style="flex: 1; justify-content:center;">
-                                    <i class="fas fa-check"></i> Hoàn tất / Đóng
-                                </button>
-                            </div>
-                        <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    .order-card-wrapper {
-        transition: all 0.3s ease;
-    }
-
-    .badge-info {
-        background: #e0f2fe;
-        color: #0369a1;
-    }
-
-    .badge-warning {
-        background: #fef3c7;
-        color: #92400e;
-    }
-
-    .realtime-items-list::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .realtime-items-list::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 10px;
-    }
+    .accordion-button::after { display: none; }
+    .accordion-button:not(.collapsed) .arrow-icon { transform: rotate(90deg); }
+    .accordion-item:hover { background-color: #fdfdfd; }
+    .badge-info { background: #e0f2fe; color: #0369a1; }
+    .btn-ghost:hover { background: #f0f0f0; color: var(--danger); }
 </style>
 
 <script>
@@ -164,7 +190,7 @@
     const reloadCountEl = document.getElementById('reloadCount');
 
     function dismissOrder(orderId) {
-        if (!confirm('Bạn muốn ẩn thẻ này khỏi danh sách giám sát?')) return;
+        if (!confirm('Bạn muốn ẩn đơn này khỏi danh sách giám sát vĩnh viễn?')) return;
         
         fetch('<?= BASE_URL ?>/admin/realtime/dismiss', {
             method: 'POST',
@@ -174,11 +200,11 @@
         .then(res => res.json())
         .then(res => {
             if (res.ok) {
-                const el = document.getElementById('order-card-' + orderId);
+                const el = document.getElementById('order-row-' + orderId);
                 if (el) {
                     el.style.opacity = '0';
-                    el.style.transform = 'scale(0.9)';
-                    setTimeout(() => el.remove(), 300);
+                    el.style.backgroundColor = '#fef2f2';
+                    setTimeout(() => el.remove(), 400);
                 }
             }
         });
@@ -189,82 +215,107 @@
             .then(res => res.json())
             .then(res => {
                 if (res.ok) {
-                    renderGrid(res.data);
+                    renderList(res.data);
                     timerCount = 15;
                 }
             })
             .catch(err => console.error(err));
     }
 
-    function renderGrid(orders) {
-        const grid = document.getElementById('realtimeGrid');
+    function renderList(orders) {
+        const container = document.getElementById('realtimeListContainer');
         if (!orders || orders.length === 0) {
-            grid.innerHTML = '<div class="col-12"><div class="card" style="padding: 3rem; text-align: center; border-style: dashed;"><i class="fas fa-mug-hot" style="font-size: 3rem; color: var(--border); margin-bottom: 1rem;"></i><h3 style="color: var(--text-muted);">Hiện tại không có bàn nào đang hoạt động</h3></div></div>';
+            container.innerHTML = '<div style="padding: 3rem; text-align: center;"><i class="fas fa-coffee" style="font-size: 2.5rem; color: var(--border); margin-bottom: 1rem;"></i><p style="color: var(--text-muted); margin:0;">Hiện tại không có bàn nào cần giám sát.</p></div>';
             return;
         }
 
-        let html = '';
+        // Reuse accordion structure
+        let html = '<div class="accordion accordion-flush" id="realtimeAccordion">';
         orders.forEach(order => {
             const isClosed = (order.status === 'closed');
-            let itemsHtml = '';
+            const statusBadge = isClosed ? 
+                '<span class="badge" style="background:#15803d; color:white; font-size:0.7rem;">ĐÃ THANH TOÁN</span>' : 
+                '<span class="badge" style="background:#eab308; color:white; font-size:0.7rem;">CHƯA THANH TOÁN</span>';
+            const priceColor = isClosed ? '#15803d' : 'var(--danger)';
+            const timeText = isClosed ? `Xong: ${order.closed_at_fmt}` : `Vào: ${order.opened_at_fmt}`;
+
+            let itemsRows = '';
             order.items.forEach(it => {
-                itemsHtml += `
-                    <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.9rem; padding-bottom: 5px; border-bottom: 1px dotted #eee;">
-                        <div style="flex:1;">
-                            <span style="font-weight:700;">x${it.quantity}</span> ${it.item_name}
-                            ${it.note ? `<div style="font-size: 0.75rem; color: var(--danger); font-style: italic;"><i class="fas fa-comment-dots"></i> ${it.note}</div>` : ''}
-                        </div>
-                    </div>`;
+                itemsRows += `
+                    <tr style="font-size: 0.9rem; border-bottom: 1px dotted #eee;">
+                        <td>
+                            <div style="font-weight: 700;">${it.item_name}</div>
+                            ${it.note ? `<div style="font-size: 0.8rem; color: var(--danger); font-style: italic;"><i class="fas fa-comment-dots"></i> ${it.note}</div>` : ''}
+                        </td>
+                        <td style="text-align: center; font-weight: 700;">x${it.quantity}</td>
+                        <td style="text-align: right;">${new Intl.NumberFormat('vi-VN').format(it.item_price / 1000)}k</td>
+                        <td style="text-align: right; font-weight: 700;">${new Intl.NumberFormat('vi-VN').format(it.item_price * it.quantity)}₫</td>
+                    </tr>`;
             });
 
-            const headerBg = isClosed ? '#f0fdf4' : '#fffcf0';
-            const headerBorder = isClosed ? '#dcfce7' : 'var(--gold-light)';
-            const titleColor = isClosed ? '#15803d' : 'var(--gold-dark)';
-            const totalColor = isClosed ? '#15803d' : 'var(--danger)';
-            const statusLabel = isClosed ? `<span class="badge" style="background:#15803d; color:white; font-size:0.6rem; vertical-align:middle; margin-left:5px;">ĐÃ THANH TOÁN</span>` : '';
-            const clockIcon = isClosed ? 'Dứt điểm: ' : 'Mở lúc: ';
-            const clockTime = isClosed ? order.closed_at_fmt : order.opened_at_fmt; // Need to update controller to pass closed_at_fmt
-
             html += `
-                <div class="col-md-6 col-xl-4 mb-4 order-card-wrapper" id="order-card-${order.id}" data-id="${order.id}">
-                    <div class="card h-100" style="border-radius:15px; overflow:hidden; border: 1px solid ${isClosed ? 'var(--success)' : 'var(--border-gold)'}; position: relative;">
-                        <button onclick="dismissOrder(${order.id})" 
-                                style="position: absolute; top: 10px; right: 10px; z-index: 10; border: none; background: rgba(0,0,0,0.1); width: 28px; height: 28px; border-radius: 50%; color: #666; cursor: pointer;">
-                            <i class="fas fa-times"></i>
+                <div class="accordion-item" id="order-row-${order.id}" style="border-bottom: 1px solid #eee;">
+                    <div class="accordion-header d-flex align-items-center" style="padding: 10px 15px;">
+                        <button class="accordion-button collapsed p-0" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapse-${order.id}" 
+                                style="background:none; border:none; box-shadow:none; width: auto; flex: 1; text-align: left; display: flex; align-items:center;">
+                            <div style="width: 40px; text-align: center; margin-right: 15px;">
+                                <i class="fas fa-chevron-right arrow-icon" style="transition: transform 0.2s;"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                    <span style="font-weight: 800; font-size: 1.1rem; color: var(--dark);">${order.full_name}</span>
+                                    ${statusBadge}
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">
+                                        <i class="fas fa-user-friends"></i> ${order.guest_count} |
+                                        <i class="fas fa-clock"></i> ${timeText}
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="text-align: right; margin: 0 20px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">TỔNG TIỀN</div>
+                                <div style="font-weight: 800; color: ${priceColor}; font-size: 1.1rem;">
+                                    ${new Intl.NumberFormat('vi-VN').format(order.total)}₫
+                                </div>
+                            </div>
                         </button>
-                        <div class="card-header" style="background: ${headerBg}; border-bottom: 1px solid ${headerBorder}; padding-right: 45px;">
-                            <div>
-                                <h4 style="margin:0; font-weight:800; color:${titleColor};">
-                                    ${order.full_name} ${statusLabel}
-                                </h4>
-                                <small style="color:var(--text-muted);">
-                                    <i class="fas fa-user-friends"></i> ${order.guest_count} khách | 
-                                    <i class="fas fa-clock"></i> ${clockIcon} ${order.opened_at_fmt}
-                                </small>
+                        <button onclick="dismissOrder(${order.id})" class="btn btn-sm btn-ghost" style="color: var(--text-muted); padding: 5px 10px;"><i class="fas fa-check-circle"></i></button>
+                    </div>
+                    <div id="collapse-${order.id}" class="accordion-collapse collapse" data-bs-parent="#realtimeAccordion">
+                        <div class="accordion-body" style="background: #fafafa; border-top: 1px solid #f0f0f0; padding: 1.5rem;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 style="font-weight: 800; color: var(--gold-dark); border-bottom: 2px solid var(--gold-light); display: inline-block; padding-bottom: 3px; margin-bottom: 1rem;">DANH SÁCH MÓN ĐÃ GỌI</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-borderless">
+                                            <thead>
+                                                <tr style="font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid #eee;">
+                                                    <th>TÊN MÓN</th>
+                                                    <th style="text-align: center;">S.L</th>
+                                                    <th style="text-align: right;">ĐƠN GIÁ</th>
+                                                    <th style="text-align: right;">THÀNH TIỀN</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>${itemsRows}</tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #eee;">
+                                        <h6 style="font-weight: 800; margin-bottom: 1rem;">THÔNG TIN PHỤ</h6>
+                                        <p style="font-size: 0.85rem; margin-bottom: 8px;"><span style="color: var(--text-muted);">Nhân viên:</span> <span style="font-weight: 700;">${order.waiter_name || 'N/A'}</span></p>
+                                        <p style="font-size: 0.85rem; margin-bottom: 8px;"><span style="color: var(--text-muted);">Đợt gọi món:</span> <span class="badge badge-info" style="font-weight: 800;">${order.rounds} đợt</span></p>
+                                        <p style="font-size: 0.85rem; margin-bottom: 8px;"><span style="color: var(--text-muted);">Khu vực:</span> <span style="font-weight: 700;">${order.table_area}</span></p>
+                                        <div style="margin-top: 1rem;"><button onclick="dismissOrder(${order.id})" class="btn btn-sm btn-success" style="width: 100%;"><i class="fas fa-check"></i> Xác nhận Hoàn tất & Đóng</button></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-body" style="padding: 1.25rem;">
-                            <div class="realtime-items-list" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
-                                ${itemsHtml}
-                            </div>
-                            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-              <div style="color:var(--text-muted); font-size:0.8rem;">
-                                    <i class="fas fa-user"></i> PV: ${order.waiter_name || 'N/A'}
-                                </div>
-                                <div style="text-align:right;">
-                                    <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">TỔNG TIỀN</div>
-                                    <div style="font-size:1.4rem; font-weight:800; color:${totalColor};">${new Intl.NumberFormat('vi-VN').format(order.total)}₫</div>
-                                </div>
-                            </div>
-                        </div>
-                        ${isClosed ? `
-                        <div class="card-footer" style="padding: 0.75rem 1.25rem; background:#f8f9fa; display: flex; gap: 0.5rem;">
-                            <button onclick="dismissOrder(${order.id})" class="btn btn-sm btn-success" style="flex: 1; justify-content:center;"><i class="fas fa-check"></i> Hoàn tất / Đóng</button>
-                        </div>` : ''}
                     </div>
                 </div>`;
         });
-        grid.innerHTML = html;
+        html += '</div>';
+        container.innerHTML = html;
     }
 
     // Timer logic

@@ -160,10 +160,16 @@ class Order extends Model
              FROM orders o
              LEFT JOIN users u ON u.id = o.waiter_id
              JOIN tables t ON t.id = o.table_id
-             WHERE o.status = 'open' 
-                OR (o.status = 'closed' AND o.closed_at >= NOW() - INTERVAL 1 HOUR)
+             WHERE o.is_realtime_hidden = 0 
+               AND (o.status = 'open' OR (o.status = 'closed' AND o.closed_at >= NOW() - INTERVAL 1 HOUR))
              ORDER BY CASE WHEN o.status = 'open' THEN 1 ELSE 2 END, o.opened_at DESC"
         );
+    }
+
+    /** Ẩn order khỏi màn hình realtime của Admin */
+    public function dismissFromRealtime(int $orderId): void
+    {
+        $this->execute("UPDATE orders SET is_realtime_hidden = 1 WHERE id = ?", [$orderId]);
     }
 
     /** Xác nhận các món Draft thành Confirmed (Gửi bếp) */

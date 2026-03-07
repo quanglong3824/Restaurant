@@ -23,16 +23,12 @@ class AdminRealtimeController extends Controller
     public function index(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
-        $dismissed = $_SESSION['realtime_dismissed'] ?? [];
 
         // Lấy tất cả bàn đang bận và chi tiết order
         $rawOrders = $this->orderModel->getRealtimeOrders();
         $orders = [];
 
         foreach ($rawOrders as $order) {
-            if (in_array($order['id'], $dismissed))
-                continue;
-
             $order['items'] = $this->orderModel->getItems($order['id']);
             $order['full_name'] = $this->tableModel->getFullDisplayName($order['table_id']);
             $order['rounds'] = $this->calculateOrderRounds($order['items']);
@@ -54,15 +50,11 @@ class AdminRealtimeController extends Controller
     public function data(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
-        $dismissed = $_SESSION['realtime_dismissed'] ?? [];
 
         $rawOrders = $this->orderModel->getRealtimeOrders();
         $orders = [];
 
         foreach ($rawOrders as $order) {
-            if (in_array($order['id'], $dismissed))
-                continue;
-
             $order['items'] = $this->orderModel->getItems($order['id']);
             $order['rounds'] = $this->calculateOrderRounds($order['items']);
             $order['full_name'] = $this->tableModel->getFullDisplayName($order['table_id']);
@@ -74,19 +66,14 @@ class AdminRealtimeController extends Controller
     }
 
     /**
-     * POST /admin/realtime/dismiss — Ẩn một card
+     * POST /admin/realtime/dismiss — Ẩn một card (lưu vào Database)
      */
     public function dismiss(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
         $orderId = (int) $this->input('order_id');
         if ($orderId > 0) {
-            if (!isset($_SESSION['realtime_dismissed'])) {
-                $_SESSION['realtime_dismissed'] = [];
-            }
-            if (!in_array($orderId, $_SESSION['realtime_dismissed'])) {
-                $_SESSION['realtime_dismissed'][] = $orderId;
-            }
+            $this->orderModel->dismissFromRealtime($orderId);
         }
         $this->json(['ok' => true]);
     }
