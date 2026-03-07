@@ -129,11 +129,20 @@ class Table extends Model
         );
     }
 
-    /** Đóng bàn: đổi status → available */
+    /** Đóng bàn: đổi status → available (đồng thời giải phóng các bàn ghép con) */
     public function close(int $id): void
     {
+        // 1. Chuyển bàn hiện tại về trống
         $this->execute(
             "UPDATE tables SET status = 'available', updated_at = NOW() WHERE id = ?",
+            [$id]
+        );
+
+        // 2. Nếu bàn này là bàn chính, giải phóng các bàn con đang ghép vào nó
+        $this->execute(
+            "UPDATE tables 
+             SET parent_id = NULL, status = 'available', updated_at = NOW() 
+             WHERE parent_id = ?",
             [$id]
         );
     }
