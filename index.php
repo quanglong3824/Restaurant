@@ -29,6 +29,7 @@ $router->post('/tables/open', 'TableController', 'open');
 $router->post('/tables/close', 'TableController', 'close');
 $router->post('/tables/merge', 'TableController', 'merge');
 $router->post('/tables/unmerge', 'TableController', 'unmerge');
+$router->post('/tables/transfer', 'TableController', 'transfer');
 
 // ── Waiter: Menu ─────────────────────────────────────────
 $router->get('/menu', 'MenuController', 'index');
@@ -39,8 +40,19 @@ $router->post('/orders/add', 'OrderController', 'addItem');
 $router->post('/orders/update', 'OrderController', 'updateItem');
 $router->post('/orders/remove', 'OrderController', 'removeItem');
 $router->post('/orders/confirm', 'OrderController', 'confirmOrder');
+$router->get('/orders/print', 'OrderController', 'print');
 
-// ── Admin: Menu Management ────────────────────────────────
+// ── Customer & Waiter: Support & Payment Requests ───────
+$router->post('/support/request', 'SupportController', 'makeRequest');
+$router->get('/support/pending', 'SupportController', 'getPending');
+$router->post('/support/resolve', 'SupportController', 'resolve');
+
+// ── Admin: Shift Management ───────────────────────────────
+$router->get('/admin/shifts', 'AdminShiftController', 'index');
+$router->post('/admin/shifts/store', 'AdminShiftController', 'store');
+$router->post('/admin/shifts/delete', 'AdminShiftController', 'delete');
+$router->post('/admin/shifts/assign', 'AdminShiftController', 'assign');
+$router->post('/admin/shifts/remove_assign', 'AdminShiftController', 'removeAssign');
 $router->get('/admin/menu', 'AdminMenuController', 'index');
 $router->get('/admin/menu/create', 'AdminMenuController', 'create');
 $router->post('/admin/menu/store', 'AdminMenuController', 'store');

@@ -47,9 +47,9 @@
     --topbar-h:     60px;
 
     /* Radius — matches wcb: no radius on major elements */
-    --radius-sm:    4px;
-    --radius-md:    6px;
-    --radius-lg:    8px;
+    --radius-sm:    0px;
+    --radius-md:    0px;
+    --radius-lg:    0px;
 
     --shadow-sm:    0 1px 3px rgba(0,0,0,.06);
     --shadow-md:    0 4px 12px rgba(0,0,0,.08);
@@ -496,7 +496,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
     align-items: center;
     gap: .6rem;
     padding: .8rem 1rem;
-    border-radius: var(--radius-md);
+    border-radius: 0px;
     font-size: .875rem;
     font-weight: 500;
     margin-bottom: 1rem;

@@ -155,11 +155,16 @@ if (!empty($items)) {
                     </button>
                 </form>
             <?php endif; ?>
-
-            <button class="btn btn-danger-outline btn-block"
-                onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
-                <i class="fas fa-door-closed"></i> Khách ra về (Đóng bàn)
-            </button>
+            
+            <div style="display: flex; gap: 0.75rem;">
+                <button class="btn btn-danger-outline" style="flex: 1;"
+                    onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
+                    <i class="fas fa-door-closed"></i> Đóng bàn
+                </button>
+                <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn btn-outline" style="flex: 1;">
+                    <i class="fas fa-print"></i> In Hóa Đơn
+                </a>
+            </div>
         </div>
 
     <?php endif; ?>

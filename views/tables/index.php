@@ -202,6 +202,34 @@ foreach ($grouped as $area => $tables) {
     </div>
 </div>
 
+<!-- Modal: Chuyển bàn -->
+<div class="modal-backdrop" id="modalTransferTable">
+    <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="transferTableName">Chuyển bàn</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="<?= BASE_URL ?>/tables/transfer" class="modal-body">
+            <input type="hidden" name="from_table_id" id="transferFromId">
+            <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
+                Chuyển khách từ <strong id="transferFromName"></strong> sang bàn trống:
+            </p>
+            <div class="form-group">
+                <label class="form-label">Chọn bàn mới</label>
+                <select name="to_table_id" class="form-control" required>
+                    <option value="">-- Chọn bàn trống --</option>
+                    <?php foreach ($allAvailableForSelect as $avail): ?>
+                        <option value="<?= $avail['id'] ?>"><?= e($avail['name']) ?> (<?= e($avail['area']) ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-gold btn-block btn-lg">
+                <i class="fas fa-exchange-alt"></i> Xác nhận chuyển bàn
+            </button>
+        </form>
+    </div>
+</div>
+
 <style>
     .table-card--merged { border-style: dashed; border-color: var(--gold); }
     .table-card--merged .table-icon { color: var(--gold); }
@@ -210,7 +238,6 @@ foreach ($grouped as $area => $tables) {
 <script>
     function handleTableClick(table) {
         if (table.status === 'occupied') {
-            // Nếu là bàn phụ, không cho thao tác order trực tiếp, yêu cầu về bàn chính
             if (table.parent_id) {
                 alert('Đây là bàn đã được ghép vào ' + table.parent_name + '. Vui lòng thao tác trên bàn chính.');
                 return;
@@ -219,10 +246,25 @@ foreach ($grouped as $area => $tables) {
             document.getElementById('occupiedTableName').textContent = table.name;
             document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
 
-            // Cập nhật nút ghép bàn trong modal bận
+            const actionsDiv = document.querySelector('#modalOccupied .modal-body div');
+            actionsDiv.querySelectorAll('.dynamic-btn').forEach(b => b.remove());
+
+            // Nút Chuyển bàn
+            const transferBtn = document.createElement('button');
+            transferBtn.type = 'button';
+            transferBtn.className = 'btn btn-outline btn-lg dynamic-btn';
+            transferBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Chuyển sang bàn khác';
+            transferBtn.onclick = () => {
+                Aurora.closeModal('modalOccupied');
+                document.getElementById('transferFromId').value = table.id;
+                document.getElementById('transferFromName').textContent = table.name;
+                Aurora.openModal('modalTransferTable');
+            };
+
+            // Nút Ghép bàn
             const mergeBtn = document.createElement('button');
             mergeBtn.type = 'button';
-            mergeBtn.className = 'btn btn-outline btn-lg';
+            mergeBtn.className = 'btn btn-outline btn-lg dynamic-btn';
             mergeBtn.innerHTML = '<i class="fas fa-link"></i> Ghép thêm bàn khác';
             mergeBtn.onclick = () => {
                 Aurora.closeModal('modalOccupied');
@@ -231,10 +273,7 @@ foreach ($grouped as $area => $tables) {
                 Aurora.openModal('modalMergeTable');
             };
 
-            const actionsDiv = document.querySelector('#modalOccupied .modal-body div');
-            // Xóa các nút cũ nếu có để tránh trùng
-            const oldMerge = actionsDiv.querySelector('.btn-outline');
-            if (oldMerge) oldMerge.remove();
+            actionsDiv.insertBefore(transferBtn, actionsDiv.lastElementChild);
             actionsDiv.insertBefore(mergeBtn, actionsDiv.lastElementChild);
 
             Aurora.openModal('modalOccupied');

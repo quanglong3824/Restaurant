@@ -48,6 +48,14 @@
 
             <?php if (Auth::isAdmin()): ?>
                 <div class="nav-section">
+                    <div class="nav-section-title">Nhân sự & Ca trực</div>
+                    <a href="<?= BASE_URL ?>/admin/shifts" class="nav-item <?= activeClass('/admin/shifts') ?>">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Phân ca & Nhân sự</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
                     <div class="nav-section-title">Hệ thống</div>
                     <a href="<?= BASE_URL ?>/admin/menu" class="nav-item <?= activeClass('/admin/menu') ?>">
                         <i class="fas fa-utensils"></i>

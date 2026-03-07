@@ -32,10 +32,10 @@
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-border: rgba(239, 68, 68, 0.3);
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 24px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
 
   --transition: 0.15s ease;
 }
@@ -186,12 +186,12 @@ body {
   text-overflow: ellipsis;
 }
 
-.user-chip:hover {
+.user-chip:hover, .shift-chip:hover {
   border-color: var(--gold);
   color: var(--gold);
   background: var(--gold-light);
 }
-.user-chip.is-selected {
+.user-chip.is-selected, .shift-chip.is-selected {
   background: var(--gold-light);
   border-color: var(--gold);
   color: var(--gold);

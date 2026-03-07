@@ -16,6 +16,71 @@
     <?php if (isset($pageCSS)): ?>
         <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/<?= e($pageCSS) ?>.css">
     <?php endif; ?>
+    <style>
+        /* Notifications */
+        .topbar-noti {
+            position: relative;
+            cursor: pointer;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+        .topbar-noti:hover { color: var(--gold); }
+        .noti-badge {
+            position: absolute;
+            top: -5px; right: -8px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 10px;
+            display: none;
+        }
+        .noti-dropdown {
+            position: absolute;
+            top: 40px; right: -50px;
+            width: 320px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0px; /* Flat design */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        .noti-dropdown.show { display: flex; }
+        .noti-header {
+            padding: 12px 15px;
+            background: var(--surface-2);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+        }
+        .noti-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .noti-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .noti-item:last-child { border-bottom: none; }
+        .noti-item-info { font-size: 0.85rem; }
+        .noti-item-info strong { color: var(--gold-dark); font-size: 0.95rem;}
+        .noti-btn {
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 0px; /* Flat design */
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body class="waiter-layout">
@@ -32,6 +97,20 @@
             <span class="topbar-page"><?= e($pageTitle ?? '') ?></span>
         </div>
         <div class="topbar-right">
+            
+            <!-- Notifications -->
+            <div class="topbar-noti" onclick="document.getElementById('notiDropdown').classList.toggle('show')">
+                <i class="fas fa-bell"></i>
+                <span class="noti-badge" id="notiBadge">0</span>
+                
+                <div class="noti-dropdown" id="notiDropdown" onclick="event.stopPropagation()">
+                    <div class="noti-header">Yêu cầu từ Khách hàng</div>
+                    <div class="noti-list" id="notiList">
+                        <div style="padding:15px; text-align:center; color:var(--text-dim); font-size:0.85rem;">Không có yêu cầu nào.</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="topbar-user">
                 <i class="fas fa-user-circle" aria-hidden="true"></i>
                 <span><?= e(Auth::user()['name'] ?? '') ?></span>
@@ -166,6 +245,72 @@
         <script src="<?= BASE_URL ?>/public/js/<?= e($pageJS) ?>.js" defer></script>
     <?php endif; ?>
 
+    <script>
+        // Notification Polling System
+        function fetchNotifications() {
+            fetch('<?= BASE_URL ?>/support/pending')
+                .then(res => res.json())
+                .then(res => {
+                    if (res.ok) {
+                        renderNotifications(res.data);
+                    }
+                })
+                .catch(err => console.error('Lỗi lấy thông báo:', err));
+        }
+
+        function renderNotifications(data) {
+            const badge = document.getElementById('notiBadge');
+            const list = document.getElementById('notiList');
+            
+            if (data.length > 0) {
+                badge.style.display = 'inline-block';
+                badge.textContent = data.length;
+                let html = '';
+                data.forEach(item => {
+                    const icon = item.type === 'payment' ? '<i class="fas fa-file-invoice-dollar" style="color:var(--danger)"></i> Yêu cầu tính tiền' : '<i class="fas fa-concierge-bell" style="color:var(--gold)"></i> Gọi phục vụ';
+                    html += `
+                        <div class="noti-item">
+                            <div class="noti-item-info">
+                                <strong>Bàn ${item.table_name}</strong> (Khu ${item.area})<br>
+                                ${icon}
+                            </div>
+                            <button class="noti-btn" onclick="resolveNotification(${item.id})">Xong</button>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            } else {
+                badge.style.display = 'none';
+                list.innerHTML = '<div style="padding:15px; text-align:center; color:var(--text-dim); font-size:0.85rem;">Không có yêu cầu nào.</div>';
+            }
+        }
+
+        function resolveNotification(id) {
+            const data = new FormData();
+            data.append('id', id);
+            
+            fetch('<?= BASE_URL ?>/support/resolve', {
+                method: 'POST',
+                body: data
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.ok) fetchNotifications();
+            });
+        }
+
+        // Click outside to close dropdown
+        window.addEventListener('click', function(e) {
+            if (!document.querySelector('.topbar-noti').contains(e.target)) {
+                document.getElementById('notiDropdown').classList.remove('show');
+            }
+        });
+
+        // Start polling every 10 seconds
+        setInterval(fetchNotifications, 10000);
+        fetchNotifications(); // Initial fetch
+    </script>
 </body>
+
 
 </html>

@@ -34,13 +34,18 @@ class AuthController extends Controller
             $this->home();
         }
 
-        // Lấy danh sách phục vụ để chọn nhanh trên iPad
+        // Lấy danh sách nhân viên
         $userModel = new User();
         $waiters = $userModel->getActiveWaiters();
+        
+        // Lấy danh sách ca trực
+        $db = getDB();
+        $shifts = $db->query("SELECT * FROM shifts")->fetchAll();
 
         $this->view('auth/login', [
             'pageTitle' => 'Đăng nhập',
             'waiters' => $waiters,
+            'shifts' => $shifts,
         ]);
     }
 
@@ -51,9 +56,10 @@ class AuthController extends Controller
     {
         $username = trim($this->input('username', ''));
         $pin = trim($this->input('pin', ''));
+        $shiftId = (int) $this->input('shift_id', 0);
 
-        if (empty($username) || empty($pin)) {
-            $_SESSION['login_error'] = 'Vui lòng chọn tên và nhập PIN.';
+        if (empty($username) || empty($pin) || $shiftId === 0) {
+            $_SESSION['login_error'] = 'Vui lòng chọn nhân viên, ca trực và nhập PIN.';
             $this->redirect('/auth/login');
         }
 
@@ -65,7 +71,10 @@ class AuthController extends Controller
             $this->redirect('/auth/login');
         }
 
+        // Lưu thông tin ca trực vào session
         Auth::login($user);
+        $_SESSION['user_shift_id'] = $shiftId;
+        
         $this->home();
     }
 

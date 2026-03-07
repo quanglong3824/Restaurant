@@ -92,6 +92,43 @@ class TableController extends Controller
         $this->redirect('/tables');
     }
 
+    /** POST /tables/transfer — Chuyển bàn */
+    public function transfer(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $fromTableId = (int) $this->input('from_table_id');
+        $toTableId = (int) $this->input('to_table_id');
+
+        if ($fromTableId === $toTableId) {
+            $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Bạn đang chọn cùng một bàn.'];
+            $this->redirect('/tables');
+        }
+
+        $toTable = $this->tableModel->findById($toTableId);
+        if (!$toTable || $toTable['status'] === 'occupied' || $toTable['parent_id'] !== null) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bàn đích không hợp lệ hoặc đang có khách.'];
+            $this->redirect('/tables');
+        }
+
+        $order = $this->orderModel->findOpenOrderByTable($fromTableId);
+        if ($order) {
+            // Update table_id in orders
+            $db = getDB();
+            $db->prepare("UPDATE orders SET table_id = ? WHERE id = ?")->execute([$toTableId, $order['id']]);
+            
+            // Cập nhật trạng thái bàn
+            $this->tableModel->close($fromTableId); // Bàn cũ thành trống
+            $this->tableModel->open($toTableId);    // Bàn mới thành bận
+
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Chuyển bàn thành công.'];
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bàn cũ không có order nào để chuyển.'];
+        }
+
+        $this->redirect('/tables');
+    }
+
     /** POST /tables/close — Đóng bàn */
     public function close(): void
     {

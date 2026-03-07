@@ -165,4 +165,23 @@ class OrderController extends Controller
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xác nhận các món được chọn! Chờ bếp chuẩn bị.'];
         $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
     }
+
+    /** GET /orders/print — In hóa đơn */
+    public function print(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+        $orderId = (int) $this->input('order_id');
+
+        $order = $this->orderModel->findById($orderId);
+        if (!$order) {
+            die('Không tìm thấy hóa đơn.');
+        }
+
+        $table = $this->tableModel->findById($order['table_id']);
+        $items = $this->orderModel->getItems($orderId);
+        $total = $this->orderModel->getTotal($orderId);
+
+        // Hiển thị view in không qua layout chung
+        require_once BASE_PATH . '/views/orders/print.php';
+    }
 }

@@ -1,5 +1,5 @@
 /**
- * auth.js — PIN Login Logic
+ * auth.js — 3-Step Login Logic (User -> Shift -> PIN)
  * Aurora Restaurant
  */
 
@@ -9,17 +9,38 @@
   // ── State ──────────────────────────────────────────────
   let pin = "";
   let selectedUsername = "";
-  let isAdminMode = false;
+  let selectedShift = "";
 
   // ── DOM refs ────────────────────────────────────────────
   const pinDots = document.querySelectorAll(".pin-dot");
   const pinField = document.getElementById("pinField");
   const usernameField = document.getElementById("usernameField");
+  const shiftField = document.getElementById("shiftField");
   const submitBtn = document.getElementById("submitBtn");
-  const adminSection = document.getElementById("adminSection");
+  
   const waiterSection = document.getElementById("waiterSection");
-  const adminUsernameInput = document.getElementById("adminUsername");
-  const adminToggleText = document.getElementById("adminToggleText");
+  const shiftSection = document.getElementById("shiftSection");
+  const pinSection = document.getElementById("pinSection");
+
+  // ── Step Navigation ─────────────────────────────────────
+  function checkSteps() {
+    // Step 1 -> Step 2
+    if (selectedUsername) {
+      shiftSection.classList.remove("u-hidden");
+    } else {
+      shiftSection.classList.add("u-hidden");
+      pinSection.classList.add("u-hidden");
+    }
+
+    // Step 2 -> Step 3
+    if (selectedUsername && selectedShift) {
+      pinSection.classList.remove("u-hidden");
+    } else {
+      pinSection.classList.add("u-hidden");
+    }
+
+    checkReady();
+  }
 
   // ── PIN helpers ─────────────────────────────────────────
   function pressKey(value) {
@@ -28,8 +49,8 @@
     syncDots();
     if (pin.length === 4) {
       pinField.value = pin;
-      checkReady();
     }
+    checkReady();
   }
 
   function deleteKey() {
@@ -47,51 +68,54 @@
   }
 
   function checkReady() {
-    const ready = pin.length === 4 && selectedUsername.trim().length > 0;
+    const ready = pin.length === 4 && 
+                  selectedUsername.trim().length > 0 && 
+                  selectedShift.trim().length > 0;
     submitBtn.disabled = !ready;
   }
 
-  // ── User selection ──────────────────────────────────────
+  // ── Step 1: User selection ──────────────────────────────
   function selectUser(el) {
-    document
-      .querySelectorAll(".user-chip")
-      .forEach((c) => c.classList.remove("is-selected"));
+    document.querySelectorAll(".user-chip").forEach((c) => c.classList.remove("is-selected"));
     el.classList.add("is-selected");
     selectedUsername = el.dataset.username;
     usernameField.value = selectedUsername;
-    checkReady();
-  }
-
-  // ── Admin toggle ────────────────────────────────────────
-  function toggleAdmin() {
-    isAdminMode = !isAdminMode;
-
-    if (isAdminMode) {
-      adminSection.classList.remove("u-hidden");
-      waiterSection.classList.add("u-hidden");
-      adminToggleText.textContent = "← Quay lại Phục vụ";
-      selectedUsername = "";
-      usernameField.value = "";
-      document
-        .querySelectorAll(".user-chip")
-        .forEach((c) => c.classList.remove("is-selected"));
-    } else {
-      adminSection.classList.add("u-hidden");
-      waiterSection.classList.remove("u-hidden");
-      adminToggleText.textContent = "Đăng nhập Admin / IT";
-      if (adminUsernameInput) adminUsernameInput.value = "";
-      selectedUsername = "";
-      usernameField.value = "";
-    }
-
-    // Reset PIN when switching mode
+    
+    // Reset following steps
+    selectedShift = "";
+    shiftField.value = "";
+    document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
     pin = "";
     pinField.value = "";
     syncDots();
-    checkReady();
+    
+    checkSteps();
   }
 
-  // ── Bind PIN pad keys ───────────────────────────────────
+  // ── Step 2: Shift selection ─────────────────────────────
+  function selectShift(el) {
+    document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
+    el.classList.add("is-selected");
+    selectedShift = el.dataset.id;
+    shiftField.value = selectedShift;
+    
+    // Reset following steps
+    pin = "";
+    pinField.value = "";
+    syncDots();
+    
+    checkSteps();
+  }
+
+  // ── Bind Events ─────────────────────────────────────────
+  document.querySelectorAll(".user-chip").forEach((chip) => {
+    chip.addEventListener("click", () => selectUser(chip));
+  });
+
+  document.querySelectorAll(".shift-chip").forEach((chip) => {
+    chip.addEventListener("click", () => selectShift(chip));
+  });
+
   document.querySelectorAll(".pin-key[data-key]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const val = btn.dataset.key;
@@ -103,28 +127,9 @@
     });
   });
 
-  // ── Bind user chips ──────────────────────────────────────
-  document.querySelectorAll(".user-chip").forEach((chip) => {
-    chip.addEventListener("click", () => selectUser(chip));
-  });
-
-  // ── Admin username input ────────────────────────────────
-  if (adminUsernameInput) {
-    adminUsernameInput.addEventListener("input", () => {
-      selectedUsername = adminUsernameInput.value.trim();
-      usernameField.value = selectedUsername;
-      checkReady();
-    });
-  }
-
-  // ── Admin toggle click ──────────────────────────────────
-  document
-    .querySelector(".admin-toggle")
-    ?.addEventListener("click", toggleAdmin);
-
   // ── Keyboard support (desktop) ──────────────────────────
   document.addEventListener("keydown", (e) => {
-    if (document.activeElement === adminUsernameInput) return;
+    if (pinSection.classList.contains("u-hidden")) return;
     if (e.key >= "0" && e.key <= "9") pressKey(e.key);
     if (e.key === "Backspace") deleteKey();
     if (e.key === "Enter" && !submitBtn.disabled) {
@@ -132,14 +137,6 @@
     }
   });
 
-  // ── Form submit guard ────────────────────────────────────
-  document.getElementById("loginForm").addEventListener("submit", function () {
-    pinField.value = pin;
-    if (isAdminMode && adminUsernameInput) {
-      usernameField.value = adminUsernameInput.value.trim();
-    }
-  });
-
   // Init
-  checkReady();
+  checkSteps();
 })();
