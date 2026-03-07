@@ -142,83 +142,55 @@ INSERT INTO `users` (`name`, `username`, `pin`, `role`) VALUES
 ('Nguyễn Văn A', 'waiter01', '1111', 'waiter'),
 ('Trần Thị B', 'waiter02', '2222', 'waiter');
 
--- Bàn mẫu
+-- Bàn mẫu (30 bàn tổng cộng)
 INSERT INTO `tables` (`name`, `area`, `capacity`, `sort_order`) VALUES
--- Khu A1
-('A1.01', 'Khu A1', 4, 1),
-('A1.02', 'Khu A1', 4, 2),
-('A1.03', 'Khu A1', 4, 3),
-('A1.04', 'Khu A1', 4, 4),
-('A1.05', 'Khu A1', 4, 5),
-('A1.06', 'Khu A1', 4, 6),
-('A1.07', 'Khu A1', 4, 7),
-('A1.08', 'Khu A1', 4, 8),
-('A1.09', 'Khu A1', 4, 9),
-('A1.10', 'Khu A1', 4, 10),
+-- A1 (6 bàn)
+('A.01', 'A1', 4, 1),
+('A.02', 'A1', 4, 2),
+('A.03', 'A1', 4, 3),
+('A.04', 'A1', 4, 4),
+('A.05', 'A1', 4, 5),
+('A.06', 'A1', 4, 6),
 
--- Khu B1
-('B1.01', 'Khu B1', 4, 11),
-('B1.02', 'Khu B1', 4, 12),
-('B1.03', 'Khu B1', 4, 13),
-('B1.04', 'Khu B1', 4, 14),
-('B1.05', 'Khu B1', 4, 15),
-('B1.06', 'Khu B1', 4, 16),
-('B1.07', 'Khu B1', 4, 17),
-('B1.08', 'Khu B1', 4, 18),
-('B1.09', 'Khu B1', 4, 19),
-('B1.10', 'Khu B1', 4, 20),
+-- B1 (6 bàn)
+('B.01', 'B1', 4, 7),
+('B.02', 'B1', 4, 8),
+('B.03', 'B1', 4, 9),
+('B.04', 'B1', 4, 10),
+('B.05', 'B1', 4, 11),
+('B.06', 'B1', 4, 12),
 
--- Khu C1
-('C1.01', 'Khu C1', 4, 21),
-('C1.02', 'Khu C1', 4, 22),
-('C1.03', 'Khu C1', 4, 23),
-('C1.04', 'Khu C1', 4, 24),
-('C1.05', 'Khu C1', 4, 25),
-('C1.06', 'Khu C1', 4, 26),
-('C1.07', 'Khu C1', 4, 27),
-('C1.08', 'Khu C1', 4, 28),
-('C1.09', 'Khu C1', 4, 29),
-('C1.10', 'Khu C1', 4, 30),
+-- C1 (6 bàn)
+('C.01', 'C1', 4, 13),
+('C.02', 'C1', 4, 14),
+('C.03', 'C1', 4, 15),
+('C.04', 'C1', 4, 16),
+('C.05', 'C1', 4, 17),
+('C.06', 'C1', 4, 18),
 
--- Nhà Hàng Á - Khu Vip 1
-('Vip 1.1', 'Nhà Hàng Á - Vip 1', 8, 31),
-('Vip 1.2', 'Nhà Hàng Á - Vip 1', 8, 32),
-('Vip 1.3', 'Nhà Hàng Á - Vip 1', 8, 33),
-('Vip 1.4', 'Nhà Hàng Á - Vip 1', 8, 34),
-('Vip 1.5', 'Nhà Hàng Á - Vip 1', 8, 35),
+-- VIP 1 (2 bàn)
+('VIP 1.1', 'VIP 1', 8, 19),
+('VIP 1.2', 'VIP 1', 8, 20),
 
--- Nhà Hàng Á - Khu Vip 2
-('Vip 2.1', 'Nhà Hàng Á - Vip 2', 8, 36),
-('Vip 2.2', 'Nhà Hàng Á - Vip 2', 8, 37),
-('Vip 2.3', 'Nhà Hàng Á - Vip 2', 8, 38),
-('Vip 2.4', 'Nhà Hàng Á - Vip 2', 8, 39),
-('Vip 2.5', 'Nhà Hàng Á - Vip 2', 8, 40),
+-- VIP 2 (2 bàn)
+('VIP 2.1', 'VIP 2', 8, 21),
+('VIP 2.2', 'VIP 2', 8, 22),
 
--- Nhà Hàng Á - Khu Vip 3
-('Vip 3.1', 'Nhà Hàng Á - Vip 3', 8, 41),
-('Vip 3.2', 'Nhà Hàng Á - Vip 3', 8, 42),
-('Vip 3.3', 'Nhà Hàng Á - Vip 3', 8, 43),
-('Vip 3.4', 'Nhà Hàng Á - Vip 3', 8, 44),
-('Vip 3.5', 'Nhà Hàng Á - Vip 3', 8, 45),
+-- VIP 3 (2 bàn)
+('VIP 3.1', 'VIP 3', 8, 23),
+('VIP 3.2', 'VIP 3', 8, 24),
 
--- Nhà Hàng Á - Khu Vip 4
-('Vip 4.1', 'Nhà Hàng Á - Vip 4', 8, 46),
-('Vip 4.2', 'Nhà Hàng Á - Vip 4', 8, 47),
-('Vip 4.3', 'Nhà Hàng Á - Vip 4', 8, 48),
-('Vip 4.4', 'Nhà Hàng Á - Vip 4', 8, 49),
-('Vip 4.5', 'Nhà Hàng Á - Vip 4', 8, 50),
+-- VIP 4 (2 bàn)
+('VIP 4.1', 'VIP 4', 8, 25),
+('VIP 4.2', 'VIP 4', 8, 26),
 
--- Nhà Hàng Âu
-('Âu 01', 'Nhà Hàng Âu', 4, 51),
-('Âu 02', 'Nhà Hàng Âu', 4, 52),
-('Âu 03', 'Nhà Hàng Âu', 4, 53),
-('Âu 04', 'Nhà Hàng Âu', 4, 54),
-('Âu 05', 'Nhà Hàng Âu', 4, 55),
-('Âu 06', 'Nhà Hàng Âu', 4, 56),
-('Âu 07', 'Nhà Hàng Âu', 4, 57),
-('Âu 08', 'Nhà Hàng Âu', 4, 58),
-('Âu 09', 'Nhà Hàng Âu', 4, 59),
-('Âu 10', 'Nhà Hàng Âu', 4, 60);
+-- Âu (6 bàn)
+('Âu 01', 'Âu', 4, 27),
+('Âu 02', 'Âu', 4, 28),
+('Âu 03', 'Âu', 4, 29),
+('Âu 04', 'Âu', 4, 30),
+('Âu 05', 'Âu', 4, 31),
+('Âu 06', 'Âu', 4, 32);
 
 -- Danh mục món
 INSERT INTO `menu_categories` (`name`, `name_en`, `icon`, `sort_order`) VALUES
@@ -250,5 +222,44 @@ INSERT INTO `menu_items` (`category_id`, `name`, `name_en`, `price`, `tags`, `so
 (4, 'Trà đào cam sả', 'Peach Tea', 55000, NULL, 3),
 (4, 'Bia Tiger lon', 'Tiger Beer Can', 35000, NULL, 4),
 (4, 'Nước suối', 'Water', 15000, NULL, 5);
+
+-- ============================================================
+-- TABLE: menu_sets (Set & Combo - À la carte)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `menu_sets` (
+    `id`          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name`        VARCHAR(150) NOT NULL COMMENT 'Tên set',
+    `name_en`     VARCHAR(150) DEFAULT NULL COMMENT 'Tên tiếng Anh',
+    `description` TEXT DEFAULT NULL,
+    `price`       DECIMAL(10, 0) NOT NULL DEFAULT 0,
+    `image`       VARCHAR(255) DEFAULT NULL,
+    `is_active`   TINYINT(1) NOT NULL DEFAULT 1,
+    `sort_order`  SMALLINT UNSIGNED DEFAULT 0,
+    `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- TABLE: menu_set_items (Món trong set)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `menu_set_items` (
+    `id`           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `set_id`       INT UNSIGNED NOT NULL,
+    `menu_item_id` INT UNSIGNED NOT NULL,
+    `quantity`     TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    `is_required`  TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=bắt buộc, 0=tuỳ chọn',
+    `sort_order`   SMALLINT UNSIGNED DEFAULT 0,
+    `created_at`   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_set_items_set` FOREIGN KEY (`set_id`) REFERENCES `menu_sets`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_set_items_menu` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- SEED DATA: Menu Sets (Sample)
+-- ============================================================
+INSERT INTO `menu_sets` (`name`, `name_en`, `description`, `price`, `sort_order`) VALUES
+('Set Ăn Sáng Á', 'Asian Breakfast Set', 'Bao gồm: Phở bò + Chả giò + Nước ép cam', 150000, 1),
+('Set Ăn Sáng Âu', 'European Breakfast Set', 'Bao gồm: Bánh mì ốp la + Salad + Cà phê', 140000, 2),
+('Set Trưa Văn Phòng', 'Office Lunch Set', 'Bao gồm: Cơm chiên + Gỏi cuốn + Nước suối', 120000, 3);
 
 SET FOREIGN_KEY_CHECKS = 1;

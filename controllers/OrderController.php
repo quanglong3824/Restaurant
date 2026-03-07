@@ -62,6 +62,7 @@ class OrderController extends Controller
         $items = $order ? $this->orderModel->getItems($order['id']) : [];
         $total = $order ? $this->orderModel->getTotal($order['id']) : 0;
         $tableDisplayName = $this->tableModel->getFullDisplayName($tableId);
+        $grouped = $this->tableModel->getAllGroupedByArea();
 
         $this->view('layouts/waiter', [
             'view' => 'orders/index',
@@ -71,6 +72,7 @@ class OrderController extends Controller
             'order' => $order,
             'items' => $items,
             'total' => $total,
+            'grouped' => $grouped,
         ]);
     }
 
@@ -109,7 +111,7 @@ class OrderController extends Controller
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
-        
+
         // Format items for JS
         foreach ($items as &$it) {
             $it['price_fmt'] = formatPrice($it['item_price']);
@@ -148,7 +150,7 @@ class OrderController extends Controller
         foreach ($items as $itemData) {
             $menuItemId = (int) ($itemData['menu_item_id'] ?? 0);
             $qty = max(1, (int) ($itemData['quantity'] ?? 1));
-            
+
             $menuItem = $this->menuModel->findById($menuItemId);
             if ($menuItem) {
                 $this->orderModel->addItem(
@@ -164,7 +166,7 @@ class OrderController extends Controller
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
-        
+
         // Format items for JS
         foreach ($items as &$it) {
             $it['price_fmt'] = formatPrice($it['item_price']);
@@ -190,8 +192,8 @@ class OrderController extends Controller
         $qtyInput = $this->input('qty');
 
         $qty = 0;
-        if (strpos((string)$qtyInput, 'delta:') === 0) {
-            $delta = (int) str_replace('delta:', '', (string)$qtyInput);
+        if (strpos((string) $qtyInput, 'delta:') === 0) {
+            $delta = (int) str_replace('delta:', '', (string) $qtyInput);
             // Get current qty
             $db = getDB();
             $stmt = $db->prepare("SELECT quantity FROM order_items WHERE id = ?");
@@ -206,7 +208,7 @@ class OrderController extends Controller
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
-        
+
         // Format items for JS
         foreach ($items as &$it) {
             $it['price_fmt'] = formatPrice($it['item_price']);
@@ -234,7 +236,7 @@ class OrderController extends Controller
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
-        
+
         // Format items for JS
         foreach ($items as &$it) {
             $it['price_fmt'] = formatPrice($it['item_price']);

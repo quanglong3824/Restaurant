@@ -3,6 +3,14 @@
     <div class="card-header">
         <h2><i class="fas fa-utensils"></i> Danh sách Món ăn</h2>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+            <!-- Menu Type Tabs -->
+            <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline <?= !isset($_GET['type']) || $_GET['type'] === '' ? 'active' : '' ?>">
+                <i class="fas fa-utensils"></i> Món Lẻ
+            </a>
+            <a href="<?= BASE_URL ?>/admin/menu/sets" class="btn btn-outline <?= isset($_GET['type']) && $_GET['type'] === 'sets' ? 'active' : '' ?>">
+                <i class="fas fa-layer-group"></i> Set & Combo
+            </a>
+            
             <!-- Category filter -->
             <select id="catFilter" class="form-control" style="width:auto;min-width:160px;">
                 <option value="">Tất cả danh mục</option>

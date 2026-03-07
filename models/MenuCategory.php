@@ -12,6 +12,12 @@ class MenuCategory extends Model
         );
     }
 
+    /** Lấy tất cả danh mục đang hoạt động */
+    public function getActive(): array
+    {
+        return $this->getActiveByType();
+    }
+
     /** Lấy tất cả danh mục đang hoạt động, lọc theo menu_type */
     public function getActiveByType(string $type = ''): array
     {

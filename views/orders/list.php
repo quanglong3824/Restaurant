@@ -32,7 +32,7 @@
         padding: 0.6rem 1.25rem;
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 50px;
+        border-radius: 0px;
         font-size: 0.9rem;
         font-weight: 600;
         color: var(--text-muted);
@@ -50,7 +50,7 @@
 
     .order-row-card {
         background: var(--surface);
-        border-radius: var(--radius-lg);
+        border-radius: 0px;
         padding: 1.25rem;
         margin-bottom: 1rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -59,13 +59,13 @@
         flex-direction: column;
         gap: 1rem;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     }
 
     .order-row-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
-        border-color: var(--border-gold);
+        border-color: var(--gold);
     }
 
     @media (min-width: 768px) {
@@ -88,7 +88,7 @@
         height: 60px;
         background: var(--gold-light);
         color: var(--gold-dark);
-        border-radius: 50%;
+        border-radius: 0px;
         display: flex;
         align-items: center;
         justify-content: center;

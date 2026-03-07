@@ -5,6 +5,7 @@
 
 require_once BASE_PATH . '/models/MenuItem.php';
 require_once BASE_PATH . '/models/MenuCategory.php';
+require_once BASE_PATH . '/models/MenuSet.php';
 
 class MenuController extends Controller
 {
@@ -12,6 +13,7 @@ class MenuController extends Controller
     public function index(): void
     {
         $tableIdFromUrl = (int) $this->input('table_id');
+        $menuType = $this->input('type', 'asia'); // asia, europe, alacarte
 
         // Nếu qua QR (có table_id), lưu vào session và cho phép khách vào
         if ($tableIdFromUrl > 0) {
@@ -24,9 +26,20 @@ class MenuController extends Controller
 
         $itemModel = new MenuItem();
         $categoryModel = new MenuCategory();
+        $setModel = new MenuSet();
 
-        $categories = $categoryModel->getActive();
-        $grouped = $itemModel->getGroupedByCategory();
+        // Lấy categories theo menu type
+        $categories = $categoryModel->getActiveByType($menuType);
+        $grouped = $itemModel->getGroupedByCategory($menuType);
+        
+        // Lấy sets nếu là alacarte
+        $sets = [];
+        if ($menuType === 'alacarte') {
+            $sets = $setModel->getActive();
+            foreach ($sets as &$set) {
+                $set['items'] = $setModel->getSetItems($set['id']);
+            }
+        }
 
         // Ưu tiên lấy table_id từ session khách nếu có
         $tableId = $tableIdFromUrl ?: ($_SESSION['customer_table_id'] ?? 0);
@@ -70,6 +83,13 @@ class MenuController extends Controller
             'pageTitle' => $tableId > 0 ? "Bàn {$tableId} - Gọi Món" : 'Menu',
             'categories' => $categories,
             'grouped' => $grouped,
+            'sets' => $sets,
+            'currentType' => $menuType,
+            'menuTypes' => [
+                ['key' => 'asia', 'label' => 'Món Á', 'icon' => 'fa-bowl-rice'],
+                ['key' => 'europe', 'label' => 'Món Âu', 'icon' => 'fa-bread-slice'],
+                ['key' => 'alacarte', 'label' => 'Set & Combo', 'icon' => 'fa-utensils'],
+            ],
             'tableId' => $tableId,
             'orderId' => $orderId,
             'order' => $order,

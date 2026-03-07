@@ -54,6 +54,10 @@ class TableController extends Controller
             $this->tableModel->open($tableId);
             $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
 
+            if ((int) $guestCount > (int) $table['capacity']) {
+                $_SESSION['flash'] = ['type' => 'warning', 'message' => "Số khách ($guestCount) vượt quá sức chứa ({$table['capacity']}). Gợi ý: Tại màn hình Order, bạn có thể nhấn Thêm Bàn/Ghép Bàn để mở rộng!"];
+            }
+
             // Redirect to orders page
             $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
         } catch (\Exception $e) {

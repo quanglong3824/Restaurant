@@ -165,7 +165,7 @@ if (!empty($items)) {
         margin-top: 1.5rem;
         flex-wrap: wrap;
     }
-    
+
     /* Quantity Buttons - Consistent with Menu */
     .qty-btn {
         width: 32px;
@@ -181,13 +181,13 @@ if (!empty($items)) {
         transition: all 0.2s;
         font-size: 0.9rem;
     }
-    
+
     .qty-btn:hover {
         border-color: var(--gold);
         color: var(--gold);
         background: var(--gold-light);
     }
-    
+
     .qty-val {
         min-width: 32px;
         text-align: center;
@@ -195,7 +195,7 @@ if (!empty($items)) {
         font-size: 0.95rem;
         color: var(--text);
     }
-    
+
     .order-item__del {
         width: 36px;
         height: 36px;
@@ -210,12 +210,12 @@ if (!empty($items)) {
         transition: all 0.2s;
         margin-left: 0.5rem;
     }
-    
+
     .order-item__del:hover {
         background: var(--danger-bg);
         border-color: var(--danger);
     }
-    
+
     /* Total Bar - Consistent with Cart */
     .order-total-bar {
         background: var(--surface);
@@ -228,7 +228,7 @@ if (!empty($items)) {
         justify-content: space-between;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
-    
+
     .order-total-bar__label {
         display: flex;
         align-items: center;
@@ -236,11 +236,11 @@ if (!empty($items)) {
         font-weight: 600;
         color: var(--text);
     }
-    
+
     .order-total-bar__label i {
         color: var(--gold);
     }
-    
+
     .order-total-bar__amount {
         font-weight: 800;
         font-size: 1.25rem;
@@ -286,10 +286,17 @@ if (!empty($items)) {
                     </span>
                 </div>
             </div>
-            <a href="<?= BASE_URL ?>/menu?table_id=<?= $table['id'] ?>&order_id=<?= $order['id'] ?>"
-                class="btn btn-gold btn-sm">
-                <i class="fas fa-plus"></i> Thêm món
-            </a>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <?php if (empty($table['parent_id'])): ?>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="Aurora.openModal('modalSelectTarget')">
+                        <i class="fas fa-link"></i> Ghép bàn
+                    </button>
+                <?php endif; ?>
+                <a href="<?= BASE_URL ?>/menu?table_id=<?= $table['id'] ?>&order_id=<?= $order['id'] ?>"
+                    class="btn btn-gold btn-sm">
+                    <i class="fas fa-plus"></i> Thêm món
+                </a>
+            </div>
         </div>
 
         <!-- Order items list -->
@@ -388,13 +395,14 @@ if (!empty($items)) {
                     </button>
                 </form>
             <?php endif; ?>
-            
+
             <div style="display: flex; gap: 0.75rem;">
                 <button class="btn btn-danger-outline" style="flex: 1;"
                     onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
                     <i class="fas fa-door-closed"></i> Đóng bàn
                 </button>
-                <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn btn-outline" style="flex: 1;">
+                <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn"
+                    style="flex: 1; background: #0ea5e9; color: #fff; border-color: #0ea5e9;">
                     <i class="fas fa-print"></i> In Hóa Đơn
                 </a>
             </div>
@@ -443,6 +451,42 @@ if (!empty($items)) {
                 </div>
             </form>
         </div>
+    </div>
+</div>
+
+<!-- Modal: Chọn bàn để Ghép -->
+<div class="modal-backdrop" id="modalSelectTarget">
+    <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="targetModalTitle"><i class="fas fa-link"></i> Ghép thêm bàn</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="targetForm" method="POST" action="<?= BASE_URL ?>/tables/merge" class="modal-body">
+            <input type="hidden" name="parent_id" value="<?= $table['id'] ?? '' ?>">
+            <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
+                Chọn bàn trống để ghép chung với <?= isset($table['name']) ? e($table['name']) : '' ?>:
+            </p>
+            <div class="form-group">
+                <label class="form-label">Chọn bàn trống</label>
+                <select name="child_id" class="form-control" required>
+                    <option value="">-- Chọn một bàn trống --</option>
+                    <?php
+                    if (!empty($grouped)):
+                        foreach ($grouped as $area => $tables):
+                            foreach ($tables as $t):
+                                if ($t['status'] === 'available' && empty($t['parent_id'])):
+                                    ?>
+                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?> (<?= e($area) ?>)</option>
+                                <?php
+                                endif;
+                            endforeach;
+                        endforeach;
+                    endif;
+                    ?>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-gold btn-block btn-lg">XÁC NHẬN GHÉP</button>
+        </form>
     </div>
 </div>
 

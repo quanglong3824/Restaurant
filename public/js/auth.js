@@ -17,16 +17,19 @@
   const usernameField = document.getElementById("usernameField");
   const shiftField = document.getElementById("shiftField");
   const submitBtn = document.getElementById("submitBtn");
-  
+
   const waiterSection = document.getElementById("waiterSection");
   const shiftSection = document.getElementById("shiftSection");
   const pinSection = document.getElementById("pinSection");
 
   // ── Step Navigation ─────────────────────────────────────
   function checkSteps() {
+    console.log('checkSteps called:', { selectedUsername, selectedShift, pinLength: pin.length });
+    
     // Step 1 -> Step 2
     if (selectedUsername) {
       shiftSection.classList.remove("u-hidden");
+      console.log('Shift section shown');
     } else {
       shiftSection.classList.add("u-hidden");
       pinSection.classList.add("u-hidden");
@@ -35,6 +38,7 @@
     // Step 2 -> Step 3
     if (selectedUsername && selectedShift) {
       pinSection.classList.remove("u-hidden");
+      console.log('PIN section shown');
     } else {
       pinSection.classList.add("u-hidden");
     }
@@ -68,10 +72,11 @@
   }
 
   function checkReady() {
-    const ready = pin.length === 4 && 
-                  selectedUsername.trim().length > 0 && 
+    const ready = pin.length === 4 &&
+                  selectedUsername.trim().length > 0 &&
                   selectedShift.trim().length > 0;
     submitBtn.disabled = !ready;
+    console.log('checkReady:', { ready, pinLength: pin.length, hasUsername: selectedUsername.trim().length > 0, hasShift: selectedShift.trim().length > 0 });
   }
 
   // ── Step 1: User selection ──────────────────────────────
@@ -80,7 +85,8 @@
     el.classList.add("is-selected");
     selectedUsername = el.dataset.username;
     usernameField.value = selectedUsername;
-    
+    console.log('User selected:', selectedUsername);
+
     // Reset following steps
     selectedShift = "";
     shiftField.value = "";
@@ -88,8 +94,13 @@
     pin = "";
     pinField.value = "";
     syncDots();
-    
+
     checkSteps();
+    
+    // Scroll to shift section smoothly
+    setTimeout(() => {
+      shiftSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   }
 
   // ── Step 2: Shift selection ─────────────────────────────
@@ -98,13 +109,19 @@
     el.classList.add("is-selected");
     selectedShift = el.dataset.id;
     shiftField.value = selectedShift;
-    
+    console.log('Shift selected:', selectedShift);
+
     // Reset following steps
     pin = "";
     pinField.value = "";
     syncDots();
-    
+
     checkSteps();
+    
+    // Scroll to PIN section smoothly
+    setTimeout(() => {
+      pinSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   }
 
   // ── Bind Events ─────────────────────────────────────────
@@ -138,5 +155,6 @@
   });
 
   // Init
+  console.log('auth.js initialized');
   checkSteps();
 })();

@@ -37,6 +37,7 @@ $router->get('/menu', 'MenuController', 'index');
 // ── Waiter: Orders ───────────────────────────────────────
 $router->get('/orders', 'OrderController', 'index');
 $router->post('/orders/add', 'OrderController', 'addItem');
+$router->post('/orders/add-set', 'OrderController', 'addSet');
 $router->post('/orders/update', 'OrderController', 'updateItem');
 $router->post('/orders/remove', 'OrderController', 'removeItem');
 $router->post('/orders/confirm', 'OrderController', 'confirmOrder');
@@ -60,6 +61,13 @@ $router->get('/admin/menu/edit', 'AdminMenuController', 'edit');
 $router->post('/admin/menu/update', 'AdminMenuController', 'update');
 $router->post('/admin/menu/delete', 'AdminMenuController', 'delete');
 $router->post('/admin/menu/toggle', 'AdminMenuController', 'toggle');
+
+// ── Admin: Menu Sets (À la carte) ─────────────────────────
+$router->get('/admin/menu/sets', 'AdminMenuSetController', 'index');
+$router->post('/admin/menu/sets/store', 'AdminMenuSetController', 'store');
+$router->post('/admin/menu/sets/update', 'AdminMenuSetController', 'update');
+$router->post('/admin/menu/sets/delete', 'AdminMenuSetController', 'delete');
+$router->post('/admin/menu/sets/toggle', 'AdminMenuSetController', 'toggle');
 
 // ── Admin: Categories ─────────────────────────────────────
 $router->get('/admin/categories', 'AdminCategoryController', 'index');

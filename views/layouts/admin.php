@@ -61,6 +61,10 @@
                         <i class="fas fa-utensils"></i>
                         <span>Quản lý Món</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>" style="padding-left: 2.75rem; font-size: 0.9rem;">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Set & Combo</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/admin/categories" class="nav-item <?= activeClass('/admin/categories') ?>">
                         <i class="fas fa-tags"></i>
                         <span>Danh Mục</span>

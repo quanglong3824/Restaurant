@@ -144,4 +144,12 @@ class MenuItem extends Model
             array_merge($params, [$limit])
         );
     }
+
+    /** Add gallery image for menu item (placeholder for future gallery feature) */
+    public function addGalleryImage(int $itemId, string $imagePath): bool
+    {
+        // Placeholder: Gallery feature not fully implemented yet
+        // This method can be extended to store multiple images per menu item
+        return true;
+    }
 }
