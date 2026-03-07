@@ -6,13 +6,18 @@ $occupied = $counts['occupied'] ?? 0;
 // Re-group tables into Occupied and Available
 $occupiedGroups = [];
 $availableGroups = [];
+$allAvailableForSelect = [];
 
 foreach ($grouped as $area => $tables) {
     foreach ($tables as $t) {
         if ($t['status'] === 'occupied') {
             $occupiedGroups[$area][] = $t;
         } else {
-            $availableGroups[$area][] = $t;
+            // Chỉ bàn trống và chưa bị ghép mới có thể chọn làm bàn chính hoặc bàn phụ
+            if ($t['parent_id'] === null) {
+                $availableGroups[$area][] = $t;
+                $allAvailableForSelect[] = $t;
+            }
         }
     }
 }
@@ -50,15 +55,18 @@ foreach ($grouped as $area => $tables) {
                 </div>
                 <div class="table-grid" style="margin-bottom: 1rem;">
                     <?php foreach ($tables as $t): ?>
-                        <div class="table-card table-card--occupied"
-                            onclick="handleTableClick(<?= $t['id'] ?>, '<?= e($t['name']) ?>', true)" role="button" tabindex="0">
-                            <i class="fas fa-utensils table-icon"></i>
+                        <div class="table-card <?= $t['status'] === 'occupied' ? 'table-card--occupied' : 'table-card--available' ?> <?= $t['parent_id'] ? 'table-card--merged' : '' ?>"
+                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
+                            <i class="fas <?= $t['status'] === 'occupied' ? 'fa-utensils' : 'fa-chair' ?> table-icon"></i>
                             <span class="table-name">
                                 <?= e($t['name']) ?>
                             </span>
                             <span class="table-area">
-                                <?= e($t['area'] ?? '') ?> ·
-                                <?= $t['capacity'] ?> ghế
+                                <?php if ($t['parent_id']): ?>
+                                    <i class="fas fa-link"></i> Ghép → <?= e($t['parent_name'] ?? 'Bàn chính') ?>
+                                <?php else: ?>
+                                    <?= e($t['area'] ?? '') ?> · <?= $t['capacity'] ?> ghế
+                                <?php endif; ?>
                             </span>
                             <div class="table-status-dot"></div>
                         </div>
@@ -88,7 +96,7 @@ foreach ($grouped as $area => $tables) {
                 <div class="table-grid" style="margin-bottom: 1rem;">
                     <?php foreach ($tables as $t): ?>
                         <div class="table-card table-card--available"
-                            onclick="handleTableClick(<?= $t['id'] ?>, '<?= e($t['name']) ?>', false)" role="button" tabindex="0">
+                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
                             <i class="fas fa-chair table-icon"></i>
                             <span class="table-name">
                                 <?= e($t['name']) ?>
@@ -163,16 +171,93 @@ foreach ($grouped as $area => $tables) {
     </div>
 </div>
 
+<!-- Modal: Ghép bàn -->
+<div class="modal-backdrop" id="modalMergeTable">
+    <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="mergeTableName">Ghép bàn</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="<?= BASE_URL ?>/tables/merge" class="modal-body">
+            <input type="hidden" name="parent_id" id="mergeParentId">
+            <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
+                Chọn bàn trống để ghép vào bàn <strong id="mergeParentName"></strong>:
+            </p>
+            <div class="form-group">
+                <label class="form-label">Bàn cần ghép (Bàn phụ)</label>
+                <select name="child_id" class="form-control" required>
+                    <option value="">-- Chọn bàn trống --</option>
+                    <?php foreach ($allAvailableForSelect as $avail): ?>
+                        <option value="<?= $avail['id'] ?>"><?= e($avail['name']) ?> (<?= e($avail['area']) ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div style="background:var(--surface-2); padding:1rem; border-radius:var(--radius-md); margin-bottom:1.5rem; font-size:0.85rem;">
+                <i class="fas fa-info-circle" style="color:var(--gold)"></i> Ghép bàn sẽ chuyển trạng thái bàn phụ sang "Có khách" và sử dụng chung một hóa đơn với bàn chính.
+            </div>
+            <button type="submit" class="btn btn-gold btn-block btn-lg">
+                <i class="fas fa-link"></i> Xác nhận ghép bàn
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .table-card--merged { border-style: dashed; border-color: var(--gold); }
+    .table-card--merged .table-icon { color: var(--gold); }
+</style>
+
 <script>
-    function handleTableClick(tableId, tableName, isOccupied) {
-        if (isOccupied) {
-            document.getElementById('occupiedTableName').textContent = tableName;
-            document.getElementById('viewOrderBtn').href =
-                '<?= BASE_URL ?>/orders?table_id=' + tableId;
+    function handleTableClick(table) {
+        if (table.status === 'occupied') {
+            // Nếu là bàn phụ, không cho thao tác order trực tiếp, yêu cầu về bàn chính
+            if (table.parent_id) {
+                alert('Đây là bàn đã được ghép vào ' + table.parent_name + '. Vui lòng thao tác trên bàn chính.');
+                return;
+            }
+
+            document.getElementById('occupiedTableName').textContent = table.name;
+            document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
+
+            // Cập nhật nút ghép bàn trong modal bận
+            const mergeBtn = document.createElement('button');
+            mergeBtn.type = 'button';
+            mergeBtn.className = 'btn btn-outline btn-lg';
+            mergeBtn.innerHTML = '<i class="fas fa-link"></i> Ghép thêm bàn khác';
+            mergeBtn.onclick = () => {
+                Aurora.closeModal('modalOccupied');
+                document.getElementById('mergeParentId').value = table.id;
+                document.getElementById('mergeParentName').textContent = table.name;
+                Aurora.openModal('modalMergeTable');
+            };
+
+            const actionsDiv = document.querySelector('#modalOccupied .modal-body div');
+            // Xóa các nút cũ nếu có để tránh trùng
+            const oldMerge = actionsDiv.querySelector('.btn-outline');
+            if (oldMerge) oldMerge.remove();
+            actionsDiv.insertBefore(mergeBtn, actionsDiv.lastElementChild);
+
             Aurora.openModal('modalOccupied');
         } else {
-            document.getElementById('modalTableName').textContent = 'Mở — ' + tableName;
-            document.getElementById('openTableId').value = tableId;
+            // Nếu là bàn trống nhưng đang bị ghép (vô lý vì status available và parent_id null đã lọc trên, nhưng cứ check)
+            if (table.parent_id) {
+                if(confirm('Bàn này đang được ghép vào ' + table.parent_name + '. Bạn muốn tách bàn này ra?')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '<?= BASE_URL ?>/tables/unmerge';
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'table_id';
+                    input.value = table.id;
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+                return;
+            }
+
+            document.getElementById('modalTableName').textContent = 'Mở — ' + table.name;
+            document.getElementById('openTableId').value = table.id;
             Aurora.openModal('modalOpenTable');
         }
     }

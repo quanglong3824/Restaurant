@@ -16,22 +16,25 @@ class MenuItem extends Model
         );
     }
 
-    /** Món đang hiển thị, kèm category (waiter) */
-    public function getActive(): array
+    /** Món đang hiển thị, kèm category (waiter), lọc theo menu_type */
+    public function getActiveByType(string $type = ''): array
     {
+        $where = $type ? "AND c.menu_type = ?" : "";
+        $params = $type ? [$type] : [];
         return $this->findAll(
-            "SELECT i.*, c.name AS category_name
+            "SELECT i.*, c.name AS category_name, c.menu_type
              FROM menu_items i
              LEFT JOIN menu_categories c ON c.id = i.category_id
-             WHERE i.is_active = 1
-             ORDER BY c.sort_order, i.sort_order, i.name"
+             WHERE i.is_active = 1 {$where}
+             ORDER BY c.sort_order, i.sort_order, i.name",
+            $params
         );
     }
 
-    /** Nhóm theo category cho waiter menu */
-    public function getGroupedByCategory(): array
+    /** Nhóm theo category cho waiter menu, có lọc type */
+    public function getGroupedByCategory(string $type = ''): array
     {
-        $rows = $this->getActive();
+        $rows = $this->getActiveByType($type);
         $grouped = [];
         foreach ($rows as $row) {
             $cat = $row['category_name'] ?? 'Khác';

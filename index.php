@@ -27,6 +27,8 @@ $router->get('/', 'AuthController', 'home');
 $router->get('/tables', 'TableController', 'index');
 $router->post('/tables/open', 'TableController', 'open');
 $router->post('/tables/close', 'TableController', 'close');
+$router->post('/tables/merge', 'TableController', 'merge');
+$router->post('/tables/unmerge', 'TableController', 'unmerge');
 
 // ── Waiter: Menu ─────────────────────────────────────────
 $router->get('/menu', 'MenuController', 'index');

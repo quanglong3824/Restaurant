@@ -12,6 +12,7 @@
                 <thead>
                     <tr>
                         <th>Icon</th>
+                        <th>Phân loại</th>
                         <th>Tên VI</th>
                         <th>Tên EN</th>
                         <th>Thứ tự</th>
@@ -25,6 +26,12 @@
                             <td>
                                 <i class="fas <?= e($cat['icon'] ?? 'fa-utensils') ?>"
                                     style="color:var(--gold);font-size:1.1rem;"></i>
+                            </td>
+                            <td>
+                                <?php 
+                                    $types = ['asia' => 'Á', 'europe' => 'Âu', 'alacarte' => 'Ala Carte', 'other' => 'Khác'];
+                                    echo $types[$cat['menu_type']] ?? 'Á';
+                                ?>
                             </td>
                             <td><strong><?= e($cat['name']) ?></strong></td>
                             <td style="color:#9ca3af;"><?= e($cat['name_en'] ?? '') ?></td>
@@ -88,6 +95,15 @@
                         placeholder="VD: Appetizers">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Phân loại Menu</label>
+                    <select name="menu_type" class="form-control">
+                        <option value="asia" <?= $editItem['menu_type'] === 'asia' ? 'selected' : '' ?>>Á</option>
+                        <option value="europe" <?= $editItem['menu_type'] === 'europe' ? 'selected' : '' ?>>Âu</option>
+                        <option value="alacarte" <?= $editItem['menu_type'] === 'alacarte' ? 'selected' : '' ?>>Ala Carte</option>
+                        <option value="other" <?= $editItem['menu_type'] === 'other' ? 'selected' : '' ?>>Khác</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>
                     <input type="text" name="icon" class="form-control" value="<?= e($editItem['icon'] ?? 'fa-utensils') ?>"
                         placeholder="fa-utensils">
@@ -124,6 +140,15 @@
                 <div class="form-group">
                     <label class="form-label">Tên (EN)</label>
                     <input type="text" name="name_en" class="form-control" placeholder="VD: Appetizers">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phân loại Menu</label>
+                    <select name="menu_type" class="form-control">
+                        <option value="asia">Á</option>
+                        <option value="europe">Âu</option>
+                        <option value="alacarte">Ala Carte</option>
+                        <option value="other">Khác</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>

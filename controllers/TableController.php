@@ -51,20 +51,45 @@ class TableController extends Controller
         $this->tableModel->open($tableId);
         $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount);
 
-        // Nút 'Vào Bàn & Lưu Order' từ trang Menu (Showcase)
-        $directMenuItemId = (int) $this->input('direct_menu_item_id', 0);
-        if ($directMenuItemId > 0) {
-            require_once BASE_PATH . '/models/MenuItem.php';
-            $menuModel = new MenuItem();
-            $item = $menuModel->findById($directMenuItemId);
-            if ($item && $item['is_available']) {
-                $this->orderModel->addItem($orderId, $item['id'], $item['name'], $item['price'], 1, '');
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã mở bàn và thêm "' . e($item['name']) . '" vào giỏ.'];
-                $this->redirect('/menu?table_id=' . $tableId . '&order_id=' . $orderId);
-            }
+        // Logic tự động ghép phòng VIP (Ghép 1+2, 3+4)
+        // Ví dụ: Nếu mở bàn "Vip 1.x" bất kỳ, có thể gợi ý hoặc tự động ghép
+        // Ở đây ta xử lý ghép bàn theo yêu cầu người dùng
+        
+        $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
+    }
+
+    /** POST /tables/merge — Ghép bàn */
+    public function merge(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $childId = (int) $this->input('child_id');
+        $parentId = (int) $this->input('parent_id');
+
+        if ($childId === $parentId) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Không thể ghép bàn với chính nó.'];
+            $this->redirect('/tables');
         }
 
-        $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
+        $ok = $this->tableModel->mergeTable($childId, $parentId);
+        if ($ok) {
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã ghép bàn thành công.'];
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bàn đang có khách, không thể ghép.'];
+        }
+        $this->redirect('/tables');
+    }
+
+    /** POST /tables/unmerge — Hủy ghép bàn */
+    public function unmerge(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $childId = (int) $this->input('table_id');
+        $this->tableModel->unmergeTable($childId);
+
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tách bàn.'];
+        $this->redirect('/tables');
     }
 
     /** POST /tables/close — Đóng bàn */

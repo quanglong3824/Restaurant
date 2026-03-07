@@ -42,6 +42,7 @@ class AdminCategoryController extends Controller
         $this->model->create([
             'name' => $name,
             'name_en' => trim((string) $this->input('name_en', '')) ?: null,
+            'menu_type' => $this->input('menu_type', 'asia'),
             'icon' => $this->input('icon', 'fa-utensils'),
             'sort_order' => (int) $this->input('sort_order', 0),
         ]);
@@ -86,6 +87,7 @@ class AdminCategoryController extends Controller
         $this->model->update($id, [
             'name' => $name,
             'name_en' => trim((string) $this->input('name_en', '')) ?: null,
+            'menu_type' => $this->input('menu_type', 'asia'),
             'icon' => $this->input('icon', 'fa-utensils'),
             'sort_order' => (int) $this->input('sort_order', 0),
             'is_active' => (int) $this->input('is_active', 1),

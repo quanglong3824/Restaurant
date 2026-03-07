@@ -12,11 +12,14 @@ class MenuCategory extends Model
         );
     }
 
-    /** Lấy tất cả danh mục đang hoạt động */
-    public function getActive(): array
+    /** Lấy tất cả danh mục đang hoạt động, lọc theo menu_type */
+    public function getActiveByType(string $type = ''): array
     {
+        $where = $type ? "AND menu_type = ?" : "";
+        $params = $type ? [$type] : [];
         return $this->findAll(
-            "SELECT * FROM menu_categories WHERE is_active = 1 ORDER BY sort_order, id ASC"
+            "SELECT * FROM menu_categories WHERE is_active = 1 {$where} ORDER BY sort_order, id ASC",
+            $params
         );
     }
 
@@ -28,11 +31,12 @@ class MenuCategory extends Model
     public function create(array $data): int
     {
         $this->execute(
-            "INSERT INTO menu_categories (name, name_en, icon, sort_order, is_active)
-             VALUES (?, ?, ?, ?, 1)",
+            "INSERT INTO menu_categories (name, name_en, menu_type, icon, sort_order, is_active)
+             VALUES (?, ?, ?, ?, ?, 1)",
             [
                 $data['name'],
                 $data['name_en'] ?? null,
+                $data['menu_type'] ?? 'asia',
                 $data['icon'] ?? 'fa-utensils',
                 $data['sort_order'] ?? 0,
             ]
@@ -44,11 +48,12 @@ class MenuCategory extends Model
     {
         $this->execute(
             "UPDATE menu_categories
-             SET name = ?, name_en = ?, icon = ?, sort_order = ?, is_active = ?
+             SET name = ?, name_en = ?, menu_type = ?, icon = ?, sort_order = ?, is_active = ?
              WHERE id = ?",
             [
                 $data['name'],
                 $data['name_en'] ?? null,
+                $data['menu_type'] ?? 'asia',
                 $data['icon'] ?? 'fa-utensils',
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,

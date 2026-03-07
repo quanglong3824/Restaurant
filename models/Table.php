@@ -11,36 +11,25 @@ class Table extends Model
     public function getAll(): array
     {
         return $this->findAll(
-            "SELECT * FROM (SELECT * FROM tables WHERE is_active = 1 ORDER BY id ASC) as t GROUP BY name ORDER BY area, sort_order, name"
+            "SELECT t.*, p.name as parent_name 
+             FROM tables t 
+             LEFT JOIN tables p ON t.parent_id = p.id
+             WHERE t.is_active = 1 
+             ORDER BY t.area, t.sort_order, t.name"
         );
     }
 
-    /** Tất cả bàn kể cả inactive (cho admin) */
-    public function getAllForAdmin(): array
-    {
-        return $this->findAll(
-            "SELECT * FROM tables ORDER BY area, sort_order, name"
-        );
-    }
-
-    /** Lấy tất cả bàn đang trống */
+    /** Lấy tất cả bàn đang trống (không phải bàn đang ghép vào bàn khác) */
     public function getAvailable(): array
     {
         return $this->findAll(
-            "SELECT * FROM tables WHERE is_active = 1 AND status = 'available' ORDER BY area, sort_order, name"
+            "SELECT * FROM tables 
+             WHERE is_active = 1 AND status = 'available' AND parent_id IS NULL 
+             ORDER BY area, sort_order, name"
         );
     }
 
-    /** Lấy theo ID */
-    public function findById(int $id): ?array
-    {
-        return $this->findOne(
-            "SELECT * FROM tables WHERE id = ?",
-            [$id]
-        );
-    }
-
-    /** Nhóm bàn theo khu vực */
+    /** Nhóm bàn theo khu vực (loại bỏ bàn đang ghép nếu cần, hoặc hiển thị lồng nhau) */
     public function getAllGroupedByArea(): array
     {
         $rows = $this->getAll();
@@ -50,6 +39,38 @@ class Table extends Model
             $grouped[$area][] = $row;
         }
         return $grouped;
+    }
+
+    /** Ghép bàn: childId ghép vào parentId */
+    public function mergeTable(int $childId, int $parentId): bool
+    {
+        // Kiểm tra xem bàn con có đang có order không
+        $inUse = $this->findOne(
+            "SELECT id FROM orders WHERE table_id = ? AND status = 'open' LIMIT 1",
+            [$childId]
+        );
+        if ($inUse) return false;
+
+        $this->execute(
+            "UPDATE tables SET parent_id = ?, status = 'occupied', updated_at = NOW() WHERE id = ?",
+            [$parentId, $childId]
+        );
+        return true;
+    }
+
+    /** Hủy ghép bàn */
+    public function unmergeTable(int $childId): void
+    {
+        $this->execute(
+            "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id = ?",
+            [$childId]
+        );
+    }
+
+    /** Lấy các bàn đang ghép vào bàn cha */
+    public function getMergedTables(int $parentId): array
+    {
+        return $this->findAll("SELECT * FROM tables WHERE parent_id = ?", [$parentId]);
     }
 
     /** Mở bàn: đổi status → occupied */
