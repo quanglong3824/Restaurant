@@ -48,7 +48,7 @@
 
             <?php if (Auth::isAdmin()): ?>
                 <div class="nav-section">
-                    <div class="nav-section-title">Menu</div>
+                    <div class="nav-section-title">Hệ thống</div>
                     <a href="<?= BASE_URL ?>/admin/menu" class="nav-item <?= activeClass('/admin/menu') ?>">
                         <i class="fas fa-utensils"></i>
                         <span>Quản lý Món</span>
@@ -60,6 +60,10 @@
                     <a href="<?= BASE_URL ?>/admin/tables" class="nav-item <?= activeClass('/admin/tables') ?>">
                         <i class="fas fa-table-cells-large"></i>
                         <span>Quản lý Bàn</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
+                        <i class="fas fa-database"></i>
+                        <span>Dữ liệu (Backup)</span>
                     </a>
                 </div>
 
@@ -82,14 +86,10 @@
 
             <?php if (Auth::isIT()): ?>
                 <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
+                    <div class="nav-section-title">Quản trị IT</div>
                     <a href="<?= BASE_URL ?>/it/users" class="nav-item <?= activeClass('/it/users') ?>">
                         <i class="fas fa-users"></i>
                         <span>Quản lý User</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
-                        <i class="fas fa-database"></i>
-                        <span>Dữ liệu (Backup)</span>
                     </a>
                 </div>
             <?php endif; ?>

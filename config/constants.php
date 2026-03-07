@@ -19,6 +19,7 @@ define('BASE_URL', ($scriptDir === '/' || $scriptDir === '\\') ? '' : rtrim($scr
 
 define('UPLOAD_PATH', BASE_PATH . '/public/uploads/');
 define('UPLOAD_URL', BASE_URL . '/public/uploads/');
+define('BACKUP_PATH', BASE_PATH . '/backups/');
 
 // Session
 define('SESSION_NAME', 'aurora_restaurant_session');

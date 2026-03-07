@@ -129,18 +129,36 @@ class SettingController extends Controller
     /** GET /it/database */
     public function database(): void
     {
-        Auth::requireRole(ROLE_IT);
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+
+        if (!is_dir(BACKUP_PATH)) {
+            mkdir(BACKUP_PATH, 0755, true);
+        }
+
+        $files = glob(BACKUP_PATH . '*.sql');
+        $backups = [];
+        foreach ($files as $file) {
+            $backups[] = [
+                'name' => basename($file),
+                'size' => filesize($file),
+                'date' => date('Y-m-d H:i:s', filemtime($file)),
+            ];
+        }
+        // Sắp xếp bản mới nhất lên đầu
+        usort($backups, fn($a, $b) => strcmp($b['date'], $a['date']));
+
         $this->view('layouts/admin', [
             'view' => 'it/database',
             'pageTitle' => 'Cơ sở dữ liệu',
             'pageSubtitle' => 'Quản lý sao lưu và phục hồi hệ thống',
+            'backups' => $backups,
         ]);
     }
 
     /** GET /it/database/backup */
     public function backup(): void
     {
-        Auth::requireRole(ROLE_IT);
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
 
         try {
             $db = getDB();
@@ -156,39 +174,68 @@ class SettingController extends Controller
             $sql .= "SET FOREIGN_KEY_CHECKS = 0;\n\n";
 
             foreach ($tables as $table) {
-                // Table structure
                 $result = $db->query("SHOW CREATE TABLE `$table`")->fetch();
                 $sql .= "DROP TABLE IF EXISTS `$table`;\n";
                 $sql .= $result['Create Table'] . ";\n\n";
 
-                // Table data
                 $result = $db->query("SELECT * FROM `$table` ");
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     $sql .= "INSERT INTO `$table` VALUES (";
                     $values = [];
                     foreach ($row as $value) {
-                        if ($value === null) {
-                            $values[] = "NULL";
-                        } else {
-                            $values[] = $db->quote($value);
-                        }
+                        $values[] = ($value === null) ? "NULL" : $db->quote($value);
                     }
                     $sql .= implode(', ', $values) . ");\n";
                 }
                 $sql .= "\n";
             }
-
             $sql .= "SET FOREIGN_KEY_CHECKS = 1;\n";
 
-            $filename = 'backup_' . DB_NAME . '_' . date('Ymd_His') . '.sql';
+            if (!is_dir(BACKUP_PATH)) {
+                mkdir(BACKUP_PATH, 0755, true);
+            }
 
-            header('Content-Type: application/sql');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            echo $sql;
-            exit;
+            $filename = 'backup_' . DB_NAME . '_' . date('Ymd_His') . '.sql';
+            file_put_contents(BACKUP_PATH . $filename, $sql);
+
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tạo bản sao lưu: ' . $filename];
+            $this->redirect('/it/database');
         } catch (Exception $e) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi sao lưu: ' . $e->getMessage()];
             $this->redirect('/it/database');
         }
+    }
+
+    /** GET /it/database/download?file= */
+    public function downloadBackup(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+        $file = $this->input('file');
+        $path = BACKUP_PATH . basename($file);
+
+        if ($file && file_exists($path)) {
+            header('Content-Type: application/sql');
+            header('Content-Disposition: attachment; filename="' . basename($file) . '"');
+            readfile($path);
+            exit;
+        }
+        $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Không tìm thấy file sao lưu.'];
+        $this->redirect('/it/database');
+    }
+
+    /** POST /it/database/delete */
+    public function deleteBackup(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+        $file = $this->input('file');
+        $path = BACKUP_PATH . basename($file);
+
+        if ($file && file_exists($path)) {
+            unlink($path);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa bản sao lưu.'];
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Không thể xóa file.'];
+        }
+        $this->redirect('/it/database');
     }
 }

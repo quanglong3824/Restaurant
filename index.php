@@ -74,5 +74,7 @@ $router->post('/it/users/delete', 'SettingController', 'deleteUser');
 // ── IT: Database Backup ───────────────────────────────────
 $router->get('/it/database', 'SettingController', 'database');
 $router->get('/it/database/backup', 'SettingController', 'backup');
+$router->get('/it/database/download', 'SettingController', 'downloadBackup');
+$router->post('/it/database/delete', 'SettingController', 'deleteBackup');
 
 $router->dispatch();
