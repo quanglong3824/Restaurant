@@ -295,13 +295,25 @@ class OrderController extends Controller
     {
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
 
-        $tableId = (int) $this->input('table_id');
         $orderId = (int) $this->input('order_id');
-
         $this->orderModel->confirmItems($orderId);
 
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xác nhận các món được chọn! Chờ bếp chuẩn bị.'];
-        $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
+        $total = $this->orderModel->getTotal($orderId);
+        $items = $this->orderModel->getItems($orderId);
+
+        // Format items for JS
+        foreach ($items as &$it) {
+            $it['price_fmt'] = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
+
+        $this->json([
+            'ok' => true,
+            'message' => 'Đã gửi bếp thành công!',
+            'total' => $total,
+            'total_fmt' => formatPrice($total),
+            'items' => $items,
+        ]);
     }
 
     /** GET /orders/print — In hóa đơn */

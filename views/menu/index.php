@@ -429,7 +429,8 @@
                                                         class="fas fa-plus" style="font-size:0.7rem;"></i></button>
                                             </div>
                                         <?php else: ?>
-                                            <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">x<?= $it['quantity'] ?></span>
+                                            <span
+                                                style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">x<?= $it['quantity'] ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -619,7 +620,7 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ order_id: orderId, table_id: <?= $tableId ?: 0 ?> })
-        }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã gửi bếp thành công!'); location.reload(); } });
+        }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã gửi bếp thành công!'); updateCartUI(res); } });
     }
 
     function handleOpenItemModal(el) {
