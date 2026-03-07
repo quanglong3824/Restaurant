@@ -262,6 +262,14 @@ if (!empty($items)) {
         </div>
     <?php else: ?>
 
+        <?php if (!empty($mergeSuggestion)): ?>
+            <div
+                style="background: var(--warning-bg); color: var(--warning-text); padding: 1rem; border-left: 4px solid var(--warning); margin-bottom: 1.5rem; border-radius: 4px; display: flex; align-items: flex-start; gap: 0.75rem;">
+                <i class="fas fa-exclamation-triangle" style="margin-top: 0.2rem;"></i>
+                <div><?= $mergeSuggestion ?></div>
+            </div>
+        <?php endif; ?>
+
         <!-- Order header info -->
         <div class="order-header-card">
             <div class="order-header-card__info">
@@ -477,7 +485,7 @@ if (!empty($items)) {
                                 if ($t['status'] === 'available' && empty($t['parent_id'])):
                                     ?>
                                     <option value="<?= $t['id'] ?>"><?= e($t['name']) ?> (<?= e($area) ?>)</option>
-                                <?php
+                                    <?php
                                 endif;
                             endforeach;
                         endforeach;

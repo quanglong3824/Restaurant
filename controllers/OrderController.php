@@ -64,6 +64,43 @@ class OrderController extends Controller
         $tableDisplayName = $this->tableModel->getFullDisplayName($tableId);
         $grouped = $this->tableModel->getAllGroupedByArea();
 
+        // Tích hợp logic gợi ý ghép bàn liên tục (persistent banner)
+        $mergeSuggestion = null;
+        if ($order && empty($table['parent_id']) && (int) $order['guest_count'] > 0) {
+            // Tính tổng sức chứa (bao gồm bàn chính và các bàn ghép)
+            $totalCapacity = (int) $table['capacity'];
+            $children = $this->tableModel->getMergedTables($tableId);
+            foreach ($children as $child) {
+                $totalCapacity += (int) $child['capacity'];
+            }
+
+            if ((int) $order['guest_count'] > $totalCapacity) {
+                $extraGuests = (int) $order['guest_count'] - $totalCapacity;
+                $tableNeeded = ceil($extraGuests / 4);
+
+                $db = getDB();
+                $stmt = $db->prepare(
+                    "SELECT name FROM tables 
+                     WHERE area = ? AND status = 'available' AND parent_id IS NULL AND id != ?
+                     ORDER BY sort_order, name
+                     LIMIT ?"
+                );
+                $stmt->bindValue(1, $table['area']);
+                $stmt->bindValue(2, $tableId, PDO::PARAM_INT);
+                $stmt->bindValue(3, $tableNeeded, PDO::PARAM_INT);
+                $stmt->execute();
+                $availableInArea = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                if (!empty($availableInArea)) {
+                    $availableNames = array_column($availableInArea, 'name');
+                    $suggestionStr = implode(', ', $availableNames);
+                    $mergeSuggestion = "Số lượng khách ({$order['guest_count']}) đang vượt quá sức chứa ({$totalCapacity}). Gợi ý: Hãy bấm 'Ghép bàn' thêm với bàn <strong>{$suggestionStr}</strong> ở cùng khu vực!";
+                } else {
+                    $mergeSuggestion = "Số lượng khách ({$order['guest_count']}) đang vượt quá sức chứa ({$totalCapacity}). Gợi ý: Hãy bấm 'Ghép bàn' thêm <strong>{$tableNeeded} bàn nữa</strong> để đủ chỗ ngồi!";
+                }
+            }
+        }
+
         $this->view('layouts/waiter', [
             'view' => 'orders/index',
             'pageTitle' => 'Order — ' . $tableDisplayName,
@@ -73,6 +110,7 @@ class OrderController extends Controller
             'items' => $items,
             'total' => $total,
             'grouped' => $grouped,
+            'mergeSuggestion' => $mergeSuggestion,
         ]);
     }
 

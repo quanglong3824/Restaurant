@@ -54,40 +54,6 @@ class TableController extends Controller
             $this->tableModel->open($tableId);
             $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
 
-            if ((int) $guestCount > (int) $table['capacity']) {
-                $extraGuests = (int) $guestCount - (int) $table['capacity'];
-                $tableNeeded = ceil($extraGuests / 4);
-
-                // Tìm bàn trống cùng khu vực để gợi ý ghép
-                $db = getDB();
-                $stmt = $db->prepare(
-                    "SELECT name FROM tables 
-                     WHERE area = ? AND status = 'available' AND parent_id IS NULL AND id != ?
-                     ORDER BY sort_order, name
-                     LIMIT ?"
-                );
-                // Cần bind Value riêng vì PDO bindParam mặc định có thể lỗi với giá trị số LIMIT
-                $stmt->bindValue(1, $table['area']);
-                $stmt->bindValue(2, $tableId, PDO::PARAM_INT);
-                $stmt->bindValue(3, $tableNeeded, PDO::PARAM_INT);
-                $stmt->execute();
-                $availableInArea = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                if (!empty($availableInArea)) {
-                    $availableNames = array_column($availableInArea, 'name');
-                    $suggestionStr = implode(', ', $availableNames);
-                    $_SESSION['flash'] = [
-                        'type' => 'warning',
-                        'message' => "Số lượng khách ($guestCount) vượt quá sức chứa. Gợi ý: Hãy bấm 'Ghép bàn' thêm với bàn {$suggestionStr} ở cùng khu vực!"
-                    ];
-                } else {
-                    $_SESSION['flash'] = [
-                        'type' => 'warning',
-                        'message' => "Số lượng khách ($guestCount) vượt quá sức chứa. Gợi ý: Hãy bấm 'Ghép bàn' thêm $tableNeeded bàn nữa để đủ chỗ!"
-                    ];
-                }
-            }
-
             // Redirect to orders page
             $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
         } catch (\Exception $e) {
