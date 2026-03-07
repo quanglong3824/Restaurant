@@ -30,6 +30,7 @@ class TableController extends Controller
             'pageTitle' => 'Sơ đồ Bàn',
             'grouped' => $grouped,
             'counts' => $counts,
+            'tableModel' => $this->tableModel,
         ]);
     }
 
@@ -41,6 +42,7 @@ class TableController extends Controller
         $tableId = (int) $this->input('table_id');
         $guestCount = max(1, (int) $this->input('guest_count', 1));
         $waiterId = Auth::user()['id'];
+        $shiftId = $_SESSION['user_shift_id'] ?? null;
 
         $table = $this->tableModel->findById($tableId);
         if (!$table || $table['status'] === 'occupied') {
@@ -48,14 +50,16 @@ class TableController extends Controller
             $this->redirect('/tables');
         }
 
-        $this->tableModel->open($tableId);
-        $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount);
-
-        // Logic tự động ghép phòng VIP (Ghép 1+2, 3+4)
-        // Ví dụ: Nếu mở bàn "Vip 1.x" bất kỳ, có thể gợi ý hoặc tự động ghép
-        // Ở đây ta xử lý ghép bàn theo yêu cầu người dùng
-        
-        $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
+        try {
+            $this->tableModel->open($tableId);
+            $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
+            
+            // Redirect to orders page
+            $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
+        } catch (\Exception $e) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi khi mở bàn: ' . $e->getMessage()];
+            $this->redirect('/tables');
+        }
     }
 
     /** POST /tables/merge — Ghép bàn */
