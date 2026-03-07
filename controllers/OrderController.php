@@ -61,11 +61,13 @@ class OrderController extends Controller
 
         $items = $order ? $this->orderModel->getItems($order['id']) : [];
         $total = $order ? $this->orderModel->getTotal($order['id']) : 0;
+        $tableDisplayName = $this->tableModel->getFullDisplayName($tableId);
 
         $this->view('layouts/waiter', [
             'view' => 'orders/index',
-            'pageTitle' => 'Order — ' . ($table['name'] ?? ''),
+            'pageTitle' => 'Order — ' . $tableDisplayName,
             'table' => $table,
+            'table_display_name' => $tableDisplayName,
             'order' => $order,
             'items' => $items,
             'total' => $total,
@@ -274,6 +276,7 @@ class OrderController extends Controller
         }
 
         $table = $this->tableModel->findById($order['table_id']);
+        $tableDisplayName = $this->tableModel->getFullDisplayName($order['table_id']);
         $items = $this->orderModel->getItems($orderId);
         $total = $this->orderModel->getTotal($orderId);
 

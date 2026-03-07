@@ -91,6 +91,29 @@ class Table extends Model
         );
     }
 
+    /** Lấy tên hiển thị đầy đủ (bao gồm cả các bàn đang ghép chung) */
+    public function getFullDisplayName(int $tableId): string
+    {
+        $table = $this->findById($tableId);
+        if (!$table) return "N/A";
+
+        // Nếu bàn này là con, lấy bàn cha của nó
+        $effectiveParentId = $table['parent_id'] ?: $table['id'];
+        
+        // Lấy tất cả bàn trong nhóm (cha + con)
+        $group = $this->findAll(
+            "SELECT name FROM tables 
+             WHERE id = ? OR parent_id = ? 
+             ORDER BY name ASC",
+            [$effectiveParentId, $effectiveParentId]
+        );
+
+        if (count($group) <= 1) return $table['name'];
+
+        $names = array_column($group, 'name');
+        return implode(' + ', $names);
+    }
+
     /** Lấy các bàn đang ghép vào bàn cha */
     public function getMergedTables(int $parentId): array
     {

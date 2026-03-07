@@ -1,4 +1,4 @@
-<?php // views/orders/index.php — Order của bàn (Waiter) 
+<?php // views/orders/index.php — Order của bàn (Waiter)
 // Phân chia món: Draft (đang chọn) vs Confirmed (đã gửi bếp)
 $draftItems = [];
 $confirmedItems = [];
@@ -15,6 +15,239 @@ if (!empty($items)) {
     }
 }
 ?>
+<style>
+    /* Order Page - Consistent with Menu Design */
+    .order-header-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-header-card__info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .order-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: var(--text);
+    }
+
+    .order-meta i {
+        color: var(--gold);
+    }
+
+    .order-meta--small {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .badge-gold {
+        background: var(--gold-light);
+        color: var(--gold-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 0px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .order-section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .order-section-title i {
+        color: var(--gold);
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s;
+    }
+
+    .order-item:hover {
+        border-color: var(--gold);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+    }
+
+    .order-item--confirmed {
+        background: var(--surface-2);
+        opacity: 0.9;
+    }
+
+    .order-item__name {
+        flex: 1;
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.95rem;
+    }
+
+    .order-item__note {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--warning);
+        font-style: italic;
+        margin-top: 0.25rem;
+    }
+
+    .order-item__controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .order-item__price {
+        font-weight: 800;
+        color: var(--gold-dark);
+        font-size: 1rem;
+        min-width: 100px;
+        text-align: right;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 0px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-success {
+        background: var(--success-bg);
+        color: var(--success-text);
+    }
+
+    .badge-warning {
+        background: var(--warning-bg);
+        color: var(--warning-text);
+    }
+
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-lg {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    /* Quantity Buttons - Consistent with Menu */
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 0px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+    
+    .qty-btn:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+        background: var(--gold-light);
+    }
+    
+    .qty-val {
+        min-width: 32px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text);
+    }
+    
+    .order-item__del {
+        width: 36px;
+        height: 36px;
+        border-radius: 0px;
+        border: 1px solid var(--danger-border);
+        background: transparent;
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-left: 0.5rem;
+    }
+    
+    .order-item__del:hover {
+        background: var(--danger-bg);
+        border-color: var(--danger);
+    }
+    
+    /* Total Bar - Consistent with Cart */
+    .order-total-bar {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0px;
+        padding: 1rem 1.25rem;
+        margin: 1.5rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .order-total-bar__label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+    
+    .order-total-bar__label i {
+        color: var(--gold);
+    }
+    
+    .order-total-bar__amount {
+        font-weight: 800;
+        font-size: 1.25rem;
+        color: var(--gold-dark);
+    }
+</style>
+
 <div class="page-content">
 
     <?php if (!$order): ?>
@@ -35,7 +268,7 @@ if (!empty($items)) {
                 <div class="order-meta">
                     <i class="fas fa-chair"></i>
                     <strong>
-                        <?= e($table['name']) ?>
+                        <?= e($table_display_name) ?>
                     </strong>
                     <span class="badge badge-gold">
                         <?= $order['guest_count'] ?> khách

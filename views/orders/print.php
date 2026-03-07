@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hóa đơn Bàn <?= e($table['name']) ?></title>
+    <title>Hóa đơn <?= e($tableDisplayName) ?></title>
     <style>
         /* CSS cho máy in nhiệt 80mm */
         @page { margin: 0; }
@@ -53,7 +53,7 @@
     <div class="text-center font-bold mb-2" style="font-size: 14px;">PHIẾU THANH TOÁN</div>
 
     <div class="meta-info mb-1">
-        <span>Bàn: <strong><?= e($table['name']) ?></strong></span>
+        <span>Bàn: <strong><?= e($tableDisplayName) ?></strong></span>
         <span>Số khách: <?= $order['guest_count'] ?></span>
     </div>
     <div class="meta-info mb-1">

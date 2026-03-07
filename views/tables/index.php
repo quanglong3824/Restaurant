@@ -21,6 +21,9 @@ foreach ($grouped as $area => $tables) {
         }
     }
 }
+
+// Display order for areas
+$displayOrder = ['A1', 'B1', 'C1', 'VIP', 'VIP 3+4', 'Âu'];
 ?>
 <div class="page-content">
 
@@ -48,30 +51,90 @@ foreach ($grouped as $area => $tables) {
                 Không có bàn nào đang bận.
             </div>
         <?php else: ?>
-            <?php foreach ($occupiedGroups as $area => $tables): ?>
+            <?php 
+            // Group VIP 1+2 and VIP 3+4 together
+            $displayOrder = ['A1', 'B1', 'C1', 'VIP', 'VIP 3+4', 'Âu'];
+            $processedVipGroups = [];
+            
+            foreach ($displayOrder as $displayArea): 
+                // Check if this is a VIP group
+                if ($displayArea === 'VIP') {
+                    $subAreas = ['VIP 1', 'VIP 2'];
+                } elseif ($displayArea === 'VIP 3+4') {
+                    $subAreas = ['VIP 3', 'VIP 4'];
+                } else {
+                    $subAreas = [$displayArea];
+                }
+                
+                // Collect tables from all sub-areas
+                $areaTables = [];
+                foreach ($subAreas as $subArea) {
+                    if (isset($occupiedGroups[$subArea])) {
+                        $areaTables[$subArea] = $occupiedGroups[$subArea];
+                    }
+                }
+                
+                if (empty($areaTables)) continue;
+            ?>
                 <div class="section-title"
                     style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">
-                    <?= e($area) ?>
+                    <?= e(in_array($displayArea, ['VIP', 'VIP 3+4']) ? 'Phòng VIP' : $displayArea) ?>
                 </div>
-                <div class="table-grid" style="margin-bottom: 1rem;">
-                    <?php foreach ($tables as $t): ?>
-                        <div class="table-card <?= $t['status'] === 'occupied' ? 'table-card--occupied' : 'table-card--available' ?> <?= $t['parent_id'] ? 'table-card--merged' : '' ?>"
-                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
-                            <i class="fas <?= $t['status'] === 'occupied' ? 'fa-utensils' : 'fa-chair' ?> table-icon"></i>
-                            <span class="table-name">
-                                <?= e($t['name']) ?>
-                            </span>
-                            <span class="table-area">
-                                <?php if ($t['parent_id']): ?>
-                                    <i class="fas fa-link"></i> Ghép → <?= e($t['parent_name'] ?? 'Bàn chính') ?>
-                                <?php else: ?>
-                                    <?= e($t['area'] ?? '') ?> · <?= $t['capacity'] ?> ghế
-                                <?php endif; ?>
-                            </span>
-                            <div class="table-status-dot"></div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                
+                <?php if (count($subAreas) > 1): ?>
+                    <!-- VIP areas: display sub-groups side by side -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <?php foreach ($areaTables as $subArea => $tables): ?>
+                            <div style="background: var(--surface-2); padding: 0.75rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 0.5rem; font-weight: 600;">
+                                    <?= e($subArea) ?>
+                                </div>
+                                <div class="table-grid">
+                                    <?php foreach ($tables as $t): ?>
+                                        <div class="table-card table-card--occupied <?= $t['parent_id'] ? 'table-card--merged' : '' ?>"
+                                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
+                                            <i class="fas fa-utensils table-icon"></i>
+                                            <span class="table-name"><?= e($t['name']) ?></span>
+                                            <span class="table-area">
+                                                <?php if ($t['parent_id']): ?>
+                                                    <i class="fas fa-link"></i> Ghép → <?= e($t['parent_name'] ?? 'Bàn chính') ?>
+                                                <?php else: ?>
+                                                    <?= $t['capacity'] ?> ghế
+                                                <?php endif; ?>
+                                            </span>
+                                            <div class="table-status-dot"></div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <!-- Regular areas -->
+                    <div class="table-grid" style="margin-bottom: 1rem;">
+                        <?php foreach ($areaTables[$displayArea] as $t): ?>
+                            <div class="table-card table-card--occupied <?= $t['parent_id'] ? 'table-card--merged' : '' ?>"
+                                onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
+                                <i class="fas fa-utensils table-icon"></i>
+                                <span class="table-name"><?= e($t['name']) ?></span>
+                                <span class="table-area">
+                                    <?php if ($t['parent_id']): ?>
+                                        <i class="fas fa-link"></i> Ghép → <?= e($t['parent_name'] ?? 'Bàn chính') ?>
+                                    <?php else: ?>
+                                        <?php 
+                                            $mergedChildren = $tableModel->getMergedTables($t['id']);
+                                            if (!empty($mergedChildren)):
+                                        ?>
+                                            <span class="badge-gold" style="font-size: 0.65rem; padding: 2px 5px;">BÀN CHÍNH</span>
+                                        <?php else: ?>
+                                            <?= e($t['area'] ?? '') ?> · <?= $t['capacity'] ?> ghế
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </span>                                <div class="table-status-dot"></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
@@ -88,27 +151,67 @@ foreach ($grouped as $area => $tables) {
                 Nhà hàng đang hết bàn trống.
             </div>
         <?php else: ?>
-            <?php foreach ($availableGroups as $area => $tables): ?>
+            <?php 
+            // Group VIP 1+2 and VIP 3+4 together
+            foreach ($displayOrder as $displayArea): 
+                if ($displayArea === 'VIP') {
+                    $subAreas = ['VIP 1', 'VIP 2'];
+                } elseif ($displayArea === 'VIP 3+4') {
+                    $subAreas = ['VIP 3', 'VIP 4'];
+                } else {
+                    $subAreas = [$displayArea];
+                }
+                
+                $areaTables = [];
+                foreach ($subAreas as $subArea) {
+                    if (isset($availableGroups[$subArea])) {
+                        $areaTables[$subArea] = $availableGroups[$subArea];
+                    }
+                }
+                
+                if (empty($areaTables)) continue;
+            ?>
                 <div class="section-title"
                     style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">
-                    <?= e($area) ?>
+                    <?= e(in_array($displayArea, ['VIP', 'VIP 3+4']) ? 'Phòng VIP' : $displayArea) ?>
                 </div>
-                <div class="table-grid" style="margin-bottom: 1rem;">
-                    <?php foreach ($tables as $t): ?>
-                        <div class="table-card table-card--available"
-                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
-                            <i class="fas fa-chair table-icon"></i>
-                            <span class="table-name">
-                                <?= e($t['name']) ?>
-                            </span>
-                            <span class="table-area">
-                                <?= e($t['area'] ?? '') ?> ·
-                                <?= $t['capacity'] ?> ghế
-                            </span>
-                            <div class="table-status-dot"></div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+                
+                <?php if (count($subAreas) > 1): ?>
+                    <!-- VIP areas: display sub-groups side by side -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <?php foreach ($areaTables as $subArea => $tables): ?>
+                            <div style="background: var(--surface-2); padding: 0.75rem; border-radius: var(--radius-md);">
+                                <div style="font-size: 0.8rem; color: var(--gold); margin-bottom: 0.5rem; font-weight: 600;">
+                                    <?= e($subArea) ?>
+                                </div>
+                                <div class="table-grid">
+                                    <?php foreach ($tables as $t): ?>
+                                        <div class="table-card table-card--available"
+                                            onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
+                                            <i class="fas fa-chair table-icon"></i>
+                                            <span class="table-name"><?= e($t['name']) ?></span>
+                                            <span class="table-area"><?= $t['capacity'] ?> ghế</span>
+                                            <div class="table-status-dot"></div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <!-- Regular areas -->
+                    <div class="table-grid" style="margin-bottom: 1rem;">
+                        <?php foreach ($areaTables[$displayArea] as $t): ?>
+                            <div class="table-card table-card--available"
+                                onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button" tabindex="0">
+                                <i class="fas fa-chair table-icon"></i>
+                                <span class="table-name"><?= e($t['name']) ?></span>
+                                <span class="table-area"><?= e($t['area'] ?? '') ?> · <?= $t['capacity'] ?> ghế</span>
+                                <div class="table-status-dot"></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>

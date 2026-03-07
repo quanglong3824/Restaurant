@@ -290,7 +290,7 @@
             <div class="cart-panel">
                 <div class="cart-header" onclick="if(window.innerWidth < 1024) toggleCart(false)" style="cursor:pointer;">
                     <div>
-                        <h4 style="margin:0; font-weight:800; color:var(--gold-dark);">Bàn #<?= e($tableId) ?></h4>
+                        <h4 style="margin:0; font-weight:800; color:var(--gold-dark);"><?= e($tableModel->getFullDisplayName($tableId)) ?></h4>
                         <small style="color:var(--text-muted);"><?= e($order['guest_count'] ?? 1) ?> khách</small>
                     </div>
                     <button style="background:none; border:none; color:var(--gold-dark); font-size:1.2rem; cursor:pointer;" class="desktop-hide">
