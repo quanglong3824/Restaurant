@@ -129,16 +129,16 @@ class Table extends Model
         );
     }
 
-    /** Đóng bàn: đổi status → available (đồng thời giải phóng các bàn ghép con) */
+    /** Đóng bàn: đổi status → available (Xử lý cả bàn ghép) */
     public function close(int $id): void
     {
-        // 1. Chuyển bàn hiện tại về trống
+        // 1. Chuyển bàn hiện tại về trống và xóa liên kết ghép (nếu có)
         $this->execute(
-            "UPDATE tables SET status = 'available', updated_at = NOW() WHERE id = ?",
+            "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id = ?",
             [$id]
         );
 
-        // 2. Nếu bàn này là bàn chính, giải phóng các bàn con đang ghép vào nó
+        // 2. Nếu bàn này là bàn chính, giải phóng toàn bộ các bàn con đang ghép vào nó
         $this->execute(
             "UPDATE tables 
              SET parent_id = NULL, status = 'available', updated_at = NOW() 
@@ -194,17 +194,25 @@ class Table extends Model
         return true;
     }
 
-    /** Đếm theo trạng thái */
+    /** Đếm theo trạng thái (Bàn ghép chỉ tính là 1 đơn vị bận) */
     public function countByStatus(): array
     {
-        $rows = $this->findAll(
-            "SELECT status, COUNT(*) as cnt FROM tables WHERE is_active = 1 GROUP BY status"
-        );
-        $result = ['available' => 0, 'occupied' => 0];
-        foreach ($rows as $r) {
-            $result[$r['status']] = (int) $r['cnt'];
-        }
-        return $result;
+        // available: Bàn active, status available, và không phải bàn con đang ghép
+        $available = $this->findOne(
+            "SELECT COUNT(*) as cnt FROM tables 
+             WHERE is_active = 1 AND status = 'available' AND parent_id IS NULL"
+        )['cnt'];
+
+        // occupied: Chỉ đếm các bàn chính (parent_id IS NULL) đang bận
+        $occupied = $this->findOne(
+            "SELECT COUNT(*) as cnt FROM tables 
+             WHERE is_active = 1 AND status = 'occupied' AND parent_id IS NULL"
+        )['cnt'];
+
+        return [
+            'available' => (int) $available,
+            'occupied' => (int) $occupied
+        ];
     }
 
     /** Lấy tất cả bàn cho Admin (bao gồm cả inactive) */
