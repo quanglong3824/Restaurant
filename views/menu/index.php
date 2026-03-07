@@ -350,7 +350,14 @@
             <div class="category-filter-bar">
                 <button class="filter-pill is-active" data-filter="all">Tất cả</button>
                 <?php foreach ($categories as $cat): ?>
-                    <button class="filter-pill" data-filter="<?= e($cat['name']) ?>"><?= e($cat['name']) ?></button>
+                    <button class="filter-pill" data-filter="<?= e($cat['name']) ?>">
+                        <?= e($cat['name']) ?>
+                        <?php if (!empty($cat['name_en'])): ?>
+                            <span style="display:block; font-size: 0.65rem; opacity: 0.6; font-weight: 500; margin-top: -2px;">
+                                <?= e($cat['name_en']) ?>
+                            </span>
+                        <?php endif; ?>
+                    </button>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -360,6 +367,20 @@
                 <div class="menu-section" data-section="<?= e($catName) ?>">
                     <h3 style="margin: 1.5rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.1rem;">
                         <i class="fas fa-caret-right"></i> <?= e($catName) ?>
+                        <?php
+                        // Try to find category object to get name_en
+                        $catObj = null;
+                        foreach ($categories as $c)
+                            if ($c['name'] === $catName) {
+                                $catObj = $c;
+                                break;
+                            }
+                        if ($catObj && !empty($catObj['name_en'])):
+                            ?>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-left: 5px;">
+                                / <?= e($catObj['name_en']) ?>
+                            </span>
+                        <?php endif; ?>
                     </h3>
                     <div class="menu-items-grid">
                         <?php foreach ($items as $item): ?>
@@ -380,7 +401,15 @@
                                         </div>
                                     <?php endif; ?>
                                     <div class="list-item-body">
-                                        <div class="list-item-name"><?= e($item['name']) ?></div>
+                                        <div class="list-item-name">
+                                            <?= e($item['name']) ?>
+                                            <?php if (!empty($item['name_en'])): ?>
+                                                <div
+                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
+                                                    <?= e($item['name_en']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                         <div class="list-item-price"><?= formatPrice($item['price']) ?></div>
                                     </div>
                                 </div>
@@ -393,6 +422,50 @@
                     </div>
                 </div>
             <?php endforeach; ?>
+
+            <?php if ($currentType === 'alacarte' && !empty($sets)): ?>
+                <div class="menu-section" data-section="Sets & Combo">
+                    <h3
+                        style="margin: 2rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.3rem; border-bottom: 2px solid var(--gold-light); padding-bottom: 0.5rem;">
+                        <i class="fas fa-utensils"></i> SETS & COMBO MENU
+                    </h3>
+                    <div class="menu-items-grid">
+                        <?php foreach ($sets as $set): ?>
+                            <div class="list-item-card" style="border: 1px solid var(--gold-light); background: #fffcf5;">
+                                <div style="display:flex; flex:1; align-items:center; cursor:pointer;"
+                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                    <?php if ($set['image']): ?>
+                                        <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img"
+                                            alt="<?= e($set['name']) ?>">
+                                    <?php else: ?>
+                                        <div class="list-item-img"
+                                            style="display:flex;align-items:center;justify-content:center;background:var(--gold-light);color:var(--gold-dark);">
+                                            <i class="fas fa-box-open"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="list-item-body">
+                                        <div class="list-item-name" style="color: var(--gold-dark);">
+                                            <?= e($set['name']) ?>
+                                            <?php if (!empty($set['name_en'])): ?>
+                                                <div
+                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
+                                                    <?= e($set['name_en']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="list-item-price"><?= formatPrice($set['price']) ?></div>
+                                        <small style="color:var(--text-muted); font-size: 0.7rem;">(Bao gồm nhiều món)</small>
+                                    </div>
+                                </div>
+                                <div class="list-item-action" style="background: var(--gold); color: white;"
+                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                    <i class="fas fa-list-ul"></i>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -455,7 +528,8 @@
                                     </div>
                                     <div style="text-align:right;">
                                         <div style="font-weight:800; font-size:0.95rem;">
-                                            <?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
+                                            <?= formatPrice($it['item_price'] * $it['quantity']) ?>
+                                        </div>
                                         <small style="color:var(--text-muted); font-weight:600;">Món nháp</small>
                                     </div>
                                 </div>
@@ -470,13 +544,15 @@
                                         style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border); border-style: none none dashed none;">
                                         <div style="flex:1;">
                                             <div style="font-weight:700; font-size:0.9rem; margin-bottom:2px;">
-                                                <?= e($it['item_name']) ?></div>
+                                                <?= e($it['item_name']) ?>
+                                            </div>
                                             <span
                                                 style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">x<?= $it['quantity'] ?></span>
                                         </div>
                                         <div style="text-align:right;">
                                             <div style="font-weight:700; font-size:0.9rem;">
-                                                <?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
+                                                <?= formatPrice($it['item_price'] * $it['quantity']) ?>
+                                            </div>
                                             <small style="color:var(--success); font-weight:600; font-size: 0.75rem;">Đã gửi</small>
                                         </div>
                                     </div>
@@ -517,6 +593,38 @@
 </div>
 
 <div id="addToast" class="add-toast"></div>
+
+<!-- Set/Combo Detail Modal -->
+<div class="modal-backdrop" id="modalSetDetail">
+    <div class="modal" style="max-width:600px; padding:0; overflow:hidden; border-radius:20px;">
+        <div id="modalSetHeader"
+            style="padding:1.5rem; background:var(--gold-light); border-bottom:1px solid var(--border-gold);">
+            <button class="modal-close" data-modal-close
+                style="position:absolute; top:15px; right:15px; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:36px; height:36px;"><i
+                    class="fas fa-times"></i></button>
+            <h2 id="modalSetName" style="margin:0; font-weight:800; font-size:1.4rem; color:var(--gold-dark);"></h2>
+            <div id="modalSetPrice" style="font-weight:800; font-size:1.2rem; color:var(--danger); margin-top:5px;">
+            </div>
+        </div>
+        <div style="padding:1.5rem; max-height:60vh; overflow-y:auto;">
+            <p id="modalSetDesc" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;"></p>
+            <h4
+                style="font-size:0.85rem; font-weight:800; text-transform:uppercase; color:var(--text-dim); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                <i class="fas fa-list-check"></i> Các món trong Set/Combo:
+            </h4>
+            <div id="modalSetItemsList" style="display:flex; flex-direction:column; gap:0.75rem;">
+                <!-- Set items will be injected here -->
+            </div>
+        </div>
+        <div
+            style="padding:1.25rem; border-top:1px solid var(--border); background:var(--surface-2); display:flex; align-items:center; gap:1rem;">
+            <button class="btn btn-outline" data-modal-close style="flex:1;">CANCEL</button>
+            <button onclick="confirmAddSetToOrder()" class="btn btn-gold" style="flex:2; height:50px; font-weight:800;">
+                THÊM COMBO VÀO BILL
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Item Detail Modal -->
 <div class="modal-backdrop" id="modalItemDetail">
@@ -568,6 +676,65 @@
 
 <script>
     let currentItem = null;
+    let currentSet = null;
+
+    function handleOpenSetModal(set) {
+        currentSet = set;
+        document.getElementById('modalSetName').textContent = set.name;
+        document.getElementById('modalSetPrice').textContent = formatMoney(set.price);
+        document.getElementById('modalSetDesc').textContent = set.description || '';
+
+        const list = document.getElementById('modalSetItemsList');
+        list.innerHTML = '';
+
+        if (set.items && set.items.length > 0) {
+            set.items.forEach(it => {
+                const itemDiv = document.createElement('div');
+                itemDiv.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:0.75rem; background:#fff; border-radius:12px; border:1px solid var(--border);';
+                itemDiv.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <input type="checkbox" checked disabled style="width:18px; height:18px; accent-color:var(--gold);">
+                        <div>
+                            <div style="font-weight:700; font-size:0.9rem;">${it.name}</div>
+                            <small style="color:var(--text-muted);">Số lượng: ${it.quantity}</small>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        Aurora.openModal('modalSetDetail');
+    }
+
+    function confirmAddSetToOrder() {
+        if (!<?= $orderId ?: 0 ?>) { alert('Vui lòng chọn bàn/order trước!'); return; }
+
+        const f = new URLSearchParams();
+        f.append('order_id', <?= $orderId ?: 0 ?>);
+        f.append('set_id', currentSet.id);
+
+        // Prepare items array for the controller
+        currentSet.items.forEach((it, idx) => {
+            f.append(`items[${idx}][menu_item_id]`, it.menu_item_id);
+            f.append(`items[${idx}][quantity]`, it.quantity);
+        });
+
+        fetch('<?= BASE_URL ?>/orders/add-set', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: f
+        }).then(res => res.json()).then(res => {
+            if (res.ok) {
+                Aurora.closeModal('modalSetDetail');
+                showToast('Đã thêm Combo!');
+                updateCartUI(res);
+            } else {
+                alert(res.message || 'Lỗi khi thêm Combo');
+            }
+        });
+    }
+
     function formatMoney(amount) { return new Intl.NumberFormat('vi-VN').format(amount) + '₫'; }
     function toggleCart(show) {
         const c = document.getElementById('cartCol');
