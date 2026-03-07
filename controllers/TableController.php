@@ -145,6 +145,7 @@ class TableController extends Controller
         $tableId = (int) $this->input('table_id');
         $orderId = (int) $this->input('order_id');
         $paymentMethod = (string) $this->input('payment_method', 'cash');
+        $isAjax = $this->input('ajax') === '1';
 
         if (!in_array($paymentMethod, ['cash', 'transfer', 'card'])) {
             $paymentMethod = 'cash';
@@ -159,13 +160,25 @@ class TableController extends Controller
                     $this->orderModel->cancel($orderId);
                 }
                 $this->tableModel->close($tableId);
-                $_SESSION['flash'] = ['type' => 'info', 'message' => 'Đã huỷ bàn thành công vì chưa gọi món.'];
+                $message = 'Đã huỷ bàn thành công vì chưa gọi món.';
+                $type = 'info';
             } else {
                 $this->orderModel->close($orderId, $paymentMethod);
                 $this->tableModel->close($tableId);
-                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã đóng bàn và thanh toán thành công.'];
+                $message = 'Đã đóng bàn và thanh toán thành công.';
+                $type = 'success';
             }
+
+            if ($isAjax) {
+                $this->json(['ok' => true, 'message' => $message]);
+                return;
+            }
+            $_SESSION['flash'] = ['type' => $type, 'message' => $message];
         } catch (\Exception $e) {
+            if ($isAjax) {
+                $this->json(['ok' => false, 'message' => $e->getMessage()]);
+                return;
+            }
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi đóng bàn: ' . $e->getMessage()];
         }
 

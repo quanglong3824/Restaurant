@@ -525,7 +525,7 @@ if (!empty($items)) {
                 </div>
 
                 <div style="display:flex; gap:.75rem; flex-direction:column;">
-                    <button type="submit" class="btn btn-block btn-lg"
+                    <button type="button" id="btnSubmitPayment" class="btn btn-block btn-lg"
                         style="background: var(--success); color: white; border: none; height: 56px; font-weight: 800; font-size: 1.1rem;"
                         onclick="handleSubmitPayment(event)">
                         <i class="fas fa-print"></i> THANH TOÁN & IN HÓA ĐƠN
@@ -534,6 +534,26 @@ if (!empty($items)) {
                         sau</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-backdrop" id="modalPaymentSuccess">
+    <div class="modal" style="max-width: 400px; text-align: center; border-radius: 12px; overflow: hidden;">
+        <div style="background: var(--success); color: white; padding: 2rem;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;"><i class="fas fa-check-circle"></i></div>
+            <h2 style="margin:0;">THANH TOÁN XONG!</h2>
+        </div>
+        <div class="modal-body" style="padding: 2rem;">
+            <p style="font-size: 1.1rem; color: var(--text); margin-bottom: 2rem;">
+                Hóa đơn đã được lưu hệ thống và bàn <strong><?= e($table_display_name) ?></strong> đã được trả về trạng
+                thái TRỐNG.
+            </p>
+            <a href="<?= BASE_URL ?>/tables" class="btn btn-gold btn-block btn-lg"
+                style="height: 56px; font-weight: 800;">
+                <i class="fas fa-home"></i> VỀ SƠ ĐỒ BÀN
+            </a>
         </div>
     </div>
 </div>
@@ -650,13 +670,55 @@ if (!empty($items)) {
     }
 
     function handleSubmitPayment(e) {
-        // We want to print in a new tab and then submit the form
-        const orderId = document.getElementById('closeOrderId').value;
-        const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
+        e.preventDefault();
 
-        // Open print in new tab
+        const form = document.getElementById('formCloseTable');
+        const checkPaid = document.getElementById('checkPaid');
+
+        if (!checkPaid.checked) {
+            alert('Vui lòng xác nhận đã nhận đủ tiền từ khách!');
+            return;
+        }
+
+        const tableId = document.getElementById('closeTableId').value;
+        const orderId = document.getElementById('closeOrderId').value;
+        const paymentMethod = form.querySelector('input[name="payment_method"]:checked').value;
+
+        // 1. Mở tab in bill mới
+        const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
         window.open(printUrl, '_blank');
 
-        // Form will submit normally after this
+        // 2. Gửi AJAX đóng bàn
+        const btn = document.getElementById('btnSubmitPayment');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+
+        const params = new URLSearchParams();
+        params.append('table_id', tableId);
+        params.append('order_id', orderId);
+        params.append('payment_method', paymentMethod);
+        params.append('ajax', '1');
+
+        fetch('<?= BASE_URL ?>/tables/close', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.ok) {
+                    Aurora.closeModal('modalClose');
+                    Aurora.openModal('modalPaymentSuccess');
+                } else {
+                    alert('Lỗi: ' + res.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-print"></i> THANH TOÁN & IN HÓA ĐƠN';
+                }
+            })
+            .catch(err => {
+                alert('Lỗi kết nối mạng!');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-print"></i> THANH TOÁN & IN HÓA ĐƠN';
+            });
     }
 </script>
