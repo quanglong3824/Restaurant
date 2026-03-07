@@ -6,18 +6,21 @@
 require_once BASE_PATH . '/models/Order.php';
 require_once BASE_PATH . '/models/Table.php';
 require_once BASE_PATH . '/models/MenuItem.php';
+require_once BASE_PATH . '/models/MenuSet.php';
 
 class OrderController extends Controller
 {
     private Order $orderModel;
     private Table $tableModel;
     private MenuItem $menuModel;
+    private MenuSet $setModel;
 
     public function __construct()
     {
         $this->orderModel = new Order();
         $this->tableModel = new Table();
         $this->menuModel = new MenuItem();
+        $this->setModel = new MenuSet();
     }
 
     /** GET /orders?table_id=&order_id= — Xem order của bàn, hoặc Danh sách tất cả bàn bận */
@@ -76,35 +79,101 @@ class OrderController extends Controller
 
         $orderId = (int) $this->input('order_id');
         $menuItemId = (int) $this->input('menu_item_id');
-        $qty = max(1, (int) $this->input('qty', 1));
+        $qty = max(0, (int) $this->input('qty', 1));
         $note = trim((string) $this->input('note', ''));
 
-        $item = $this->menuModel->findById($menuItemId);
-        if (!$item || !$item['is_available']) {
-            $this->json(['ok' => false, 'message' => 'Món không khả dụng.'], 400);
+        if ($menuItemId > 0) {
+            $item = $this->menuModel->findById($menuItemId);
+            if (!$item || !$item['is_available']) {
+                $this->json(['ok' => false, 'message' => 'Món không khả dụng.'], 400);
+            }
+
+            $order = $this->orderModel->findById($orderId);
+            if (!$order || $order['status'] !== 'open') {
+                $this->json(['ok' => false, 'message' => 'Order không hợp lệ.'], 400);
+            }
+
+            if ($qty > 0) {
+                $this->orderModel->addItem(
+                    $orderId,
+                    $menuItemId,
+                    $item['name'],
+                    $item['price'],
+                    $qty,
+                    $note
+                );
+            }
         }
+
+        $total = $this->orderModel->getTotal($orderId);
+        $items = $this->orderModel->getItems($orderId);
+        
+        // Format items for JS
+        foreach ($items as &$it) {
+            $it['price_fmt'] = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
+
+        $this->json([
+            'ok' => true,
+            'total' => $total,
+            'total_fmt' => formatPrice($total),
+            'items' => $items,
+            'item_count' => array_sum(array_column($items, 'quantity')),
+        ]);
+    }
+
+    /** POST /orders/add-set — Thêm set/combo vào order */
+    public function addSet(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $orderId = (int) $this->input('order_id');
+        $setId = (int) $this->input('set_id');
+        $items = $this->input('items', []);
 
         $order = $this->orderModel->findById($orderId);
         if (!$order || $order['status'] !== 'open') {
             $this->json(['ok' => false, 'message' => 'Order không hợp lệ.'], 400);
         }
 
-        $this->orderModel->addItem(
-            $orderId,
-            $menuItemId,
-            $item['name'],
-            $item['price'],
-            $qty,
-            $note
-        );
+        $set = $this->setModel->findById($setId);
+        if (!$set || !$set['is_active']) {
+            $this->json(['ok' => false, 'message' => 'Set không tồn tại hoặc không khả dụng.'], 400);
+        }
+
+        // Add each item from the set
+        foreach ($items as $itemData) {
+            $menuItemId = (int) ($itemData['menu_item_id'] ?? 0);
+            $qty = max(1, (int) ($itemData['quantity'] ?? 1));
+            
+            $menuItem = $this->menuModel->findById($menuItemId);
+            if ($menuItem) {
+                $this->orderModel->addItem(
+                    $orderId,
+                    $menuItemId,
+                    $menuItem['name'],
+                    $menuItem['price'],
+                    $qty,
+                    "Set: {$set['name']}"
+                );
+            }
+        }
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
+        
+        // Format items for JS
+        foreach ($items as &$it) {
+            $it['price_fmt'] = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
 
         $this->json([
             'ok' => true,
             'total' => $total,
             'total_fmt' => formatPrice($total),
+            'items' => $items,
             'item_count' => array_sum(array_column($items, 'quantity')),
         ]);
     }
@@ -116,17 +185,37 @@ class OrderController extends Controller
 
         $itemId = (int) $this->input('item_id');
         $orderId = (int) $this->input('order_id');
-        $qty = (int) $this->input('qty', 1);
+        $qtyInput = $this->input('qty');
+
+        $qty = 0;
+        if (strpos((string)$qtyInput, 'delta:') === 0) {
+            $delta = (int) str_replace('delta:', '', (string)$qtyInput);
+            // Get current qty
+            $db = getDB();
+            $stmt = $db->prepare("SELECT quantity FROM order_items WHERE id = ?");
+            $stmt->execute([$itemId]);
+            $current = $stmt->fetchColumn();
+            $qty = max(0, $current + $delta);
+        } else {
+            $qty = max(0, (int) $qtyInput);
+        }
 
         $this->orderModel->updateItem($itemId, $qty);
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
+        
+        // Format items for JS
+        foreach ($items as &$it) {
+            $it['price_fmt'] = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
 
         $this->json([
             'ok' => true,
             'total' => $total,
             'total_fmt' => formatPrice($total),
+            'items' => $items,
             'item_count' => array_sum(array_column($items, 'quantity')),
         ]);
     }
@@ -143,11 +232,18 @@ class OrderController extends Controller
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
+        
+        // Format items for JS
+        foreach ($items as &$it) {
+            $it['price_fmt'] = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
 
         $this->json([
             'ok' => true,
             'total' => $total,
             'total_fmt' => formatPrice($total),
+            'items' => $items,
             'item_count' => array_sum(array_column($items, 'quantity')),
         ]);
     }
