@@ -113,23 +113,20 @@
                                     <div style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">TỔNG TIỀN</div>
                                     <div
                                         style="font-size:1.4rem; font-weight:800; color:<?= $isClosed ? '#15803d' : 'var(--danger)' ?>;">
-                                        <?= formatPrice($order['total']) ?></div>
+                                        <?= formatPrice($order['total']) ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer"
-                            style="padding: 0.75rem 1.25rem; background:#f8f9fa; display: flex; gap: 0.5rem;">
-                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $order['table_id'] ?>&order_id=<?= $order['id'] ?>"
-                                class="btn btn-sm btn-ghost" style="flex: 1; justify-content:center;">
-                                <i class="fas fa-search"></i> Xem chi tiết
-                            </a>
-                            <?php if ($isClosed): ?>
+                        <?php if ($isClosed): ?>
+                            <div class="card-footer"
+                                style="padding: 0.75rem 1.25rem; background:#f8f9fa; display: flex; gap: 0.5rem;">
                                 <button onclick="dismissOrder(<?= $order['id'] ?>)" class="btn btn-sm btn-success"
                                     style="flex: 1; justify-content:center;">
                                     <i class="fas fa-check"></i> Hoàn tất / Đóng
                                 </button>
-                            <?php endif; ?>
-                        </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -251,7 +248,7 @@
                                 ${itemsHtml}
                             </div>
                             <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                       <div style="color:var(--text-muted); font-size:0.8rem;">
+              <div style="color:var(--text-muted); font-size:0.8rem;">
                                     <i class="fas fa-user"></i> PV: ${order.waiter_name || 'N/A'}
                                 </div>
                                 <div style="text-align:right;">
@@ -260,12 +257,10 @@
                                 </div>
                             </div>
                         </div>
+                        ${isClosed ? `
                         <div class="card-footer" style="padding: 0.75rem 1.25rem; background:#f8f9fa; display: flex; gap: 0.5rem;">
-                            <a href="<?= BASE_URL ?>/orders?table_id=${order.table_id}&order_id=${order.id}" class="btn btn-sm btn-ghost" style="flex: 1; justify-content:center;">
-                                <i class="fas fa-search"></i> Xem chi tiết
-                            </a>
-                            ${isClosed ? `<button onclick="dismissOrder(${order.id})" class="btn btn-sm btn-success" style="flex: 1; justify-content:center;"><i class="fas fa-check"></i> Hoàn tất / Đóng</button>` : ''}
-                        </div>
+                            <button onclick="dismissOrder(${order.id})" class="btn btn-sm btn-success" style="flex: 1; justify-content:center;"><i class="fas fa-check"></i> Hoàn tất / Đóng</button>
+                        </div>` : ''}
                     </div>
                 </div>`;
         });
