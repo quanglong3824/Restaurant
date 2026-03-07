@@ -480,8 +480,9 @@ if (!empty($items)) {
             <form method="POST" action="<?= BASE_URL ?>/tables/close" id="formCloseTable">
                 <input type="hidden" name="table_id" id="closeTableId">
                 <input type="hidden" name="order_id" id="closeOrderId">
+                <input type="hidden" id="isQuickCancel" value="0">
 
-                <div class="form-group" style="margin-bottom: 1.25rem;">
+                <div class="form-group payment-only" style="margin-bottom: 1.25rem;">
                     <label class="form-label" style="font-weight: 700;">PHƯƠNG THỨC THANH TOÁN</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
                         <label style="cursor: pointer;">
@@ -515,7 +516,7 @@ if (!empty($items)) {
                     }
                 </style>
 
-                <div class="form-group"
+                <div class="form-group payment-only"
                     style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; background: #fffbeb; padding: 0.75rem; border: 1px solid #fef3c7; border-radius: 8px;">
                     <input type="checkbox" id="checkPaid" required style="width: 22px; height: 22px; cursor: pointer;">
                     <label for="checkPaid"
@@ -652,6 +653,14 @@ if (!empty($items)) {
         document.querySelector('#paymentModalHeader h3').innerHTML = '<i class="fas fa-trash"></i> HỦY BÀN / ĐÓNG';
         document.getElementById('closeTableId').value = tableId;
         document.getElementById('closeOrderId').value = orderId;
+        document.getElementById('isQuickCancel').value = "1";
+        
+        // Hide payment elements
+        document.querySelectorAll('.payment-only').forEach(el => el.style.display = 'none');
+        document.getElementById('paymentSummary').style.display = 'none';
+        document.getElementById('btnSubmitPayment').innerHTML = '<i class="fas fa-check"></i> XÁC NHẬN HỦY BÀN TRỐNG';
+        document.getElementById('checkPaid').removeAttribute('required');
+
         Aurora.openModal('modalClose');
     }
 
@@ -660,8 +669,14 @@ if (!empty($items)) {
         document.querySelector('#paymentModalHeader h3').innerHTML = '<i class="fas fa-money-check-alt"></i> XÁC NHẬN THANH TOÁN';
         document.getElementById('closeTableId').value = tableId;
         document.getElementById('closeOrderId').value = orderId;
+        document.getElementById('isQuickCancel').value = "0";
 
-        // Show total if needed (already set via PHP but for reliability)
+        // Show payment elements
+        document.querySelectorAll('.payment-only').forEach(el => el.style.display = 'flex');
+        document.getElementById('paymentSummary').style.display = 'block';
+        document.getElementById('btnSubmitPayment').innerHTML = '<i class="fas fa-print"></i> THANH TOÁN & IN HÓA ĐƠN';
+        document.getElementById('checkPaid').setAttribute('required', 'required');
+
         if (total) {
             document.getElementById('modalTotalAmount').textContent = new Intl.NumberFormat('vi-VN').format(total) + '₫';
         }
@@ -670,12 +685,11 @@ if (!empty($items)) {
     }
 
     function handleSubmitPayment(e) {
-        e.preventDefault();
-
+        const isQuickCancel = document.getElementById('isQuickCancel').value === "1";
         const form = document.getElementById('formCloseTable');
         const checkPaid = document.getElementById('checkPaid');
 
-        if (!checkPaid.checked) {
+        if (!isQuickCancel && !checkPaid.checked) {
             alert('Vui lòng xác nhận đã nhận đủ tiền từ khách!');
             return;
         }
@@ -684,9 +698,11 @@ if (!empty($items)) {
         const orderId = document.getElementById('closeOrderId').value;
         const paymentMethod = form.querySelector('input[name="payment_method"]:checked').value;
 
-        // 1. Mở tab in bill mới
-        const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
-        window.open(printUrl, '_blank');
+        // 1. Mở tab in bill mới (chỉ khi có tiền)
+        if (!isQuickCancel) {
+            const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
+            window.open(printUrl, '_blank');
+        }
 
         // 2. Gửi AJAX đóng bàn
         const btn = document.getElementById('btnSubmitPayment');
