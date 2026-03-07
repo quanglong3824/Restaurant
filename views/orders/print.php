@@ -171,6 +171,10 @@
     $isActuallyPaid = ($order['status'] === 'closed' || !empty($_GET['payment_method']));
 
     if ($isActuallyPaid && !empty($order['payment_method'])): ?>
+        <div
+            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 2px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+            ĐÃ THANH TOÁN
+        </div>
         <div style="font-size: 11px; margin-top: 10px; display: flex; justify-content: space-between;">
             <span>Phương thức:</span>
             <span class="font-bold">
@@ -192,7 +196,8 @@
             </span>
         </div>
     <?php else: ?>
-        <div style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+        <div
+            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
             CHƯA THANH TOÁN
         </div>
         <div style="font-size: 10px; text-align: center; color: #666; font-style: italic; margin-top: 4px;">
