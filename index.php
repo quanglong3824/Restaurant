@@ -48,6 +48,11 @@ $router->post('/support/request', 'SupportController', 'makeRequest');
 $router->get('/support/pending', 'SupportController', 'getPending');
 $router->post('/support/resolve', 'SupportController', 'resolve');
 
+// ── Admin: Real-time Monitoring ──────────────────────────
+$router->get('/admin/realtime', 'AdminRealtimeController', 'index');
+$router->get('/admin/realtime/data', 'AdminRealtimeController', 'data');
+$router->post('/admin/realtime/dismiss', 'AdminRealtimeController', 'dismiss');
+
 // ── Admin: Shift Management ───────────────────────────────
 $router->get('/admin/shifts', 'AdminShiftController', 'index');
 $router->post('/admin/shifts/store', 'AdminShiftController', 'store');

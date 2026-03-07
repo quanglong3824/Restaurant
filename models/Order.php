@@ -150,6 +150,22 @@ class Order extends Model
         );
     }
 
+    /** Lấy tất cả Order Đang Bận + Mới thanh toán (Cho Admin Realtime) */
+    public function getRealtimeOrders(): array
+    {
+        return $this->findAll(
+            "SELECT o.*, u.name AS waiter_name, t.name AS table_name, t.area AS table_area,
+                   (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total,
+                   (SELECT COUNT(oi.id) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
+             FROM orders o
+             LEFT JOIN users u ON u.id = o.waiter_id
+             JOIN tables t ON t.id = o.table_id
+             WHERE o.status = 'open' 
+                OR (o.status = 'closed' AND o.closed_at >= NOW() - INTERVAL 1 HOUR)
+             ORDER BY CASE WHEN o.status = 'open' THEN 1 ELSE 2 END, o.opened_at DESC"
+        );
+    }
+
     /** Xác nhận các món Draft thành Confirmed (Gửi bếp) */
     public function confirmItems(int $orderId): void
     {
