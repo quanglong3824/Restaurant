@@ -340,4 +340,41 @@ class OrderController extends Controller
         // Hiển thị view in không qua layout chung
         require_once BASE_PATH . '/views/orders/print.php';
     }
+    /** GET /orders/history — Lịch sử bán hàng cho nhân viên */
+    public function history(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
+
+        $filterType = $this->input('filter_type', 'date'); // date, week, month
+        $date = $this->input('date', date('Y-m-d'));
+        $month = $this->input('month', date('n'));
+        $year = $this->input('year', date('Y'));
+        $week = $this->input('week', date('W'));
+
+        $filters = [];
+        if ($filterType === 'date') {
+            $filters['date'] = $date;
+        } elseif ($filterType === 'month') {
+            $filters['month'] = $month;
+            $filters['year'] = $year;
+        } elseif ($filterType === 'week') {
+            $filters['week'] = $week;
+            $filters['year'] = $year;
+        }
+
+        $orders = $this->orderModel->getSalesHistory($filters);
+
+        $this->view('layouts/waiter', [
+            'view' => 'orders/history',
+            'pageTitle' => 'Lịch sử Bán hàng',
+            'orders' => $orders,
+            'filters' => [
+                'type' => $filterType,
+                'date' => $date,
+                'month' => $month,
+                'year' => $year,
+                'week' => $week
+            ]
+        ]);
+    }
 }

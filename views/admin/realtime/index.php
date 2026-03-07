@@ -159,7 +159,7 @@
                                                         <span style="font-weight: 700;"><?= e($order['table_area']) ?></span>
                                                     </p>
                                                     <div style="margin-top: 1rem;">
-                                                        <button onclick="dismissOrder(<?= $order['id'] ?>)" class="btn btn-sm btn-success style="width: 100%;"">
+                                                        <button onclick="dismissOrder(<?= $order['id'] ?>)" class="btn btn-sm btn-success" style="width: 100%;">
                                                             <i class="fas fa-check"></i> Xác nhận Hoàn tất & Đóng
                                                         </button>
                                                     </div>

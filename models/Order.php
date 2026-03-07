@@ -153,17 +153,16 @@ class Order extends Model
     /** Lấy tất cả Order Đang Bận + Mới thanh toán (Cho Admin Realtime) */
     public function getRealtimeOrders(): array
     {
-        return $this->findAll(
-            "SELECT o.*, u.name AS waiter_name, t.name AS table_name, t.area AS table_area,
-                   (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total,
-                   (SELECT COUNT(oi.id) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
-             FROM orders o
-             LEFT JOIN users u ON u.id = o.waiter_id
-             JOIN tables t ON t.id = o.table_id
-             WHERE o.is_realtime_hidden = 0 
-               AND (o.status = 'open' OR (o.status = 'closed' AND o.closed_at >= NOW() - INTERVAL 1 HOUR))
-             ORDER BY CASE WHEN o.status = 'open' THEN 1 ELSE 2 END, o.opened_at DESC"
-        );
+        $sql = "SELECT o.*, u.name AS waiter_name, t.name AS table_name, t.area AS table_area,
+                       (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total,
+                       (SELECT COUNT(oi.id) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
+                FROM orders o
+                LEFT JOIN users u ON u.id = o.waiter_id
+                JOIN tables t ON t.id = o.table_id
+                WHERE is_realtime_hidden = 0 
+                  AND (o.status = 'open' OR (o.status = 'closed' AND o.closed_at >= NOW() - INTERVAL 1 HOUR))
+                ORDER BY CASE WHEN o.status = 'open' THEN 1 ELSE 2 END, o.opened_at DESC";
+        return $this->findAll($sql);
     }
 
     /** Ẩn order khỏi màn hình realtime của Admin */
@@ -233,5 +232,49 @@ class Order extends Model
              ORDER BY day",
             [$from, $to]
         );
+    }
+    /** Sales History for Waiters/Admin with filters */
+    public function getSalesHistory(array $filters = []): array
+    {
+        $sql = "SELECT o.*, u.name AS waiter_name, t.name AS table_name, t.area AS table_area,
+                       (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total,
+                       (SELECT COUNT(oi.id) FROM order_items oi WHERE oi.order_id = o.id) AS item_count
+                FROM orders o
+                LEFT JOIN users u ON u.id = o.waiter_id
+                JOIN tables t ON t.id = o.table_id
+                WHERE o.status = 'closed'";
+        $params = [];
+
+        // Filter by Date
+        if (!empty($filters['date'])) {
+            $sql .= " AND DATE(o.opened_at) = ?";
+            $params[] = $filters['date'];
+        }
+
+        // Filter by Month & Year
+        if (!empty($filters['month']) && !empty($filters['year'])) {
+            $sql .= " AND MONTH(o.opened_at) = ? AND YEAR(o.opened_at) = ?";
+            $params[] = $filters['month'];
+            $params[] = $filters['year'];
+        } elseif (!empty($filters['year'])) {
+            $sql .= " AND YEAR(o.opened_at) = ?";
+            $params[] = $filters['year'];
+        }
+
+        // Filter by Week (ISO week)
+        if (!empty($filters['week']) && !empty($filters['year'])) {
+            $sql .= " AND WEEK(o.opened_at, 1) = ? AND YEAR(o.opened_at) = ?";
+            $params[] = $filters['week'];
+            $params[] = $filters['year'];
+        }
+
+        // Filter by Waiter (optional, for individual history)
+        if (!empty($filters['waiter_id'])) {
+            $sql .= " AND o.waiter_id = ?";
+            $params[] = $filters['waiter_id'];
+        }
+
+        $sql .= " ORDER BY o.closed_at DESC LIMIT 500";
+        return $this->findAll($sql, $params);
     }
 }

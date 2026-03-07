@@ -25,7 +25,15 @@ function e(?string $value): string
 function activeClass(string $path): string
 {
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    return str_contains($uri, $path) ? 'active' : '';
+    $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+
+    // Nếu path truyền vào không bắt đầu bằng baseUrl, thì thêm vào để so sánh
+    $lookupPath = $path;
+    if ($baseUrl && !str_starts_with($path, $baseUrl)) {
+        $lookupPath = $baseUrl . $path;
+    }
+
+    return ($uri === $lookupPath) ? 'active' : '';
 }
 
 /**

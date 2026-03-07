@@ -61,7 +61,8 @@
                         <i class="fas fa-utensils"></i>
                         <span>Quản lý Món</span>
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>" style="padding-left: 2.75rem; font-size: 0.9rem;">
+                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>"
+                        style="padding-left: 2.75rem; font-size: 0.9rem;">
                         <i class="fas fa-layer-group"></i>
                         <span>Set & Combo</span>
                     </a>
@@ -76,6 +77,14 @@
                     <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
                         <i class="fas fa-database"></i>
                         <span>Dữ liệu (Backup)</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Giám sát</div>
+                    <a href="<?= BASE_URL ?>/admin/realtime" class="nav-item <?= activeClass('/admin/realtime') ?>">
+                        <i class="fas fa-satellite-dish" style="color:#10b981"></i>
+                        <span>Thời gian thực</span>
                     </a>
                 </div>
 

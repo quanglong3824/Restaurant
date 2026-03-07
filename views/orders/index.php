@@ -439,13 +439,10 @@ if (!empty($items)) {
                     </button>
                     <div style="display: flex; gap: 0.75rem;">
                         <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank"
-                            class="btn btn-outline" style="flex: 1; border-color: #0ea5e9; color: #0ea5e9;">
+                            class="btn btn-outline"
+                            style="flex: 1; border-color: #0ea5e9; color: #0ea5e9; height: 48px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-print"></i> Xem/In bill tạm
                         </a>
-                        <button class="btn btn-danger-outline" style="flex: 0.5; opacity: 0.6;"
-                            onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
-                            <i class="fas fa-trash"></i> Hủy bàn
-                        </button>
                     </div>
                 <?php else: ?>
                     <button class="btn btn-danger btn-block btn-lg"

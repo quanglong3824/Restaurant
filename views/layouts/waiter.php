@@ -25,10 +25,15 @@
             font-size: 1.2rem;
             color: var(--text-muted);
         }
-        .topbar-noti:hover { color: var(--gold); }
+
+        .topbar-noti:hover {
+            color: var(--gold);
+        }
+
         .noti-badge {
             position: absolute;
-            top: -5px; right: -8px;
+            top: -5px;
+            right: -8px;
             background: var(--danger);
             color: #fff;
             font-size: 0.65rem;
@@ -37,29 +42,38 @@
             border-radius: 10px;
             display: none;
         }
+
         .noti-dropdown {
             position: absolute;
-            top: 40px; right: -50px;
+            top: 40px;
+            right: -50px;
             width: 320px;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 0px; /* Flat design */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 0px;
+            /* Flat design */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             display: none;
             flex-direction: column;
             z-index: 1000;
         }
-        .noti-dropdown.show { display: flex; }
+
+        .noti-dropdown.show {
+            display: flex;
+        }
+
         .noti-header {
             padding: 12px 15px;
             background: var(--surface-2);
             font-weight: 700;
             border-bottom: 1px solid var(--border);
         }
+
         .noti-list {
             max-height: 300px;
             overflow-y: auto;
         }
+
         .noti-item {
             padding: 12px 15px;
             border-bottom: 1px solid var(--border);
@@ -67,15 +81,27 @@
             justify-content: space-between;
             align-items: center;
         }
-        .noti-item:last-child { border-bottom: none; }
-        .noti-item-info { font-size: 0.85rem; }
-        .noti-item-info strong { color: var(--gold-dark); font-size: 0.95rem;}
+
+        .noti-item:last-child {
+            border-bottom: none;
+        }
+
+        .noti-item-info {
+            font-size: 0.85rem;
+        }
+
+        .noti-item-info strong {
+            color: var(--gold-dark);
+            font-size: 0.95rem;
+        }
+
         .noti-btn {
             background: var(--success);
             color: #fff;
             border: none;
             padding: 6px 10px;
-            border-radius: 0px; /* Flat design */
+            border-radius: 0px;
+            /* Flat design */
             cursor: pointer;
             font-size: 0.75rem;
             font-weight: 600;
@@ -97,16 +123,17 @@
             <span class="topbar-page"><?= e($pageTitle ?? '') ?></span>
         </div>
         <div class="topbar-right">
-            
+
             <!-- Notifications -->
             <div class="topbar-noti" onclick="document.getElementById('notiDropdown').classList.toggle('show')">
                 <i class="fas fa-bell"></i>
                 <span class="noti-badge" id="notiBadge">0</span>
-                
+
                 <div class="noti-dropdown" id="notiDropdown" onclick="event.stopPropagation()">
                     <div class="noti-header">Yêu cầu từ Khách hàng</div>
                     <div class="noti-list" id="notiList">
-                        <div style="padding:15px; text-align:center; color:var(--text-dim); font-size:0.85rem;">Không có yêu cầu nào.</div>
+                        <div style="padding:15px; text-align:center; color:var(--text-dim); font-size:0.85rem;">Không có
+                            yêu cầu nào.</div>
                     </div>
                 </div>
             </div>
@@ -152,15 +179,20 @@
             <i class="fas fa-receipt" aria-hidden="true"></i>
             <span>Order</span>
         </a>
+        <a href="<?= BASE_URL ?>/orders/history" class="bottomnav-item <?= activeClass('/orders/history') ?>"
+            aria-label="Lịch sử">
+            <i class="fas fa-history" aria-hidden="true"></i>
+            <span>Lịch sử</span>
+        </a>
     </nav>
 
     <!-- Chat AI Float Button & UI (Temporarily Hidden) -->
     <?php /*
-    <a href="javascript:void(0)" onclick="toggleAiChat()" class="ai-float-btn" aria-label="AI Assistant"
+<a href="javascript:void(0)" onclick="toggleAiChat()" class="ai-float-btn" aria-label="AI Assistant"
 ...
-        </div>
-    </div>
-    */ ?>
+   </div>
+</div>
+*/ ?>
 
     <script>
         function toggleAiChat() {
@@ -214,7 +246,7 @@
         function renderNotifications(data) {
             const badge = document.getElementById('notiBadge');
             const list = document.getElementById('notiList');
-            
+
             if (data.length > 0) {
                 badge.style.display = 'inline-block';
                 badge.textContent = data.length;
@@ -241,19 +273,19 @@
         function resolveNotification(id) {
             const data = new FormData();
             data.append('id', id);
-            
+
             fetch('<?= BASE_URL ?>/support/resolve', {
                 method: 'POST',
                 body: data
             })
-            .then(res => res.json())
-            .then(res => {
-                if (res.ok) fetchNotifications();
-            });
+                .then(res => res.json())
+                .then(res => {
+                    if (res.ok) fetchNotifications();
+                });
         }
 
         // Click outside to close dropdown
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             if (!document.querySelector('.topbar-noti').contains(e.target)) {
                 document.getElementById('notiDropdown').classList.remove('show');
             }
