@@ -166,7 +166,11 @@
         <span><?= formatPrice($total) ?></span>
     </div>
 
-    <?php if (!empty($order['payment_method'])): ?>
+    <?php
+    // Nếu đơn đã đóng HOẶC có truyền phương thức thanh toán từ URL (thao tác in khi đóng bàn) thì mới coi là đã thanh toán
+    $isActuallyPaid = ($order['status'] === 'closed' || !empty($_GET['payment_method']));
+
+    if ($isActuallyPaid && !empty($order['payment_method'])): ?>
         <div style="font-size: 11px; margin-top: 10px; display: flex; justify-content: space-between;">
             <span>Phương thức:</span>
             <span class="font-bold">
@@ -188,8 +192,7 @@
             </span>
         </div>
     <?php else: ?>
-        <div
-            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+        <div style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
             CHƯA THANH TOÁN
         </div>
         <div style="font-size: 10px; text-align: center; color: #666; font-style: italic; margin-top: 4px;">
