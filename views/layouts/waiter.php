@@ -154,60 +154,13 @@
         </a>
     </nav>
 
-    <!-- Chat AI Float Button & UI -->
+    <!-- Chat AI Float Button & UI (Temporarily Hidden) -->
+    <?php /*
     <a href="javascript:void(0)" onclick="toggleAiChat()" class="ai-float-btn" aria-label="AI Assistant"
-        style="position:fixed; bottom: 85px; right: 20px; width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; text-decoration: none; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4); z-index: 1000; transition: transform 0.2s;">
-        <i class="fas fa-comment-dots"></i>
-    </a>
-
-    <div id="aiChatWindow"
-        style="display:none; position:fixed; bottom: 150px; right: 20px; width: 340px; height: 450px; background: var(--surface); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 1001; flex-direction: column; overflow: hidden; border: 1px solid var(--border);">
-        <div
-            style="background: var(--gold); padding: 15px; color: white; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display:flex; align-items:center; gap: 10px;">
-                <div
-                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-robot"></i></div>
-                <strong style="font-size: 1rem;">Aurora AI</strong>
-            </div>
-            <button onclick="toggleAiChat()"
-                style="background:none; border:none; color:white; font-size: 1.2rem; cursor:pointer;"><i
-                    class="fas fa-times"></i></button>
-        </div>
-        <div id="aiChatBody"
-            style="flex: 1; padding: 15px; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; gap: 12px;">
-            <!-- Message received -->
-            <div style="display: flex; gap: 10px;">
-                <div
-                    style="width: 25px; height: 25px; border-radius: 50%; background: var(--gold); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
-                    <i class="fas fa-robot"></i></div>
-                <div
-                    style="background: var(--surface); padding: 10px 14px; border-radius: 14px; border-top-left-radius: 4px; font-size: 0.9rem; color: var(--text); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); max-width: 85%;">
-                    Xin chào! Tôi có thể giúp gì cho bạn hôm nay?
-                </div>
-            </div>
-            <!-- Message received -->
-            <div style="display: flex; gap: 10px;">
-                <div
-                    style="width: 25px; height: 25px; border-radius: 50%; background: var(--gold); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
-                    <i class="fas fa-robot"></i></div>
-                <div
-                    style="background: var(--surface); padding: 10px 14px; border-radius: 14px; border-top-left-radius: 4px; font-size: 0.9rem; color: var(--text); border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); max-width: 85%;">
-                    Phiên bản AI API sẽ sớm được kết nối!
-                </div>
-            </div>
-        </div>
-        <div style="padding: 15px; background: var(--surface); border-top: 1px solid var(--border);">
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="aiChatInput" placeholder="Nhập tin nhắn..."
-                    onkeydown="if(event.key==='Enter') sendAiMsg()"
-                    style="flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none;">
-                <button onclick="sendAiMsg()"
-                    style="background: var(--gold); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;"><i
-                        class="fas fa-paper-plane"></i></button>
-            </div>
+...
         </div>
     </div>
+    */ ?>
 
     <script>
         function toggleAiChat() {
