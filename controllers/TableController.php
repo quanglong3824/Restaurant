@@ -53,7 +53,7 @@ class TableController extends Controller
         try {
             $this->tableModel->open($tableId);
             $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
-            
+
             // Redirect to orders page
             $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
         } catch (\Exception $e) {
@@ -120,7 +120,7 @@ class TableController extends Controller
             // Update table_id in orders
             $db = getDB();
             $db->prepare("UPDATE orders SET table_id = ? WHERE id = ?")->execute([$toTableId, $order['id']]);
-            
+
             // Cập nhật trạng thái bàn
             $this->tableModel->close($fromTableId); // Bàn cũ thành trống
             $this->tableModel->open($toTableId);    // Bàn mới thành bận
@@ -146,19 +146,23 @@ class TableController extends Controller
             $paymentMethod = 'cash';
         }
 
-        $totalInfo = $this->orderModel->getTotal($orderId);
-        $total = is_array($totalInfo) ? ($totalInfo['total'] ?? 0) : $totalInfo;
+        try {
+            $totalInfo = $this->orderModel->getTotal($orderId);
+            $total = is_array($totalInfo) ? ($totalInfo['total'] ?? 0) : $totalInfo;
 
-        if ($total == 0) {
-            if ($orderId > 0) {
-                $this->orderModel->cancel($orderId);
+            if ($total == 0) {
+                if ($orderId > 0) {
+                    $this->orderModel->cancel($orderId);
+                }
+                $this->tableModel->close($tableId);
+                $_SESSION['flash'] = ['type' => 'info', 'message' => 'Đã huỷ bàn thành công vì chưa gọi món.'];
+            } else {
+                $this->orderModel->close($orderId, $paymentMethod);
+                $this->tableModel->close($tableId);
+                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã đóng bàn và thanh toán thành công.'];
             }
-            $this->tableModel->close($tableId);
-            $_SESSION['flash'] = ['type' => 'info', 'message' => 'Đã huỷ bàn thành công vì chưa gọi món.'];
-        } else {
-            $this->orderModel->close($orderId, $paymentMethod);
-            $this->tableModel->close($tableId);
-            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã đóng bàn và thanh toán thành công.'];
+        } catch (\Exception $e) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi đóng bàn: ' . $e->getMessage()];
         }
 
         $this->redirect('/tables');

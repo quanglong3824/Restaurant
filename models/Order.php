@@ -6,12 +6,12 @@
 class Order extends Model
 {
     /** Mở order mới cho bàn */
-    public function create(int $tableId, ?int $waiterId = null, int $guestCount = 1): int
+    public function create(int $tableId, ?int $waiterId = null, int $guestCount = 1, ?int $shiftId = null): int
     {
         $this->execute(
-            "INSERT INTO orders (table_id, waiter_id, guest_count, status, opened_at)
-             VALUES (?, ?, ?, 'open', NOW())",
-            [$tableId, $waiterId, $guestCount]
+            "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, opened_at)
+             VALUES (?, ?, ?, ?, 'open', NOW())",
+            [$tableId, $waiterId, $shiftId, $guestCount]
         );
         return (int) $this->lastInsertId();
     }
@@ -115,13 +115,23 @@ class Order extends Model
         );
     }
 
-    /** Huỷ order (Khách không gọi món gì) */
     public function cancel(int $orderId): void
     {
+        // Use 'closed' instead of 'canceled' because the status ENUM only has 'open' and 'closed'
         $this->execute(
-            "UPDATE orders SET status = 'canceled', closed_at = NOW(), payment_status = 'canceled' WHERE id = ?",
+            "UPDATE orders SET status = 'closed', closed_at = NOW() WHERE id = ?",
             [$orderId]
         );
+
+        try {
+            // Attempt to update payment_status if the column exists, ignoring errors if it doesn't
+            $this->execute(
+                "UPDATE orders SET payment_status = 'canceled' WHERE id = ?",
+                [$orderId]
+            );
+        } catch (\Exception $e) {
+            // Do nothing if payment_status doesn't exist or doesn't support 'canceled'
+        }
     }
 
     /** Lấy tất cả Order Đang Bận (Cho View Orders) */

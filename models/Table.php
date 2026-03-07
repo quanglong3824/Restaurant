@@ -73,7 +73,8 @@ class Table extends Model
             "SELECT id FROM orders WHERE table_id = ? AND status = 'open' LIMIT 1",
             [$childId]
         );
-        if ($inUse) return false;
+        if ($inUse)
+            return false;
 
         $this->execute(
             "UPDATE tables SET parent_id = ?, status = 'occupied', updated_at = NOW() WHERE id = ?",
@@ -95,11 +96,12 @@ class Table extends Model
     public function getFullDisplayName(int $tableId): string
     {
         $table = $this->findById($tableId);
-        if (!$table) return "N/A";
+        if (!$table)
+            return "N/A";
 
         // Nếu bàn này là con, lấy bàn cha của nó
         $effectiveParentId = $table['parent_id'] ?: $table['id'];
-        
+
         // Lấy tất cả bàn trong nhóm (cha + con)
         $group = $this->findAll(
             "SELECT name FROM tables 
@@ -108,7 +110,8 @@ class Table extends Model
             [$effectiveParentId, $effectiveParentId]
         );
 
-        if (count($group) <= 1) return $table['name'];
+        if (count($group) <= 1)
+            return $table['name'];
 
         $names = array_column($group, 'name');
         return implode(' + ', $names);
@@ -132,19 +135,22 @@ class Table extends Model
     /** Đóng bàn: đổi status → available (Xử lý cả bàn ghép) */
     public function close(int $id): void
     {
+        // Lấy danh sách các bàn đang ghép vào bàn này (nếu có)
+        $children = $this->findAll("SELECT id FROM tables WHERE parent_id = ?", [$id]);
+
         // 1. Chuyển bàn hiện tại về trống và xóa liên kết ghép (nếu có)
         $this->execute(
             "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id = ?",
             [$id]
         );
 
-        // 2. Nếu bàn này là bàn chính, giải phóng toàn bộ các bàn con đang ghép vào nó
-        $this->execute(
-            "UPDATE tables 
-             SET parent_id = NULL, status = 'available', updated_at = NOW() 
-             WHERE parent_id = ?",
-            [$id]
-        );
+        // 2. Chuyển tất cả bàn con về trạng thái trống
+        foreach ($children as $child) {
+            $this->execute(
+                "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id = ?",
+                [$child['id']]
+            );
+        }
     }
 
     /** Thêm bàn mới */
