@@ -332,6 +332,11 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
         $total = $this->orderModel->getTotal($orderId);
 
+        // Fallback for payment_method from query string (immediate print)
+        if ($this->input('payment_method')) {
+            $order['payment_method'] = $this->input('payment_method');
+        }
+
         // Hiển thị view in không qua layout chung
         require_once BASE_PATH . '/views/orders/print.php';
     }

@@ -654,7 +654,7 @@ if (!empty($items)) {
         document.getElementById('closeTableId').value = tableId;
         document.getElementById('closeOrderId').value = orderId;
         document.getElementById('isQuickCancel').value = "1";
-        
+
         // Hide payment elements
         document.querySelectorAll('.payment-only').forEach(el => el.style.display = 'none');
         document.getElementById('paymentSummary').style.display = 'none';
@@ -700,7 +700,7 @@ if (!empty($items)) {
 
         // 1. Mở tab in bill mới (chỉ khi có tiền)
         if (!isQuickCancel) {
-            const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
+            const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId + '&payment_method=' + paymentMethod;
             window.open(printUrl, '_blank');
         }
 

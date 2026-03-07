@@ -188,7 +188,11 @@
             </span>
         </div>
     <?php else: ?>
-        <div style="font-size: 11px; margin-top: 10px; text-align: center; color: #666; font-style: italic;">
+        <div
+            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+            CHƯA THANH TOÁN
+        </div>
+        <div style="font-size: 10px; text-align: center; color: #666; font-style: italic; margin-top: 4px;">
             (Đây là phiếu tạm tính)
         </div>
     <?php endif; ?>
