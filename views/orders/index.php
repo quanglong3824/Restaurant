@@ -246,6 +246,30 @@ if (!empty($items)) {
         font-size: 1.25rem;
         color: var(--gold-dark);
     }
+
+    /* Scrollable Box for Confirmed Items */
+    .confirmed-scroll-box {
+        max-height: 480px;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
+
+    .confirmed-scroll-box::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .confirmed-scroll-box::-webkit-scrollbar-track {
+        background: var(--surface-2);
+        border-radius: 10px;
+    }
+
+    .confirmed-scroll-box::-webkit-scrollbar-thumb {
+        background: var(--border-gold);
+        border-radius: 10px;
+    }
 </style>
 
 <div class="page-content">
@@ -320,25 +344,27 @@ if (!empty($items)) {
                 <!-- Confirmed items -->
                 <?php if (!empty($confirmedItems)): ?>
                     <div class="order-section-title">Đã xác nhận (Đang làm/Đã lên món)</div>
-                    <?php foreach ($confirmedItems as $item): ?>
-                        <div class="order-item order-item--confirmed" id="row-<?= $item['id'] ?>"
-                            style="opacity: 0.8; background: var(--surface-2);">
-                            <div class="order-item__name">
-                                <?= e($item['item_name']) ?>
-                                <?php if ($item['note']): ?>
-                                    <span class="order-item__note">
-                                        <?= e($item['note']) ?>
-                                    </span>
-                                <?php endif; ?>
+                    <div class="confirmed-scroll-box">
+                        <?php foreach ($confirmedItems as $item): ?>
+                            <div class="order-item order-item--confirmed" id="row-<?= $item['id'] ?>"
+                                style="opacity: 0.8; background: var(--surface-2);">
+                                <div class="order-item__name">
+                                    <?= e($item['item_name']) ?>
+                                    <?php if ($item['note']): ?>
+                                        <span class="order-item__note">
+                                            <?= e($item['note']) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="order-item__controls" style="width: auto; padding: 0 .5rem;">
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> x<?= $item['quantity'] ?></span>
+                                </div>
+                                <div class="order-item__price">
+                                    <?= formatPrice($item['item_price'] * $item['quantity']) ?>
+                                </div>
                             </div>
-                            <div class="order-item__controls" style="width: auto; padding: 0 .5rem;">
-                                <span class="badge badge-success"><i class="fas fa-check"></i> x<?= $item['quantity'] ?></span>
-                            </div>
-                            <div class="order-item__price">
-                                <?= formatPrice($item['item_price'] * $item['quantity']) ?>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </div>
                 <?php endif; ?>
 
                 <!-- Draft items -->
@@ -471,7 +497,8 @@ if (!empty($items)) {
         </div>
         <form id="targetForm" method="POST" action="<?= BASE_URL ?>/tables/merge" class="modal-body">
             <input type="hidden" name="parent_id" value="<?= $table['id'] ?? '' ?>">
-            <input type="hidden" name="redirect" value="/orders?table_id=<?= $table['id'] ?? '' ?>&order_id=<?= $order['id'] ?? '' ?>">
+            <input type="hidden" name="redirect"
+                value="/orders?table_id=<?= $table['id'] ?? '' ?>&order_id=<?= $order['id'] ?? '' ?>">
             <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
                 Chọn bàn trống để ghép chung với <?= isset($table['name']) ? e($table['name']) : '' ?>:
             </p>
