@@ -430,58 +430,108 @@ if (!empty($items)) {
                 </form>
             <?php endif; ?>
 
-            <div style="display: flex; gap: 0.75rem;">
-                <button class="btn btn-danger-outline" style="flex: 1;"
-                    onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
-                    <i class="fas fa-door-closed"></i> Đóng bàn
-                </button>
-                <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn"
-                    style="flex: 1; background: #0ea5e9; color: #fff; border-color: #0ea5e9;">
-                    <i class="fas fa-print"></i> In Hóa Đơn
-                </a>
+            <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+                <?php if ($total > 0): ?>
+                    <button class="btn btn-block btn-lg"
+                        style="background: var(--success); color: white; border: none; box-shadow: 0 4px 12px rgba(16,185,129,0.3); font-weight: 800; height: 60px;"
+                        onclick="confirmPayment(<?= $table['id'] ?>, <?= $order['id'] ?>, <?= $total ?>)">
+                        <i class="fas fa-credit-card"></i> TIẾP TỤC THANH TOÁN & IN BILL
+                    </button>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank"
+                            class="btn btn-outline" style="flex: 1; border-color: #0ea5e9; color: #0ea5e9;">
+                            <i class="fas fa-print"></i> Xem/In bill tạm
+                        </a>
+                        <button class="btn btn-danger-outline" style="flex: 0.5; opacity: 0.6;"
+                            onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
+                            <i class="fas fa-trash"></i> Hủy bàn
+                        </button>
+                    </div>
+                <?php else: ?>
+                    <button class="btn btn-danger btn-block btn-lg"
+                        onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
+                        <i class="fas fa-door-closed"></i> HỦY BÀN / ĐÓNG (BÀN TRỐNG)
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
 
     <?php endif; ?>
 </div>
 
-<!-- Close confirm modal -->
+<!-- Payment & Close modal -->
 <div class="modal-backdrop" id="modalClose">
-    <div class="modal" style="max-width: 360px;">
-        <div class="modal-header">
-            <h3>Kết thúc phục vụ bàn?</h3>
-            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+    <div class="modal" style="max-width: 400px; border-radius: 12px; overflow: hidden;">
+        <div class="modal-header" id="paymentModalHeader"
+            style="background: var(--success); color: white; padding: 1.5rem;">
+            <h3 style="margin:0;"><i class="fas fa-money-check-alt"></i> XÁC NHẬN THANH TOÁN</h3>
+            <button class="modal-close" data-modal-close type="button" style="color:white; opacity:0.8;"><i
+                    class="fas fa-times"></i></button>
         </div>
-        <div class="modal-body">
-            <p style="color:var(--text-muted);margin-bottom:1rem;font-size:0.9rem;">
-                Sau khi đóng, hóa đơn sẽ được cập nhật là Đã Thanh Toán và bàn sẽ về trạng thái <strong
-                    style="color:var(--success)">Trống</strong>.
-            </p>
+        <div class="modal-body" style="padding: 1.5rem;">
+            <div id="paymentSummary"
+                style="background: var(--surface-2); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">
+                    Tổng cộng thanh toán</div>
+                <div style="font-size: 2rem; font-weight: 900; color: var(--danger); margin: 0.25rem 0;"
+                    id="modalTotalAmount"><?= formatPrice($total) ?></div>
+            </div>
+
             <form method="POST" action="<?= BASE_URL ?>/tables/close" id="formCloseTable">
                 <input type="hidden" name="table_id" id="closeTableId">
                 <input type="hidden" name="order_id" id="closeOrderId">
 
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label class="form-label">Hình thức thanh toán</label>
-                    <select name="payment_method" class="form-control" required>
-                        <option value="cash">Tiền mặt</option>
-                        <option value="transfer">Chuyển khoản</option>
-                        <option value="card">Thẻ ngân hàng</option>
-                    </select>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label class="form-label" style="font-weight: 700;">PHƯƠNG THỨC THANH TOÁN</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="payment_method" value="cash" checked style="display:none;"
+                                class="pay-radio">
+                            <div class="pay-option"><i class="fas fa-money-bill-wave"></i> Tiền mặt</div>
+                        </label>
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="payment_method" value="transfer" style="display:none;"
+                                class="pay-radio">
+                            <div class="pay-option"><i class="fas fa-university"></i> Chuyển khoản</div>
+                        </label>
+                    </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <input type="checkbox" id="checkPaid" required style="width: 20px; height: 20px; cursor: pointer;">
-                    <label for="checkPaid" style="font-weight: 500; cursor: pointer; user-select: none;">
-                        Tôi xác nhận khách Đã Thanh Toán
+                <style>
+                    .pay-radio:checked+.pay-option {
+                        background: var(--success);
+                        color: white;
+                        border-color: var(--success);
+                    }
+
+                    .pay-option {
+                        padding: 1rem 0.5rem;
+                        border: 2px solid var(--border);
+                        border-radius: 8px;
+                        text-align: center;
+                        font-weight: 700;
+                        font-size: 0.9rem;
+                        transition: all 0.2s;
+                    }
+                </style>
+
+                <div class="form-group"
+                    style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; background: #fffbeb; padding: 0.75rem; border: 1px solid #fef3c7; border-radius: 8px;">
+                    <input type="checkbox" id="checkPaid" required style="width: 22px; height: 22px; cursor: pointer;">
+                    <label for="checkPaid"
+                        style="font-weight: 600; cursor: pointer; user-select: none; font-size: 0.9rem; color: #92400e;">
+                        Xác nhận đã nhận đủ tiền từ khách
                     </label>
                 </div>
 
-                <div style="display:flex;gap:.6rem;flex-direction:column;">
-                    <button type="submit" class="btn btn-danger btn-lg">
-                        <i class="fas fa-door-closed"></i> Đóng Bàn
+                <div style="display:flex; gap:.75rem; flex-direction:column;">
+                    <button type="submit" class="btn btn-block btn-lg"
+                        style="background: var(--success); color: white; border: none; height: 56px; font-weight: 800; font-size: 1.1rem;"
+                        onclick="handleSubmitPayment(event)">
+                        <i class="fas fa-print"></i> THANH TOÁN & IN HÓA ĐƠN
                     </button>
-                    <button type="button" class="btn btn-ghost" data-modal-close>Quay lại</button>
+                    <button type="button" class="btn btn-ghost" data-modal-close style="color: var(--text-dim);">Để
+                        sau</button>
                 </div>
             </form>
         </div>
@@ -578,8 +628,35 @@ if (!empty($items)) {
     }
 
     function confirmClose(tableId, orderId) {
+        document.getElementById('paymentModalHeader').style.background = 'var(--danger)';
+        document.querySelector('#paymentModalHeader h3').innerHTML = '<i class="fas fa-trash"></i> HỦY BÀN / ĐÓNG';
         document.getElementById('closeTableId').value = tableId;
         document.getElementById('closeOrderId').value = orderId;
         Aurora.openModal('modalClose');
+    }
+
+    function confirmPayment(tableId, orderId, total) {
+        document.getElementById('paymentModalHeader').style.background = 'var(--success)';
+        document.querySelector('#paymentModalHeader h3').innerHTML = '<i class="fas fa-money-check-alt"></i> XÁC NHẬN THANH TOÁN';
+        document.getElementById('closeTableId').value = tableId;
+        document.getElementById('closeOrderId').value = orderId;
+
+        // Show total if needed (already set via PHP but for reliability)
+        if (total) {
+            document.getElementById('modalTotalAmount').textContent = new Intl.NumberFormat('vi-VN').format(total) + '₫';
+        }
+
+        Aurora.openModal('modalClose');
+    }
+
+    function handleSubmitPayment(e) {
+        // We want to print in a new tab and then submit the form
+        const orderId = document.getElementById('closeOrderId').value;
+        const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
+
+        // Open print in new tab
+        window.open(printUrl, '_blank');
+
+        // Form will submit normally after this
     }
 </script>
