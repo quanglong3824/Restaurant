@@ -1,13 +1,17 @@
 <?php // views/orders/print.php ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hóa đơn <?= e($tableDisplayName) ?></title>
     <style>
         /* CSS cho máy in nhiệt 80mm */
-        @page { margin: 0; }
+        @page {
+            margin: 0;
+        }
+
         body {
             font-family: 'Courier New', Courier, monospace;
             font-size: 12px;
@@ -17,29 +21,96 @@
             padding: 15px;
             width: 80mm;
         }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .font-bold { font-weight: bold; }
-        .mb-1 { margin-bottom: 5px; }
-        .mb-2 { margin-bottom: 10px; }
-        .divider { border-top: 1px dashed #000; margin: 10px 0; }
-        
-        .header h1 { font-size: 16px; margin: 0 0 5px; }
-        .header p { margin: 0; font-size: 11px; }
 
-        .meta-info { font-size: 11px; display: flex; justify-content: space-between; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { border-bottom: 1px dashed #000; padding-bottom: 5px; text-align: left; }
-        td { padding: 5px 0; vertical-align: top; }
-        .col-qty { width: 15%; text-align: center; }
-        .col-price { width: 25%; text-align: right; }
-        .col-total { width: 25%; text-align: right; }
-        
-        .total-row { font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; margin-top: 10px; }
-        .footer { text-align: center; margin-top: 20px; font-size: 11px; }
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .mb-1 {
+            margin-bottom: 5px;
+        }
+
+        .mb-2 {
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+
+        .header h1 {
+            font-size: 16px;
+            margin: 0 0 5px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 11px;
+        }
+
+        .meta-info {
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            border-bottom: 1px dashed #000;
+            padding-bottom: 5px;
+            text-align: left;
+        }
+
+        td {
+            padding: 5px 0;
+            vertical-align: top;
+        }
+
+        .col-qty {
+            width: 15%;
+            text-align: center;
+        }
+
+        .col-price {
+            width: 25%;
+            text-align: right;
+        }
+
+        .col-total {
+            width: 25%;
+            text-align: right;
+        }
+
+        .total-row {
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+        }
     </style>
 </head>
+
 <body onload="window.print();">
 
     <div class="header text-center mb-2">
@@ -78,12 +149,12 @@
         </thead>
         <tbody>
             <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= e($item['item_name']) ?></td>
-                <td class="col-qty"><?= $item['quantity'] ?></td>
-                <td class="col-price"><?= number_format($item['item_price'], 0, ',', '.') ?></td>
-                <td class="col-total"><?= number_format($item['item_price'] * $item['quantity'], 0, ',', '.') ?></td>
-            </tr>
+                <tr>
+                    <td><?= e($item['item_name']) ?></td>
+                    <td class="col-qty"><?= $item['quantity'] ?></td>
+                    <td class="col-price"><?= number_format($item['item_price'], 0, ',', '.') ?></td>
+                    <td class="col-total"><?= number_format($item['item_price'] * $item['quantity'], 0, ',', '.') ?></td>
+                </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
@@ -95,6 +166,33 @@
         <span><?= formatPrice($total) ?></span>
     </div>
 
+    <?php if (!empty($order['payment_method'])): ?>
+        <div style="font-size: 11px; margin-top: 10px; display: flex; justify-content: space-between;">
+            <span>Phương thức:</span>
+            <span class="font-bold">
+                <?php
+                switch ($order['payment_method']) {
+                    case 'cash':
+                        echo 'Tiền mặt';
+                        break;
+                    case 'transfer':
+                        echo 'Chuyển khoản';
+                        break;
+                    case 'card':
+                        echo 'Thẻ ngân hàng';
+                        break;
+                    default:
+                        echo e($order['payment_method']);
+                }
+                ?>
+            </span>
+        </div>
+    <?php else: ?>
+        <div style="font-size: 11px; margin-top: 10px; text-align: center; color: #666; font-style: italic;">
+            (Đây là phiếu tạm tính)
+        </div>
+    <?php endif; ?>
+
     <div class="divider"></div>
 
     <div class="footer">
@@ -103,4 +201,5 @@
     </div>
 
 </body>
+
 </html>
