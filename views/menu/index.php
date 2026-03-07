@@ -288,35 +288,35 @@
 
         <div class="pos-cart-col" id="cartCol">
             <div class="cart-panel">
-                <div class="cart-header">
+                <div class="cart-header" onclick="if(window.innerWidth < 1024) toggleCart(false)" style="cursor:pointer;">
                     <div>
                         <h4 style="margin:0; font-weight:800; color:var(--gold-dark);">Bàn #<?= e($tableId) ?></h4>
                         <small style="color:var(--text-muted);"><?= e($order['guest_count'] ?? 1) ?> khách</small>
                     </div>
-                    <button style="background:none; border:none; color:var(--gold-dark); font-size:1.2rem; cursor:pointer;" onclick="toggleCart(false)" class="desktop-hide">
+                    <button style="background:none; border:none; color:var(--gold-dark); font-size:1.2rem; cursor:pointer;" class="desktop-hide">
                         <i class="fas fa-chevron-down"></i>
                     </button>
                 </div>
-                <div class="cart-body">
+                <div class="cart-body" onclick="handleBodyClick(event)">
                     <?php $draftCount = 0; if (empty($orderItems)): ?>
-                        <div style="text-align:center; padding-top:3rem; color:var(--text-dim);">
+                        <div style="text-align:center; padding-top:3rem; color:var(--text-dim); pointer-events:none;">
                             <i class="fas fa-shopping-basket" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i>
                             <p>Chưa có món nào.</p>
                         </div>
                     <?php else: foreach ($orderItems as $it): if ($it['status'] === 'draft') $draftCount++; ?>
-                        <div style="display:flex; justify-content:space-between; margin-bottom:1.2rem; padding-bottom:1.2rem; border-bottom:1px dashed var(--border);">
+                        <div class="cart-item-row" style="display:flex; justify-content:space-between; margin-bottom:1.2rem; padding-bottom:1.2rem; border-bottom:1px dashed var(--border);">
                             <div style="flex:1;">
                                 <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;"><?= e($it['item_name']) ?></div>
                                 <div style="display:flex; align-items:center; gap:0.75rem;">
                                     <span style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;"><?= formatPrice($it['item_price']) ?></span>
                                     <div style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
-                                        <button onclick="changeCartQty(<?= $it['id'] ?>, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
+                                        <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
                                         <span style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;"><?= $it['quantity'] ?></span>
-                                        <button onclick="changeCartQty(<?= $it['id'] ?>, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                                        <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <div style="text-align:right;">
+                            <div style="text-align:right; pointer-events:none;">
                                 <div style="font-weight:800; font-size:0.95rem;"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
                                 <small style="color:<?= $it['status'] === 'confirmed' ? 'var(--success)' : 'var(--text-muted)' ?>; font-weight:600;">
                                     <?= $it['status'] === 'confirmed' ? 'Đã gửi bếp' : 'Món nháp' ?>
@@ -389,6 +389,16 @@
         if (!c) return;
         if (show) { c.classList.add('is-visible'); o?.classList.add('is-visible'); document.body.style.overflow = 'hidden'; }
         else { c.classList.remove('is-visible'); o?.classList.remove('is-visible'); document.body.style.overflow = ''; }
+    }
+
+    function handleBodyClick(e) {
+        if (window.innerWidth >= 1024) return;
+        // Nếu click trực tiếp vào cart-body hoặc vùng không chứa class quan trọng -> Đóng giỏ
+        const isItemRow = e.target.closest('.cart-item-row');
+        const isButton = e.target.closest('button, a');
+        if (!isItemRow && !isButton) {
+            toggleCart(false);
+        }
     }
 
     function updateCartUI(data) {
