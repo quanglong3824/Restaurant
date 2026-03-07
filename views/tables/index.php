@@ -106,6 +106,18 @@ sort($allAreas);
         </div>
         <div class="modal-body">
             <div id="occupiedActions" style="display:flex; flex-direction:column; gap:0.75rem;">
+                <div id="childTableInfo" style="display:none; background:var(--gold-light); padding:1rem; border-radius:8px; margin-bottom:0.5rem; text-align:center;">
+                    <p style="margin:0; font-size:0.85rem; color:var(--gold-dark); font-weight:700;">
+                        <i class="fas fa-link"></i> Bàn này đang ghép vào <span id="parentNameLabel"></span>
+                    </p>
+                    <form method="POST" action="<?= BASE_URL ?>/tables/unmerge" style="margin-top:0.75rem;">
+                        <input type="hidden" name="table_id" id="unmergeTableId">
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%; border-radius:4px;">
+                            <i class="fas fa-unlink"></i> TÁCH KHỎI BÀN CHÍNH
+                        </button>
+                    </form>
+                </div>
+
                 <a id="viewOrderBtn" href="#" class="btn btn-gold btn-lg" style="justify-content:center;">
                     <i class="fas fa-file-invoice-dollar"></i> XEM ĐƠN / THÊM MÓN
                 </a>
@@ -165,17 +177,33 @@ sort($allAreas);
 <script>
     function handleTableClick(table) {
         if (table.status === 'occupied') {
-            // Nếu là bàn phụ đã ghép -> Yêu cầu thao tác trên bàn chính
-            if (table.parent_id) {
-                alert('Bàn này đã được ghép vào ' + table.parent_name + '. Vui lòng thao tác trên bàn chính.');
-                return;
-            }
-
             document.getElementById('occupiedTableName').textContent = table.name;
-            document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
+            const childInfo = document.getElementById('childTableInfo');
+            const viewOrderBtn = document.getElementById('viewOrderBtn');
+            const btnTransfer = document.getElementById('btnTransfer');
+            const btnMerge = document.getElementById('btnMerge');
+
+            // Nếu là bàn phụ đã ghép
+            if (table.parent_id) {
+                childInfo.style.display = 'block';
+                document.getElementById('parentNameLabel').textContent = table.parent_name;
+                document.getElementById('unmergeTableId').value = table.id;
+                
+                // Vẫn cho phép xem đơn hàng của bàn chính
+                viewOrderBtn.href = '<?= BASE_URL ?>/orders?table_id=' + table.parent_id;
+                
+                // Ẩn các nút không liên quan cho bàn phụ
+                btnTransfer.style.display = 'none';
+                btnMerge.style.display = 'none';
+            } else {
+                childInfo.style.display = 'none';
+                viewOrderBtn.href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
+                btnTransfer.style.display = 'flex';
+                btnMerge.style.display = 'flex';
+            }
             
             // Cấu hình nút Chuyển bàn
-            document.getElementById('btnTransfer').onclick = () => {
+            btnTransfer.onclick = () => {
                 Aurora.closeModal('modalOccupied');
                 openTargetModal('transfer', table);
             };

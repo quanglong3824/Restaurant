@@ -150,7 +150,9 @@ class TableController extends Controller
         $total = is_array($totalInfo) ? ($totalInfo['total'] ?? 0) : $totalInfo;
 
         if ($total == 0) {
-            $this->orderModel->cancel($orderId);
+            if ($orderId > 0) {
+                $this->orderModel->cancel($orderId);
+            }
             $this->tableModel->close($tableId);
             $_SESSION['flash'] = ['type' => 'info', 'message' => 'Đã huỷ bàn thành công vì chưa gọi món.'];
         } else {
