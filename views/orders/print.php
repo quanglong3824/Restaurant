@@ -6,109 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hóa đơn <?= e($tableDisplayName) ?></title>
-    <style>
-        /* CSS cho máy in nhiệt 80mm */
-        @page {
-            margin: 0;
-        }
-
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            color: #000;
-            background: #fff;
-            margin: 0;
-            padding: 15px;
-            width: 80mm;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .font-bold {
-            font-weight: bold;
-        }
-
-        .mb-1 {
-            margin-bottom: 5px;
-        }
-
-        .mb-2 {
-            margin-bottom: 10px;
-        }
-
-        .divider {
-            border-top: 1px dashed #000;
-            margin: 10px 0;
-        }
-
-        .header h1 {
-            font-size: 16px;
-            margin: 0 0 5px;
-        }
-
-        .header p {
-            margin: 0;
-            font-size: 11px;
-        }
-
-        .meta-info {
-            font-size: 11px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        th {
-            border-bottom: 1px dashed #000;
-            padding-bottom: 5px;
-            text-align: left;
-        }
-
-        td {
-            padding: 5px 0;
-            vertical-align: top;
-        }
-
-        .col-qty {
-            width: 15%;
-            text-align: center;
-        }
-
-        .col-price {
-            width: 25%;
-            text-align: right;
-        }
-
-        .col-total {
-            width: 25%;
-            text-align: right;
-        }
-
-        .total-row {
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 11px;
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/orders/print.css">
 </head>
 
 <body onload="window.print();">
@@ -121,7 +19,7 @@
 
     <div class="divider"></div>
 
-    <div class="text-center font-bold mb-2" style="font-size: 14px;">PHIẾU THANH TOÁN</div>
+    <div class="text-center font-bold mb-2">PHIẾU THANH TOÁN</div>
 
     <div class="meta-info mb-1">
         <span>Bàn: <strong><?= e($tableDisplayName) ?></strong></span>
@@ -171,11 +69,10 @@
     $isActuallyPaid = ($order['status'] === 'closed' || !empty($_GET['payment_method']));
 
     if ($isActuallyPaid && !empty($order['payment_method'])): ?>
-        <div
-            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 2px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+        <div class="payment-good">
             ĐÃ THANH TOÁN
         </div>
-        <div style="font-size: 11px; margin-top: 10px; display: flex; justify-content: space-between;">
+        <div class="payment-status">
             <span>Phương thức:</span>
             <span class="font-bold">
                 <?php
@@ -196,11 +93,10 @@
             </span>
         </div>
     <?php else: ?>
-        <div
-            style="font-size: 13px; margin-top: 10px; text-align: center; color: #000; border: 1px solid #000; padding: 5px; font-weight: 900; text-transform: uppercase;">
+        <div class="payment-pending">
             CHƯA THANH TOÁN
         </div>
-        <div style="font-size: 10px; text-align: center; color: #666; font-style: italic; margin-top: 4px;">
+        <div class="payment-note">
             (Đây là phiếu tạm tính)
         </div>
     <?php endif; ?>
