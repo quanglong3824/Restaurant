@@ -167,22 +167,26 @@
         <?php require BASE_PATH . "/views/{$view}.php"; ?>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation - Floating with Apple Liquid Glass Design -->
     <nav class="waiter-bottomnav" role="navigation" aria-label="Menu chính">
         <a href="<?= BASE_URL ?>/tables" class="bottomnav-item <?= activeClass('/tables') ?>" aria-label="Sơ đồ bàn">
+            <span class="liquid-ring"></span>
             <i class="fas fa-table-cells-large" aria-hidden="true"></i>
             <span>Bàn</span>
         </a>
         <a href="<?= BASE_URL ?>/menu" class="bottomnav-item <?= activeClass('/menu') ?>" aria-label="Menu">
+            <span class="liquid-ring"></span>
             <i class="fas fa-book-open" aria-hidden="true"></i>
             <span>Menu</span>
         </a>
         <a href="<?= BASE_URL ?>/orders" class="bottomnav-item <?= activeClass('/orders') ?>" aria-label="Order">
+            <span class="liquid-ring"></span>
             <i class="fas fa-receipt" aria-hidden="true"></i>
             <span>Order</span>
         </a>
         <a href="<?= BASE_URL ?>/orders/history" class="bottomnav-item <?= activeClass('/orders/history') ?>"
             aria-label="Lịch sử">
+            <span class="liquid-ring"></span>
             <i class="fas fa-history" aria-hidden="true"></i>
             <span>Lịch sử</span>
         </a>
@@ -296,8 +300,25 @@
         // Start polling every 10 seconds
         setInterval(fetchNotifications, 10000);
         fetchNotifications(); // Initial fetch
+
+        // Bottom Navigation Active State Management
+        // Set active class based on current URL
+        (function() {
+            const currentUrl = window.location.pathname;
+            const navItems = document.querySelectorAll('.bottomnav-item');
+            
+            navItems.forEach(item => {
+                const link = item.getAttribute('href');
+                // Remove active class from all items
+                item.classList.remove('active');
+                item.querySelector('.liquid-ring').style.display = 'none';
+                
+                // Check if this is the active page (exact match or current page is a subpage)
+                if (currentUrl === link || currentUrl.startsWith(link + '/')) {
+                    item.classList.add('active');
+                    item.querySelector('.liquid-ring').style.display = 'block';
+                }
+            });
+        })();
     </script>
 </body>
-
-
-</html>
