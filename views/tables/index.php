@@ -418,16 +418,13 @@ function renderTableToken($t, $tableModel) {
     </div>
 </div>
 
+<!-- Link CSS -->
+<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/tables.css">
+
 <!-- Tables functionality -->
 <script>
 // Simple table click handler for non-QR version
 document.addEventListener('DOMContentLoaded', function() {
-    const(modalOpenTable, modalOccupied, modalSelectTarget) = [
-        document.getElementById('modalOpenTable'),
-        document.getElementById('modalOccupied'),
-        document.getElementById('modalSelectTarget')
-    ];
-
     // Simple handler to just show modal with table info
     window.handleTableClick = function(table) {
         if (table.status === 'occupied') {
