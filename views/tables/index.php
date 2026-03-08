@@ -218,47 +218,12 @@ function renderTableToken($t, $tableModel) {
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body py-4">
-            <div id="childTableInfo" class="alert-premium mb-4" style="display:none;">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-link text-gold"></i>
-                    <div>
-                        <div class="small fw-bold">BÀN ĐANG GHÉP</div>
-                        <div class="tiny text-muted">Đang theo <span id="parentNameLabel" class="text-white"></span></div>
-                    </div>
-                    <form method="POST" action="<?= BASE_URL ?>/tables/unmerge" class="ms-auto">
-                        <input type="hidden" name="table_id" id="unmergeTableId">
-                        <button type="submit" class="btn btn-sm btn-ghost p-1 px-2 border-danger text-danger">TÁCH</button>
-                    </form>
-                </div>
-            </div>
-
-            <div id="masterTableInfo" class="alert-premium mb-4" style="display:none;">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-chess-board text-gold"></i>
-                    <div>
-                        <div class="small fw-bold">BÀN GHÉP CHÍNH</div>
-                        <div class="tiny text-muted">Đang quản lý <span id="childCountLabel" class="text-white"></span> bàn ghép</div>
-                    </div>
-                    <button type="button" id="btnAddMoreTables" class="btn btn-sm btn-ghost p-1 px-2 border-primary text-primary ms-auto">THÊM BÀN</button>
-                </div>
-            </div>
+            <!-- Merged table info removed - QR System feature -->
 
             <div class="d-grid gap-3">
                 <a id="viewOrderBtn" href="#" class="btn btn-gold py-3 shadow-lg">
                     <i class="fas fa-file-invoice-dollar me-2"></i> XEM CHI TIẾT & GỌI MÓN
                 </a>
-                <div class="row g-2">
-                    <div class="col-6">
-                        <button type="button" id="btnTransfer" class="btn btn-ghost w-100 py-3">
-                            <i class="fas fa-exchange-alt mb-1 d-block"></i> <span class="small">CHUYỂN</span>
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button type="button" id="btnMerge" class="btn btn-ghost w-100 py-3">
-                            <i class="fas fa-link mb-1 d-block"></i> <span class="small">GHÉP</span>
-                        </button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -453,6 +418,27 @@ function renderTableToken($t, $tableModel) {
     </div>
 </div>
 
-<!-- Link CSS và JS -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/tables.css">
-<script src="<?= BASE_URL ?>/public/js/tables.js" defer></script>
+<!-- Tables functionality -->
+<script>
+// Simple table click handler for non-QR version
+document.addEventListener('DOMContentLoaded', function() {
+    const(modalOpenTable, modalOccupied, modalSelectTarget) = [
+        document.getElementById('modalOpenTable'),
+        document.getElementById('modalOccupied'),
+        document.getElementById('modalSelectTarget')
+    ];
+
+    // Simple handler to just show modal with table info
+    window.handleTableClick = function(table) {
+        if (table.status === 'occupied') {
+            document.getElementById('occupiedTableName').textContent = table.name;
+            document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
+            Aurora.openModal('modalOccupied');
+        } else {
+            document.getElementById('modalTableName').textContent = table.name;
+            document.getElementById('openTableId').value = table.id;
+            Aurora.openModal('modalOpenTable');
+        }
+    };
+});
+</script>
