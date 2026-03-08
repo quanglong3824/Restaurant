@@ -48,10 +48,10 @@
     </div>
     <?php endif; ?>
 
-    <!-- App JS -->
-    <script src="<?= BASE_URL ?>/public/js/app.js"></script>
-    <!-- Layout JS -->
-    <script src="<?= BASE_URL ?>/public/js/layout/public.js"></script>
+    <!-- App JS (defer - không block HTML parse) -->
+    <script src="<?= BASE_URL ?>/public/js/app.js" defer></script>
+    <!-- Layout JS (defer - không block HTML parse) -->
+    <script src="<?= BASE_URL ?>/public/js/layout/public.js" defer></script>
 </body>
 
 </html>

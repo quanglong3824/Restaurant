@@ -110,13 +110,15 @@
 </div>
 */ ?>
 
+    <!-- Layout JS (tải trước nội dung trang) -->
+    <script src="<?= BASE_URL ?>/public/js/layout/waiter-notify.js" defer></script>
+    <script src="<?= BASE_URL ?>/public/js/layout/waiter-ai.js" defer></script>
+
     <!-- App JS -->
     <script src="<?= BASE_URL ?>/public/js/app.js" defer></script>
     <?php if (isset($pageJS)): ?>
         <script src="<?= BASE_URL ?>/public/js/<?= e($pageJS) ?>.js" defer></script>
     <?php endif; ?>
-
-    <!-- Layout JS -->
-    <script src="<?= BASE_URL ?>/public/js/layout/waiter-ai.js" defer></script>
-    <script src="<?= BASE_URL ?>/public/js/layout/waiter-notify.js" defer></script>
 </body>
+
+</html>
