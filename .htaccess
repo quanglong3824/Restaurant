@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Ensure the RewriteBase matches the sub-directory name
+RewriteBase /restaurant/
+
+# Prevent directory listing
+Options -Indexes
+
+# Handle the Authorization Header (sometimes stripped by Apache)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Redirect all requests to index.php if the file or directory doesn't exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L,QSA]
