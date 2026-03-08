@@ -302,21 +302,23 @@
         fetchNotifications(); // Initial fetch
 
         // Bottom Navigation Active State Management
-        // Set active class based on current URL
+        // Set display of liquid-ring based on current active state
         (function() {
             const currentUrl = window.location.pathname;
             const navItems = document.querySelectorAll('.bottomnav-item');
-            
+
             navItems.forEach(item => {
                 const link = item.getAttribute('href');
-                // Remove active class from all items
-                item.classList.remove('active');
-                item.querySelector('.liquid-ring').style.display = 'none';
-                
-                // Check if this is the active page (exact match or current page is a subpage)
-                if (currentUrl === link || currentUrl.startsWith(link + '/')) {
-                    item.classList.add('active');
-                    item.querySelector('.liquid-ring').style.display = 'block';
+                const isActive = item.classList.contains('active');
+
+                // Show/hide liquid-ring based on active class from PHP
+                const liquidRing = item.querySelector('.liquid-ring');
+                if (liquidRing) {
+                    if (isActive) {
+                        liquidRing.style.display = 'block';
+                    } else {
+                        liquidRing.style.display = 'none';
+                    }
                 }
             });
         })();
