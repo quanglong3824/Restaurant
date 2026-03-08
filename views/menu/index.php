@@ -1,0 +1,890 @@
+<?php // views/menu/index.php — Digital Menu (Waiter POS & Showcase) ?>
+<style>
+    /* POS Layout & Grid */
+    .pos-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+    }
+
+    .pos-menu-col {
+        flex: 1;
+        min-width: 0;
+        padding-bottom: 100px;
+        /* Space for mobile FAB */
+    }
+
+    @media (min-width: 1024px) {
+        .pos-layout {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .pos-menu-col {
+            padding-bottom: 0;
+        }
+
+        .pos-cart-col {
+            position: sticky;
+            top: 1.5rem;
+            width: 400px;
+            height: calc(100vh - 120px);
+            z-index: 10;
+            padding-left: 1.5rem;
+        }
+    }
+
+    /* Menu Type Tabs */
+    .menu-type-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        background: var(--surface-2);
+        padding: 0.5rem;
+        border-radius: var(--radius-lg);
+        overflow-x: auto;
+    }
+
+    .menu-type-tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .menu-type-tab.is-active {
+        background: var(--gold);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+
+    /* Category Filters */
+    .category-filter-bar {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem 0;
+        scrollbar-width: none;
+    }
+
+    .category-filter-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-pill {
+        padding: 0.5rem 1rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+
+    .filter-pill.is-active {
+        background: var(--gold-dark);
+        color: #fff;
+        border-color: var(--gold-dark);
+    }
+
+    /* Floating Cart (Mobile) */
+    .pos-cart-col {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pos-cart-col.is-visible {
+        transform: translateY(0);
+    }
+
+    @media (min-width: 1024px) {
+        .pos-cart-col {
+            transform: none !important;
+            position: sticky;
+        }
+    }
+
+    .cart-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 24px 24px 0 0;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        height: 85vh;
+    }
+
+    @media (min-width: 1024px) {
+        .cart-panel {
+            border-radius: 20px;
+            height: 100%;
+            box-shadow: var(--shadow-card);
+        }
+    }
+
+    .cart-header {
+        padding: 1.25rem;
+        background: var(--gold-light);
+        border-bottom: 1px solid var(--border-gold);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cart-body {
+        padding: 1rem;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .cart-footer {
+        padding: 1.25rem;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+    }
+
+    /* FAB Mobile - Circular Style */
+    .cart-fab {
+        position: fixed;
+        bottom: 85px;
+        /* Same position as old chat button */
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: var(--gold);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+        z-index: 998;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .cart-fab:active {
+        transform: scale(0.9);
+    }
+
+    .cart-fab-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: var(--danger);
+        color: white;
+        min-width: 22px;
+        height: 22px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.75rem;
+        padding: 0 5px;
+        border: 2px solid var(--surface);
+    }
+
+    .cart-fab i {
+        font-size: 1.4rem;
+    }
+
+    .cart-fab span:not(.cart-fab-badge) {
+        display: none;
+    }
+
+    /* Hide text on mobile FAB */
+
+    .cart-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+        backdrop-filter: blur(4px);
+    }
+
+    .cart-overlay.is-visible {
+        display: block;
+    }
+
+    /* Menu Items Card */
+    .menu-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .list-item-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+    }
+
+    .list-item-card:hover {
+        border-color: var(--gold);
+        transform: translateX(4px);
+    }
+
+    .list-item-img {
+        width: 70px;
+        height: 70px;
+        border-radius: 8px;
+        object-fit: cover;
+        background: var(--surface-2);
+    }
+
+    .list-item-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .list-item-name {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+    }
+
+    .list-item-price {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--gold-dark);
+    }
+
+    .list-item-action {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--gold-light);
+        color: var(--gold-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.1rem;
+    }
+
+    /* Toast */
+    .add-toast {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #333;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 2000;
+    }
+
+    .add-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .confirmed-section {
+        background: var(--surface-2);
+        border-radius: var(--radius-md);
+        padding: 0.75rem;
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 1.25rem 0 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<div class="page-content pos-layout">
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+
+    <!-- MAIN MENU -->
+    <div class="pos-menu-col">
+        <div class="menu-type-tabs">
+            <?php foreach ($menuTypes as $type): ?>
+                <a href="<?= BASE_URL ?>/menu?type=<?= e($type['key']) ?><?= $tableId ? '&table_id=' . $tableId : '' ?><?= $orderId ? '&order_id=' . $orderId : '' ?>"
+                    class="menu-type-tab <?= $currentType === $type['key'] ? 'is-active' : '' ?>">
+                    <i class="fas <?= e($type['icon']) ?>"></i>
+                    <?= e($type['label']) ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+
+        <?php if (!empty($categories) && $currentType !== 'alacarte'): ?>
+            <div class="category-filter-bar">
+                <button class="filter-pill is-active" data-filter="all">Tất cả</button>
+                <?php foreach ($categories as $cat): ?>
+                    <button class="filter-pill" data-filter="<?= e($cat['name']) ?>">
+                        <?= e($cat['name']) ?>
+                        <?php if (!empty($cat['name_en'])): ?>
+                            <span style="display:block; font-size: 0.65rem; opacity: 0.6; font-weight: 500; margin-top: -2px;">
+                                <?= e($cat['name_en']) ?>
+                            </span>
+                        <?php endif; ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <div id="menuItemsContainer">
+            <?php foreach ($grouped as $catName => $items): ?>
+                <div class="menu-section" data-section="<?= e($catName) ?>">
+                    <h3 style="margin: 1.5rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.1rem;">
+                        <i class="fas fa-caret-right"></i> <?= e($catName) ?>
+                        <?php
+                        // Try to find category object to get name_en
+                        $catObj = null;
+                        foreach ($categories as $c)
+                            if ($c['name'] === $catName) {
+                                $catObj = $c;
+                                break;
+                            }
+                        if ($catObj && !empty($catObj['name_en'])):
+                            ?>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-left: 5px;">
+                                / <?= e($catObj['name_en']) ?>
+                            </span>
+                        <?php endif; ?>
+                    </h3>
+                    <div class="menu-items-grid">
+                        <?php foreach ($items as $item): ?>
+                            <div class="list-item-card">
+                                <div style="display:flex; flex:1; align-items:center; cursor:pointer;"
+                                    data-id="<?= $item['id'] ?>" data-name="<?= e($item['name']) ?>"
+                                    data-price="<?= $item['price'] ?>"
+                                    data-img="<?= $item['image'] ? BASE_URL . '/public/uploads/' . e($item['image']) : '' ?>"
+                                    data-desc="<?= e($item['description'] ?? '') ?>" data-order="<?= $orderId ?: '' ?>"
+                                    onclick="handleOpenItemModal(this)">
+                                    <?php if ($item['image']): ?>
+                                        <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img"
+                                            alt="<?= e($item['name']) ?>">
+                                    <?php else: ?>
+                                        <div class="list-item-img"
+                                            style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--text-muted);">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="list-item-body">
+                                        <div class="list-item-name">
+                                            <?= e($item['name']) ?>
+                                            <?php if (!empty($item['name_en'])): ?>
+                                                <div
+                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
+                                                    <?= e($item['name_en']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="list-item-price"><?= formatPrice($item['price']) ?></div>
+                                    </div>
+                                </div>
+                                <div class="list-item-action"
+                                    onclick="quickAdd(event, <?= $item['id'] ?>, <?= $orderId ?: 'null' ?>)">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
+            <?php if ($currentType === 'alacarte' && !empty($sets)): ?>
+                <div class="menu-section" data-section="Sets & Combo">
+                    <h3
+                        style="margin: 2rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.3rem; border-bottom: 2px solid var(--gold-light); padding-bottom: 0.5rem;">
+                        <i class="fas fa-utensils"></i> SETS & COMBO MENU
+                    </h3>
+                    <div class="menu-items-grid">
+                        <?php foreach ($sets as $set): ?>
+                            <div class="list-item-card" style="border: 1px solid var(--gold-light); background: #fffcf5;">
+                                <div style="display:flex; flex:1; align-items:center; cursor:pointer;"
+                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                    <?php if ($set['image']): ?>
+                                        <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img"
+                                            alt="<?= e($set['name']) ?>">
+                                    <?php else: ?>
+                                        <div class="list-item-img"
+                                            style="display:flex;align-items:center;justify-content:center;background:var(--gold-light);color:var(--gold-dark);">
+                                            <i class="fas fa-box-open"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="list-item-body">
+                                        <div class="list-item-name" style="color: var(--gold-dark);">
+                                            <?= e($set['name']) ?>
+                                            <?php if (!empty($set['name_en'])): ?>
+                                                <div
+                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
+                                                    <?= e($set['name_en']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="list-item-price"><?= formatPrice($set['price']) ?></div>
+                                        <small style="color:var(--text-muted); font-size: 0.7rem;">(Bao gồm nhiều món)</small>
+                                    </div>
+                                </div>
+                                <div class="list-item-action" style="background: var(--gold); color: white;"
+                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                    <i class="fas fa-list-ul"></i>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- CART SIDEBAR -->
+    <?php if ($orderId > 0): ?>
+        <button class="cart-fab" id="cartFab" onclick="toggleCart(true)">
+            <i class="fas fa-shopping-basket"></i>
+            <div class="cart-fab-badge" id="fabCount"><?= count($orderItems) ?></div>
+        </button>
+
+        <div class="pos-cart-col" id="cartCol">
+            <div class="cart-panel">
+                <div class="cart-header" onclick="if(window.innerWidth < 1024) toggleCart(false)" style="cursor:pointer;">
+                    <div>
+                        <h4 style="margin:0; font-weight:800; color:var(--gold-dark);">
+                            <?= e($tableModel->getFullDisplayName($tableId)) ?>
+                        </h4>
+                        <small style="color:var(--text-muted);"><?= e($order['guest_count'] ?? 1) ?> khách</small>
+                    </div>
+                    <button style="background:none; border:none; color:var(--gold-dark); font-size:1.2rem; cursor:pointer;"
+                        class="desktop-hide">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div class="cart-body" onclick="handleBodyClick(event)">
+                    <?php
+                    $draftItems = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
+                    $confirmedItems = array_filter($orderItems, fn($it) => $it['status'] === 'confirmed');
+                    $draftCount = count($draftItems);
+
+                    if (empty($orderItems)): ?>
+                        <div style="text-align:center; padding-top:3rem; color:var(--text-dim); pointer-events:none;">
+                            <i class="fas fa-shopping-basket" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i>
+                            <p>Chưa có món nào.</p>
+                        </div>
+                    <?php else: ?>
+                        <?php if ($draftCount > 0): ?>
+                            <div class="section-label"><i class="fas fa-edit"></i> Món đang chọn (nháp)</div>
+                            <?php foreach ($draftItems as $it): ?>
+                                <div class="cart-item-row"
+                                    style="display:flex; justify-content:space-between; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px dashed var(--border);">
+                                    <div style="flex:1;">
+                                        <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;"><?= e($it['item_name']) ?>
+                                        </div>
+                                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                                            <span
+                                                style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;"><?= formatPrice($it['item_price']) ?></span>
+                                            <div
+                                                style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
+                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)"
+                                                    style="border:none; background:none; padding:4px; cursor:pointer;"><i
+                                                        class="fas fa-minus" style="font-size:0.7rem;"></i></button>
+                                                <span
+                                                    style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;"><?= $it['quantity'] ?></span>
+                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)"
+                                                    style="border:none; background:none; padding:4px; cursor:pointer;"><i
+                                                        class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-weight:800; font-size:0.95rem;">
+                                            <?= formatPrice($it['item_price'] * $it['quantity']) ?>
+                                        </div>
+                                        <small style="color:var(--text-muted); font-weight:600;">Món nháp</small>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if (!empty($confirmedItems)): ?>
+                            <div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi bếp (Đang làm)</div>
+                            <div class="confirmed-section">
+                                <?php foreach ($confirmedItems as $it): ?>
+                                    <div class="cart-item-row"
+                                        style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border); border-style: none none dashed none;">
+                                        <div style="flex:1;">
+                                            <div style="font-weight:700; font-size:0.9rem; margin-bottom:2px;">
+                                                <?= e($it['item_name']) ?>
+                                            </div>
+                                            <span
+                                                style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">x<?= $it['quantity'] ?></span>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <div style="font-weight:700; font-size:0.9rem;">
+                                                <?= formatPrice($it['item_price'] * $it['quantity']) ?>
+                                            </div>
+                                            <small style="color:var(--success); font-weight:600; font-size: 0.75rem;">Đã gửi</small>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+                <div class="cart-footer">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:1.25rem; font-weight:800;">
+                        <span style="color:var(--text-muted);">TỔNG CỘNG</span>
+                        <span style="color:var(--danger); font-size:1.4rem;"
+                            id="orderTotal"><?= formatPrice($orderTotal) ?></span>
+                    </div>
+                    <div id="cartActionBtn">
+                        <?php if ($draftCount > 0): ?>
+                            <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="btn btn-gold btn-block"
+                                style="background:var(--danger); border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);">
+                                <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?> món)
+                            </button>
+                        <?php elseif (!empty($orderItems)): ?>
+                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>"
+                                class="btn btn-gold btn-block"
+                                style="background:var(--success); color:white; border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+                                <i class="fas fa-check-circle"></i> ĐÃ GỬI BẾP (XEM BILL)
+                            </a>
+                        <?php else: ?>
+                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>"
+                                class="btn btn-gold btn-block" style="height:54px; font-size:1rem;">
+                                <i class="fas fa-file-invoice-dollar"></i> XEM CHI TIẾT BILL
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<div id="addToast" class="add-toast"></div>
+
+<!-- Set/Combo Detail Modal -->
+<div class="modal-backdrop" id="modalSetDetail">
+    <div class="modal modal-premium" style="max-width:600px;">
+        <div class="modal-header">
+            <div class="d-flex flex-column">
+                <h3 id="modalSetName" class="playfair"></h3>
+                <div id="modalSetPrice" class="text-gold fw-800"></div>
+            </div>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p id="modalSetDesc" class="text-muted small mb-4"></p>
+            <h4 class="form-label mb-3"><i class="fas fa-list-check me-2"></i> Thành phần trong Combo</h4>
+            <div id="modalSetItemsList" class="d-flex flex-column gap-2 mb-4">
+                <!-- Set items will be injected here -->
+            </div>
+            <div class="d-grid gap-3 mt-4">
+                <button onclick="confirmAddSetToOrder()" class="btn btn-gold py-3 fw-bold">
+                    <i class="fas fa-plus-circle me-2"></i> THÊM COMBO VÀO ĐƠN HÀNG
+                </button>
+                <button class="btn btn-ghost" data-modal-close>ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Item Detail Modal -->
+<div class="modal-backdrop" id="modalItemDetail">
+    <div class="modal modal-premium" style="max-width:500px;">
+        <div class="modal-header p-0 border-0" style="height: 250px; position: relative;" id="modalItemImgContainer">
+            <div id="modalItemImg" style="width: 100%; height: 100%;">
+                <div id="modalItemImgPlaceholder"
+                    class="d-flex align-items-center justify-content-center h-100 bg-light text-muted opacity-30">
+                    <i class="fas fa-image fa-3x"></i>
+                </div>
+            </div>
+            <button class="modal-close" data-modal-close
+                style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.4); color: #fff;"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body pt-4">
+            <h3 id="modalItemName" class="playfair mb-1"></h3>
+            <div id="modalItemPrice" class="text-gold fw-800 mb-3 fs-4"></div>
+            <p id="modalItemDesc" class="text-muted small mb-4"></p>
+
+            <div id="orderControlsSection" style="display:none;">
+                <div class="form-group">
+                    <label class="form-label">Ghi chú (Note)</label>
+                    <input type="text" id="modalItemNote" class="form-control"
+                        placeholder="Ví dụ: Không hành, ít cay...">
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
+                    <div class="qty-stepper d-flex align-items-center bg-light rounded-pill p-1">
+                        <button onclick="changeModalQty(-1)" class="btn btn-icon-sm"><i
+                                class="fas fa-minus"></i></button>
+                        <span id="modalItemQty" class="px-3 fw-800">1</span>
+                        <button onclick="changeModalQty(1)" class="btn btn-icon-sm"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <button onclick="confirmAddToOrder()" class="btn btn-gold flex-fill py-3 fw-bold">
+                        GỌI MÓN: <span id="modalBtnTotal" class="ms-1"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentItem = null;
+    let currentSet = null;
+
+    function handleOpenSetModal(set) {
+        currentSet = set;
+        document.getElementById('modalSetName').textContent = set.name;
+        document.getElementById('modalSetPrice').textContent = formatMoney(set.price);
+        document.getElementById('modalSetDesc').textContent = set.description || '';
+
+        const list = document.getElementById('modalSetItemsList');
+        list.innerHTML = '';
+
+        if (set.items && set.items.length > 0) {
+            set.items.forEach(it => {
+                const itemDiv = document.createElement('div');
+                itemDiv.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:0.75rem; background:#fff; border-radius:12px; border:1px solid var(--border);';
+                itemDiv.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <input type="checkbox" checked disabled style="width:18px; height:18px; accent-color:var(--gold);">
+                        <div>
+                            <div style="font-weight:700; font-size:0.9rem;">${it.name}</div>
+                            <small style="color:var(--text-muted);">Số lượng: ${it.quantity}</small>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(itemDiv);
+            });
+        }
+
+        Aurora.openModal('modalSetDetail');
+    }
+
+    function confirmAddSetToOrder() {
+        if (!<?= $orderId ?: 0 ?>) { alert('Vui lòng chọn bàn/order trước!'); return; }
+
+        const f = new URLSearchParams();
+        f.append('order_id', <?= $orderId ?: 0 ?>);
+        f.append('set_id', currentSet.id);
+
+        // Prepare items array for the controller
+        currentSet.items.forEach((it, idx) => {
+            f.append(`items[${idx}][menu_item_id]`, it.menu_item_id);
+            f.append(`items[${idx}][quantity]`, it.quantity);
+        });
+
+        fetch('<?= BASE_URL ?>/orders/add-set', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: f
+        }).then(res => res.json()).then(res => {
+            if (res.ok) {
+                Aurora.closeModal('modalSetDetail');
+                showToast('Đã thêm Combo!');
+                updateCartUI(res);
+            } else {
+                alert(res.message || 'Lỗi khi thêm Combo');
+            }
+        });
+    }
+
+    function formatMoney(amount) { return new Intl.NumberFormat('vi-VN').format(amount) + '₫'; }
+    function toggleCart(show) {
+        const c = document.getElementById('cartCol');
+        const o = document.getElementById('cartOverlay');
+        if (!c) return;
+        if (show) { c.classList.add('is-visible'); o?.classList.add('is-visible'); document.body.style.overflow = 'hidden'; }
+        else { c.classList.remove('is-visible'); o?.classList.remove('is-visible'); document.body.style.overflow = ''; }
+    }
+
+    function handleBodyClick(e) {
+        if (window.innerWidth >= 1024) return;
+        // Nếu click trực tiếp vào cart-body hoặc vùng không chứa class quan trọng -> Đóng giỏ
+        const isItemRow = e.target.closest('.cart-item-row');
+        const isButton = e.target.closest('button, a');
+        if (!isItemRow && !isButton) {
+            toggleCart(false);
+        }
+    }
+
+    function updateCartUI(data) {
+        if (!data.ok) return;
+        const body = document.querySelector('.cart-body');
+        const totalEl = document.getElementById('orderTotal');
+        const fTotal = document.getElementById('fabTotal');
+        const fCount = document.getElementById('fabCount');
+        const btnContainer = document.getElementById('cartActionBtn');
+
+        if (totalEl) totalEl.textContent = data.total_fmt;
+        if (fTotal) fTotal.textContent = data.total_fmt;
+        if (fCount) fCount.textContent = data.items.length;
+
+        if (body) {
+            if (data.items.length === 0) {
+                body.innerHTML = '<div style="text-align:center; padding-top:3rem; color:var(--text-dim);"><i class="fas fa-shopping-basket" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i><p>Chưa có món nào.</p></div>';
+            } else {
+                let draftsHtml = ''; let confirmedHtml = ''; let draftCount = 0;
+                data.items.forEach(it => {
+                    const itemHtml = `<div class="cart-item-row" style="display:flex; justify-content:space-between; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px dashed var(--border);">
+                        <div style="flex:1;">
+                            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
+                            <div style="display:flex; align-items:center; gap:0.75rem;">
+                                <span style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
+                                ${it.status === 'draft' ? `
+                                <div style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
+                                    <button onclick="changeCartQty(${it.id}, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
+                                    <span style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;">${it.quantity}</span>
+                                    <button onclick="changeCartQty(${it.id}, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                                </div>
+                                ` : `
+                                <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">x${it.quantity}</span>
+                                `}
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:800; font-size:0.95rem;">${it.subtotal_fmt}</div>
+                            <small style="color:${it.status === 'confirmed' ? 'var(--success)' : 'var(--text-muted)'}; font-weight:600;">
+                                ${it.status === 'confirmed' ? 'Đã gửi' : 'Món nháp'}
+                            </small>
+                        </div>
+                    </div>`;
+
+                    if (it.status === 'draft') {
+                        draftsHtml += itemHtml;
+                        draftCount++;
+                    } else {
+                        confirmedHtml += itemHtml;
+                    }
+                });
+
+                let finalHtml = '';
+                if (draftsHtml) {
+                    finalHtml += `<div class="section-label"><i class="fas fa-edit"></i> Món đang chọn (nháp)</div>${draftsHtml}`;
+                }
+                if (confirmedHtml) {
+                    finalHtml += `<div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi bếp (Đang làm)</div><div class="confirmed-section">${confirmedHtml}</div>`;
+                }
+                body.innerHTML = finalHtml;
+
+                if (btnContainer) {
+                    if (draftCount > 0) {
+                        btnContainer.innerHTML = `<button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="btn btn-gold btn-block" style="background:var(--danger); border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
+                    } else if (data.items.length > 0) {
+                        btnContainer.innerHTML = `<a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="btn btn-gold btn-block" style="background:var(--success); color:white; border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-check-circle"></i> ĐÃ GỬI BẾP (XEM BILL)</a>`;
+                    } else {
+                        btnContainer.innerHTML = `<a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="btn btn-gold btn-block" style="height:54px; font-size:1rem;"><i class="fas fa-file-invoice-dollar"></i> XEM CHI TIẾT BILL</a>`;
+                    }
+                }
+            }
+        }
+    }
+
+    function changeCartQty(itemId, delta) {
+        fetch('<?= BASE_URL ?>/orders/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ item_id: itemId, order_id: <?= $orderId ?: 0 ?>, qty: 'delta:' + delta })
+        }).then(r => r.json()).then(data => { if (data.ok) updateCartUI(data); });
+    }
+
+    function confirmOrderAjax(orderId) {
+        if (!confirm('Xác nhận gửi các món nháp này xuống bếp?')) return;
+        fetch('<?= BASE_URL ?>/orders/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ order_id: orderId, table_id: <?= $tableId ?: 0 ?> })
+        }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã gửi bếp thành công!'); updateCartUI(res); } });
+    }
+
+    function handleOpenItemModal(el) {
+        const d = el.dataset;
+        currentItem = { id: d.id, name: d.name, price: parseFloat(d.price), orderId: d.order, qty: 1 };
+        document.getElementById('modalItemName').textContent = d.name;
+        document.getElementById('modalItemPrice').textContent = formatMoney(d.price);
+        document.getElementById('modalItemDesc').textContent = d.desc || '';
+        const imgEl = document.getElementById('modalItemImg');
+        const placeholder = document.getElementById('modalItemImgPlaceholder');
+        imgEl.querySelectorAll('img').forEach(i => i.remove());
+        if (d.img) {
+            placeholder.style.display = 'none';
+            const i = document.createElement('img');
+            i.src = d.img; i.style.cssText = 'width:100%; height:100%; object-fit:cover;';
+            imgEl.appendChild(i);
+        } else { placeholder.style.display = 'flex'; }
+        document.getElementById('orderControlsSection').style.display = d.order ? 'block' : 'none';
+        if (d.order) updateModalUI();
+        Aurora.openModal('modalItemDetail');
+    }
+
+    function changeModalQty(delta) { if (!currentItem) return; currentItem.qty = Math.max(1, currentItem.qty + delta); updateModalUI(); }
+    function updateModalUI() { document.getElementById('modalItemQty').textContent = currentItem.qty; document.getElementById('modalBtnTotal').textContent = formatMoney(currentItem.qty * currentItem.price); }
+
+    function confirmAddToOrder() {
+        const f = new FormData();
+        f.append('order_id', currentItem.orderId); f.append('menu_item_id', currentItem.id);
+        f.append('qty', currentItem.qty); f.append('note', document.getElementById('modalItemNote').value);
+        fetch('<?= BASE_URL ?>/orders/add', { method: 'POST', body: f }).then(res => res.json()).then(res => {
+            if (res.ok) { Aurora.closeModal('modalItemDetail'); showToast('Đã thêm món!'); updateCartUI(res); }
+        });
+    }
+
+    function quickAdd(event, itemId, orderId) {
+        event.stopPropagation();
+        if (!orderId) { alert('Vui lòng chọn bàn trước khi gọi món!'); return; }
+        const f = new FormData(); f.append('order_id', orderId); f.append('menu_item_id', itemId); f.append('qty', 1);
+        fetch('<?= BASE_URL ?>/orders/add', { method: 'POST', body: f }).then(res => res.json()).then(res => {
+            if (res.ok) { showToast('Đã thêm món!'); updateCartUI(res); }
+        });
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('addToast');
+        if (!t) return;
+        t.textContent = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('is-active'));
+            pill.classList.add('is-active');
+            const f = pill.dataset.filter;
+            document.querySelectorAll('.menu-section').forEach(s => { s.style.display = (f === 'all' || s.dataset.section === f) ? 'block' : 'none'; });
+        });
+    });
+</script>

@@ -1,0 +1,96 @@
+ỨNG DỤNG WEB/APP Đặt oder nhà hàng
+
+1. Mô tả hệ thống
+-  Hệ thống giúp nhân viên phục vụ giảm tải các bước trong công việc, hệ thống có chức năng như 
++ Về phía khách hàng. 
+*** khách hàng có thể oder qua mã QR được in trực tiếp tại bàn 
+*** Khách hàng có thể xem menu và thực hiện các thao tác như 
+- Thêm món vào giỏ hàng 
+- Xóa món khỏi giỏ hàng 
+- Tăng số lượng món 
+- Giảm số lượng món 
+- Gọi nhân viên hỗ trợ 
+- Tính tiền 
+*** khách hàng có thể oder nhiều lần và gọi nhân viên khi cần thiết hỗ trợ 
+*** Khách hàng có yêu cầu tính tiền 
+==> Quét QR để thực hiện các tính năng đó 
+
++ Về phía nhân viên 
+- Nhân viên có thể nhận oder trực tiếp từ khi khách quét mã 
+*** Nhân viên có thể xem danh sách oder và thực hiện các thao tác như 
+- Xác nhận oder 
+- Hủy oder 
+- Tính tiền 
+- In hóa đơn 
+- Ghép bàn
+- Tách bàn
+- Chuyển bàn
+- Chuyển đổi trạng thái bàn 
+
++ Về phía quản lý 
+- Quản lý có thể xem danh sách bàn và thực hiện các thao tác như 
+- Thêm bàn, khu
+- Xóa bàn 
+- Sửa bàn 
+- Chuyển đổi trạng thái bàn 
+- Quản lý menu 
+- Thêm món 
+- Xóa món 
+- Sửa món 
+- Quản lý danh mục món 
+- Thêm danh mục món 
+- Xóa danh mục món 
+- Sửa danh mục món 
+- Quản lý đơn hàng 
+- Xem danh sách đơn hàng 
+- Xem chi tiết đơn hàng 
+- Hủy đơn hàng 
+- In hóa đơn 
+- Quản lý nhân viên 
+- Quản lý ca trực 
+- Gán nhân viên vào ca
+- Thêm nhân viên 
+- Xóa nhân viên 
+- Sửa nhân viên 
+- Quản lý tài khoản 
+- Thêm tài khoản 
+- Xóa tài khoản 
+- Sửa tài khoản 
+- Quản lý quyền 
+- Thêm quyền 
+- Xóa quyền 
+- Sửa quyền 
+- Xem ca trực của nhân viên ai phụ trách quản lý
+
+
+* có 3 loại menu 
+- Menu chính 
+- Menu đồ uống 
+- Menu tráng miệng  
+
+* có 3 khu vực
+- Khu A1
+- Khu B1
+- Khu C1
+- Khu Nhà hàng Âu 
+- Khu Nhà hàng Á ( Vip 1 2, 3 4)
+
++ về phía auth 
+
+Đăng nhập 
+- Chọn nhân viên ca 
+- Chọn ca trực ( Sáng , chiều)
+- nhập mật khẩu ( Pin )
+
+Khách hàng 
+- Chồng spam ( khi mang QR ra ngoài kháhc sạn - cần nghiên cứu thêm )
+
+GIAO DIỆN 
+-  Phẳng không bo góc
+- Hiện đại
+- Màu sắc chủ đạo là #D4AF37
+- Màu sắc phụ là màu trắng 
+- Màu sắc nhấn là màu tương phản đồng bộ 
+
+CODE 
+- tách các module và gọi (JS CSS PHP DB)
