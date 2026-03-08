@@ -11,11 +11,17 @@ define('APP_LANG', 'vi');
 
 // Paths
 define('BASE_PATH', dirname(__DIR__));
-// Tự động xác định BASE_URL (đường dẫn tương đối từ root tên miền)
-// Ví dụ: nếu chạy ở http://localhost/project/index.php thì BASE_URL là /project
-// Nếu chạy ở http://aurora.com/index.php thì BASE_URL là (rỗng)
+
+// Tự động xác định BASE_URL (URL tuyệt đối bao gồm cả protocol và domain)
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
-define('BASE_URL', ($scriptDir === '/' || $scriptDir === '\\') ? '' : rtrim($scriptDir, '/'));
+$basePath = ($scriptDir === '/' || $scriptDir === '\\') ? '' : rtrim($scriptDir, '/');
+
+// BASE_URL cho các đường dẫn (links, redirects)
+define('BASE_URL', $protocol . $host . $basePath);
+// ROUTE_BASE_PATH cho việc định tuyến (chỉ lấy phần path)
+define('ROUTE_BASE_PATH', $basePath);
 
 define('UPLOAD_PATH', BASE_PATH . '/public/uploads/');
 define('UPLOAD_URL', BASE_URL . '/public/uploads/');

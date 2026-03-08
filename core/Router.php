@@ -24,8 +24,8 @@ class Router
         $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
         // Strip base path
-        $basePath = BASE_URL;
-        if (str_starts_with($uri, $basePath)) {
+        $basePath = ROUTE_BASE_PATH;
+        if ($basePath !== '' && str_starts_with($uri, $basePath)) {
             $uri = substr($uri, strlen($basePath));
         }
         $uri = '/' . trim($uri, '/');

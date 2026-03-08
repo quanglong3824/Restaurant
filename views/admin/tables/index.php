@@ -314,7 +314,7 @@
                 const tableName = btn.dataset.name;
 
                 // Generate URL: Always use production URL for the QR content so it works after printing
-                const productionUrl = 'https://aurorahotelplaza.com/Restaurant';
+                const productionUrl = 'https://aurorahotelplaza.com/restaurant';
                 const fullUrl = `${productionUrl}/menu?table_id=${tableId}`;
 
                 qrTitle.innerText = `Mã QR: ${tableName}`;
