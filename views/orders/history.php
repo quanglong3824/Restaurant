@@ -1,18 +1,18 @@
 <?php // views/orders/history.php — Order History for Waiters/Admins
 // Use pagination data from controller
 $page = $currentPage ?? 1;
-$limit = 8; // Items per page
+$limit = 10; // Items per page
 $totalPages = $totalPages ?? 1;
 $totalItems = $totalCount ?? 0;
 $totalRevenueVal = $totalRevenue ?? 0;
 $pagedOrders = $orders;
 ?>
 
-<div class="history-page-wrapper animate-fade-in">
+<div class="history-page-wrapper">
     <div class="page-content-container">
 
         <!-- Header Section -->
-        <div class="page-header-minimal mb-6">
+        <div class="page-header-minimal mb-4">
             <div class="d-flex justify-content-between align-items-end">
                 <div>
                     <div class="header-breadcrumb mb-2">
@@ -20,47 +20,38 @@ $pagedOrders = $orders;
                         <i class="fas fa-chevron-right mx-2 text-muted"></i>
                         <span class="text-gold fw-bold">Lịch sử</span>
                     </div>
-                    <h1 class="playfair fw-900 mb-2" style="font-size: 2.8rem; letter-spacing: -1px;">Lịch sử giao dịch</h1>
-                    <p class="text-muted-gold mb-0"><i class="fas fa-layer-group me-2" style="color: var(--gold)"></i> Hệ thống quản lý hóa đơn Aurora Hotel Plaza</p>
+                    <h1 class="playfair fw-900 mb-1" style="font-size: 2rem; letter-spacing: -0.5px;">Lịch sử giao dịch</h1>
+                    <p class="text-muted-gold mb-0" style="font-size: 0.85rem; font-weight: 500;"><i class="fas fa-layer-group me-1" style="color: var(--gold)"></i> Hệ thống quản lý hóa đơn</p>
                 </div>
                 <div class="header-stats">
                     <div class="total-revenue-display">
-                        <div class="revenue-amount"><?= formatPrice($totalRevenueVal) ?></div>
-                        <div class="revenue-label">Tổng doanh thu</div>
+                        <div class="revenue-amount" style="font-size: 1.5rem; font-weight: 800;"><?= formatPrice($totalRevenueVal) ?></div>
+                        <div class="revenue-label" style="font-size: 0.7rem; font-weight: 600;">Tổng doanh thu</div>
                     </div>
                     <div class="results-counter">
-                        <span class="count-badge"><?= number_format($totalItems) ?></span>
-                        <span class="count-label">Hóa đơn</span>
+                        <span class="count-badge" style="padding: 0.25rem 0.8rem; font-size: 1.1rem;"><?= number_format($totalItems) ?></span>
+                        <span class="count-label" style="font-size: 0.65rem;">Hóa đơn</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Filter Section - Refined Glassmorphism -->
-        <section class="filter-section mb-6">
-            <div class="filter-glass-card animate-fade-in-up">
+        <!-- Filter Section -->
+        <section class="filter-section mb-4">
+            <div class="filter-glass-card">
                 <form action="<?= BASE_URL ?>/orders/history" method="GET" id="historyFilterForm">
-                    <div class="row g-4">
-                        <div class="col-lg-4">
+                    <div class="row g-3">
+                        <div class="col-lg-3">
                             <div class="filter-type-group">
-                                <button type="button" class="type-btn <?= $filters['type'] === 'date' ? 'active' : '' ?>" onclick="setFilter('date')">
-                                    <div class="btn-icon"><i class="fas fa-calendar-day"></i></div>
-                                    <div class="btn-label">Ngày</div>
-                                </button>
-                                <button type="button" class="type-btn <?= $filters['type'] === 'week' ? 'active' : '' ?>" onclick="setFilter('week')">
-                                    <div class="btn-icon"><i class="fas fa-calendar-week"></i></div>
-                                    <div class="btn-label">Tuần</div>
-                                </button>
-                                <button type="button" class="type-btn <?= $filters['type'] === 'month' ? 'active' : '' ?>" onclick="setFilter('month')">
-                                    <div class="btn-icon"><i class="fas fa-calendar-alt"></i></div>
-                                    <div class="btn-label">Tháng</div>
-                                </button>
+                                <button type="button" class="type-btn <?= $filters['type'] === 'date' ? 'active' : '' ?>" onclick="setFilter('date')">Ngày</button>
+                                <button type="button" class="type-btn <?= $filters['type'] === 'week' ? 'active' : '' ?>" onclick="setFilter('week')">Tuần</button>
+                                <button type="button" class="type-btn <?= $filters['type'] === 'month' ? 'active' : '' ?>" onclick="setFilter('month')">Tháng</button>
                             </div>
                             <input type="hidden" name="filter_type" id="filter_type" value="<?= e($filters['type']) ?>">
                         </div>
 
-                        <div class="col-lg-8">
-                            <div class="row g-3 align-items-end">
+                        <div class="col-lg-9">
+                            <div class="row g-2 align-items-end">
                                 <?php if ($filters['type'] === 'date'): ?>
                                     <div class="col-sm-7">
                                         <div class="input-premium-wrapper">
@@ -72,24 +63,24 @@ $pagedOrders = $orders;
                                         <button type="submit" class="btn-premium-gold w-100">Cập nhật</button>
                                     </div>
                                 <?php elseif ($filters['type'] === 'week'): ?>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <input type="number" name="week" class="input-premium" min="1" max="53" value="<?= e($filters['week']) ?>" placeholder="Tuần">
                                     </div>
                                     <div class="col-4">
                                         <input type="number" name="year" class="input-premium" value="<?= e($filters['year']) ?>" placeholder="Năm">
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-5">
                                         <button type="submit" class="btn-premium-gold w-100">Lọc</button>
                                     </div>
                                 <?php elseif ($filters['type'] === 'month'): ?>
-                                    <div class="col-5">
+                                    <div class="col-4">
                                         <select name="month" class="input-premium">
                                             <?php for ($m = 1; $m <= 12; $m++): ?>
                                                 <option value="<?= $m ?>" <?= (int) $filters['month'] === $m ? 'selected' : '' ?>>Tháng <?= $m ?></option>
                                             <?php endfor; ?>
                                         </select>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-5">
                                         <input type="number" name="year" class="input-premium" value="<?= e($filters['year']) ?>" placeholder="Năm">
                                     </div>
                                     <div class="col-3">
@@ -103,25 +94,25 @@ $pagedOrders = $orders;
             </div>
         </section>
 
-        <!-- Insights / Summary Row -->
-        <section class="summary-section mb-6">
-            <div class="summary-row-premium animate-scale-up">
+        <!-- Summary Row -->
+        <section class="summary-section mb-4">
+            <div class="summary-row-premium">
                 <div class="summary-main-card">
                     <div class="summary-bg-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="summary-content">
                         <span class="summary-tag">DOANH THU TỔNG KỲ</span>
-                        <h2 class="revenue-display"><?= formatPrice($totalRevenueVal) ?></h2>
+                        <h2 class="revenue-display" style="font-size: 2.5rem;"><?= formatPrice($totalRevenueVal) ?></h2>
                     </div>
                 </div>
                 <div class="summary-stats-group">
                     <div class="stat-mini-card">
-                        <div class="stat-icon"><i class="fas fa-receipt text-success"></i></div>
-                        <span class="val"><?= number_format($totalItems) ?></span>
+                        <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                        <span class="val" style="font-size: 1.75rem;"><?= number_format($totalItems) ?></span>
                         <span class="lbl">Giao dịch</span>
                     </div>
                     <div class="stat-mini-card">
-                        <div class="stat-icon"><i class="fas fa-file-invoice text-gold"></i></div>
-                        <span class="val"><?= count($pagedOrders) ?></span>
+                        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+                        <span class="val" style="font-size: 1.75rem;"><?= count($pagedOrders) ?></span>
                         <span class="lbl">Trang này</span>
                     </div>
                 </div>
@@ -130,85 +121,79 @@ $pagedOrders = $orders;
 
         <!-- Content Listing -->
         <section class="history-list-section">
-            <div class="section-title-row mb-4">
-                <h3 class="playfair fw-800"><i class="fas fa-stream text-gold me-2"></i> Dòng thời gian giao dịch</h3>
-                <div class="pagination-info">Hiển thị từ <?= (($page - 1) * $limit) + 1 ?> đến <?= min($page * $limit, $totalItems) ?></div>
+            <div class="section-title-row mb-3">
+                <h3 class="playfair fw-800" style="font-size: 1.3rem;"><i class="fas fa-stream text-gold me-2"></i> Dòng thời gian</h3>
+                <div class="pagination-info" style="font-size: 0.8rem; font-weight: 500;">Hiển thị <?= (($page - 1) * $limit) + 1 ?> - <?= min($page * $limit, $totalItems) ?></div>
             </div>
 
             <?php if (empty($pagedOrders)): ?>
-                <div class="empty-state-box animate-fade-in-up">
-                    <div class="empty-icon-circle mb-4">
+                <div class="empty-state-box">
+                    <div class="empty-icon-circle mb-3">
                         <i class="fas fa-inbox"></i>
                     </div>
-                    <h4 class="fw-bold">Không có dữ liệu hóa đơn</h4>
-                    <p class="text-muted mt-2">Vui lòng điều chỉnh bộ lọc hoặc chờ thêm dữ liệu mới.</p>
+                    <h4 class="fw-bold" style="font-size: 1rem; margin-bottom: 0.5rem;">Không có dữ liệu</h4>
+                    <p class="text-muted" style="font-size: 0.85rem;">Vui lòng điều chỉnh bộ lọc.</p>
                 </div>
             <?php else: ?>
-                <div class="history-premium-grid">
+                <div class="history-premium-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                     <?php foreach ($pagedOrders as $order): ?>
-                        <div class="premium-order-card animate-fade-in-up" style="animation-delay: <?= $loop->index * 0.05 ?>s">
+                        <div class="premium-order-card" style="border-radius: 18px;">
                             <div class="card-top-accent"></div>
-                            <div class="card-inner">
+                            <div class="card-inner" style="padding: 1.25rem;">
                                 <div class="order-header">
-                                    <div class="table-avatar">
-                                        <span class="num"><?= e(str_replace('Bàn ', '', $order['table_name'])) ?></span>
+                                    <div class="table-avatar" style="width: 56px; height: 56px; font-size: 1.25rem;">
+                                        <span><?= e(str_replace('Bàn ', '', $order['table_name'])) ?></span>
                                     </div>
-                                    <div class="order-meta">
+                                    <div class="order-meta" style="flex: 1;">
                                         <div class="d-flex justify-content-between align-items-start">
-                                            <h5 class="m-0 fw-800 text-dark"><?= e($order['table_name']) ?></h5>
-                                            <span class="order-id">#<?= sprintf('%06d', $order['id']) ?></span>
+                                            <h5 class="m-0 fw-800 text-dark" style="font-size: 1rem;"><?= e($order['table_name']) ?></h5>
+                                            <span class="order-id" style="font-size: 0.7rem; padding: 0.2rem 0.6rem;"><?= sprintf('%06d', $order['id']) ?></span>
                                         </div>
-                                        <div class="timestamp">
-                                            <span class="timestamp-item">
-                                                <i class="far fa-calendar-check me-1 text-success"></i> <?= date('d/m/Y', strtotime($order['closed_at'])) ?>
-                                            </span>
+                                        <div class="timestamp" style="font-size: 0.75rem; margin-top: 0.3rem;">
+                                            <span class="timestamp-item"><i class="far fa-calendar-check me-1" style="color: var(--success)"></i> <?= date('d/m/Y', strtotime($order['closed_at'])) ?></span>
                                             <span class="separator"></span>
-                                            <span class="timestamp-item">
-                                                <i class="far fa-clock me-1 text-gold"></i> <?= date('H:i', strtotime($order['closed_at'])) ?>
-                                            </span>
+                                            <span class="timestamp-item"><i class="far fa-clock me-1" style="color: var(--gold)"></i> <?= date('H:i', strtotime($order['closed_at'])) ?></span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="order-details-summary my-4">
+                                <div class="order-details-summary my-3">
                                     <div class="detail-row">
-                                        <span class="detail-icon"><i class="fas fa-user-tie text-muted"></i></span>
+                                        <span class="detail-icon"><i class="fas fa-user-tie"></i></span>
                                         <div class="detail-value-group">
-                                            <span class="label">Nhân viên</span>
-                                            <span class="value"><?= e($order['waiter_name'] ?? 'Hệ thống') ?></span>
+                                            <span class="label" style="font-size: 0.7rem; color: var(--text-muted);">Nhân viên</span>
+                                            <span class="value" style="font-size: 0.85rem; font-weight: 600;"><?= e($order['waiter_name'] ?? 'Hệ thống') ?></span>
                                         </div>
                                     </div>
                                     <div class="detail-row">
-                                        <span class="detail-icon"><i class="fas fa-credit-card text-muted"></i></span>
+                                        <span class="detail-icon"><i class="fas fa-credit-card"></i></span>
                                         <div class="detail-value-group">
-                                            <span class="label">Thanh toán</span>
-                                            <span class="value-badge"><?= strtoupper(e($order['payment_method'])) ?></span>
+                                            <span class="label" style="font-size: 0.7rem; color: var(--text-muted);">Thanh toán</span>
+                                            <span class="value-badge" style="font-size: 0.7rem; padding: 0.2rem 0.6rem; text-transform: uppercase;"><?= strtoupper(e($order['payment_method'])) ?></span>
                                         </div>
                                     </div>
                                     <div class="detail-row">
-                                        <span class="detail-icon"><i class="fas fa-utensils text-muted"></i></span>
+                                        <span class="detail-icon"><i class="fas fa-utensils"></i></span>
                                         <div class="detail-value-group">
-                                            <span class="label">Sản phẩm</span>
-                                            <span class="value"><?= $order['item_count'] ?> món ăn</span>
+                                            <span class="label" style="font-size: 0.7rem; color: var(--text-muted);">Sản phẩm</span>
+                                            <span class="value" style="font-size: 0.85rem; font-weight: 600;"><?= $order['item_count'] ?> món</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="order-pricing border-top pt-4 mb-4">
+                                <div class="order-pricing border-top pt-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="pricing-label">TỔNG TIỀN THANH TOÁN</span>
-                                        <span class="pricing-value"><?= formatPrice($order['total']) ?></span>
+                                        <span class="pricing-label" style="font-size: 0.65rem; letter-spacing: 1px;">TỔNG TIỀN</span>
+                                        <span class="pricing-value" style="font-size: 1.3rem; color: var(--gold); font-weight: 900;"><?= formatPrice($order['total']) ?></span>
                                     </div>
                                 </div>
 
                                 <div class="order-actions gap-2">
-                                    <button type="button" class="btn-action-view view-details-btn"
-                                        data-order-id="<?= $order['id'] ?>"
-                                        data-order-data="<?= htmlspecialchars(json_encode($order)) ?>">
-                                        <i class="fas fa-eye me-2"></i> Xem chi tiết
+                                    <button type="button" class="btn-action-view view-details-btn" style="font-size: 0.75rem; padding: 0.6rem;" data-order-id="<?= $order['id'] ?>" data-order-data="<?= htmlspecialchars(json_encode($order)) ?>">
+                                        <i class="fas fa-eye me-1"></i> CHI TIẾT
                                     </button>
-                                    <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn-action-print">
-                                        <i class="fas fa-print me-2"></i> In hóa đơn
+                                    <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank" class="btn-action-print" style="font-size: 0.75rem; padding: 0.6rem;">
+                                        <i class="fas fa-print me-1"></i> IN
                                     </a>
                                 </div>
                             </div>
@@ -216,10 +201,10 @@ $pagedOrders = $orders;
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Pagination UI -->
+                <!-- Pagination -->
                 <?php if ($totalPages > 1): ?>
-                <div class="pagination-scroller mt-6 animate-fade-in">
-                    <nav class="pagination-luxury">
+                <div class="pagination-scroller mt-4">
+                    <nav class="pagination-luxury" style="gap: 0.5rem;">
                         <?php
                         $queryParams = $_GET;
                         unset($queryParams['page']);
@@ -227,34 +212,34 @@ $pagedOrders = $orders;
                         $baseUrl = BASE_URL . '/orders/history?' . ($queryString ? $queryString . '&' : '');
                         ?>
 
-                        <a href="<?= $page <= 1 ? 'javascript:void(0)' : $baseUrl . 'page=' . ($page - 1) ?>" class="pag-btn <?= $page <= 1 ? 'disabled' : '' ?>" aria-label="Trang trước">
-                            <i class="fas fa-chevron-left"></i>
+                        <a href="<?= $page <= 1 ? 'javascript:void(0)' : $baseUrl . 'page=' . ($page - 1) ?>" class="pag-btn <?= $page <= 1 ? 'disabled' : '' ?>" style="width: 44px; height: 44px;">
+                            <i class="fas fa-chevron-left" style="font-size: 0.8rem;"></i>
                         </a>
 
-                        <div class="pag-numbers">
+                        <div class="pag-numbers" style="padding: 0.3rem; border-radius: 16px;">
                             <?php
-                            $startPage = max(1, $page - 2);
-                            $endPage = min($totalPages, $page + 2);
+                            $startPage = max(1, $page - 1);
+                            $endPage = min($totalPages, $page + 1);
 
                             if ($startPage > 1) {
-                                echo '<a href="'.$baseUrl.'page=1" class="pag-link">1</a>';
-                                if ($startPage > 2) echo '<span class="pag-dots">...</span>';
+                                echo '<a href="'.$baseUrl.'page=1" class="pag-link" style="width: 36px; height: 36px; font-size: 0.8rem;">1</a>';
+                                if ($startPage > 2) echo '<span class="pag-dots" style="font-size: 0.7rem;">...</span>';
                             }
 
                             for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                <a href="<?= $baseUrl ?>page=<?= $i ?>" class="pag-link <?= $i === $page ? 'active' : '' ?>"><?= $i ?></a>
+                                <a href="<?= $baseUrl ?>page=<?= $i ?>" class="pag-link <?= $i === $page ? 'active' : '' ?>" style="width: 36px; height: 36px; font-size: 0.8rem;"><?= $i ?></a>
                             <?php endfor; ?>
 
                             <?php
                             if ($endPage < $totalPages) {
-                                if ($endPage < $totalPages - 2) echo '<span class="pag-dots">...</span>';
-                                echo '<a href="'.$baseUrl.'page='.$totalPages.'" class="pag-link">'.$totalPages.'</a>';
+                                if ($endPage < $totalPages - 1) echo '<span class="pag-dots" style="font-size: 0.7rem;">...</span>';
+                                echo '<a href="'.$baseUrl.'page='.$totalPages.'" class="pag-link" style="width: 36px; height: 36px; font-size: 0.8rem;">'.$totalPages.'</a>';
                             }
                             ?>
                         </div>
 
-                        <a href="<?= $page >= $totalPages ? 'javascript:void(0)' : $baseUrl . 'page=' . ($page + 1) ?>" class="pag-btn <?= $page >= $totalPages ? 'disabled' : '' ?>" aria-label="Trang sau">
-                            <i class="fas fa-chevron-right"></i>
+                        <a href="<?= $page >= $totalPages ? 'javascript:void(0)' : $baseUrl . 'page=' . ($page + 1) ?>" class="pag-btn <?= $page >= $totalPages ? 'disabled' : '' ?>" style="width: 44px; height: 44px;">
+                            <i class="fas fa-chevron-right" style="font-size: 0.8rem;"></i>
                         </a>
                     </nav>
                 </div>
@@ -264,538 +249,242 @@ $pagedOrders = $orders;
     </div>
 </div>
 
-<!-- Modal: Premium Detail -->
+<!-- Modal -->
 <div class="modal-backdrop" id="modalOrderDetails">
-    <div class="modal modal-luxury-detail">
+    <div class="modal modal-luxury-detail" style="border-radius: 28px;">
         <div class="modal-header-premium">
-            <div class="header-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-            <div class="header-text">
-                <h3>Chi tiết hóa đơn</h3>
-                <p id="modalOrderSubtitle">Thông tin giao dịch khách hàng</p>
+            <div class="header-icon" style="width: 56px; height: 56px;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 1.5rem;"></i>
             </div>
-            <button class="close-btn-minimal" data-modal-close type="button" aria-label="Đóng">
-                <i class="fas fa-times"></i>
+            <div class="header-text">
+                <h3 style="font-size: 1.3rem; margin: 0;">Chi tiết hóa đơn</h3>
+                <p id="modalOrderSubtitle" style="font-size: 0.8rem; color: var(--text-muted); margin: 0.3rem 0 0;">Thông tin giao dịch</p>
+            </div>
+            <button class="close-btn-minimal" data-modal-close type="button" style="width: 36px; height: 36px;">
+                <i class="fas fa-times" style="font-size: 0.9rem;"></i>
             </button>
         </div>
         <div class="modal-body-premium" id="modalOrderBody">
-            <!-- Loading state -->
-            <div class="text-center py-5">
-                <div class="spinner-premium mb-3"></div>
-                <p class="text-muted fw-600">Đang chuẩn bị dữ liệu...</p>
+            <div class="text-center py-4">
+                <div class="spinner-premium" style="width: 40px; height: 40px; border-width: 3px;"></div>
+                <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.5rem;">Đang chuẩn bị dữ liệu...</p>
             </div>
         </div>
-        <div class="modal-footer-premium">
-            <button type="button" class="btn-modal-close" data-modal-close>Đóng lại</button>
-            <a href="" target="_blank" class="btn-modal-print" id="btnPrintOrder">
-                <i class="fas fa-print me-2"></i> In hóa đơn
+        <div class="modal-footer-premium" style="padding: 1rem 1.5rem; gap: 0.5rem;">
+            <button type="button" class="btn-modal-close" data-modal-close style="font-size: 0.8rem; padding: 0.6rem;">Đóng</button>
+            <a href="" target="_blank" class="btn-modal-print" id="btnPrintOrder" style="font-size: 0.8rem; padding: 0.6rem;">
+                <i class="fas fa-print me-1"></i> IN
             </a>
         </div>
     </div>
 </div>
 
 <style>
-    /* Premium Architecture for History View */
     :root {
         --history-bg: #f8fafc;
         --card-bg: #ffffff;
         --gold-primary: #d4af37;
         --gold-secondary: #b89b5e;
-        --gold-light-alpha: rgba(212, 175, 55, 0.1);
-        --gold-text: #8e7037;
+        --gold-light-alpha: rgba(212, 175, 55, 0.08);
         --text-dark: #0f172a;
         --text-slate: #64748b;
         --text-muted: #94a3b8;
-        --radius-premium: 24px;
-        --radius-lg: 30px;
-        --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.06);
-        --shadow-card-hover: 0 25px 60px -12px rgba(0, 0, 0, 0.1);
-        --transition-smooth: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        --success: #10b981;
+        --radius-premium: 20px;
+        --shadow-premium: 0 8px 24px -8px rgba(0, 0, 0, 0.06);
     }
 
     .history-page-wrapper {
         background-color: var(--history-bg);
         min-height: 100vh;
-        padding: 3rem 1.5rem 8rem;
+        padding: 2rem 1.5rem 7rem;
     }
 
-    .page-content-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+    .page-content-container { max-width: 900px; margin: 0 auto; }
 
-    /* Page Header */
-    .page-header-minimal {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-    
-    .page-header-minimal .playfair { 
-        font-size: 2.8rem; 
-        letter-spacing: -1px;
-        background: linear-gradient(135deg, var(--text-dark) 0%, var(--gold-text) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+    .page-header-minimal { display: flex; justify-content: space-between; align-items: flex-end; }
 
-    .text-muted-gold { color: var(--text-muted); font-weight: 600; font-size: 0.95rem; }
-    .header-breadcrumb { font-size: 0.85rem; font-weight: 600; }
+    .page-header-minimal .playfair { font-size: 2rem; letter-spacing: -0.5px; }
+    .text-muted-gold { color: var(--text-muted); font-weight: 500; font-size: 0.85rem; }
+    .header-breadcrumb { font-size: 0.75rem; font-weight: 600; }
 
-    .header-stats { display: flex; gap: 2rem; align-items: flex-end; }
-    
+    .header-stats { display: flex; gap: 1.5rem; align-items: flex-end; }
+
     .total-revenue-display { text-align: right; }
-    .revenue-amount { 
-        font-size: 2rem; 
-        font-weight: 900; 
-        color: var(--gold-primary); 
-        font-family: 'Outfit', sans-serif;
-        letter-spacing: -0.5px;
-    }
-    .revenue-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .revenue-amount { font-size: 1.5rem; font-weight: 800; color: var(--gold-primary); }
+    .revenue-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .results-counter {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-    .count-badge {
-        background: var(--gold-primary);
-        color: white;
-        padding: 0.4rem 1.2rem;
-        border-radius: 12px;
-        font-weight: 800;
-        font-size: 1.3rem;
-        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-    }
-    .count-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; letter-spacing: 1px;}
+    .results-counter { display: flex; flex-direction: column; align-items: flex-end; }
+    .count-badge { background: var(--gold-primary); color: white; padding: 0.25rem 0.8rem; border-radius: 10px; font-weight: 800; font-size: 1.1rem; }
+    .count-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
-    /* Filter Card */
     .filter-glass-card {
         background: var(--card-bg);
-        border: 1px solid rgba(212, 175, 55, 0.15);
-        border-radius: var(--radius-lg);
-        padding: 2rem;
+        border: 1px solid rgba(212, 175, 55, 0.12);
+        border-radius: var(--radius-premium);
+        padding: 1.5rem;
         box-shadow: var(--shadow-premium);
-        transition: box-shadow 0.4s ease;
-    }
-    .filter-glass-card:hover {
-        box-shadow: 0 15px 50px -10px rgba(0, 0, 0, 0.08);
     }
 
-    .filter-type-group {
-        display: flex;
-        gap: 0.5rem;
-    }
-
+    .filter-type-group { display: flex; gap: 0.3rem; }
     .type-btn {
-        flex: 1;
-        border: 2px solid #e2e8f0;
-        background: white;
-        padding: 1rem 0.5rem;
-        border-radius: 18px;
-        font-weight: 700;
-        color: var(--text-slate);
-        transition: var(--transition-smooth);
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
+        flex: 1; border: 2px solid #e2e8f0; background: white; padding: 0.7rem 0.5rem;
+        border-radius: 12px; font-weight: 700; color: var(--text-slate);
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; font-size: 0.8rem;
     }
+    .type-btn.active { background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%); color: white; border-color: var(--gold-primary); box-shadow: 0 8px 15px rgba(212, 175, 55, 0.3); }
 
-    .type-btn .btn-icon {
-        font-size: 1.3rem;
-        margin-bottom: 4px;
-        transition: color 0.3s ease;
-    }
-
-    .type-btn .btn-label {
-        font-size: 0.85rem;
-        display: block;
-    }
-
-    .type-btn.active {
-        background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
-        color: white;
-        border-color: var(--gold-primary);
-        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
-    }
-
-    .type-btn.active .btn-icon { color: white; }
-
-    .input-premium-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-    }
-    .input-premium-wrapper .icon {
-        position: absolute;
-        left: 1.25rem;
-        color: var(--gold-secondary);
-        font-size: 1.1rem;
-        transition: color 0.3s ease;
-    }
+    .input-premium-wrapper { position: relative; }
+    .input-premium-wrapper .icon { position: absolute; left: 1rem; color: var(--gold-secondary); font-size: 1rem; }
     .input-premium {
-        width: 100%;
-        height: 56px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 0 1.25rem;
-        padding-left: 3rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        font-size: 0.95rem;
+        width: 100%; height: 48px; background: #f8fafc; border: 1px solid #e2e8f0;
+        border-radius: 12px; padding: 0 1rem; padding-left: 2.5rem;
+        font-weight: 700; color: var(--text-dark); transition: all 0.25s;
     }
-    .input-premium:focus {
-        border-color: var(--gold-primary);
-        background: white;
-        box-shadow: 0 0 0 6px var(--gold-light-alpha);
-        outline: none;
-    }
-    .input-premium-wrapper:hover .icon { color: var(--gold-primary); }
+    .input-premium:focus { border-color: var(--gold-primary); background: white; box-shadow: 0 0 0 4px var(--gold-light-alpha); outline: none; }
 
     .btn-premium-gold {
-        height: 56px;
-        background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
-        color: white;
-        border: none;
-        border-radius: 16px;
-        font-weight: 800;
-        letter-spacing: 1px;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 10px 20px -5px rgba(212, 175, 55, 0.4);
+        height: 48px; background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+        color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.75rem;
+        box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3); transition: all 0.25s;
     }
-    .btn-premium-gold:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 18px 35px -5px rgba(212, 175, 55, 0.5);
-    }
+    .btn-premium-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4); }
 
-    /* Summary Section */
-    .summary-row-premium {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: 2rem;
-    }
-    @media (max-width: 991px) { .summary-row-premium { grid-template-columns: 1fr; } }
+    .summary-row-premium { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; }
+    @media (max-width: 768px) { .summary-row-premium { grid-template-columns: 1fr; } }
 
     .summary-main-card {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        border-radius: var(--radius-lg);
-        padding: 3.5rem 2.5rem;
-        position: relative;
-        overflow: hidden;
-        color: white;
-        display: flex;
-        align-items: center;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        border-radius: var(--radius-premium); padding: 2rem; position: relative; color: white;
     }
-    .summary-bg-icon {
-        position: absolute;
-        right: -8%;
-        top: -12%;
-        font-size: 10rem;
-        color: rgba(255,255,255,0.05);
-        transform: rotate(-15deg);
-        transition: transform 0.5s ease;
-    }
-    .summary-main-card:hover .summary-bg-icon {
-        transform: rotate(-15deg) scale(1.1);
-    }
-    .summary-tag { color: var(--gold-primary); font-weight: 800; letter-spacing: 2px; font-size: 0.85rem; display: block; margin-bottom: 0.75rem;}
-    .revenue-display { font-size: 4rem; font-weight: 900; margin: 0; font-family: 'Outfit', sans-serif; letter-spacing: -2px; line-height: 1; }
+    .summary-bg-icon { position: absolute; right: -5%; top: -8%; font-size: 6rem; color: rgba(255,255,255,0.04); transform: rotate(-15deg); }
+    .summary-tag { color: var(--gold-primary); font-weight: 800; letter-spacing: 1.5px; font-size: 0.7rem; display: block; margin-bottom: 0.5rem; }
+    .revenue-display { font-size: 2.5rem; font-weight: 900; margin: 0; font-family: 'Outfit'; letter-spacing: -1px; }
 
-    .summary-stats-group {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-    }
+    .summary-stats-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .stat-mini-card {
-        background: var(--card-bg);
-        border-radius: 24px;
-        padding: 1.75rem 1.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border: 1px solid rgba(212, 175, 55, 0.15);
-        box-shadow: 0 5px 20px rgba(0,0,0,0.04);
-        transition: var(--transition-smooth);
-        position: relative;
-        overflow: hidden;
+        background: var(--card-bg); border-radius: 18px; padding: 1.25rem 1rem;
+        display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(212, 175, 55, 0.1);
     }
-    .stat-mini-card::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, var(--gold-light-alpha), transparent);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-    .stat-mini-card:hover { transform: translateY(-5px); }
-    .stat-mini-card:hover::before { opacity: 1; }
-    .stat-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 16px; margin-bottom: 1rem; }
-    .stat-icon i { font-size: 1.5rem; }
+    .stat-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; margin-bottom: 0.75rem; }
+    .stat-icon i { font-size: 1.2rem; }
     .stat-icon.text-success { background: #ecfdf5; color: #059669; }
     .stat-icon.text-gold { background: var(--gold-light-alpha); color: var(--gold-primary); }
-    .stat-mini-card .val { font-size: 2.25rem; font-weight: 900; color: var(--text-dark); font-family: 'Outfit'; }
-    .stat-mini-card .lbl { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    .stat-mini-card .val { font-size: 1.75rem; font-weight: 900; color: var(--text-dark); font-family: 'Outfit'; }
+    .stat-mini-card .lbl { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
 
-    /* History Grid */
-    .history-premium-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2.25rem;
-    }
-    @media (max-width: 991px) { .history-premium-grid { grid-template-columns: 1fr; } }
+    .history-premium-grid { display: grid; gap: 1rem; }
+    @media (max-width: 768px) { .history-premium-grid { grid-template-columns: 1fr; } }
 
     .premium-order-card {
-        background: var(--card-bg);
-        border-radius: var(--radius-lg);
-        position: relative;
-        overflow: hidden;
-        border: 1px solid #edf2f7;
-        transition: var(--transition-smooth);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-        cursor: pointer;
+        background: var(--card-bg); border-radius: 18px; position: relative; overflow: hidden;
+        border: 1px solid #edf2f7; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
-    .premium-order-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-card-hover);
-        border-color: var(--gold-primary);
-    }
-    .card-top-accent {
-        height: 6px;
-        background: linear-gradient(90deg, var(--gold-primary), var(--gold-secondary), #ffd700);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
+    .premium-order-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); border-color: var(--gold-primary); }
+    .card-top-accent { height: 5px; background: linear-gradient(90deg, var(--gold-primary), var(--gold-secondary)); opacity: 0; transition: opacity 0.3s; }
     .premium-order-card:hover .card-top-accent { opacity: 1; }
 
-    .card-inner { padding: 2.5rem; }
+    .card-inner { padding: 1.25rem; }
 
-    .order-header { display: flex; gap: 1.5rem; align-items: center; }
+    .order-header { display: flex; gap: 1rem; align-items: center; }
     .table-avatar {
-        width: 80px; height: 80px;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border-radius: 24px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 2rem; font-weight: 900; color: var(--gold-primary);
-        border: 2px solid rgba(212, 175, 55, 0.2);
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.1);
+        width: 56px; height: 56px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 18px; display: flex; align-items: center; justify-content: center;
+        font-size: 1.25rem; font-weight: 900; color: var(--gold-primary);
+        border: 1.5px solid rgba(212, 175, 55, 0.2);
     }
-    .premium-order-card:hover .table-avatar {
-        transform: scale(1.05);
-        border-color: var(--gold-primary);
-        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
-    }
+    .premium-order-card:hover .table-avatar { transform: scale(1.05); border-color: var(--gold-primary); }
     .order-meta { flex: 1; }
-    .order-id { 
-        font-size: 0.85rem; 
-        font-weight: 800; 
-        color: var(--text-muted); 
-        background: #f8fafc; 
-        padding: 0.35rem 1rem; 
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-    }
-    .timestamp { font-size: 0.9rem; color: var(--text-slate); font-weight: 600; margin-top: 0.75rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-    .timestamp-item { display: flex; align-items: center; gap: 4px; transition: color 0.3s ease; }
-    .premium-order-card:hover .timestamp-item { color: var(--gold-text); }
-    .separator { width: 4px; height: 4px; background: #cbd5e1; border-radius: 50%; }
+    .order-id { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); background: #f8fafc; padding: 0.2rem 0.6rem; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .timestamp { font-size: 0.75rem; color: var(--text-slate); margin-top: 0.3rem; display: flex; align-items: center; gap: 6px; }
+    .separator { width: 3px; height: 3px; background: #cbd5e1; border-radius: 50%; }
 
-    .order-details-summary { margin: 2rem 0; }
-    .detail-row {
-        display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 0;
-        border-bottom: 1px solid #f1f5f9;
-        transition: padding 0.3s ease;
-    }
+    .order-details-summary { margin: 1.5rem 0; }
+    .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9; }
     .detail-row:last-child { border-bottom: none; }
-    .detail-icon { font-size: 1.2rem; margin-right: 1rem; transition: color 0.3s ease; }
+    .detail-icon { font-size: 1rem; margin-right: 0.75rem; color: var(--text-muted); transition: color 0.3s; }
     .premium-order-card:hover .detail-icon { color: var(--gold-primary); }
     .detail-value-group { flex: 1; display: flex; flex-direction: column; }
-    .detail-row .label { color: var(--text-muted); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; }
-    .detail-row .value { font-weight: 700; color: var(--text-dark); font-size: 0.95rem; }
-    .value-badge { 
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); 
-        padding: 0.35rem 1rem; 
-        border-radius: 12px; 
-        font-weight: 800; 
-        font-size: 0.75rem; 
-        color: var(--text-dark);
-        border: 1px solid #e2e8f0;
-    }
+    .detail-row .label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+    .detail-row .value { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
+    .value-badge { background: #f8fafc; padding: 0.2rem 0.6rem; border-radius: 8px; font-weight: 700; font-size: 0.7rem; color: var(--text-dark); border: 1px solid #e2e8f0; }
 
-    .order-pricing { margin-top: 2.5rem; }
-    .pricing-label { font-weight: 800; color: var(--text-muted); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; }
-    .pricing-value { font-size: 2rem; font-weight: 900; color: var(--gold-primary); font-family: 'Outfit'; letter-spacing: -1px; }
+    .order-pricing { margin-top: 1.5rem; border-top: 1px solid #f1f5f9; padding-top: 1rem; }
+    .pricing-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .pricing-value { font-size: 1.3rem; font-weight: 900; color: var(--gold-primary); font-family: 'Outfit'; }
 
-    .order-actions { display: flex; gap: 1rem; margin-top: 2.5rem; }
+    .order-actions { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
     .btn-action-view, .btn-action-print {
-        flex: 1; height: 56px; border: 1px solid #e2e8f0; border-radius: 18px;
-        font-weight: 800; font-size: 0.9rem; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        display: flex; align-items: center; justify-content: center;
-        background: white; text-decoration: none !important;
-        color: var(--text-dark);
+        flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; font-size: 0.75rem;
+        display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        background: white; text-decoration: none !important; padding: 0.6rem;
     }
-    .btn-action-view {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        color: var(--text-dark);
-    }
-    .btn-action-view:hover { 
-        background: white; 
-        border-color: var(--text-dark); 
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    .btn-action-print { 
-        color: var(--gold-primary);
-        border-color: rgba(212, 175, 55, 0.2);
-    }
-    .btn-action-print:hover { 
-        background: var(--gold-light-alpha);
-        border-color: var(--gold-primary);
-        transform: translateY(-3px);
-        color: var(--gold-text);
-    }
+    .btn-action-view { background: #f8fafc; }
+    .btn-action-view:hover { background: white; border-color: var(--text-dark); transform: translateY(-2px); }
+    .btn-action-print { color: var(--gold-primary); border-color: rgba(212, 175, 55, 0.2); }
+    .btn-action-print:hover { background: var(--gold-light-alpha); border-color: var(--gold-primary); transform: translateY(-2px); }
 
-    /* Premium Pagination */
-    .pagination-luxury { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+    .pagination-luxury { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
     .pag-btn {
-        width: 56px; height: 56px; background: white; border: 1px solid #e2e8f0; border-radius: 18px;
-        display: flex; align-items: center; justify-content: center; color: var(--text-dark);
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); text-decoration: none !important;
-        font-size: 1.1rem;
+        width: 44px; height: 44px; background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; color: var(--text-dark); transition: all 0.2s;
     }
-    .pag-btn:hover:not(.disabled) { 
-        background: var(--text-dark); 
-        color: white; 
-        border-color: var(--text-dark); 
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
-    }
+    .pag-btn:hover:not(.disabled) { background: var(--text-dark); color: white; border-color: var(--text-dark); transform: translateY(-2px); }
     .pag-btn.disabled { opacity: 0.3; cursor: not-allowed; }
-
-    .pag-numbers { display: flex; align-items: center; background: white; padding: 0.5rem; border-radius: 20px; border: 1px solid #e2e8f0; }
+    .pag-numbers { display: flex; align-items: center; background: white; padding: 0.3rem; border-radius: 14px; border: 1px solid #e2e8f0; }
     .pag-link {
-        width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-        border-radius: 14px; font-weight: 800; color: var(--text-slate); transition: all 0.3s;
-        text-decoration: none !important;
+        width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+        border-radius: 10px; font-weight: 700; color: var(--text-slate); transition: all 0.2s;
+        text-decoration: none !important; font-size: 0.8rem;
     }
-    .pag-link.active { 
-        background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%); 
-        color: white; 
-        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
-        transform: scale(1.1);
-    }
+    .pag-link.active { background: var(--gold-primary); color: white; box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3); }
     .pag-link:hover:not(.active) { color: var(--gold-primary); background: var(--gold-light-alpha); }
-    .pag-dots { padding: 0 0.5rem; color: #cbd5e1; font-weight: 800; }
+    .pag-dots { padding: 0 0.4rem; color: #cbd5e1; font-size: 0.7rem; }
 
-    /* Modal - Ultra Luxury */
-    .modal-luxury-detail {
-        background: white; border-radius: 36px; overflow: hidden;
-        box-shadow: 0 60px 120px -20px rgba(0, 0, 0, 0.3);
-        max-width: 700px; width: 95%; margin: 2rem auto;
-        animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes modalSlideIn {
-        from { opacity: 0; transform: translateY(50px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .modal-header-premium {
-        position: relative;
-        padding: 2.5rem 3rem;
-        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-        border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-        display: flex; align-items: center; position: relative;
-    }
-    .header-icon {
-        width: 72px; height: 72px; background: linear-gradient(135deg, var(--gold-light-alpha) 0%, rgba(212, 175, 55, 0.1) 100%); border-radius: 20px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 2rem; color: var(--gold-primary); margin-right: 2rem;
-        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
-    }
-    .header-text h3 { margin: 0; font-weight: 900; font-size: 1.8rem; color: var(--text-dark); font-family: 'Playfair Display'; }
-    .header-text p { margin: 0.5rem 0 0; color: var(--text-slate); font-weight: 600; font-size: 0.95rem; }
-    .close-btn-minimal {
-        position: absolute; top: 2rem; right: 2rem; border: none; background: #f1f5f9;
-        width: 48px; height: 48px; border-radius: 50%; color: var(--text-slate); transition: all 0.3s;
-        display: flex; align-items: center; justify-content: center;
-    }
+    .modal-luxury-detail { background: white; border-radius: 28px; box-shadow: 0 30px 80px rgba(0,0,0,0.2); max-width: 500px; width: 95%; margin: 2rem auto; padding: 1rem; }
+    .modal-header-premium { display: flex; align-items: center; padding: 0 1rem 1rem; }
+    .header-icon { width: 56px; height: 56px; background: var(--gold-light-alpha); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; }
+    .header-text h3 { margin: 0; font-weight: 900; font-size: 1.3rem; color: var(--text-dark); }
+    .close-btn-minimal { position: absolute; top: 1rem; right: 1rem; border: none; background: #f1f5f9; width: 36px; height: 36px; border-radius: 50%; color: var(--text-slate); transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
     .close-btn-minimal:hover { background: #e2e8f0; color: var(--text-dark); transform: rotate(90deg); }
+    .modal-body-premium { padding: 1.5rem 1rem; }
+    .modal-footer-premium { display: flex; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid #f1f5f9; }
+    .btn-modal-close { flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; background: white; padding: 0.6rem; font-weight: 700; transition: all 0.2s; }
+    .btn-modal-close:hover { background: #f8fafc; border-color: var(--text-dark); }
+    .btn-modal-print { flex: 1; background: var(--text-dark); color: white; border: none; border-radius: 12px; padding: 0.6rem; font-weight: 700; text-decoration: none !important; transition: all 0.2s; }
+    .btn-modal-print:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-    .modal-body-premium { padding: 3rem; }
-
-    .modal-footer-premium {
-        padding: 2rem 3rem; display: flex; gap: 1rem; border-top: 1px solid #f1f5f9;
-    }
-    .btn-modal-close {
-        flex: 1; height: 56px; border: 1px solid #e2e8f0; border-radius: 18px;
-        font-weight: 800; color: var(--text-slate); background: white; transition: all 0.3s;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .btn-modal-close:hover { background: #f8fafc; color: var(--text-dark); border-color: var(--text-dark); transform: translateY(-2px); }
-    .btn-modal-print {
-        flex: 1.5; height: 56px; background: var(--text-dark); color: white; border: none;
-        border-radius: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center;
-        text-decoration: none !important; transition: all 0.3s;
-    }
-    .btn-modal-print:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(15, 23, 42, 0.3); }
-
-    .spinner-premium {
-        width: 60px; height: 60px; border: 5px solid #f1f5f9; border-top: 5px solid var(--gold-primary);
-        border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;
-        box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-    }
+    .spinner-premium { width: 40px; height: 40px; border: 3px solid #f1f5f9; border-top: 3px solid var(--gold-primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Empty State */
-    .empty-state-box {
-        background: var(--card-bg); border-radius: 36px; text-align: center; border: 2px dashed #e2e8f0;
-        padding: 4rem 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-        transition: all 0.4s ease;
-    }
-    .empty-state-box:hover { border-color: var(--gold-primary); box-shadow: 0 15px 50px rgba(212, 175, 55, 0.1); }
-    .empty-icon-circle {
-        width: 120px; height: 120px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 50%;
-        display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;
-        font-size: 3.5rem; color: #cbd5e1;
-    }
-    .empty-state-box h4 { font-weight: 800; color: var(--text-dark); margin-bottom: 1rem; }
-    .empty-state-box .text-muted { color: var(--text-slate); font-size: 1.05rem; }
+    .empty-state-box { background: var(--card-bg); border-radius: 24px; text-align: center; border: 2px dashed #e2e8f0; padding: 2.5rem 1.5rem; }
+    .empty-icon-circle { width: 80px; height: 80px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 2.5rem; color: #cbd5e1; }
+    .empty-state-box h4 { font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem; font-size: 1rem; }
+    .empty-state-box .text-muted { color: var(--text-slate); font-size: 0.85rem; }
 
-    /* Additional polish for tables in modal */
-    .modal-table-premium { width: 100%; border-collapse: collapse; margin-top: 2rem; }
-    .modal-table-premium th { text-align: left; padding: 1.25rem; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; background: #f8fafc; }
-    .modal-table-premium td { padding: 1.25rem 1rem; border-bottom: 1px solid #f1f5f9; }
-    .modal-table-premium tbody tr:hover td { background: rgba(212, 175, 55, 0.08); }
+    .modal-table-premium { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    .modal-table-premium th { text-align: left; padding: 0.75rem 0.5rem; color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 800; }
+    .modal-table-premium td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #f1f5f9; }
+    .modal-table-premium td:last-child { text-align: right; }
     .modal-table-premium tbody tr:last-child td { border-bottom: none; }
 
     .section-title-row { display: flex; justify-content: space-between; align-items: flex-end; }
-    .section-title-row h3 { font-size: 1.8rem; letter-spacing: -0.5px; }
-    .pagination-info { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+    .section-title-row h3 { font-size: 1.3rem; letter-spacing: -0.5px; }
+    .pagination-info { color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
 
-    @media (max-width: 768px) {
-        .history-page-wrapper { padding: 2rem 1rem 7rem; }
-        .page-header-minimal .playfair { font-size: 2rem; }
-        .revenue-amount { font-size: 1.5rem; }
-        .revenue-display { font-size: 2.8rem; }
-        .summary-row-premium { grid-template-columns: 1fr; }
+    @media (max-width: 600px) {
+        .history-page-wrapper { padding: 1.5rem 1rem 6.5rem; }
+        .revenue-amount { font-size: 1.3rem; }
+        .revenue-display { font-size: 2rem; }
+        .summary-main-card { padding: 1.5rem; }
         .summary-stats-group { grid-template-columns: 1fr; }
-        .header-stats { flex-direction: column; gap: 1.5rem; }
+        .header-stats { flex-direction: column; gap: 1rem; }
         .history-premium-grid { grid-template-columns: 1fr; }
-        .premium-order-card:hover .table-avatar { transform: scale(1); }
-        .stat-mini-card { padding: 1.5rem; }
-        .modal-header-premium { padding: 2rem; }
-        .modal-footer-premium { padding: 1.5rem 2rem; flex-direction: column; }
-        .btn-modal-close, .btn-modal-print { width: 100%; }
+        .modal { width: 96%; margin: 2rem auto; }
     }
 </style>
 
 <script>
-    // Load order details when modal opens
     document.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const orderId = this.getAttribute('data-order-id');
@@ -806,16 +495,16 @@ $pagedOrders = $orders;
             const subtitle = document.getElementById('modalOrderSubtitle');
 
             printBtn.href = '<?= BASE_URL ?>/orders/print?order_id=' + orderId;
-            subtitle.innerHTML = `<i class="fas fa-tag me-1" style="color: var(--gold)"></i> Bàn: <strong>${orderData.table_name}</strong> | <i class="far fa-clock ms-2 me-1" style="color: var(--text-muted)"></i> ${new Date(orderData.closed_at).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}`;
+            subtitle.innerHTML = `<i class="fas fa-tag me-1" style="color: var(--gold)"></i> Bàn: <strong>${orderData.table_name}</strong> | <i class="far fa-clock ms-2" style="color: var(--text-muted)"></i> ${new Date(orderData.closed_at).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}`;
 
             let html = `
-                <div class="modal-pricing-header d-flex justify-content-between align-items-center mb-5 p-4" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-radius: 24px; border: 1px solid rgba(212, 175, 55, 0.15);">
+                <div class="modal-pricing-header" style="background: #f8fafc; border-radius: 16px; padding: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(212, 175, 55, 0.1);">
                     <div>
-                        <span class="d-block text-muted small fw-800" style="letter-spacing: 1px; text-transform: uppercase;">TỔNG THANH TOÁN</span>
-                        <h2 class="m-0 fw-900 text-gold" style="font-size: 2.5rem; font-family: 'Outfit'; letter-spacing: -1px;">${formatPrice(orderData.total || 0)}</h2>
+                        <span class="d-block text-muted small fw-800" style="font-size: 0.65rem; letter-spacing: 1px;">TỔNG THANH TOÁN</span>
+                        <h2 class="m-0 fw-900 text-gold" style="font-size: 1.8rem; font-family: 'Outfit'; color: var(--gold-primary);">${formatPrice(orderData.total || 0)}</h2>
                     </div>
                     <div class="text-end">
-                        <span class="badge" style="background: white; color: var(--text-dark); border: 2px solid #e2e8f0; padding: 0.6rem 1.5rem; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">${orderData.payment_method.toUpperCase()}</span>
+                        <span class="badge" style="background: white; color: var(--text-dark); border: 1px solid #e2e8f0; padding: 0.3rem 0.8rem; border-radius: 10px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">${orderData.payment_method.toUpperCase()}</span>
                     </div>
                 </div>
 
@@ -828,22 +517,18 @@ $pagedOrders = $orders;
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="3" class="text-center py-5">
-                                <div class="spinner-premium" style="width: 40px; height: 40px; border-width: 3px;"></div>
-                            </td>
-                        </tr>
+                        <tr><td colspan="3" class="text-center py-4"><div class="spinner-premium" style="width: 30px; height: 30px; border-width: 2px;"></div></td></tr>
                     </tbody>
                 </table>
 
-                <div class="modal-summary-footer mt-5 p-4" style="background: white; border: 1px solid #f1f5f9; border-radius: 24px;">
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted fw-bold" style="letter-spacing: 0.5px;">Tổng số lượng</span>
-                        <span class="fw-bold text-dark" style="font-size: 1.1rem;"><?= $orderData['item_count'] ?> món</span>
+                <div class="modal-summary-footer mt-3" style="background: white; border: 1px solid #f1f5f9; border-radius: 16px; padding: 1rem;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted fw-bold" style="font-size: 0.75rem;">Tổng số lượng</span>
+                        <span class="fw-bold text-dark" style="font-size: 0.9rem;"><?= $orderData['item_count'] ?> món</span>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <span class="text-muted fw-bold" style="letter-spacing: 0.5px;">Nhân viên phục vụ</span>
-                        <span class="fw-bold text-dark" style="font-size: 1.1rem;"><?= e($orderData['waiter_name'] ?: 'Hệ thống') ?></span>
+                        <span class="text-muted fw-bold" style="font-size: 0.75rem;">Nhân viên</span>
+                        <span class="fw-bold text-dark" style="font-size: 0.9rem;"><?= e($orderData['waiter_name'] ?: 'Hệ thống') ?></span>
                     </div>
                 </div>
             `;
@@ -855,21 +540,21 @@ $pagedOrders = $orders;
                     if (data.ok && data.items) {
                         let itemsHtml = '';
                         data.items.forEach(item => {
-                            itemsHtml += `
+                            itemsHtml +=`
                                 <tr>
-                                    <td class="fw-bold text-dark" style="font-size: 1.1rem; color: var(--gold-primary);">x${item.quantity}</td>
+                                    <td class="fw-bold text-dark" style="font-size: 1rem; color: var(--gold-primary);">x${item.quantity}</td>
                                     <td>
-                                        <div class="fw-bold text-dark" style="font-size: 1rem;"><?= e($item['item_name']) ?></div>
-                                        <div class="text-muted small" style="font-size: 0.85rem;"><?= formatPrice($item['price']) ?></div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.9rem;"><?= e($item['item_name']) ?></div>
+                                        <div class="text-muted small" style="font-size: 0.8rem;"><?= formatPrice($item['price']) ?></div>
                                     </td>
-                                    <td class="text-end fw-bold text-gold" style="font-size: 1.1rem; color: var(--gold-primary);"><?= formatPrice($item['subtotal']) ?></td>
+                                    <td class="text-end fw-bold text-gold" style="font-size: 1rem; color: var(--gold-primary);"><?= formatPrice($item['subtotal']) ?></td>
                                 </tr>
                             `;
                         });
                         document.querySelector('.modal-table-premium tbody').innerHTML = itemsHtml;
                     }
                 })
-                .catch(err => console.error('Lỗi tải chi tiết hóa đơn:', err));
+                .catch(err => console.error('Error:', err));
 
             Aurora.openModal('modalOrderDetails');
         });
@@ -877,14 +562,10 @@ $pagedOrders = $orders;
 
     function setFilter(type) {
         document.getElementById('filter_type').value = type;
-        const form = document.getElementById('historyFilterForm');
-        form.submit();
+        document.getElementById('historyFilterForm').submit();
     }
 
-    // Close modal on outside click
     document.getElementById('modalOrderDetails').addEventListener('click', function(e) {
-        if (e.target === this) {
-            Aurora.closeModal('modalOrderDetails');
-        }
+        if (e.target === this) Aurora.closeModal('modalOrderDetails');
     });
 </script>
