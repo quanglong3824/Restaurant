@@ -287,6 +287,7 @@ const MENU_CONFIG = {
     orderId: <?= $orderId ?: 0 ?>,
     tableId: <?= $tableId ?: 0 ?>
 };
+</script>
 
 <!-- Split Table Modal -->
 <div class="modal-backdrop" id="modalSplitTable">
@@ -334,5 +335,4 @@ const MENU_CONFIG = {
     </div>
 </div>
 
-</script>
 <script src="<?= BASE_URL ?>/public/js/menu/index.js" defer></script>
