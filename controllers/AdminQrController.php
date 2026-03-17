@@ -44,8 +44,8 @@ class AdminQrController extends Controller
             return;
         }
 
-        // Generate a random unique token
-        $token = bin2hex(random_bytes(16));
+        // Generate a random unique token (shorter for faster QR scanning)
+        $token = bin2hex(random_bytes(8));
         $this->qrModel->generate($tableId, $token);
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tạo mã QR mới thành công.'];

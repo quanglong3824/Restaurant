@@ -301,7 +301,7 @@
                     return;
                 }
 
-                const fullUrl = `<?= BASE_URL ?>/qr/menu?table_id=${tableId}&token=${token}`;
+                const fullUrl = `<?= BASE_URL ?>/q?t=${token}`;
 
                 qrTitle.innerText = `Mã QR: ${tableName}`;
                 qrTableDisplay.innerText = tableName.toUpperCase();
@@ -314,7 +314,8 @@
                     height: 300,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.L
+                    correctLevel: QRCode.CorrectLevel.L,
+                    margin: 2
                 });
 
                 modal.style.display = 'block';

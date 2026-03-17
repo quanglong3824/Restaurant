@@ -121,6 +121,7 @@ $router->get('/it/database/download', 'SettingController', 'downloadBackup');
 $router->post('/it/database/delete', 'SettingController', 'deleteBackup');
 
 // ── QR Ordering: Customer ──────────────────────────────────
+$router->get('/q', 'QrMenuController', 'shortLink');
 $router->get('/qr/menu', 'QrMenuController', 'index');
 $router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
 $router->post('/qr/cart/update', 'QrMenuController', 'updateCart');

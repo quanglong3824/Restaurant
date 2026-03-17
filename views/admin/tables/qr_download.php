@@ -26,14 +26,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const url = '<?= BASE_URL ?>/qr/menu?table_id=<?= $tableId ?>&token=<?= $token ?>';
+        const url = '<?= BASE_URL ?>/q?t=<?= $token ?>';
         new QRCode(document.getElementById("qrcode"), {
             text: url,
-            width: 200,
-            height: 200,
+            width: 250,
+            height: 250,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.L
+            correctLevel : QRCode.CorrectLevel.L,
+            margin: 2
         });
     });
 </script>

@@ -32,6 +32,25 @@ class QrMenuController extends Controller
         $this->notifModel = new OrderNotification();
     }
 
+    /** Handle short QR links: /q?t=TOKEN */
+    public function shortLink(): void
+    {
+        $token = $_GET['t'] ?? '';
+        if (!$token) {
+            $this->view('404', ['message' => 'Mã QR thiếu mã định danh.']);
+            return;
+        }
+
+        $qrTable = $this->qrModel->findByToken($token);
+        if (!$qrTable) {
+            $this->view('404', ['message' => 'Mã QR không tồn tại hoặc đã hết hạn.']);
+            return;
+        }
+
+        // Redirect to full menu URL
+        $this->redirect("/qr/menu?table_id=" . $qrTable['table_id'] . "&token=" . $qrTable['qr_hash']);
+    }
+
     /** View menu for customer */
     public function index(): void
     {

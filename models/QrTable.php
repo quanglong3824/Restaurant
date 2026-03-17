@@ -39,8 +39,10 @@ class QrTable extends Model
     {
         $allQr = $this->findAll("SELECT id, table_id, qr_hash FROM qr_tables");
         foreach ($allQr as $qr) {
-            if (strlen(trim($qr['qr_hash'])) !== 32 || !ctype_xdigit(trim($qr['qr_hash']))) {
-                $newToken = bin2hex(random_bytes(16));
+            $h = trim($qr['qr_hash']);
+            // Allow 16 (new short) or 32 (old long) hex characters. If anything else, it is garbage.
+            if (!in_array(strlen($h), [16, 32]) || !ctype_xdigit($h)) {
+                $newToken = bin2hex(random_bytes(8));
                 $this->generate($qr['table_id'], $newToken);
             }
         }
