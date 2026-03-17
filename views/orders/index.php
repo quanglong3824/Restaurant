@@ -80,7 +80,7 @@ if (!empty($items)) {
             <!-- Confirmed Items Section -->
             <?php if (!empty($confirmedItems)): ?>
                 <div class="section-label">
-                    <i class="fas fa-check-circle me-1"></i> ĐÃ GỬI BẾP
+                    <i class="fas fa-check-circle me-1"></i> ĐÃ XÁC NHẬN
                 </div>
                 <div class="items-grid-confirmed">
                     <?php
@@ -213,7 +213,7 @@ if (!empty($items)) {
                             <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
                             <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                             <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
-                                <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN GỬI BẾP
+                                <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN ORDER
                             </button>
                         </form>
                     <?php endif; ?>
