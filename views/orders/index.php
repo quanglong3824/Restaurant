@@ -388,5 +388,12 @@ if (!empty($items)) {
 <!-- External CSS -->
 <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/orders/index.css">
 
+<!-- Config -->
+<script>
+const ORDERS_CONFIG = {
+    baseUrl: '<?= BASE_URL ?>'
+};
+</script>
+
 <!-- External JavaScript -->
 <script src="<?= BASE_URL ?>/public/js/orders/index.js"></script>

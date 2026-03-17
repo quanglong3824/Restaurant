@@ -42,7 +42,7 @@ function submitGuestCountUpdate() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG LƯU...';
 
-    fetch('<?= BASE_URL ?>/orders/update-guest-count', {
+    fetch(ORDERS_CONFIG.baseUrl + '/orders/update-guest-count', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -74,7 +74,7 @@ function changeQty(itemId, orderId, delta) {
     if (!qtyEl) return;
     const current = parseInt(qtyEl.textContent);
     const newQty = Math.max(0, current + delta);
-    fetch('<?= BASE_URL ?>/orders/update', {
+    fetch(ORDERS_CONFIG.baseUrl + '/orders/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ item_id: itemId, order_id: orderId, qty: newQty })
@@ -94,7 +94,7 @@ function changeQty(itemId, orderId, delta) {
 // Remove item
 function removeItem(itemId, orderId) {
     if (!confirm('Xóa món này khỏi order?')) return;
-    fetch('<?= BASE_URL ?>/orders/remove', {
+    fetch(ORDERS_CONFIG.baseUrl + '/orders/remove', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ item_id: itemId, order_id: orderId })
@@ -107,7 +107,7 @@ function removeItem(itemId, orderId) {
 function confirmClose(tableId, orderId) {
     if (!confirm('Bạn có chắc chắn muốn hủy bàn này?')) return;
 
-    fetch('<?= BASE_URL ?>/tables/close', {
+    fetch(ORDERS_CONFIG.baseUrl + '/tables/close', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -120,7 +120,7 @@ function confirmClose(tableId, orderId) {
         .then(r => r.json())
         .then(res => {
             if (res.ok) {
-                location.href = '<?= BASE_URL ?>/orders?table_id=' + tableId + '&order_id=' + orderId;
+                location.href = ORDERS_CONFIG.baseUrl + '/orders?table_id=' + tableId + '&order_id=' + orderId;
             } else {
                 alert(res.message || 'Có lỗi xảy ra khi đóng bàn');
             }
@@ -153,7 +153,7 @@ function handleSubmitPayment(e) {
     params.append('ajax', '1');
     params.append('redirect_to_order', '1');
     
-    fetch('<?= BASE_URL ?>/tables/close', {
+    fetch(ORDERS_CONFIG.baseUrl + '/tables/close', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params
@@ -166,14 +166,14 @@ function handleSubmitPayment(e) {
         if (res.ok) {
             // Open print window first (non-blocking)
             if (!isQuickCancel) {
-                const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + params.get('order_id') + '&payment_method=' + params.get('payment_method');
+                const printUrl = ORDERS_CONFIG.baseUrl + '/orders/print?order_id=' + params.get('order_id') + '&payment_method=' + params.get('payment_method');
                 const printWindow = window.open(printUrl, '_blank');
                 // Focus print window
                 if (printWindow) printWindow.focus();
             }
             // Redirect after short delay
             setTimeout(() => {
-                location.href = '<?= BASE_URL ?>/orders?table_id=' + params.get('table_id') + '&order_id=' + params.get('order_id');
+                location.href = ORDERS_CONFIG.baseUrl + '/orders?table_id=' + params.get('table_id') + '&order_id=' + params.get('order_id');
             }, 500);
         } else {
             alert(res.message || 'Có lỗi xảy ra!');
