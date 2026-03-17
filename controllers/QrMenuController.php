@@ -78,13 +78,8 @@ class QrMenuController extends Controller
         ]);
         
         $this->view('layouts/public', [
-            'view' => 'menu/customer',
-            'pageTitle' => 'Thực đơn bàn ' . ($table['name'] ?? $tableId),
-            'table' => $table,
-            'categories' => $categories,
-            'menuItems' => $menuItems,
-            'openOrder' => $openOrder,
-            'isCustomer' => true
+            'view' => 'qr/scanned',
+            'pageTitle' => 'Đã quét mã QR',
         ]);
     }
 
