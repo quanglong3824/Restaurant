@@ -146,7 +146,8 @@ function handleSubmitPayment(e) {
     if (!isQuickCancel && !checkPaid.checked) { alert('Vui lòng xác nhận đã nhận đủ tiền!'); return; }
     
     const btn = document.getElementById('btnSubmitPayment');
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG LƯU...';
+    btn.disabled = true; 
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
     
     const params = new URLSearchParams(new FormData(form));
     params.append('ajax', '1');
@@ -157,13 +158,35 @@ function handleSubmitPayment(e) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params
     })
-        .then(r => r.json())
-        .then(res => {
-            if (res.ok) {
-                if (!isQuickCancel) window.open('<?= BASE_URL ?>/orders/print?order_id=' + params.get('order_id') + '&payment_method=' + params.get('payment_method'), '_blank');
+    .then(r => {
+        if (!r.ok) throw new Error('Lỗi phản hồi: ' + r.status);
+        return r.json();
+    })
+    .then(res => {
+        if (res.ok) {
+            // Open print window first (non-blocking)
+            if (!isQuickCancel) {
+                const printUrl = '<?= BASE_URL ?>/orders/print?order_id=' + params.get('order_id') + '&payment_method=' + params.get('payment_method');
+                const printWindow = window.open(printUrl, '_blank');
+                // Focus print window
+                if (printWindow) printWindow.focus();
+            }
+            // Redirect after short delay
+            setTimeout(() => {
                 location.href = '<?= BASE_URL ?>/orders?table_id=' + params.get('table_id') + '&order_id=' + params.get('order_id');
-            } else { alert(res.message); btn.disabled = false; btn.innerHTML = 'THỬ LẠI'; }
-        });
+            }, 500);
+        } else {
+            alert(res.message || 'Có lỗi xảy ra!');
+            btn.disabled = false; 
+            btn.innerHTML = '<i class="fas fa-redo me-2"></i> THỬ LẠI';
+        }
+    })
+    .catch(err => {
+        console.error('Payment error:', err);
+        alert('Lỗi: ' + err.message);
+        btn.disabled = false; 
+        btn.innerHTML = '<i class="fas fa-redo me-2"></i> THỬ LẠI';
+    });
 }
 
 // Confirm order via AJAX
