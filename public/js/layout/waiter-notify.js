@@ -31,14 +31,29 @@ function renderNotifications(data) {
         badge.textContent = data.length;
         let html = '';
         data.forEach(item => {
-            const icon = item.type === 'payment' ? '<i class="fas fa-file-invoice-dollar" style="color:var(--danger)"></i> Yêu cầu tính tiền' : '<i class="fas fa-concierge-bell" style="color:var(--gold)"></i> Gọi phục vụ';
+            let icon = '';
+            let label = '';
+            let btnLabel = 'Xong';
+            
+            if (item.type === 'payment') {
+                icon = '<i class="fas fa-file-invoice-dollar" style="color:var(--danger)"></i>';
+                label = 'Yêu cầu tính tiền';
+            } else if (item.type === 'new_order') {
+                icon = '<i class="fas fa-shopping-basket" style="color:var(--success)"></i>';
+                label = 'Đơn hàng mới';
+                btnLabel = 'Xác nhận';
+            } else {
+                icon = '<i class="fas fa-concierge-bell" style="color:var(--gold)"></i>';
+                label = 'Gọi phục vụ';
+            }
+
             html += `
                 <div class="noti-item">
                     <div class="noti-item-info">
                         <strong>Bàn ${item.table_name}</strong> (Khu ${item.area})<br>
-                        ${icon}
+                        ${icon} ${label}
                     </div>
-                    <button class="noti-btn" onclick="resolveNotification(${item.id})">Xong</button>
+                    <button class="noti-btn" onclick="resolveNotification(${item.id})">${btnLabel}</button>
                 </div>
             `;
         });

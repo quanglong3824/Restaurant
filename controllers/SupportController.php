@@ -48,6 +48,22 @@ class SupportController extends Controller
 
         $id = (int) $this->input('id');
         if ($id > 0) {
+            // Lấy thông tin yêu cầu trước khi resolve
+            $db = getDB();
+            $stmt = $db->prepare("SELECT * FROM support_requests WHERE id = ?");
+            $stmt->execute([$id]);
+            $request = $stmt->fetch();
+
+            if ($request && $request['type'] === 'new_order') {
+                // Tự động xác nhận tất cả các món đang pending của bàn này
+                require_once BASE_PATH . '/models/Order.php';
+                $orderModel = new Order();
+                $order = $orderModel->findOpenOrderByTable($request['table_id']);
+                if ($order) {
+                    $orderModel->confirmPendingItems($order['id']);
+                }
+            }
+
             $this->supportModel->resolveRequest($id);
             echo json_encode(['ok' => true]);
         } else {

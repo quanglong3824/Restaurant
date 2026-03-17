@@ -193,6 +193,24 @@ class Order extends Model
         );
     }
 
+    /** Khách hàng gửi món -> Chuyển sang pending và chờ phục vụ xác nhận */
+    public function confirmItemsToPending(int $orderId): void
+    {
+        $this->execute(
+            "UPDATE order_items SET status = 'pending' WHERE order_id = ? AND status = 'draft'",
+            [$orderId]
+        );
+    }
+
+    /** Phục vụ xác nhận các món pending thành confirmed */
+    public function confirmPendingItems(int $orderId): void
+    {
+        $this->execute(
+            "UPDATE order_items SET status = 'confirmed' WHERE order_id = ? AND status = 'pending'",
+            [$orderId]
+        );
+    }
+
     /** Tính tổng tiền order */
     public function getTotal(int $orderId): float
     {

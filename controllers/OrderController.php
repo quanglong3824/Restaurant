@@ -316,10 +316,28 @@ class OrderController extends Controller
     /** POST /orders/confirm — Xác nhận món (Gửi bếp) */
     public function confirmOrder(): void
     {
-        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
-
         $orderId = (int) $this->input('order_id');
-        $this->orderModel->confirmItems($orderId);
+        $order = $this->orderModel->findById($orderId);
+
+        if (!$order || $order['status'] !== 'open') {
+            $this->json(['ok' => false, 'message' => 'Order không hợp lệ.'], 400);
+        }
+
+        if (Auth::isLoggedIn()) {
+            // Nhân viên xác nhận: Chuyển thẳng sang confirmed
+            $this->orderModel->confirmItems($orderId);
+            $message = 'Đã gửi bếp thành công!';
+        } else {
+            // Khách hàng gửi: Chuyển sang pending và tạo yêu cầu support
+            $this->orderModel->confirmItemsToPending($orderId);
+
+            // Tạo thông báo cho phục vụ
+            require_once BASE_PATH . '/models/Support.php';
+            $supportModel = new Support();
+            $supportModel->createRequest($order['table_id'], 'new_order');
+
+            $message = 'Đã gửi yêu cầu gọi món! Vui lòng chờ nhân viên xác nhận.';
+        }
 
         $total = $this->orderModel->getTotal($orderId);
         $items = $this->orderModel->getItems($orderId);
@@ -332,7 +350,7 @@ class OrderController extends Controller
 
         $this->json([
             'ok' => true,
-            'message' => 'Đã gửi bếp thành công!',
+            'message' => $message,
             'total' => $total,
             'total_fmt' => formatPrice($total),
             'items' => $items,
