@@ -23,8 +23,8 @@ class AdminQrController extends Controller
         // Auto-cleanup invalid QR tokens (historical garbage data)
         $this->qrModel->cleanupInvalidTokens();
 
-        $qrCodes = $this->qrModel->getAllWithTableInfo() ?: [];
-        $tables = $this->tableModel->getAll() ?: [];
+        $qrCodes = $this->qrModel->getAllWithTableInfo();
+        $tables = $this->tableModel->getAll();
 
         $this->view('layouts/admin', [
             'view' => 'admin/tables/qr_codes',
