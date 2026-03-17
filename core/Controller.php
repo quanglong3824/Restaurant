@@ -30,7 +30,11 @@ abstract class Controller
 
     protected function redirect(string $path): void
     {
-        header('Location: ' . BASE_URL . $path);
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            header('Location: ' . $path);
+        } else {
+            header('Location: ' . BASE_URL . $path);
+        }
         exit;
     }
 
