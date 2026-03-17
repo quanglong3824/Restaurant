@@ -79,10 +79,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchNotifications() {
         try {
             const response = await fetch(`${BASE_URL}/api/notifications/poll`);
+            if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
-            renderList(data.notifications);
+            renderList(data.notifications || []);
+
+            // Update badge globally if function exists
+            if (window.updateNotiBadge) {
+                window.updateNotiBadge(data.count || 0);
+            }
         } catch (e) {
             console.error(e);
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                    <p>Lỗi kết nối máy chủ. Đang thử lại...</p>
+                </div>
+            `;
         }
     }
 
@@ -97,12 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        listEl.innerHTML = '';
+        const fragment = document.createDocumentFragment();
         notifications.forEach(n => {
-            const isUnread = !parseInt(n.is_read);
+            const isUnread = n.is_read == 0 || n.is_read === false || n.is_read === null;
             const item = document.createElement('div');
             item.className = `waiter-noti-item ${isUnread ? 'unread' : 'read'}`;
-            
+    ...
             const icon = n.notification_type === 'scan_qr' ? 'fa-qrcode' : 
                          n.notification_type === 'payment_request' ? 'fa-file-invoice-dollar' : 'fa-concierge-bell';
 
@@ -125,8 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = `${BASE_URL}/orders?table_id=${n.table_id}`;
             };
 
-            listEl.appendChild(item);
+            fragment.appendChild(item);
         });
+        
+        listEl.innerHTML = '';
+        listEl.appendChild(fragment);
     }
 
     markAllBtn.onclick = async () => {

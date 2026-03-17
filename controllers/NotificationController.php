@@ -40,18 +40,23 @@ class NotificationController extends Controller
     public function poll(): void
     {
         try {
-            $recent = $this->notifModel->getRecent(20);
-            $unreadCount = count(array_filter($recent, fn($n) => !$n['is_read']));
+            $recent = $this->notifModel->getRecent(20) ?: [];
+            $unreadCount = 0;
+            foreach ($recent as $n) {
+                if (!isset($n['is_read']) || !$n['is_read']) {
+                    $unreadCount++;
+                }
+            }
             
             $this->json([
                 'count' => $unreadCount,
                 'notifications' => $recent
             ]);
         } catch (\Throwable $e) {
+            // Log error for internal tracking if needed
             $this->json([
                 'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'notifications' => []
             ], 500);
         }
     }
