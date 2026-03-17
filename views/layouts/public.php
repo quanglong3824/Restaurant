@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="<?= asset('public/css/app.css') ?>">
     <!-- Layout CSS -->
     <link rel="stylesheet" href="<?= asset('public/css/layout/public.css') ?>">
+    <script>
+        const BASE_URL = '<?= BASE_URL ?>';
+    </script>
 </head>
 
 <body>
@@ -25,10 +28,10 @@
             <i class="fas fa-utensils"></i>
             <span>AURORA RESTAURANT</span>
         </div>
-        <?php if (isset($tableId) && $tableId > 0): ?>
+        <?php if (isset($table) && isset($table['id'])): ?>
             <div class="table-info-badge">
                 <i class="fas fa-chair"></i> Bàn
-                <?= e($tableId) ?>
+                <?= e($table['name'] ?? $table['id']) ?>
             </div>
         <?php endif; ?>
     </header>
@@ -37,12 +40,12 @@
         <?php require BASE_PATH . "/views/{$view}.php"; ?>
     </main>
 
-    <?php if (isset($tableId) && $tableId > 0): ?>
+    <?php if (isset($table) && isset($table['id'])): ?>
     <div class="support-fab-container">
-        <button class="support-fab" onclick="requestSupport(<?= $tableId ?>, 'support')">
+        <button class="support-fab" onclick="requestSupport(<?= $table['id'] ?>, 'support')">
             <i class="fas fa-concierge-bell"></i> Gọi Phục Vụ
         </button>
-        <button class="support-fab support-fab-payment" onclick="requestSupport(<?= $tableId ?>, 'payment')">
+        <button class="support-fab support-fab-payment" onclick="requestSupport(<?= $table['id'] ?>, 'payment')">
             <i class="fas fa-file-invoice-dollar"></i> Tính Tiền
         </button>
     </div>

@@ -3,6 +3,9 @@
 // AdminQrController — Aurora Restaurant
 // ============================================================
 
+require_once BASE_PATH . '/models/QrTable.php';
+require_once BASE_PATH . '/models/Table.php';
+
 class AdminQrController extends Controller
 {
     private QrTable $qrModel;
@@ -20,10 +23,12 @@ class AdminQrController extends Controller
         $qrCodes = $this->qrModel->getAllWithTableInfo();
         $tables = $this->tableModel->getAll();
 
-        $this->render('admin/tables/qr_codes', [
+        $this->view('layouts/admin', [
+            'view' => 'admin/tables/qr_codes',
+            'pageTitle' => 'Quản lý mã QR',
             'qrCodes' => $qrCodes,
             'tables' => $tables
-        ], 'admin');
+        ]);
     }
 
     public function generate(): void
@@ -49,9 +54,21 @@ class AdminQrController extends Controller
         $token = $_GET['token'];
 
         // Redirect to a page that renders the QR code
-        $this->render('admin/tables/qr_download', [
+        $this->view('layouts/admin', [
+            'view' => 'admin/tables/qr_download',
+            'pageTitle' => 'Tải mã QR',
             'tableId' => $tableId,
             'token' => $token
-        ], 'admin');
+        ]);
+    }
+
+    public function delete(): void
+    {
+        $id = (int)$_POST['id'];
+        if ($id) {
+            $this->qrModel->execute("DELETE FROM qr_tables WHERE id = ?", [$id]);
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa mã QR thành công.'];
+        }
+        $this->redirect('/admin/qr-codes');
     }
 }

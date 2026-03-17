@@ -7,8 +7,8 @@
 // 1. Load configuration
 require_once __DIR__ . '/config/database.php';
 
-// 2. Configuration
-$backup_file = __DIR__ . '/database/backup_auroraho_restaurant_20260317_141642.sql';
+// 2. Configuration - NEWEST BACKUP
+$backup_file = __DIR__ . '/database/backup_auroraho_restaurant_20260317_144346.sql';
 
 // Check if file exists
 if (!file_exists($backup_file)) {
@@ -31,8 +31,7 @@ try {
     echo "<p style='color: blue;'>[OK] Disabled foreign key checks.</p>";
 
     // Split SQL into individual queries
-    // Note: This is a simple split by semicolon. For complex SQL files with triggers/procedures, 
-    // a more robust parser would be needed.
+    // Note: Simple split by semicolon.
     $queries = explode(';', $sql);
     
     $success_count = 0;

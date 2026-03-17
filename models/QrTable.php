@@ -14,7 +14,7 @@ class QrTable extends Model
 
     public function findByToken(string $token): ?array
     {
-        return $this->findOne("SELECT * FROM qr_tables WHERE qr_token = ? AND is_active = 1", [$token]);
+        return $this->findOne("SELECT * FROM qr_tables WHERE qr_hash = ? AND is_active = 1", [$token]);
     }
 
     public function incrementScanCount(int $id): void
@@ -28,7 +28,7 @@ class QrTable extends Model
     public function getAllWithTableInfo(): array
     {
         return $this->findAll(
-            "SELECT qr.*, t.name as table_name, t.area as table_area 
+            "SELECT qr.*, qr.qr_hash as qr_token, t.name as table_name, t.area as table_area 
              FROM qr_tables qr
              JOIN tables t ON qr.table_id = t.id
              ORDER BY t.area, t.sort_order, t.name"
@@ -39,9 +39,9 @@ class QrTable extends Model
     {
         $url = "/qr/menu?table_id=$tableId&token=$token";
         $this->execute(
-            "INSERT INTO qr_tables (table_id, qr_token, qr_url, is_active) 
+            "INSERT INTO qr_tables (table_id, qr_hash, qr_code, is_active) 
              VALUES (?, ?, ?, 1)
-             ON DUPLICATE KEY UPDATE qr_token = VALUES(qr_token), qr_url = VALUES(qr_url), updated_at = NOW()",
+             ON DUPLICATE KEY UPDATE qr_hash = VALUES(qr_hash), qr_code = VALUES(qr_code), updated_at = NOW()",
             [$tableId, $token, $url]
         );
         return (int) $this->lastInsertId();

@@ -17,7 +17,7 @@ function requestSupport(tableId, type) {
     data.append('table_id', tableId);
     data.append('type', type);
 
-    fetch('<?= BASE_URL ?>/support/request', {
+    fetch(BASE_URL + '/support/request', {
         method: 'POST',
         body: data
     })

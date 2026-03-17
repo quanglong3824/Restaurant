@@ -3,6 +3,14 @@
 // QrMenuController — Aurora Restaurant
 // ============================================================
 
+require_once BASE_PATH . '/models/QrTable.php';
+require_once BASE_PATH . '/models/Table.php';
+require_once BASE_PATH . '/models/MenuItem.php';
+require_once BASE_PATH . '/models/MenuCategory.php';
+require_once BASE_PATH . '/models/Order.php';
+require_once BASE_PATH . '/models/CustomerSession.php';
+require_once BASE_PATH . '/models/OrderNotification.php';
+
 class QrMenuController extends Controller
 {
     private QrTable $qrModel;
@@ -11,6 +19,7 @@ class QrMenuController extends Controller
     private MenuCategory $categoryModel;
     private Order $orderModel;
     private CustomerSession $sessionModel;
+    private OrderNotification $notifModel;
 
     public function __construct()
     {
@@ -20,6 +29,7 @@ class QrMenuController extends Controller
         $this->categoryModel = new MenuCategory();
         $this->orderModel = new Order();
         $this->sessionModel = new CustomerSession();
+        $this->notifModel = new OrderNotification();
     }
 
     /** View menu for customer */
@@ -29,13 +39,13 @@ class QrMenuController extends Controller
         $token = $_GET['token'] ?? '';
 
         if (!$tableId || !$token) {
-            $this->render('errors/404', ['message' => 'Mã QR không hợp lệ hoặc thiếu thông tin bàn.']);
+            $this->view('404', ['message' => 'Mã QR không hợp lệ hoặc thiếu thông tin bàn.']);
             return;
         }
 
         $qrTable = $this->qrModel->findByToken($token);
         if (!$qrTable || $qrTable['table_id'] != $tableId) {
-            $this->render('errors/404', ['message' => 'Mã QR đã hết hạn hoặc không hợp lệ.']);
+            $this->view('404', ['message' => 'Mã QR đã hết hạn hoặc không hợp lệ.']);
             return;
         }
 
@@ -51,14 +61,26 @@ class QrMenuController extends Controller
 
         // Get open order for this table if exists
         $openOrder = $this->orderModel->findOpenByTable($tableId);
+        $orderId = $openOrder ? $openOrder['id'] : 0;
+
+        // Notify staff about QR scan
+        $this->notifModel->create([
+            'order_id' => $orderId,
+            'table_id' => $tableId,
+            'notification_type' => 'scan_qr',
+            'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
+            'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
+        ]);
         
-        $this->render('menu/customer', [
+        $this->view('layouts/public', [
+            'view' => 'menu/customer',
+            'pageTitle' => 'Thực đơn bàn ' . ($table['name'] ?? $tableId),
             'table' => $table,
             'categories' => $categories,
             'menuItems' => $menuItems,
             'openOrder' => $openOrder,
             'isCustomer' => true
-        ], 'public');
+        ]);
     }
 
     private function setupCustomerSession(int $tableId, string $token): void

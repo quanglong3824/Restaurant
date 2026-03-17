@@ -3,6 +3,11 @@
 // QrOrderController — Aurora Restaurant
 // ============================================================
 
+require_once BASE_PATH . '/models/Order.php';
+require_once BASE_PATH . '/models/Table.php';
+require_once BASE_PATH . '/models/CustomerSession.php';
+require_once BASE_PATH . '/models/OrderNotification.php';
+
 class QrOrderController extends Controller
 {
     private Order $orderModel;
@@ -107,17 +112,23 @@ class QrOrderController extends Controller
         $order = $this->orderModel->findOpenByTable($tableId);
         
         if (!$order) {
-            $this->render('orders/status', ['message' => 'Hiện tại chưa có order nào đang mở cho bàn này.']);
+            $this->view('layouts/public', [
+                'view' => 'orders/status',
+                'pageTitle' => 'Trạng thái Order',
+                'message' => 'Hiện tại chưa có order nào đang mở cho bàn này.'
+            ]);
             return;
         }
 
         $items = $this->orderModel->getItems($order['id']);
         
-        $this->render('orders/status', [
+        $this->view('layouts/public', [
+            'view' => 'orders/status',
+            'pageTitle' => 'Trạng thái Order #' . $order['id'],
             'order' => $order,
             'items' => $items,
             'isCustomer' => true
-        ], 'public');
+        ]);
     }
 
     /** View order history */
@@ -127,9 +138,11 @@ class QrOrderController extends Controller
         // Just show items from current session if needed, or all items of the table
         $orders = $this->orderModel->getHistoryByTable($tableId, 5);
         
-        $this->render('orders/history', [
+        $this->view('layouts/public', [
+            'view' => 'orders/history',
+            'pageTitle' => 'Lịch sử gọi món',
             'orders' => $orders,
             'isCustomer' => true
-        ], 'public');
+        ]);
     }
 }

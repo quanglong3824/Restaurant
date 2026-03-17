@@ -3,6 +3,8 @@
 // NotificationController — Aurora Restaurant
 // ============================================================
 
+require_once BASE_PATH . '/models/OrderNotification.php';
+
 class NotificationController extends Controller
 {
     private OrderNotification $notifModel;

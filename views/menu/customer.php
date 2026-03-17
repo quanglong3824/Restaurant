@@ -48,7 +48,7 @@
                                     <?php else: ?>
                                         <div class="menu-card-placeholder"><i class="fas fa-image"></i></div>
                                     <?php endif; ?>
-                                    <?php if ($item['is_bestseller']): ?>
+                                    <?php if (isset($item['tags']) && str_contains($item['tags'], 'bestseller')): ?>
                                         <span class="badge-bestseller">Bestseller</span>
                                     <?php endif; ?>
                                 </div>

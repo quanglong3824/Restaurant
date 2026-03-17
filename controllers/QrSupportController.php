@@ -3,6 +3,9 @@
 // QrSupportController — Aurora Restaurant
 // ============================================================
 
+require_once BASE_PATH . '/models/Order.php';
+require_once BASE_PATH . '/models/OrderNotification.php';
+
 class QrSupportController extends Controller
 {
     private Order $orderModel;

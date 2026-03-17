@@ -111,3 +111,20 @@
         color: var(--gold);
     }
 </style>
+
+<script>
+    function confirmDelete(id) {
+        if (confirm('Bạn có chắc chắn muốn xóa mã QR này?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= BASE_URL ?>/admin/qr-codes/delete';
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
