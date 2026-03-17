@@ -35,6 +35,17 @@ class QrTable extends Model
         );
     }
 
+    public function cleanupInvalidTokens(): void
+    {
+        $allQr = $this->findAll("SELECT id, table_id, qr_hash FROM qr_tables");
+        foreach ($allQr as $qr) {
+            if (strlen(trim($qr['qr_hash'])) !== 32 || !ctype_xdigit(trim($qr['qr_hash']))) {
+                $newToken = bin2hex(random_bytes(16));
+                $this->generate($qr['table_id'], $newToken);
+            }
+        }
+    }
+
     public function generate(int $tableId, string $token): int
     {
         $url = "/qr/menu?table_id=$tableId&token=$token";
