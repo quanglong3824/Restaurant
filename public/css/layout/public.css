@@ -22,22 +22,27 @@ body {
 
 .public-header {
     background: #fff;
-    padding: 1.2rem;
+    padding: 1rem;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
 }
 
 .public-logo {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 800;
     color: var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
+    flex: 1;
 }
 
 .public-container {
@@ -49,14 +54,62 @@ body {
 .table-info-badge {
     background: #000;
     color: #fff;
-    padding: 4px 12px;
-    border-radius: 0px; /* Flat design */
-    font-size: 0.8rem;
-    margin-top: 5px;
-    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-/* Override somePOS styles for public view */
+.table-info-badge i {
+    font-size: 0.65rem;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .public-header {
+        padding: 0.75rem;
+    }
+    
+    .public-logo {
+        font-size: 1rem;
+    }
+    
+    .table-info-badge {
+        padding: 3px 8px;
+        font-size: 0.65rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .public-header {
+        padding: 0.6rem 0.75rem;
+    }
+    
+    .public-logo {
+        font-size: 0.9rem;
+        gap: 6px;
+    }
+    
+    .public-logo i {
+        font-size: 1rem;
+    }
+    
+    .table-info-badge {
+        padding: 3px 6px;
+        font-size: 0.6rem;
+    }
+    
+    .table-info-badge i {
+        font-size: 0.55rem;
+    }
+}
+
+/* Override some POS styles for public view */
 .pos-cart-col {
     position: fixed !important;
     bottom: 0;
@@ -112,4 +165,21 @@ body {
 .support-fab-payment {
     background: var(--gold);
     color: #fff;
+}
+
+/* Mobile - Support buttons */
+@media (max-width: 480px) {
+    .support-fab-container {
+        bottom: 100px;
+        right: 10px;
+    }
+    
+    .support-fab {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .support-fab span {
+        display: none; /* Hide text on small screens, show icon only */
+    }
 }
