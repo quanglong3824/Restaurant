@@ -19,22 +19,37 @@ class NotificationController extends Controller
     /** GET /notifications */
     public function waiterIndex(): void
     {
-        $this->view('layouts/waiter', [
-            'view' => 'notifications/waiter',
-            'pageTitle' => 'Thông báo',
-        ]);
+        try {
+            $this->view('layouts/waiter', [
+                'view' => 'notifications/waiter',
+                'pageTitle' => 'Thông báo',
+            ]);
+        } catch (\Throwable $e) {
+            echo "<h1>Lỗi trang thông báo (500)</h1>";
+            echo "<p>Lỗi: " . $e->getMessage() . "</p>";
+            echo "<p>File: " . $e->getFile() . " trên dòng " . $e->getLine() . "</p>";
+            exit;
+        }
     }
 
     /** Poll for notifications (recent history) */
     public function poll(): void
     {
-        $recent = $this->notifModel->getRecent(20);
-        $unreadCount = count(array_filter($recent, fn($n) => !$n['is_read']));
-        
-        $this->json([
-            'count' => $unreadCount,
-            'notifications' => $recent
-        ]);
+        try {
+            $recent = $this->notifModel->getRecent(20);
+            $unreadCount = count(array_filter($recent, fn($n) => !$n['is_read']));
+            
+            $this->json([
+                'count' => $unreadCount,
+                'notifications' => $recent
+            ]);
+        } catch (\Throwable $e) {
+            $this->json([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
     }
 
     /** Mark a notification as read */
