@@ -188,7 +188,15 @@ DELIMITER ;
 -- ============================================================
 -- 8. Update version tracking (if exists)
 -- ============================================================
-UPDATE `settings` SET `value` = '1.5' WHERE `key` = 'db_version';
+-- Only run if settings table exists
+SET @table_exists = (SELECT COUNT(*) FROM information_schema.tables 
+                     WHERE table_schema = DATABASE() AND table_name = 'settings');
+SET @sql = IF(@table_exists > 0,
+              'UPDATE `settings` SET `value` = '1.5' WHERE `key` = 'db_version'',
+              'SELECT 'Skipping settings update - table not found' AS message');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- ============================================================
 -- 9. Verify migration
