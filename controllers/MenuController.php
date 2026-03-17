@@ -13,14 +13,24 @@ class MenuController extends Controller
     public function index(): void
     {
         $tableIdFromUrl = (int) $this->input('table_id');
-        $menuType = $this->input('type', 'asia'); // asia, europe, alacarte
+        $menuType = $this->input('type', 'asia');
 
-        // Nếu qua QR (có table_id), lưu vào session và cho phép khách vào
+        // LOGIC BẢO MẬT & THÔNG BÁO
         if ($tableIdFromUrl > 0) {
+            // Trường hợp khách quét QR
             $_SESSION['customer_table_id'] = $tableIdFromUrl;
-            // Nếu khách vào, không bắt buộc login
-        } else {
-            // Nếu không có table_id, bắt buộc là nhân viên
+            
+            // Gửi thông báo cho Waiter: Khách vừa vào bàn
+            if (!isset($_SESSION['qr_scanned_notified'])) {
+                require_once BASE_PATH . '/models/Support.php';
+                $supportModel = new Support();
+                $ip = $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
+                // Tạo thông báo loại 'scan_qr'
+                $supportModel->createRequest($tableIdFromUrl, 'scan_qr');
+                $_SESSION['qr_scanned_notified'] = true;
+            }
+        } else if (!isset($_SESSION['customer_table_id'])) {
+            // Không có table_id và cũng không có trong session -> Phải là nhân viên
             Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
         }
 

@@ -42,6 +42,10 @@ function renderNotifications(data) {
                 icon = '<i class="fas fa-shopping-basket" style="color:var(--success)"></i>';
                 label = 'Đơn hàng mới';
                 btnLabel = 'Xác nhận';
+            } else if (item.type === 'scan_qr') {
+                icon = '<i class="fas fa-qrcode" style="color:var(--info)"></i>';
+                label = 'Khách vừa quét mã';
+                btnLabel = 'Đã biết';
             } else {
                 icon = '<i class="fas fa-concierge-bell" style="color:var(--gold)"></i>';
                 label = 'Gọi phục vụ';

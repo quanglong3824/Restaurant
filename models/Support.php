@@ -7,9 +7,11 @@ class Support extends Model
 {
     public function createRequest(int $tableId, string $type): int
     {
-        // Kiểm tra xem bàn này đã có yêu cầu loại này đang pending chưa để tránh spam
+        // Chống spam: Nếu cùng một bàn gửi yêu cầu cùng loại trong 5 phút qua
         $existing = $this->findOne(
-            "SELECT id FROM support_requests WHERE table_id = ? AND type = ? AND status = 'pending'",
+            "SELECT id FROM support_requests 
+             WHERE table_id = ? AND type = ? AND status = 'pending' 
+             AND created_at >= NOW() - INTERVAL 5 MINUTE",
             [$tableId, $type]
         );
 
