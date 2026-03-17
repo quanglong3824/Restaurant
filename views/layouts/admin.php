@@ -159,6 +159,25 @@
                     <p><?= e($pageSubtitle) ?></p>
                 <?php endif; ?>
             </div>
+
+            <!-- Notification Area -->
+            <div class="notification-area" id="notificationArea">
+                <button class="notification-bell" id="notificationBell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count" id="notificationCount"></span>
+                </button>
+                <div class="notification-panel" id="notificationPanel">
+                    <div class="notification-panel-header">
+                        <span>Thông báo</span>
+                        <button class="btn-ghost small" id="markAllAsReadBtn">Đánh dấu đã đọc</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <!-- Notifications will be injected here by JavaScript -->
+                        <div class="notification-item empty">Chưa có thông báo mới.</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Content -->
