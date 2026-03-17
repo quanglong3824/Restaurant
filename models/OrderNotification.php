@@ -7,7 +7,6 @@ class OrderNotification extends Model
 {
     protected string $table = 'order_notifications';
 
-    /** Tạo thông báo mới */
     public function create(array $data): int
     {
         $orderId = empty($data['order_id']) ? null : $data['order_id'];
@@ -27,22 +26,29 @@ class OrderNotification extends Model
         return (int) $this->lastInsertId();
     }
 
-    /** Lấy danh sách thông báo mới nhất kèm chi tiết bàn */
-    public function getRecent(int $limit = 50): array
+    public function getUnread(): array
     {
         return $this->findAll(
-            "SELECT n.*, t.name as table_name, t.area as table_area,
-                    o.status as order_status, o.payment_status
+            "SELECT n.*, t.name as table_name, t.area as table_area 
              FROM order_notifications n
              JOIN tables t ON n.table_id = t.id
-             LEFT JOIN orders o ON n.order_id = o.id
-             ORDER BY n.is_read ASC, n.created_at DESC
+             WHERE n.is_read = 0
+             ORDER BY n.created_at DESC"
+        );
+    }
+
+    public function getRecent(int $limit = 20): array
+    {
+        return $this->findAll(
+            "SELECT n.*, t.name as table_name, t.area as table_area 
+             FROM order_notifications n
+             JOIN tables t ON n.table_id = t.id
+             ORDER BY n.created_at DESC
              LIMIT ?",
             [$limit]
         );
     }
 
-    /** Đánh dấu đã đọc */
     public function markAsRead(int $id, int $userId): void
     {
         $this->execute(
@@ -53,7 +59,6 @@ class OrderNotification extends Model
         );
     }
 
-    /** Đánh dấu tất cả đã đọc cho một nhân viên */
     public function markAllAsRead(int $userId): void
     {
         $this->execute(
@@ -61,20 +66,6 @@ class OrderNotification extends Model
              SET is_read = 1, read_at = NOW(), read_by = ? 
              WHERE is_read = 0",
             [$userId]
-        );
-    }
-
-    /** Xóa thông báo cũ (giữ lại 100 cái gần nhất để nhẹ DB) */
-    public function cleanup(): void
-    {
-        $this->execute(
-            "DELETE FROM order_notifications 
-             WHERE id NOT IN (
-                SELECT id FROM (
-                    SELECT id FROM order_notifications 
-                    ORDER BY created_at DESC LIMIT 100
-                ) tmp
-             )"
         );
     }
 }
