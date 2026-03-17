@@ -156,17 +156,35 @@
 
 <!-- QR Modal -->
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
+    <div class="modal-content" style="max-width: 450px;">
         <div class="modal-header">
             <h3 id="qrModalTitle">Mã QR Bàn</h3>
             <button type="button" class="close-modal">&times;</button>
         </div>
-        <div class="modal-body" style="padding: 2rem;">
-            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 1.5rem;"></div>
-            <p id="qrUrl" style="font-size: 0.8rem; color: #666; word-break: break-all; margin-bottom: 1rem;"></p>
-            <div style="display: flex; gap: 1rem; justify-content: center;">
+        <div class="modal-body" id="printableQrArea">
+            <div class="qr-print-header" style="display:none; text-align:center; margin-bottom:20px;">
+                <h1 style="font-family:'Playfair Display', serif; color:#D4AF37; margin:0; font-size:28px;">AURORA HOTEL PLAZA</h1>
+                <p style="margin:5px 0 15px; font-size:14px; letter-spacing:2px; color:#666;">RESTAURANT & BAR</p>
+                <div style="border-top:1px solid #D4AF37; border-bottom:1px solid #D4AF37; padding:10px 0; margin:10px 0;">
+                    <h2 id="qrTableDisplay" style="margin:0; font-size:24px; color:#1a1a1a;">BÀN 01</h2>
+                </div>
+            </div>
+            
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 1.5rem; padding:15px; background:#fff; border-radius:12px;"></div>
+            
+            <div class="qr-print-footer" style="display:none; text-align:center; margin-top:15px;">
+                <p style="font-weight:600; margin-bottom:5px;">QUÉT MÃ ĐỂ ĐẶT MÓN</p>
+                <p style="font-size:12px; color:#888;">Cảm ơn Quý khách / Thank you!</p>
+            </div>
+
+            <p id="qrUrl" style="font-size: 0.75rem; color: #999; word-break: break-all; margin-bottom: 1.5rem; font-family:monospace;"></p>
+            
+            <div style="display: flex; gap: 0.75rem; justify-content: center;" class="no-print">
                 <button type="button" class="btn btn-gold" onclick="printQR()">
-                    <i class="fas fa-print"></i> In mã QR
+                    <i class="fas fa-print"></i> In QR
+                </button>
+                <button type="button" class="btn btn-outline" onclick="downloadQR()">
+                    <i class="fas fa-download"></i> Tải ảnh
                 </button>
                 <button type="button" class="btn btn-outline close-modal">Đóng</button>
             </div>
@@ -175,7 +193,7 @@
 </div>
 
 <style>
-    /* QR Modal Styles - Fixed Centering */
+    /* QR Modal Styles */
     .modal {
         display: none;
         position: fixed;
@@ -184,117 +202,63 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
+        background-color: rgba(0, 0, 0, 0.75);
         backdrop-filter: blur(8px);
-        overflow-y: auto;
-        padding: 20px;
     }
 
     .modal-content {
         background-color: #fff;
-        margin: 40px auto;
-        border-radius: 20px;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        overflow: hidden;
+        margin: 5% auto;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         position: relative;
-        max-width: 400px;
-        width: 100%;
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .modal-header {
-        padding: 1.5rem;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #eee;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #fafafa;
-    }
-
-    .modal-header h3 {
-        margin: 0;
-        color: #1a1a1a;
-        font-weight: 700;
     }
 
     .close-modal {
-        background: #eee;
+        background: #f3f4f6;
         border: none;
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        font-size: 1.2rem;
         cursor: pointer;
-        color: #666;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
+        transition: 0.2s;
     }
 
-    .close-modal:hover {
-        background: #e0e0e0;
-        color: #000;
-    }
-
-    .modal-body {
-        padding: 2rem;
-        text-align: center;
-    }
-
-    #qrcode {
-        background: #fff;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        display: inline-block !important;
-        /* Force inline-block for centering */
-    }
+    .close-modal:hover { background: #e5e7eb; }
 
     #qrcode img {
-        display: block;
-        margin: 0 auto;
+        border: 1px solid #f0f0f0;
+        padding: 10px;
+        border-radius: 8px;
     }
 
     @media print {
-        body * {
-            visibility: hidden;
-        }
-
-        #qrModal,
-        #qrModal * {
-            visibility: visible;
-        }
-
-        .modal {
-            background: none;
-            backdrop-filter: none;
-            position: static;
-            display: block;
-            padding: 0;
-        }
-
-        .modal-content {
-            box-shadow: none;
-            margin: 0;
-            width: 100%;
-            max-width: none;
-        }
-
-        .modal-header,
-        .close-modal,
-        button,
-        #qrUrl {
-            display: none !important;
-        }
-
-        #qrcode {
-            position: absolute;
-            left: 50%;
-            top: 20%;
-            transform: translateX(-50%);
-            box-shadow: none;
-            padding: 0;
-        }
+        body * { visibility: hidden; }
+        #qrModal, #qrModal * { visibility: visible; }
+        .modal { position: absolute; left: 0; top: 0; background: #fff; padding: 0; }
+        .modal-content { box-shadow: none; margin: 0; border: none; width: 100%; max-width: none; }
+        .no-print, .modal-header, #qrUrl { display: none !important; }
+        .qr-print-header, .qr-print-footer { display: block !important; }
+        #printableQrArea { padding: 40px !important; }
+        #qrcode { margin: 0 auto !important; padding: 0 !important; }
+        #qrcode img { width: 400px !important; height: 400px !important; border: none !important; }
     }
 </style>
 
@@ -304,53 +268,59 @@
         const qrContainer = document.getElementById('qrcode');
         const qrUrlText = document.getElementById('qrUrl');
         const qrTitle = document.getElementById('qrModalTitle');
+        const qrTableDisplay = document.getElementById('qrTableDisplay');
         const closeBtns = document.querySelectorAll('.close-modal');
-
-        let qr = null;
 
         document.querySelectorAll('.btn-qr').forEach(btn => {
             btn.addEventListener('click', () => {
                 const tableId = btn.dataset.id;
                 const tableName = btn.dataset.name;
-
-                // Generate URL: Always use production URL for the QR content so it works after printing
-                const productionUrl = 'https://aurorahotelplaza.com/restaurant';
-                const fullUrl = `${productionUrl}/menu?table_id=${tableId}`;
+                const fullUrl = `<?= BASE_URL ?>/menu?table_id=${tableId}`;
 
                 qrTitle.innerText = `Mã QR: ${tableName}`;
+                qrTableDisplay.innerText = tableName.toUpperCase();
                 qrUrlText.innerText = fullUrl;
-
-                // Clear old QR
                 qrContainer.innerHTML = '';
 
-                // Create New QR
-                qr = new QRCode(qrContainer, {
+                new QRCode(qrContainer, {
                     text: fullUrl,
-                    width: 256,
-                    height: 256,
-                    colorDark: "#1a1a1a",
+                    width: 300,
+                    height: 300,
+                    colorDark: "#000000",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H
                 });
 
                 modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
             });
         });
 
         closeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 modal.style.display = 'none';
+                document.body.style.overflow = '';
             });
         });
 
-        window.onclick = (event) => {
-            if (event.target == modal) {
+        window.onclick = (e) => {
+            if (e.target == modal) {
                 modal.style.display = 'none';
+                document.body.style.overflow = '';
             }
         };
     });
 
     function printQR() {
         window.print();
+    }
+
+    function downloadQR() {
+        const img = document.querySelector('#qrcode img');
+        if (!img) return;
+        const link = document.createElement('a');
+        link.download = `QR-${document.getElementById('qrTableDisplay').innerText}.png`;
+        link.href = img.src;
+        link.click();
     }
 </script>
