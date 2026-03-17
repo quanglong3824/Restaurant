@@ -10,6 +10,7 @@
   let pin = "";
   let selectedUsername = "";
   let selectedShift = "";
+  let selectedRole = "";
 
   // ── DOM refs ────────────────────────────────────────────
   const pinDots = document.querySelectorAll(".pin-dot");
@@ -17,58 +18,43 @@
   const usernameField = document.getElementById("usernameField");
   const shiftField = document.getElementById("shiftField");
   const submitBtn = document.getElementById("submitBtn");
+  const loginForm = document.getElementById("loginForm");
 
   const waiterSection = document.getElementById("waiterSection");
   const shiftSection = document.getElementById("shiftSection");
   const pinSection = document.getElementById("pinSection");
 
-  // ── Step Navigation ─────────────────────────────────────
-  function checkSteps() {
-    console.log('checkSteps called:', { selectedUsername, selectedShift, pinLength: pin.length });
-    
-    // Step 1 -> Step 2
-    if (selectedUsername) {
-      shiftSection.classList.remove("u-hidden");
-      console.log('Shift section shown');
-    } else {
-      shiftSection.classList.add("u-hidden");
-      pinSection.classList.add("u-hidden");
-    }
-
-    // Step 2 -> Step 3
-    if (selectedUsername && selectedShift) {
-      pinSection.classList.remove("u-hidden");
-      console.log('PIN section shown');
-    } else {
-      pinSection.classList.add("u-hidden");
-    }
-
-    checkReady();
+  // ── PIN helpers ─────────────────────────────────────────
+  function syncDots() {
+    pinDots.forEach((dot, i) => {
+      dot.classList.toggle("is-filled", i < pin.length);
+    });
   }
 
-  // ── PIN helpers ─────────────────────────────────────────
   function pressKey(value) {
     if (pin.length >= 4) return;
     pin += value;
     syncDots();
+    
     if (pin.length === 4) {
       pinField.value = pin;
+      // Auto submit when PIN is complete
+      setTimeout(() => {
+        if (!submitBtn.disabled) {
+          submitForm();
+        }
+      }, 150);
     }
+    
     checkReady();
   }
 
   function deleteKey() {
     if (pin.length === 0) return;
     pin = pin.slice(0, -1);
-    pinField.value = "";
+    pinField.value = pin;
     syncDots();
     checkReady();
-  }
-
-  function syncDots() {
-    pinDots.forEach((dot, i) => {
-      dot.classList.toggle("is-filled", i < pin.length);
-    });
   }
 
   function checkReady() {
@@ -79,41 +65,11 @@
                   selectedUsername.trim().length > 0 &&
                   hasShift;
     submitBtn.disabled = !ready;
-    console.log('checkReady:', { ready, pinLength: pin.length, hasUsername: selectedUsername.trim().length > 0, hasShift });
   }
 
-  let selectedRole = "";
-
-  // ── Step Navigation ─────────────────────────────────────
-  function checkSteps() {
-    console.log('checkSteps called:', { selectedUsername, selectedShift, selectedRole, pinLength: pin.length });
-    
-    // Step 1 -> Step 2
-    if (selectedUsername) {
-      if (selectedRole === 'admin' || selectedRole === 'it') {
-        shiftSection.classList.add("u-hidden");
-        pinSection.classList.remove("u-hidden");
-        console.log('Skip shift, showing PIN section');
-      } else {
-        shiftSection.classList.remove("u-hidden");
-        console.log('Showing shift section');
-      }
-    } else {
-      shiftSection.classList.add("u-hidden");
-      pinSection.classList.add("u-hidden");
-    }
-
-    // Step 2 -> Step 3 (Only for waiters)
-    if (selectedUsername && selectedRole === 'waiter') {
-      if (selectedShift) {
-        pinSection.classList.remove("u-hidden");
-        console.log('PIN section shown');
-      } else {
-        pinSection.classList.add("u-hidden");
-      }
-    }
-
-    checkReady();
+  function submitForm() {
+    submitBtn.classList.add('loading');
+    loginForm.submit();
   }
 
   // ── Step 1: User selection ──────────────────────────────
@@ -123,7 +79,6 @@
     selectedUsername = el.dataset.username;
     selectedRole = el.dataset.role || "waiter";
     usernameField.value = selectedUsername;
-    console.log('User selected:', selectedUsername, 'Role:', selectedRole);
 
     // Reset following steps
     pin = "";
@@ -131,16 +86,20 @@
     syncDots();
 
     if (selectedRole === 'admin' || selectedRole === 'it') {
-      selectedShift = "-1"; // Placeholder for non-shift roles
+      selectedShift = "-1";
       shiftField.value = "-1";
       document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
+      shiftSection.classList.add("u-hidden");
+      pinSection.classList.remove("u-hidden");
     } else {
       selectedShift = "";
       shiftField.value = "";
       document.querySelectorAll(".shift-chip").forEach((c) => c.classList.remove("is-selected"));
+      shiftSection.classList.remove("u-hidden");
+      pinSection.classList.add("u-hidden");
     }
 
-    checkSteps();
+    checkReady();
     
     // Scroll smoothly to next visible section
     setTimeout(() => {
@@ -155,14 +114,14 @@
     el.classList.add("is-selected");
     selectedShift = el.dataset.id;
     shiftField.value = selectedShift;
-    console.log('Shift selected:', selectedShift);
 
     // Reset following steps
     pin = "";
     pinField.value = "";
     syncDots();
 
-    checkSteps();
+    pinSection.classList.remove("u-hidden");
+    checkReady();
     
     // Scroll to PIN section smoothly
     setTimeout(() => {
@@ -196,11 +155,10 @@
     if (e.key >= "0" && e.key <= "9") pressKey(e.key);
     if (e.key === "Backspace") deleteKey();
     if (e.key === "Enter" && !submitBtn.disabled) {
-      document.getElementById("loginForm").submit();
+      submitForm();
     }
   });
 
   // Init
-  console.log('auth.js initialized');
-  checkSteps();
+  checkReady();
 })();
