@@ -5,7 +5,8 @@
 // ============================================================
 
 // Tự động chuyển đổi cấu hình Database theo môi trường
-if ($_SERVER['HTTP_HOST'] === 'localhost') {
+$hostName = $_SERVER['HTTP_HOST'] ?? '';
+if ($hostName === 'localhost' || $hostName === '127.0.0.1') {
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '');

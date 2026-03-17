@@ -35,57 +35,61 @@ class QrMenuController extends Controller
     /** View menu for customer */
     public function index(): void
     {
-        $tableId = (int)($_GET['table_id'] ?? 0);
-        $token = $_GET['token'] ?? '';
+        try {
+            $tableId = (int)($_GET['table_id'] ?? 0);
+            $token = $_GET['token'] ?? '';
 
-        if (!$tableId || !$token) {
-            $this->view('404', ['message' => 'Mã QR không hợp lệ hoặc thiếu thông tin bàn.']);
-            return;
+            if (!$tableId || !$token) {
+                $this->view('404', ['message' => 'Mã QR không hợp lệ hoặc thiếu thông tin bàn.']);
+                return;
+            }
+
+            $qrTable = $this->qrModel->findByToken($token);
+            if (!$qrTable || $qrTable['table_id'] != $tableId) {
+                $this->view('404', ['message' => 'Mã QR đã hết hạn hoặc không hợp lệ.']);
+                return;
+            }
+
+            // Increment scan count
+            $this->qrModel->incrementScanCount($qrTable['id']);
+
+            // Set customer session
+            $this->setupCustomerSession($tableId, $token);
+
+            $table = $this->tableModel->findById($tableId);
+            if (!$table) {
+                $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
+                return;
+            }
+
+            // Get open order for this table if exists
+            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            $orderId = $openOrder ? $openOrder['id'] : 0;
+
+            // Notify staff about QR scan
+            $this->notifModel->create([
+                'order_id' => $orderId,
+                'table_id' => $tableId,
+                'notification_type' => 'scan_qr',
+                'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
+                'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
+            ]);
+            
+            // --- TEST MODE: Chế độ test chỉ hiện số bàn ---
+            echo "<!DOCTYPE html><html lang='vi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Quét QR Thành Công</title></head>";
+            echo "<body style='background-color:#0f172a; color:#f8fafc; font-family:sans-serif; text-align:center; padding-top:20vh;'>";
+            echo "<i class='fas fa-check-circle' style='font-size:4rem; color:#10b981; margin-bottom:20px;'></i>";
+            echo "<h1 style='color:#c5a059; font-size:2rem; margin-bottom:10px;'>ĐÃ QUÉT MÃ QR</h1>";
+            echo "<h2 style='font-size:3rem; margin:0;'>BÀN " . e($table['name'] ?? $tableId) . "</h2>";
+            echo "<p style='color:#94a3b8; margin-top:20px;'>Hệ thống đã ghi nhận. Vui lòng đợi trong giây lát...</p>";
+            echo "</body></html>";
+            exit;
+        } catch (\Throwable $e) {
+            echo "<h1>Hệ thống gặp lỗi (500)</h1>";
+            echo "<p>Lỗi: " . $e->getMessage() . "</p>";
+            echo "<p>File: " . $e->getFile() . " trên dòng " . $e->getLine() . "</p>";
+            exit;
         }
-
-        $qrTable = $this->qrModel->findByToken($token);
-        if (!$qrTable || $qrTable['table_id'] != $tableId) {
-            $this->view('404', ['message' => 'Mã QR đã hết hạn hoặc không hợp lệ.']);
-            return;
-        }
-
-        // Increment scan count
-        $this->qrModel->incrementScanCount($qrTable['id']);
-
-        // Set customer session
-        $this->setupCustomerSession($tableId, $token);
-
-        $table = $this->tableModel->findById($tableId);
-        if (!$table) {
-            $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
-            return;
-        }
-
-        $categories = $this->categoryModel->getAll();
-        $menuItems = $this->menuModel->getAllActive();
-
-        // Get open order for this table if exists
-        $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-        $orderId = $openOrder ? $openOrder['id'] : 0;
-
-        // Notify staff about QR scan
-        $this->notifModel->create([
-            'order_id' => $orderId,
-            'table_id' => $tableId,
-            'notification_type' => 'scan_qr',
-            'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
-            'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
-        ]);
-        
-        // --- TEST MODE: Chế độ test chỉ hiện số bàn ---
-        echo "<!DOCTYPE html><html lang='vi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Quét QR Thành Công</title></head>";
-        echo "<body style='background-color:#0f172a; color:#f8fafc; font-family:sans-serif; text-align:center; padding-top:20vh;'>";
-        echo "<i class='fas fa-check-circle' style='font-size:4rem; color:#10b981; margin-bottom:20px;'></i>";
-        echo "<h1 style='color:#c5a059; font-size:2rem; margin-bottom:10px;'>ĐÃ QUÉT MÃ QR</h1>";
-        echo "<h2 style='font-size:3rem; margin:0;'>BÀN " . e($table['name'] ?? $tableId) . "</h2>";
-        echo "<p style='color:#94a3b8; margin-top:20px;'>Hệ thống đã ghi nhận. Vui lòng đợi trong giây lát...</p>";
-        echo "</body></html>";
-        exit;
     }
 
     private function setupCustomerSession(int $tableId, string $token): void

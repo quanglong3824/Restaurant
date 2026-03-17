@@ -19,6 +19,11 @@ class AdminTableController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
+        // One-time migration for order_notifications
+        try {
+            $this->model->execute("ALTER TABLE order_notifications MODIFY order_id int(10) unsigned NULL");
+        } catch (\Throwable $e) {}
+
         // Tự động đồng bộ trạng thái bàn (Sửa lỗi bàn bị kẹt 'Có khách' dù đã xong)
         $this->model->syncStatuses();
 

@@ -9,13 +9,6 @@ class OrderNotification extends Model
 
     public function create(array $data): int
     {
-        // Ensure order_id can be null for scan_qr events
-        try {
-            $this->execute("ALTER TABLE order_notifications MODIFY order_id int(10) unsigned NULL");
-        } catch (\Throwable $e) {
-            // Ignore if fails or already altered
-        }
-
         $orderId = empty($data['order_id']) ? null : $data['order_id'];
 
         $this->execute(
