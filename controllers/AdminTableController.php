@@ -19,32 +19,6 @@ class AdminTableController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
-        // One-time migration for missing tables and columns
-        try {
-            // Fix order_notifications
-            $this->model->execute("ALTER TABLE order_notifications MODIFY order_id int(10) unsigned NULL");
-
-            // Fix orders: allow waiter_id to be NULL for QR orders
-            $this->model->execute("ALTER TABLE orders MODIFY waiter_id int(10) unsigned NULL");
-            
-            // Create customer_sessions if not exists
-            $this->model->execute("CREATE TABLE IF NOT EXISTS `customer_sessions` (
-                `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                `session_id` varchar(255) NOT NULL,
-                `table_id` int(10) unsigned NOT NULL,
-                `order_id` int(10) unsigned DEFAULT NULL,
-                `ip_address` varchar(45) DEFAULT NULL,
-                `user_agent` text DEFAULT NULL,
-                `is_active` tinyint(1) NOT NULL DEFAULT 1,
-                `last_activity` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-                `expires_at` timestamp NULL DEFAULT NULL,
-                `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-                PRIMARY KEY (`id`),
-                UNIQUE KEY `idx_session_id` (`session_id`),
-                KEY `idx_table_active` (`table_id`,`is_active`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        } catch (\Throwable $e) {}
-
         // Tự động đồng bộ trạng thái bàn (Sửa lỗi bàn bị kẹt 'Có khách' dù đã xong)
         $this->model->syncStatuses();
 
