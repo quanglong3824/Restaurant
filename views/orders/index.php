@@ -284,14 +284,21 @@ if (!empty($items)) {
                     </div>
                 </div>
 
-                <div class="mb-4 p-3 rounded-pill bg-light d-flex align-items-center gap-2">
+                <div class="mb-3 p-3 rounded-pill bg-light d-flex align-items-center gap-2">
                     <input type="checkbox" id="checkPaid" required>
                     <label for="checkPaid" class="small fw-bold m-0">Đã nhận đủ tiền từ khách hàng</label>
                 </div>
 
+                <div class="mb-4 p-3 rounded bg-light d-flex align-items-center gap-2">
+                    <input type="checkbox" id="checkPrintBill">
+                    <label for="checkPrintBill" class="small fw-bold m-0">
+                        <i class="fas fa-print me-1"></i> Xem hoá đơn sau thanh toán
+                    </label>
+                </div>
+
                 <button type="button" id="btnSubmitPayment" class="btn btn-gold w-100 py-3 shadow-lg"
                     onclick="handleSubmitPayment(event)">
-                    <i class="fas fa-print me-2"></i> HOÀN TẤT VÀ IN BILL
+                    <i class="fas fa-check-circle me-2"></i> HOÀN TẤT THANH TOÁN
                 </button>
             </form>
         </div>

@@ -143,6 +143,7 @@ function handleSubmitPayment(e) {
     const isQuickCancel = document.getElementById('isQuickCancel').value === "1";
     const form = document.getElementById('formCloseTable');
     const checkPaid = document.getElementById('checkPaid');
+    const checkPrintBill = document.getElementById('checkPrintBill');
     if (!isQuickCancel && !checkPaid.checked) { alert('Vui lòng xác nhận đã nhận đủ tiền!'); return; }
     
     const btn = document.getElementById('btnSubmitPayment');
@@ -164,17 +165,20 @@ function handleSubmitPayment(e) {
     })
     .then(res => {
         if (res.ok) {
-            // Open print window first (non-blocking)
-            if (!isQuickCancel) {
+            // If print bill checkbox is checked, redirect to print page
+            if (checkPrintBill.checked && !isQuickCancel) {
                 const printUrl = ORDERS_CONFIG.baseUrl + '/orders/print?order_id=' + params.get('order_id') + '&payment_method=' + params.get('payment_method');
-                const printWindow = window.open(printUrl, '_blank');
-                // Focus print window
-                if (printWindow) printWindow.focus();
+                window.location.href = printUrl;
+            } else {
+                // Just close modal and reload page
+                Aurora.closeModal('modalClose');
+                // Show success message
+                alert('Thanh toán thành công!');
+                // Reload to update order status
+                setTimeout(() => {
+                    location.href = ORDERS_CONFIG.baseUrl + '/orders?table_id=' + params.get('table_id') + '&order_id=' + params.get('order_id');
+                }, 500);
             }
-            // Redirect after short delay
-            setTimeout(() => {
-                location.href = ORDERS_CONFIG.baseUrl + '/orders?table_id=' + params.get('table_id') + '&order_id=' + params.get('order_id');
-            }, 500);
         } else {
             alert(res.message || 'Có lỗi xảy ra!');
             btn.disabled = false; 
