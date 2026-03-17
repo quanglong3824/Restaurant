@@ -86,6 +86,7 @@ class QrMenuController extends Controller
 
             // Get open order for this table if exists, or create one immediately
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            $orderItems = [];
             
             if (!$openOrder) {
                 // Mark table as busy immediately upon scan
@@ -95,8 +96,10 @@ class QrMenuController extends Controller
                     'order_source' => 'customer_qr',
                     'status' => 'open'
                 ]);
+                $openOrder = $this->orderModel->findById($orderId);
             } else {
                 $orderId = $openOrder['id'];
+                $orderItems = $this->orderModel->getItems($orderId);
             }
 
             // Notify staff about QR scan
@@ -115,6 +118,7 @@ class QrMenuController extends Controller
                 'categories' => $categories,
                 'menuItems' => $menuItems,
                 'openOrder' => $openOrder,
+                'orderItems' => $orderItems,
                 'isCustomer' => true
             ]);
         } catch (\Throwable $e) {
@@ -127,7 +131,17 @@ class QrMenuController extends Controller
 
     private function setupCustomerSession(int $tableId, string $token): void
     {
+        // Set session cookie lifetime to 24 hours
+        $lifetime = 24 * 3600;
         if (session_status() === PHP_SESSION_NONE) {
+            session_set_cookie_params([
+                'lifetime' => $lifetime,
+                'path' => '/',
+                'domain' => $_SERVER['HTTP_HOST'],
+                'secure' => isset($_SERVER['HTTPS']),
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
             session_start();
         }
 
@@ -140,6 +154,8 @@ class QrMenuController extends Controller
                 'table_id' => $tableId
             ]);
         } else {
+            // If session exists but for different table, update it or keep it?
+            // Usually, a device stays at one table.
             $this->sessionModel->updateActivity($sessionId);
         }
 

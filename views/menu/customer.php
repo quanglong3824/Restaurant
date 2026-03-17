@@ -21,9 +21,20 @@
                 <i class="fas fa-hand-paper"></i>
                 <span>Gọi phục vụ</span>
             </button>
-            <button class="action-btn" onclick="callWaiter('payment')">
+            <?php 
+                $hasItems = false;
+                if (isset($orderItems) && count($orderItems) > 0) {
+                    foreach ($orderItems as $oi) {
+                        if ($oi['status'] !== 'cancelled') {
+                            $hasItems = true;
+                            break;
+                        }
+                    }
+                }
+            ?>
+            <button class="action-btn <?= $hasItems ? 'glow-payment' : '' ?>" onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>">
                 <i class="fas fa-file-invoice-dollar"></i>
-                <span>Thanh toán</span>
+                <span><?= $hasItems ? 'Hóa đơn' : 'Thanh toán' ?></span>
             </button>
             <button class="action-btn" onclick="window.location.reload()">
                 <i class="fas fa-sync-alt"></i>
@@ -31,6 +42,20 @@
             </button>
         </div>
     </header>
+
+    <style>
+        .glow-payment {
+            background: var(--gold) !important;
+            color: white !important;
+            box-shadow: 0 0 15px var(--gold);
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+    </style>
 
     <!-- Category Navigation (Sticky) -->
     <nav class="category-nav">
@@ -167,34 +192,71 @@
 
 <!-- Item Detail Modal -->
 <div id="itemDetailModal" class="modal-backdrop hidden">
-    <div class="modal modal-center modal-premium">
-        <div class="detail-img-box" id="detailImg"></div>
+...
+</div>
+
+<!-- Bill Tam Modal -->
+<div id="billTamModal" class="modal-backdrop hidden">
+    <div class="modal modal-bottom modal-premium">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-invoice-dollar me-2"></i> Hóa đơn tạm tính</h3>
+            <button class="modal-close" onclick="closeBillTam()"><i class="fas fa-times"></i></button>
+        </div>
         <div class="modal-body">
-            <div class="detail-header">
-                <h2 id="detailName"></h2>
-                <div id="detailPrice" class="detail-price-val"></div>
+            <div id="billItemsList" class="bill-items-container">
+                <?php if ($hasItems): ?>
+                    <?php 
+                        $total = 0; 
+                        foreach ($orderItems as $oi): 
+                            if ($oi['status'] === 'cancelled') continue;
+                            $total += $oi['item_price'] * $oi['quantity'];
+                    ?>
+                        <div class="bill-item">
+                            <div class="bill-item-main">
+                                <span class="bill-qty"><?= $oi['quantity'] ?>x</span>
+                                <span class="bill-name"><?= e($oi['item_name']) ?></span>
+                                <span class="bill-price"><?= formatPrice($oi['item_price'] * $oi['quantity']) ?></span>
+                            </div>
+                            <div class="bill-item-status <?= $oi['status'] ?>">
+                                <?= $oi['status'] === 'confirmed' ? 'Đã xác nhận' : 'Chờ xác nhận' ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-center text-muted py-4">Bàn chưa có món nào được gọi.</p>
+                <?php endif; ?>
             </div>
-            <p id="detailDesc" class="detail-description"></p>
             
-            <div class="detail-controls">
-                <div class="qty-selector">
-                    <button class="qty-btn" onclick="changeDetailQty(-1)"><i class="fas fa-minus"></i></button>
-                    <span id="detailQty" class="qty-value">1</span>
-                    <button class="qty-btn" onclick="changeDetailQty(1)"><i class="fas fa-plus"></i></button>
-                </div>
-                
-                <div class="detail-note-input">
-                    <input type="text" id="detailNote" placeholder="Ghi chú cho món này...">
+            <?php if ($hasItems): ?>
+            <div class="bill-summary mt-3">
+                <div class="d-flex justify-content-between">
+                    <span>Tổng tiền món:</span>
+                    <strong><?= formatPrice($total) ?></strong>
                 </div>
             </div>
-            
-            <button class="btn-add-main" onclick="addFromDetail()">
-                THÊM VÀO GIỎ - <span id="detailBtnTotal"></span>
+            <?php endif; ?>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-gold w-100 mb-2" onclick="callWaiter('payment')">
+                <i class="fas fa-hand-holding-usd me-2"></i> YÊU CẦU THANH TOÁN
             </button>
-            <button class="btn-close-detail" onclick="closeItemDetail()">ĐÓNG</button>
+            <button class="btn-ghost w-100" onclick="closeBillTam()">TIẾP TỤC ĐẶT MÓN</button>
         </div>
     </div>
 </div>
+
+<style>
+    .bill-items-container { max-height: 40vh; overflow-y: auto; }
+    .bill-item { padding: 12px 0; border-bottom: 1px dashed var(--border); }
+    .bill-item-main { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .bill-qty { color: var(--gold-dark); min-width: 30px; }
+    .bill-name { flex: 1; }
+    .bill-price { color: var(--text-dark); }
+    .bill-item-status { font-size: 0.7rem; margin-top: 4px; padding-left: 40px; }
+    .bill-item-status.confirmed { color: #10b981; }
+    .bill-item-status.pending { color: #f59e0b; }
+    .bill-summary { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+</style>
 
 <!-- Scripts Configuration -->
 <script>
@@ -202,7 +264,18 @@
         tableId: <?= $table['id'] ?>,
         tableName: '<?= e($table['name']) ?>',
         baseUrl: '<?= BASE_URL ?>',
-        isIT: <?= Auth::isIT() ? 'true' : 'false' ?>
+        isIT: <?= Auth::isIT() ? 'true' : 'false' ?>,
+        hasItems: <?= $hasItems ? 'true' : 'false' ?>
     };
+    
+    function showBillTam() {
+        document.getElementById('billTamModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeBillTam() {
+        document.getElementById('billTamModal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/customer.js" defer></script>

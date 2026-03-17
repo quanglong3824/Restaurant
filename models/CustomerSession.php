@@ -19,7 +19,7 @@ class CustomerSession extends Model
                 $data['order_id'] ?? null,
                 $data['ip_address'] ?? $_SERVER['REMOTE_ADDR'],
                 $data['user_agent'] ?? $_SERVER['HTTP_USER_AGENT'],
-                date('Y-m-d H:i:s', strtotime('+30 minutes'))
+                date('Y-m-d H:i:s', strtotime('+24 hours'))
             ]
         );
         return (int) $this->lastInsertId();
@@ -45,7 +45,7 @@ class CustomerSession extends Model
     {
         $this->execute(
             "UPDATE customer_sessions 
-             SET last_activity = NOW(), expires_at = DATE_ADD(NOW(), INTERVAL 30 MINUTE) 
+             SET last_activity = NOW(), expires_at = DATE_ADD(NOW(), INTERVAL 24 HOUR) 
              WHERE session_id = ?",
             [$sessionId]
         );

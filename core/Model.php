@@ -17,7 +17,21 @@ abstract class Model
     protected function query(string $sql, array $params = []): PDOStatement
     {
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($params);
+        foreach ($params as $key => $value) {
+            $type = PDO::PARAM_STR;
+            if (is_int($value)) {
+                $type = PDO::PARAM_INT;
+            } elseif (is_bool($value)) {
+                $type = PDO::PARAM_BOOL;
+            } elseif (is_null($value)) {
+                $type = PDO::PARAM_NULL;
+            }
+            
+            // PDO parameters can be 1-indexed (int) or string named
+            $paramKey = is_int($key) ? $key + 1 : $key;
+            $stmt->bindValue($paramKey, $value, $type);
+        }
+        $stmt->execute();
         return $stmt;
     }
 

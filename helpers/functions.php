@@ -38,13 +38,14 @@ function asset(string $path): string
 function activeClass(string $path): string
 {
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+    
+    // Get path from BASE_URL
+    $baseUrlPath = parse_url(defined('BASE_URL') ? BASE_URL : '', PHP_URL_PATH);
+    $baseUrlPath = rtrim($baseUrlPath, '/');
 
-    // Nếu path truyền vào không bắt đầu bằng baseUrl, thì thêm vào để so sánh
-    $lookupPath = $path;
-    if ($baseUrl && !str_starts_with($path, $baseUrl)) {
-        $lookupPath = $baseUrl . $path;
-    }
+    $lookupPath = $baseUrlPath . '/' . ltrim($path, '/');
+    $lookupPath = rtrim($lookupPath, '/');
+    $uri = rtrim($uri, '/');
 
     return ($uri === $lookupPath) ? 'active' : '';
 }
