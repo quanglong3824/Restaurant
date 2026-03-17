@@ -23,6 +23,9 @@ class AdminTableController extends Controller
         try {
             // Fix order_notifications
             $this->model->execute("ALTER TABLE order_notifications MODIFY order_id int(10) unsigned NULL");
+
+            // Fix orders: allow waiter_id to be NULL for QR orders
+            $this->model->execute("ALTER TABLE orders MODIFY waiter_id int(10) unsigned NULL");
             
             // Create customer_sessions if not exists
             $this->model->execute("CREATE TABLE IF NOT EXISTS `customer_sessions` (
