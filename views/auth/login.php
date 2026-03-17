@@ -75,13 +75,12 @@
                     <i class="fas fa-clock" aria-hidden="true"></i>
                     2. Chọn ca trực
                 </p>
-                <div class="shift-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="shift-grid">
                     <?php foreach ($shifts as $s): ?>
                         <button type="button" class="shift-chip" data-id="<?= $s['id'] ?>"
-                            style="padding: 1rem; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-weight: 600; cursor: pointer;">
+                            
                             <?= e($s['name']) ?><br>
-                            <small
-                                style="font-weight: 400; font-size: 0.75rem; opacity: 0.7;"><?= date('H:i', strtotime($s['start_time'])) ?>
+                            <small><?= date('H:i', strtotime($s['start_time'])) ?>
                                 - <?= date('H:i', strtotime($s['end_time'])) ?></small>
                         </button>
                     <?php endforeach; ?>

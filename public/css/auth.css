@@ -397,3 +397,36 @@ body {
     max-width: 420px;
   }
 }
+
+/* ── Shift Chip ───────────────────────────────────────────── */
+.shift-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  padding: 1rem 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-family: inherit;
+  transition: all var(--transition);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.shift-chip small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.shift-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
