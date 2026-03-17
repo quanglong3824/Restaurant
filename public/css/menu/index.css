@@ -35,12 +35,12 @@ body {
 /* POS Layout */
 .pos-layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 340px;
     gap: 1rem;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 1rem;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 100px);
     overflow: hidden;
 }
 
@@ -49,6 +49,7 @@ body {
     flex-direction: column;
     height: 100%;
     min-height: 0;
+    overflow: hidden;
 }
 
 .pos-menu-col > .menu-type-tabs,
@@ -68,12 +69,13 @@ body {
 .pos-cart-col {
     position: sticky;
     top: 0;
-    height: fit-content;
+    height: 100%;
     max-height: calc(100vh - 100px);
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
     .pos-layout {
         grid-template-columns: 1fr;
         height: auto;
@@ -245,13 +247,14 @@ body {
     border-bottom: 2px solid var(--gold-light);
 }
 
-/* Cart Panel - Compact */
+/* Cart Panel */
 .cart-panel {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .cart-header {
@@ -259,6 +262,7 @@ body {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     border-radius: var(--radius) var(--radius) 0 0;
+    flex-shrink: 0;
 }
 
 .cart-header h4 {
@@ -277,7 +281,7 @@ body {
     padding: 0.75rem;
     overflow-y: auto;
     flex: 1;
-    max-height: 350px;
+    min-height: 0;
 }
 
 .cart-footer {
@@ -285,6 +289,7 @@ body {
     border-top: 1px solid var(--border);
     background: var(--bg);
     border-radius: 0 0 var(--radius) var(--radius);
+    flex-shrink: 0;
 }
 
 .cart-footer .total-row {
@@ -456,6 +461,16 @@ body {
 
 #menuItemsContainer::-webkit-scrollbar-thumb:hover {
     background: var(--gold);
+}
+
+/* Scrollbar - Cart */
+.cart-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.cart-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
 }
 
 /* Modal */
