@@ -193,8 +193,25 @@ function confirmAddToOrder() {
     const f = new FormData();
     f.append('order_id', currentItem.orderId); f.append('menu_item_id', currentItem.id);
     f.append('qty', currentItem.qty); f.append('note', document.getElementById('modalItemNote').value);
-    fetch(MENU_CONFIG.baseUrl + '/orders/add', { method: 'POST', body: f }).then(res => res.json()).then(res => {
-        if (res.ok) { Aurora.closeModal('modalItemDetail'); showToast('Đã thêm món!'); updateCartUI(res); }
+    
+    fetch(MENU_CONFIG.baseUrl + '/orders/add', { 
+        method: 'POST', 
+        body: f 
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok) { 
+            Aurora.closeModal('modalItemDetail'); 
+            showToast('Đã thêm món!'); 
+            updateCartUI(res); 
+        } else { 
+            alert('Lỗi: ' + (res.message || 'Không thể thêm món'));
+            console.error('Add item error:', res);
+        }
+    })
+    .catch(err => {
+        alert('Lỗi kết nối: ' + err.message);
+        console.error('Fetch error:', err);
     });
 }
 
@@ -202,8 +219,24 @@ function quickAdd(event, itemId, orderId) {
     event.stopPropagation();
     if (!orderId) { alert('Vui lòng chọn bàn trước khi gọi món!'); return; }
     const f = new FormData(); f.append('order_id', orderId); f.append('menu_item_id', itemId); f.append('qty', 1);
-    fetch(MENU_CONFIG.baseUrl + '/orders/add', { method: 'POST', body: f }).then(res => res.json()).then(res => {
-        if (res.ok) { showToast('Đã thêm món!'); updateCartUI(res); }
+    
+    fetch(MENU_CONFIG.baseUrl + '/orders/add', { 
+        method: 'POST', 
+        body: f 
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok) { 
+            showToast('Đã thêm món!'); 
+            updateCartUI(res); 
+        } else { 
+            alert('Lỗi: ' + (res.message || 'Không thể thêm món'));
+            console.error('Quick add error:', res);
+        }
+    })
+    .catch(err => {
+        alert('Lỗi kết nối: ' + err.message);
+        console.error('Fetch error:', err);
     });
 }
 

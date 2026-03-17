@@ -1,5 +1,5 @@
 -- Aurora Restaurant Database Backup
--- Generated: 2026-03-17 12:07:56
+-- Generated: 2026-03-17 12:44:11
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -236,118 +236,127 @@ DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` int(10) unsigned NOT NULL,
+  `table_id` int(11) unsigned DEFAULT NULL COMMENT 'Bàn vật lý mà món này thuộc về (cho merged tables)',
   `menu_item_id` int(10) unsigned NOT NULL,
   `item_name` varchar(150) NOT NULL COMMENT 'Snapshot tên món tại thời điểm ghi',
   `item_price` decimal(10,0) NOT NULL COMMENT 'Snapshot giá tại thời điểm ghi',
   `quantity` tinyint(3) unsigned NOT NULL DEFAULT 1,
   `note` varchar(255) DEFAULT NULL COMMENT 'Ghi chú: không hành, ít cay...',
+  `split_from_item_id` int(11) unsigned DEFAULT NULL COMMENT 'ID của món gốc mà món này được tách từ đó',
+  `is_split_item` tinyint(1) unsigned DEFAULT 0 COMMENT '1 = món này đã được tách từ bàn khác',
   `status` enum('draft','confirmed','cancelled') DEFAULT 'draft',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `fk_order_items_order` (`order_id`),
   KEY `fk_order_items_menu` (`menu_item_id`),
+  KEY `idx_order_items_table` (`table_id`),
+  KEY `idx_split_tracking` (`is_split_item`,`split_from_item_id`),
+  KEY `idx_table_status` (`table_id`,`status`),
   CONSTRAINT `fk_order_items_menu` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=123 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_order_items_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `order_items` VALUES ('1', '1', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-07 19:22:05', '2026-03-07 19:37:54');
-INSERT INTO `order_items` VALUES ('2', '1', '125', 'Salad Cá Ngừ', '125000', '1', '', 'confirmed', '2026-03-07 19:23:55', '2026-03-07 19:37:54');
-INSERT INTO `order_items` VALUES ('3', '1', '126', 'Salad Bò Nướng', '145000', '1', '', 'confirmed', '2026-03-07 19:23:58', '2026-03-07 19:37:54');
-INSERT INTO `order_items` VALUES ('4', '1', '131', 'Súp Hải Sản', '135000', '2', '', 'confirmed', '2026-03-07 19:24:37', '2026-03-07 19:37:54');
-INSERT INTO `order_items` VALUES ('5', '1', '59', 'Súp cua vi cá', '180000', '1', '', 'confirmed', '2026-03-07 19:30:57', '2026-03-07 19:37:54');
-INSERT INTO `order_items` VALUES ('6', '7', '55', 'Gỏi cuốn tôm thịt', '85000', '3', '', 'confirmed', '2026-03-07 20:04:53', '2026-03-07 20:05:52');
-INSERT INTO `order_items` VALUES ('7', '7', '2', 'Chả giò rế', '75000', '2', '', 'confirmed', '2026-03-07 20:04:59', '2026-03-07 20:05:32');
-INSERT INTO `order_items` VALUES ('8', '7', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-07 20:05:05', '2026-03-07 20:05:32');
-INSERT INTO `order_items` VALUES ('9', '7', '4', 'Cơm chiên hải sản', '120000', '1', '', 'confirmed', '2026-03-07 20:05:08', '2026-03-07 20:05:32');
-INSERT INTO `order_items` VALUES ('10', '7', '5', 'Bò lúc lắc', '180000', '1', '', 'confirmed', '2026-03-07 20:05:09', '2026-03-07 20:05:32');
-INSERT INTO `order_items` VALUES ('11', '7', '137', 'Spaghetti Carbonara', '145000', '1', '', 'confirmed', '2026-03-07 20:05:19', '2026-03-07 20:05:32');
-INSERT INTO `order_items` VALUES ('12', '8', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-07 20:07:08', '2026-03-07 20:07:13');
-INSERT INTO `order_items` VALUES ('13', '8', '60', 'Súp bào ngư', '220000', '1', '', 'confirmed', '2026-03-07 20:07:10', '2026-03-07 20:07:13');
-INSERT INTO `order_items` VALUES ('14', '8', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-07 20:08:44', '2026-03-07 20:08:48');
-INSERT INTO `order_items` VALUES ('15', '8', '55', 'Gỏi cuốn tôm thịt', '85000', '1', 'Không cho ớt', 'confirmed', '2026-03-07 20:09:47', '2026-03-07 20:10:02');
-INSERT INTO `order_items` VALUES ('16', '8', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-07 20:13:03', '2026-03-07 20:13:09');
-INSERT INTO `order_items` VALUES ('17', '8', '71', 'Mực nướng sa tế', '165000', '1', '', 'confirmed', '2026-03-07 20:13:06', '2026-03-07 20:13:09');
-INSERT INTO `order_items` VALUES ('18', '8', '60', 'Súp bào ngư', '220000', '3', '', 'confirmed', '2026-03-07 20:14:37', '2026-03-07 20:14:46');
-INSERT INTO `order_items` VALUES ('19', '8', '60', 'Súp bào ngư', '220000', '1', '', 'confirmed', '2026-03-07 20:16:03', '2026-03-07 20:16:06');
-INSERT INTO `order_items` VALUES ('20', '8', '3', 'Súp bào ngư vi cá', '150000', '1', '', 'confirmed', '2026-03-07 20:16:50', '2026-03-07 20:16:57');
-INSERT INTO `order_items` VALUES ('21', '10', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-07 20:17:31', '2026-03-07 20:17:47');
-INSERT INTO `order_items` VALUES ('22', '10', '5', 'Bò lúc lắc', '180000', '1', '', 'confirmed', '2026-03-07 20:17:34', '2026-03-07 20:17:47');
-INSERT INTO `order_items` VALUES ('23', '10', '71', 'Mực nướng sa tế', '165000', '1', '', 'confirmed', '2026-03-07 20:17:37', '2026-03-07 20:17:47');
-INSERT INTO `order_items` VALUES ('24', '10', '80', 'Phở bò đặc biệt', '95000', '1', '', 'confirmed', '2026-03-07 20:17:42', '2026-03-07 20:17:47');
-INSERT INTO `order_items` VALUES ('25', '10', '77', 'Cơm gà xối mỡ', '95000', '1', '', 'confirmed', '2026-03-07 20:20:03', '2026-03-07 20:20:07');
-INSERT INTO `order_items` VALUES ('26', '9', '55', 'Gỏi cuốn tôm thịt', '85000', '3', '', 'confirmed', '2026-03-07 20:32:14', '2026-03-07 20:32:19');
-INSERT INTO `order_items` VALUES ('27', '9', '66', 'Lẩu nấm thập cẩm', '280000', '1', '', 'confirmed', '2026-03-07 20:32:16', '2026-03-07 20:32:19');
-INSERT INTO `order_items` VALUES ('28', '12', '55', 'Gỏi cuốn tôm thịt', '85000', '5', '', 'confirmed', '2026-03-07 20:39:33', '2026-03-07 20:39:37');
-INSERT INTO `order_items` VALUES ('29', '13', '55', 'Gỏi cuốn tôm thịt', '85000', '8', '', 'confirmed', '2026-03-07 21:16:36', '2026-03-07 21:17:11');
-INSERT INTO `order_items` VALUES ('31', '13', '57', 'Nem nướng Nha Trang', '110000', '2', '', 'confirmed', '2026-03-07 21:16:43', '2026-03-07 21:17:11');
-INSERT INTO `order_items` VALUES ('32', '13', '67', 'Lẩu bò nhúng dấm', '320000', '2', '', 'confirmed', '2026-03-07 21:16:45', '2026-03-07 21:17:11');
-INSERT INTO `order_items` VALUES ('33', '13', '9', 'Kem dừa', '55000', '8', '', 'confirmed', '2026-03-07 21:16:47', '2026-03-07 21:17:11');
-INSERT INTO `order_items` VALUES ('34', '14', '1', 'Gỏi cuốn tôm thịt', '85000', '12', '', 'confirmed', '2026-03-07 21:25:30', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('35', '14', '58', 'Bò lúc lắc', '145000', '3', '', 'confirmed', '2026-03-07 21:25:36', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('36', '14', '60', 'Súp bào ngư', '220000', '3', '', 'confirmed', '2026-03-07 21:25:43', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('37', '14', '63', 'Gỏi hải sản Thái', '165000', '3', '', 'confirmed', '2026-03-07 21:25:49', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('38', '14', '7', 'Tôm sú nướng muối ớt', '220000', '3', '', 'confirmed', '2026-03-07 21:25:55', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('39', '14', '9', 'Kem dừa', '55000', '3', '', 'confirmed', '2026-03-07 21:26:02', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('40', '14', '94', 'Bánh flan', '50000', '3', '', 'confirmed', '2026-03-07 21:26:03', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('41', '14', '92', 'Kem dừa', '55000', '6', '', 'confirmed', '2026-03-07 21:26:07', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('42', '14', '71', 'Mực nướng sa tế', '165000', '1', '', 'confirmed', '2026-03-07 21:26:24', '2026-03-07 21:26:34');
-INSERT INTO `order_items` VALUES ('44', '15', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-07 21:59:41', '2026-03-08 09:47:47');
-INSERT INTO `order_items` VALUES ('45', '15', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-07 21:59:41', '2026-03-08 09:47:47');
-INSERT INTO `order_items` VALUES ('46', '17', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 09:58:21', '2026-03-08 09:58:28');
-INSERT INTO `order_items` VALUES ('47', '17', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 09:58:22', '2026-03-08 09:58:28');
-INSERT INTO `order_items` VALUES ('48', '17', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-08 09:58:25', '2026-03-08 09:58:28');
-INSERT INTO `order_items` VALUES ('49', '17', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 09:58:46', '2026-03-08 09:58:50');
-INSERT INTO `order_items` VALUES ('50', '17', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 10:00:38', '2026-03-08 10:00:44');
-INSERT INTO `order_items` VALUES ('51', '17', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-08 10:01:33', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('52', '17', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-08 10:01:33', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('53', '17', '4', 'Cơm chiên hải sản', '120000', '1', 'Set: Set Trưa Văn Phòng 1', 'confirmed', '2026-03-08 10:01:37', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('54', '17', '1', 'Gỏi cuốn tôm thịt', '85000', '2', 'Set: Set Trưa Văn Phòng 1', 'confirmed', '2026-03-08 10:01:37', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('55', '17', '14', 'Nước suối', '15000', '1', 'Set: Set Trưa Văn Phòng 1', 'confirmed', '2026-03-08 10:01:37', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('56', '17', '14', 'Nước suối', '15000', '1', 'Set: Set Trưa Nhanh', 'confirmed', '2026-03-08 10:01:53', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('57', '17', '127', 'Salad Caesar', '115000', '1', 'Set: Set Trưa Nhanh', 'confirmed', '2026-03-08 10:01:53', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('58', '17', '137', 'Spaghetti Carbonara', '145000', '1', 'Set: Set Trưa Nhanh', 'confirmed', '2026-03-08 10:01:53', '2026-03-08 10:05:41');
-INSERT INTO `order_items` VALUES ('60', '22', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-08 10:25:13', '2026-03-08 10:28:59');
-INSERT INTO `order_items` VALUES ('61', '22', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-08 10:25:13', '2026-03-08 10:28:59');
-INSERT INTO `order_items` VALUES ('62', '30', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 15:22:52', '2026-03-08 15:26:34');
-INSERT INTO `order_items` VALUES ('63', '30', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-08 15:22:53', '2026-03-08 15:26:34');
-INSERT INTO `order_items` VALUES ('64', '30', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-08 15:22:55', '2026-03-08 15:26:34');
-INSERT INTO `order_items` VALUES ('65', '32', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-09 22:26:35', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('66', '32', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-09 22:26:38', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('67', '32', '56', 'Chả giò rế hải sản', '95000', '1', '', 'confirmed', '2026-03-09 22:26:38', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('68', '32', '57', 'Nem nướng Nha Trang', '110000', '1', '', 'confirmed', '2026-03-09 22:26:40', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('69', '32', '58', 'Bò lúc lắc', '145000', '1', '', 'confirmed', '2026-03-09 22:26:41', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('70', '32', '3', 'Súp bào ngư vi cá', '150000', '1', '', 'confirmed', '2026-03-09 22:26:42', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('71', '32', '63', 'Gỏi hải sản Thái', '165000', '1', '', 'confirmed', '2026-03-09 22:26:45', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('72', '32', '65', 'Lẩu thái hải sản', '350000', '1', '', 'confirmed', '2026-03-09 22:26:51', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('73', '32', '9', 'Kem dừa', '55000', '1', '', 'confirmed', '2026-03-09 22:26:54', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('74', '32', '93', 'Sương sa hạt lựu', '40000', '1', '', 'confirmed', '2026-03-09 22:26:56', '2026-03-09 22:27:03');
-INSERT INTO `order_items` VALUES ('75', '33', '3', 'Súp bào ngư vi cá', '150000', '1', '', 'confirmed', '2026-03-16 09:28:06', '2026-03-16 09:28:14');
-INSERT INTO `order_items` VALUES ('76', '33', '60', 'Súp bào ngư', '220000', '1', '', 'confirmed', '2026-03-16 09:28:08', '2026-03-16 09:28:14');
-INSERT INTO `order_items` VALUES ('77', '33', '62', 'Gỏi đu đủ bò khô', '95000', '1', '', 'confirmed', '2026-03-16 09:28:09', '2026-03-16 09:28:14');
-INSERT INTO `order_items` VALUES ('78', '34', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-16 14:52:21', '2026-03-16 14:52:26');
-INSERT INTO `order_items` VALUES ('79', '34', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-16 14:52:22', '2026-03-16 14:52:26');
-INSERT INTO `order_items` VALUES ('80', '34', '2', 'Chả giò rế', '75000', '1', '', 'confirmed', '2026-03-16 14:52:23', '2026-03-16 14:52:26');
-INSERT INTO `order_items` VALUES ('81', '35', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'draft', '2026-03-16 18:13:44', '2026-03-16 18:13:44');
-INSERT INTO `order_items` VALUES ('82', '35', '80', 'Phở bò đặc biệt', '95000', '4', 'Set: Set Ăn Sáng Á Cơ Bản', 'draft', '2026-03-16 18:13:44', '2026-03-16 18:15:25');
-INSERT INTO `order_items` VALUES ('83', '36', '66', 'Lẩu nấm thập cẩm', '280000', '1', '', 'draft', '2026-03-16 20:26:28', '2026-03-16 20:26:28');
-INSERT INTO `order_items` VALUES ('84', '42', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 08:04:05', '2026-03-17 08:08:59');
-INSERT INTO `order_items` VALUES ('85', '42', '55', 'Gỏi cuốn tôm thịt', '85000', '2', '', 'confirmed', '2026-03-17 08:15:52', '2026-03-17 08:16:03');
-INSERT INTO `order_items` VALUES ('100', '43', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-17 11:00:23', '2026-03-17 11:00:26');
-INSERT INTO `order_items` VALUES ('101', '43', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', 'confirmed', '2026-03-17 11:00:23', '2026-03-17 11:00:26');
-INSERT INTO `order_items` VALUES ('103', '43', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:29:19', '2026-03-17 11:29:24');
-INSERT INTO `order_items` VALUES ('109', '44', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:49:02', '2026-03-17 11:49:06');
-INSERT INTO `order_items` VALUES ('110', '44', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:49:04', '2026-03-17 11:49:06');
-INSERT INTO `order_items` VALUES ('111', '45', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:49:26', '2026-03-17 11:49:30');
-INSERT INTO `order_items` VALUES ('112', '45', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:49:27', '2026-03-17 11:49:30');
-INSERT INTO `order_items` VALUES ('113', '46', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:52:17', '2026-03-17 11:52:19');
-INSERT INTO `order_items` VALUES ('114', '47', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:52:44', '2026-03-17 11:52:47');
-INSERT INTO `order_items` VALUES ('117', '47', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:56:07', '2026-03-17 11:56:21');
-INSERT INTO `order_items` VALUES ('118', '47', '87', 'Tôm càng nướng mọi', '380000', '1', '', 'confirmed', '2026-03-17 11:56:26', '2026-03-17 11:59:43');
-INSERT INTO `order_items` VALUES ('119', '47', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', 'confirmed', '2026-03-17 11:59:18', '2026-03-17 11:59:43');
-INSERT INTO `order_items` VALUES ('120', '47', '86', 'Cá chẽm hấp hồng hạnh', '320000', '2', '', 'confirmed', '2026-03-17 11:59:27', '2026-03-17 11:59:43');
-INSERT INTO `order_items` VALUES ('121', '47', '152', 'Pizza Pepperoni', '185000', '1', '', 'confirmed', '2026-03-17 11:59:29', '2026-03-17 11:59:43');
-INSERT INTO `order_items` VALUES ('122', '47', '153', 'Pizza Hải Sản', '225000', '1', '', 'confirmed', '2026-03-17 11:59:32', '2026-03-17 11:59:43');
+INSERT INTO `order_items` VALUES ('1', '1', '6', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-07 19:22:05', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('2', '1', '6', '125', 'Salad Cá Ngừ', '125000', '1', '', NULL, '0', 'confirmed', '2026-03-07 19:23:55', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('3', '1', '6', '126', 'Salad Bò Nướng', '145000', '1', '', NULL, '0', 'confirmed', '2026-03-07 19:23:58', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('4', '1', '6', '131', 'Súp Hải Sản', '135000', '2', '', NULL, '0', 'confirmed', '2026-03-07 19:24:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('5', '1', '6', '59', 'Súp cua vi cá', '180000', '1', '', NULL, '0', 'confirmed', '2026-03-07 19:30:57', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('6', '7', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '3', '', NULL, '0', 'confirmed', '2026-03-07 20:04:53', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('7', '7', '1', '2', 'Chả giò rế', '75000', '2', '', NULL, '0', 'confirmed', '2026-03-07 20:04:59', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('8', '7', '1', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:05:05', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('9', '7', '1', '4', 'Cơm chiên hải sản', '120000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:05:08', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('10', '7', '1', '5', 'Bò lúc lắc', '180000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:05:09', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('11', '7', '1', '137', 'Spaghetti Carbonara', '145000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:05:19', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('12', '8', '1', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:07:08', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('13', '8', '1', '60', 'Súp bào ngư', '220000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:07:10', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('14', '8', '1', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:08:44', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('15', '8', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', 'Không cho ớt', NULL, '0', 'confirmed', '2026-03-07 20:09:47', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('16', '8', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:13:03', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('17', '8', '1', '71', 'Mực nướng sa tế', '165000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:13:06', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('18', '8', '1', '60', 'Súp bào ngư', '220000', '3', '', NULL, '0', 'confirmed', '2026-03-07 20:14:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('19', '8', '1', '60', 'Súp bào ngư', '220000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:16:03', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('20', '8', '1', '3', 'Súp bào ngư vi cá', '150000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:16:50', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('21', '10', '6', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:17:31', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('22', '10', '6', '5', 'Bò lúc lắc', '180000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:17:34', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('23', '10', '6', '71', 'Mực nướng sa tế', '165000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:17:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('24', '10', '6', '80', 'Phở bò đặc biệt', '95000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:17:42', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('25', '10', '6', '77', 'Cơm gà xối mỡ', '95000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:20:03', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('26', '9', '4', '55', 'Gỏi cuốn tôm thịt', '85000', '3', '', NULL, '0', 'confirmed', '2026-03-07 20:32:14', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('27', '9', '4', '66', 'Lẩu nấm thập cẩm', '280000', '1', '', NULL, '0', 'confirmed', '2026-03-07 20:32:16', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('28', '12', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '5', '', NULL, '0', 'confirmed', '2026-03-07 20:39:33', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('29', '13', '7', '55', 'Gỏi cuốn tôm thịt', '85000', '8', '', NULL, '0', 'confirmed', '2026-03-07 21:16:36', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('31', '13', '7', '57', 'Nem nướng Nha Trang', '110000', '2', '', NULL, '0', 'confirmed', '2026-03-07 21:16:43', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('32', '13', '7', '67', 'Lẩu bò nhúng dấm', '320000', '2', '', NULL, '0', 'confirmed', '2026-03-07 21:16:45', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('33', '13', '7', '9', 'Kem dừa', '55000', '8', '', NULL, '0', 'confirmed', '2026-03-07 21:16:47', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('34', '14', '1', '1', 'Gỏi cuốn tôm thịt', '85000', '12', '', NULL, '0', 'confirmed', '2026-03-07 21:25:30', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('35', '14', '1', '58', 'Bò lúc lắc', '145000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:25:36', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('36', '14', '1', '60', 'Súp bào ngư', '220000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:25:43', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('37', '14', '1', '63', 'Gỏi hải sản Thái', '165000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:25:49', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('38', '14', '1', '7', 'Tôm sú nướng muối ớt', '220000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:25:55', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('39', '14', '1', '9', 'Kem dừa', '55000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:26:02', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('40', '14', '1', '94', 'Bánh flan', '50000', '3', '', NULL, '0', 'confirmed', '2026-03-07 21:26:03', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('41', '14', '1', '92', 'Kem dừa', '55000', '6', '', NULL, '0', 'confirmed', '2026-03-07 21:26:07', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('42', '14', '1', '71', 'Mực nướng sa tế', '165000', '1', '', NULL, '0', 'confirmed', '2026-03-07 21:26:24', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('44', '15', '1', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-07 21:59:41', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('45', '15', '1', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-07 21:59:41', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('46', '17', '22', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 09:58:21', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('47', '17', '22', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 09:58:22', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('48', '17', '22', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-08 09:58:25', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('49', '17', '22', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 09:58:46', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('50', '17', '22', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 10:00:38', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('51', '17', '22', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-08 10:01:33', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('52', '17', '22', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-08 10:01:33', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('53', '17', '22', '4', 'Cơm chiên hải sản', '120000', '1', 'Set: Set Trưa Văn Phòng 1', NULL, '0', 'confirmed', '2026-03-08 10:01:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('54', '17', '22', '1', 'Gỏi cuốn tôm thịt', '85000', '2', 'Set: Set Trưa Văn Phòng 1', NULL, '0', 'confirmed', '2026-03-08 10:01:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('55', '17', '22', '14', 'Nước suối', '15000', '1', 'Set: Set Trưa Văn Phòng 1', NULL, '0', 'confirmed', '2026-03-08 10:01:37', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('56', '17', '22', '14', 'Nước suối', '15000', '1', 'Set: Set Trưa Nhanh', NULL, '0', 'confirmed', '2026-03-08 10:01:53', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('57', '17', '22', '127', 'Salad Caesar', '115000', '1', 'Set: Set Trưa Nhanh', NULL, '0', 'confirmed', '2026-03-08 10:01:53', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('58', '17', '22', '137', 'Spaghetti Carbonara', '145000', '1', 'Set: Set Trưa Nhanh', NULL, '0', 'confirmed', '2026-03-08 10:01:53', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('60', '22', '19', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-08 10:25:13', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('61', '22', '19', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-08 10:25:13', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('62', '30', '19', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 15:22:52', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('63', '30', '19', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-08 15:22:53', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('64', '30', '19', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-08 15:22:55', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('65', '32', '21', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:35', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('66', '32', '21', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:38', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('67', '32', '21', '56', 'Chả giò rế hải sản', '95000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:38', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('68', '32', '21', '57', 'Nem nướng Nha Trang', '110000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:40', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('69', '32', '21', '58', 'Bò lúc lắc', '145000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:41', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('70', '32', '21', '3', 'Súp bào ngư vi cá', '150000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:42', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('71', '32', '21', '63', 'Gỏi hải sản Thái', '165000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:45', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('72', '32', '21', '65', 'Lẩu thái hải sản', '350000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:51', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('73', '32', '21', '9', 'Kem dừa', '55000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:54', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('74', '32', '21', '93', 'Sương sa hạt lựu', '40000', '1', '', NULL, '0', 'confirmed', '2026-03-09 22:26:56', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('75', '33', '13', '3', 'Súp bào ngư vi cá', '150000', '1', '', NULL, '0', 'confirmed', '2026-03-16 09:28:06', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('76', '33', '13', '60', 'Súp bào ngư', '220000', '1', '', NULL, '0', 'confirmed', '2026-03-16 09:28:08', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('77', '33', '13', '62', 'Gỏi đu đủ bò khô', '95000', '1', '', NULL, '0', 'confirmed', '2026-03-16 09:28:09', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('78', '34', '19', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-16 14:52:21', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('79', '34', '19', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-16 14:52:22', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('80', '34', '19', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-16 14:52:23', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('81', '35', '20', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'draft', '2026-03-16 18:13:44', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('82', '35', '20', '80', 'Phở bò đặc biệt', '95000', '4', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'draft', '2026-03-16 18:13:44', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('83', '36', '22', '66', 'Lẩu nấm thập cẩm', '280000', '1', '', NULL, '0', 'draft', '2026-03-16 20:26:28', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('84', '42', '19', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 08:04:05', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('85', '42', '19', '55', 'Gỏi cuốn tôm thịt', '85000', '2', '', NULL, '0', 'confirmed', '2026-03-17 08:15:52', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('100', '43', '20', '10', 'Nước ép cam', '65000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-17 11:00:23', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('101', '43', '20', '80', 'Phở bò đặc biệt', '95000', '1', 'Set: Set Ăn Sáng Á Cơ Bản', NULL, '0', 'confirmed', '2026-03-17 11:00:23', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('103', '43', '20', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:29:19', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('109', '44', '20', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:49:02', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('110', '44', '20', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:49:04', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('111', '45', '23', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:49:26', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('112', '45', '23', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:49:27', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('113', '46', '19', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:52:17', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('114', '47', '20', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:52:44', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('117', '47', '20', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:56:07', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('118', '47', '20', '87', 'Tôm càng nướng mọi', '380000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:56:26', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('119', '47', '20', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:59:18', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('120', '47', '20', '86', 'Cá chẽm hấp hồng hạnh', '320000', '2', '', NULL, '0', 'confirmed', '2026-03-17 11:59:27', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('121', '47', '20', '152', 'Pizza Pepperoni', '185000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:59:29', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('122', '47', '20', '153', 'Pizza Hải Sản', '225000', '1', '', NULL, '0', 'confirmed', '2026-03-17 11:59:32', '2026-03-17 12:19:12');
+INSERT INTO `order_items` VALUES ('123', '49', NULL, '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', '2026-03-17 12:21:31', '2026-03-17 12:21:35');
+INSERT INTO `order_items` VALUES ('124', '49', NULL, '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', '2026-03-17 12:21:34', '2026-03-17 12:21:35');
 
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
@@ -372,7 +381,7 @@ CREATE TABLE `orders` (
   KEY `idx_orders_opened` (`opened_at`),
   CONSTRAINT `fk_orders_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_orders_waiter` FOREIGN KEY (`waiter_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `orders` VALUES ('1', '6', '3', '1', '1', NULL, 'closed', '0', 'cash', 'paid', '2026-03-07 19:21:40', '2026-03-07 19:40:08', '2026-03-07 19:21:40', '2026-03-07 19:40:08');
 INSERT INTO `orders` VALUES ('2', '4', '3', '1', '1', NULL, 'closed', '0', 'cash', 'canceled', '2026-03-07 19:44:21', '2026-03-07 19:52:34', '2026-03-07 19:44:21', '2026-03-07 19:52:34');
@@ -421,6 +430,10 @@ INSERT INTO `orders` VALUES ('44', '20', '3', '1', '2', NULL, 'closed', '0', 'ca
 INSERT INTO `orders` VALUES ('45', '23', '3', '1', '2', NULL, 'closed', '0', 'cash', 'paid', '2026-03-17 11:49:24', '2026-03-17 11:52:02', '2026-03-17 11:49:24', '2026-03-17 11:52:02');
 INSERT INTO `orders` VALUES ('46', '19', '3', '1', '2', NULL, 'closed', '0', 'cash', 'paid', '2026-03-17 11:52:13', '2026-03-17 11:52:22', '2026-03-17 11:52:13', '2026-03-17 11:52:22');
 INSERT INTO `orders` VALUES ('47', '20', '3', '1', '3', NULL, 'closed', '0', 'transfer', 'paid', '2026-03-17 11:52:40', '2026-03-17 11:59:55', '2026-03-17 11:52:40', '2026-03-17 11:59:55');
+INSERT INTO `orders` VALUES ('48', '1', '3', '1', '1', NULL, 'closed', '0', 'cash', 'canceled', '2026-03-17 12:21:24', '2026-03-17 12:23:10', '2026-03-17 12:21:24', '2026-03-17 12:23:10');
+INSERT INTO `orders` VALUES ('49', '19', '3', '1', '1', NULL, 'closed', '0', 'cash', 'paid', '2026-03-17 12:21:28', '2026-03-17 12:23:27', '2026-03-17 12:21:28', '2026-03-17 12:23:27');
+INSERT INTO `orders` VALUES ('50', '20', '3', '1', '2', NULL, 'closed', '0', 'cash', 'canceled', '2026-03-17 12:22:47', '2026-03-17 12:42:12', '2026-03-17 12:22:47', '2026-03-17 12:42:12');
+INSERT INTO `orders` VALUES ('51', '19', '3', '1', '10', NULL, 'open', '0', 'cash', 'pending', '2026-03-17 12:42:16', NULL, '2026-03-17 12:42:16', '2026-03-17 12:42:16');
 
 DROP TABLE IF EXISTS `qr_tables`;
 CREATE TABLE `qr_tables` (
@@ -513,29 +526,30 @@ CREATE TABLE `tables` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `fk_tables_parent` (`parent_id`),
+  KEY `idx_parent_id` (`parent_id`),
   CONSTRAINT `fk_tables_parent` FOREIGN KEY (`parent_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('2', NULL, 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('4', NULL, 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('5', NULL, 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('6', NULL, 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('7', NULL, 'B.01', 'B1', '4', 'available', '0', '0', '7', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('8', NULL, 'B.02', 'B1', '4', 'available', '0', '0', '8', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('9', NULL, 'B.03', 'B1', '4', 'available', '0', '0', '9', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('10', NULL, 'B.04', 'B1', '4', 'available', '0', '0', '10', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('11', NULL, 'B.05', 'B1', '4', 'available', '0', '0', '11', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
-INSERT INTO `tables` VALUES ('12', NULL, 'B.06', 'B1', '4', 'available', '0', '0', '12', '1', '2026-03-07 18:20:45', '2026-03-16 21:37:02');
+INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('2', NULL, 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('4', NULL, 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('5', NULL, 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('6', NULL, 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('7', NULL, 'B.01', 'B1', '4', 'available', '0', '0', '7', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('8', NULL, 'B.02', 'B1', '4', 'available', '0', '0', '8', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('9', NULL, 'B.03', 'B1', '4', 'available', '0', '0', '9', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('10', NULL, 'B.04', 'B1', '4', 'available', '0', '0', '10', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('11', NULL, 'B.05', 'B1', '4', 'available', '0', '0', '11', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
+INSERT INTO `tables` VALUES ('12', NULL, 'B.06', 'B1', '4', 'available', '0', '0', '12', '1', '2026-03-07 18:20:45', '2026-03-17 12:23:10');
 INSERT INTO `tables` VALUES ('13', NULL, 'C.01', 'C1', '4', 'available', '0', '0', '13', '1', '2026-03-07 18:20:45', '2026-03-16 21:32:44');
 INSERT INTO `tables` VALUES ('14', NULL, 'C.02', 'C1', '4', 'available', '0', '0', '14', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('15', NULL, 'C.03', 'C1', '4', 'available', '0', '0', '15', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('16', NULL, 'C.04', 'C1', '4', 'available', '0', '0', '16', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('17', NULL, 'C.05', 'C1', '4', 'available', '0', '0', '17', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('18', NULL, 'C.06', 'C1', '4', 'available', '0', '0', '18', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
-INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'available', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-17 11:52:22');
-INSERT INTO `tables` VALUES ('20', NULL, 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-17 11:59:55');
+INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'occupied', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-17 12:42:16');
+INSERT INTO `tables` VALUES ('20', '19', 'VIP 1.2', 'VIP 1', '8', 'occupied', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-17 12:42:20');
 INSERT INTO `tables` VALUES ('21', NULL, 'VIP 2.1', 'VIP 2', '8', 'available', '0', '0', '21', '1', '2026-03-07 18:20:45', '2026-03-16 21:32:40');
 INSERT INTO `tables` VALUES ('22', NULL, 'VIP 2.2', 'VIP 2', '8', 'available', '0', '0', '22', '1', '2026-03-07 18:20:45', '2026-03-16 21:32:21');
 INSERT INTO `tables` VALUES ('23', NULL, 'VIP 3.1', 'VIP 3', '8', 'available', '0', '0', '23', '1', '2026-03-07 18:20:45', '2026-03-17 11:52:02');
