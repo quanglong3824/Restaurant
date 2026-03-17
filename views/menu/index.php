@@ -1,10 +1,7 @@
-<?php // views/menu/index.php — Digital Menu (Waiter POS & Showcase) ?>
+<?php // views/menu/index.php — Digital Menu (Compact Layout) ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/menu/index.css">
 
 <div class="page-content pos-layout">
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
-
-    <!-- CONFIGURATION - PHP values passed to external JS -->
 
     <!-- MAIN MENU -->
     <div class="pos-menu-col">
@@ -25,9 +22,7 @@
                     <button class="filter-pill" data-filter="<?= e($cat['name']) ?>">
                         <?= e($cat['name']) ?>
                         <?php if (!empty($cat['name_en'])): ?>
-                            <span style="display:block; font-size: 0.65rem; opacity: 0.6; font-weight: 500; margin-top: -2px;">
-                                <?= e($cat['name_en']) ?>
-                            </span>
+                            <span style="display:block; font-size:0.6rem; opacity:0.6; font-weight:500; margin-top:-2px;"><?= e($cat['name_en']) ?></span>
                         <?php endif; ?>
                     </button>
                 <?php endforeach; ?>
@@ -37,38 +32,28 @@
         <div id="menuItemsContainer">
             <?php foreach ($grouped as $catName => $items): ?>
                 <div class="menu-section" data-section="<?= e($catName) ?>">
-                    <h3 style="margin: 1.5rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.1rem;">
+                    <h3>
                         <i class="fas fa-caret-right"></i> <?= e($catName) ?>
                         <?php
-                        // Try to find category object to get name_en
                         $catObj = null;
-                        foreach ($categories as $c)
-                            if ($c['name'] === $catName) {
-                                $catObj = $c;
-                                break;
-                            }
-                        if ($catObj && !empty($catObj['name_en'])):
-                            ?>
-                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500; margin-left: 5px;">
-                                / <?= e($catObj['name_en']) ?>
-                            </span>
+                        foreach ($categories as $c) if ($c['name'] === $catName) { $catObj = $c; break; }
+                        if ($catObj && !empty($catObj['name_en'])): ?>
+                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-left:5px;">/ <?= e($catObj['name_en']) ?></span>
                         <?php endif; ?>
                     </h3>
                     <div class="menu-items-grid">
                         <?php foreach ($items as $item): ?>
                             <div class="list-item-card">
-                                <div style="display:flex; flex:1; align-items:center; cursor:pointer;"
+                                <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
                                     data-id="<?= $item['id'] ?>" data-name="<?= e($item['name']) ?>"
                                     data-price="<?= $item['price'] ?>"
                                     data-img="<?= $item['image'] ? BASE_URL . '/public/uploads/' . e($item['image']) : '' ?>"
                                     data-desc="<?= e($item['description'] ?? '') ?>" data-order="<?= $orderId ?: '' ?>"
                                     onclick="handleOpenItemModal(this)">
                                     <?php if ($item['image']): ?>
-                                        <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img"
-                                            alt="<?= e($item['name']) ?>">
+                                        <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img" alt="<?= e($item['name']) ?>">
                                     <?php else: ?>
-                                        <div class="list-item-img"
-                                            style="display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--text-muted);">
+                                        <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
                                             <i class="fas fa-image"></i>
                                         </div>
                                     <?php endif; ?>
@@ -76,17 +61,13 @@
                                         <div class="list-item-name">
                                             <?= e($item['name']) ?>
                                             <?php if (!empty($item['name_en'])): ?>
-                                                <div
-                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
-                                                    <?= e($item['name_en']) ?>
-                                                </div>
+                                                <div class="list-item-name-en"><?= e($item['name_en']) ?></div>
                                             <?php endif; ?>
                                         </div>
                                         <div class="list-item-price"><?= formatPrice($item['price']) ?></div>
                                     </div>
                                 </div>
-                                <div class="list-item-action"
-                                    onclick="quickAdd(event, <?= $item['id'] ?>, <?= $orderId ?: 'null' ?>)">
+                                <div class="list-item-action" onclick="quickAdd(event, <?= $item['id'] ?>, <?= $orderId ?: 'null' ?>)">
                                     <i class="fas fa-plus"></i>
                                 </div>
                             </div>
@@ -97,40 +78,30 @@
 
             <?php if ($currentType === 'alacarte' && !empty($sets)): ?>
                 <div class="menu-section" data-section="Sets & Combo">
-                    <h3
-                        style="margin: 2rem 0 1rem; font-weight: 800; color: var(--gold-dark); font-size: 1.3rem; border-bottom: 2px solid var(--gold-light); padding-bottom: 0.5rem;">
-                        <i class="fas fa-utensils"></i> SETS & COMBO MENU
-                    </h3>
+                    <h3><i class="fas fa-utensils"></i> SETS & COMBO</h3>
                     <div class="menu-items-grid">
                         <?php foreach ($sets as $set): ?>
-                            <div class="list-item-card" style="border: 1px solid var(--gold-light); background: #fffcf5;">
-                                <div style="display:flex; flex:1; align-items:center; cursor:pointer;"
+                            <div class="list-item-card" style="border:1px solid var(--gold-light); background:#fffcf5;">
+                                <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
                                     onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
                                     <?php if ($set['image']): ?>
-                                        <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img"
-                                            alt="<?= e($set['name']) ?>">
+                                        <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img" alt="<?= e($set['name']) ?>">
                                     <?php else: ?>
-                                        <div class="list-item-img"
-                                            style="display:flex;align-items:center;justify-content:center;background:var(--gold-light);color:var(--gold-dark);">
+                                        <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--gold-dark);">
                                             <i class="fas fa-box-open"></i>
                                         </div>
                                     <?php endif; ?>
                                     <div class="list-item-body">
-                                        <div class="list-item-name" style="color: var(--gold-dark);">
+                                        <div class="list-item-name" style="color:var(--gold-dark);">
                                             <?= e($set['name']) ?>
                                             <?php if (!empty($set['name_en'])): ?>
-                                                <div
-                                                    style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; font-style: italic;">
-                                                    <?= e($set['name_en']) ?>
-                                                </div>
+                                                <div class="list-item-name-en"><?= e($set['name_en']) ?></div>
                                             <?php endif; ?>
                                         </div>
                                         <div class="list-item-price"><?= formatPrice($set['price']) ?></div>
-                                        <small style="color:var(--text-muted); font-size: 0.7rem;">(Bao gồm nhiều món)</small>
                                     </div>
                                 </div>
-                                <div class="list-item-action" style="background: var(--gold); color: white;"
-                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                <div class="list-item-action" style="background:var(--gold); color:white;" onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
                                     <i class="fas fa-list-ul"></i>
                                 </div>
                             </div>
@@ -141,27 +112,15 @@
         </div>
     </div>
 
-    <!-- CART SIDEBAR -->
+    <!-- CART SIDEBAR - Fixed -->
     <?php if ($orderId > 0): ?>
-        <button class="cart-fab" id="cartFab" onclick="toggleCart(true)">
-            <i class="fas fa-shopping-basket"></i>
-            <div class="cart-fab-badge" id="fabCount"><?= count($orderItems) ?></div>
-        </button>
-
-        <div class="pos-cart-col" id="cartCol">
+        <div class="pos-cart-col">
             <div class="cart-panel">
-                <div class="cart-header" onclick="if(window.innerWidth < 1024) toggleCart(false)" style="cursor:pointer;">
-                    <div>
-                        <h4 style="margin:0; font-weight:800; color:var(--gold-dark);">
-                            <?= e($tableModel->getFullDisplayName($tableId)) ?>
-                        </h4>
-                        <small style="color:var(--text-muted);"><?= e($order['guest_count'] ?? 1) ?> khách</small>
-                    </div>
-                    <button style="background:none; border:none; color:var(--gold-dark); font-size:1.2rem; cursor:pointer;"
-                        class="desktop-hide">
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
+                <div class="cart-header">
+                    <h4><?= e($tableModel->getFullDisplayName($tableId)) ?></h4>
+                    <small><?= e($order['guest_count'] ?? 1) ?> khách</small>
                 </div>
+                
                 <div class="cart-body" onclick="handleBodyClick(event)">
                     <?php
                     $draftItems = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
@@ -169,63 +128,46 @@
                     $draftCount = count($draftItems);
 
                     if (empty($orderItems)): ?>
-                        <div style="text-align:center; padding-top:3rem; color:var(--text-dim); pointer-events:none;">
-                            <i class="fas fa-shopping-basket" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i>
-                            <p>Chưa có món nào.</p>
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-basket"></i>
+                            <p>Chưa có món nào</p>
                         </div>
                     <?php else: ?>
                         <?php if ($draftCount > 0): ?>
-                            <div class="section-label"><i class="fas fa-edit"></i> Món đang chọn (nháp)</div>
+                            <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
                             <?php foreach ($draftItems as $it): ?>
-                                <div class="cart-item-row"
-                                    style="display:flex; justify-content:space-between; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px dashed var(--border);">
+                                <div class="cart-item-row">
                                     <div style="flex:1;">
-                                        <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;"><?= e($it['item_name']) ?>
-                                        </div>
-                                        <div style="display:flex; align-items:center; gap:0.75rem;">
-                                            <span
-                                                style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;"><?= formatPrice($it['item_price']) ?></span>
-                                            <div
-                                                style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
-                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)"
-                                                    style="border:none; background:none; padding:4px; cursor:pointer;"><i
-                                                        class="fas fa-minus" style="font-size:0.7rem;"></i></button>
-                                                <span
-                                                    style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;"><?= $it['quantity'] ?></span>
-                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)"
-                                                    style="border:none; background:none; padding:4px; cursor:pointer;"><i
-                                                        class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                                        <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                                            <span class="cart-item-price"><?= formatPrice($it['item_price']) ?></span>
+                                            <div class="qty-control">
+                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)"><i class="fas fa-minus"></i></button>
+                                                <span><?= $it['quantity'] ?></span>
+                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
                                     </div>
                                     <div style="text-align:right;">
-                                        <div style="font-weight:800; font-size:0.95rem;">
-                                            <?= formatPrice($it['item_price'] * $it['quantity']) ?>
-                                        </div>
-                                        <small style="color:var(--text-muted); font-weight:600;">Món nháp</small>
+                                        <div class="cart-item-price" style="font-size:0.9rem;"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
+                                        <span class="cart-item-status draft">Nháp</span>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         <?php endif; ?>
 
                         <?php if (!empty($confirmedItems)): ?>
-                            <div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi bếp (Đang làm)</div>
-                            <div class="confirmed-section">
+                            <div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi</div>
+                            <div style="background:var(--bg); border-radius:6px; padding:0.5rem;">
                                 <?php foreach ($confirmedItems as $it): ?>
-                                    <div class="cart-item-row"
-                                        style="display:flex; justify-content:space-between; margin-bottom:0.8rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border); border-style: none none dashed none;">
+                                    <div class="cart-item-row" style="margin-bottom:0.5rem; padding-bottom:0.5rem;">
                                         <div style="flex:1;">
-                                            <div style="font-weight:700; font-size:0.9rem; margin-bottom:2px;">
-                                                <?= e($it['item_name']) ?>
-                                            </div>
-                                            <span
-                                                style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">x<?= $it['quantity'] ?></span>
+                                            <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                            <span class="cart-item-qty">x<?= $it['quantity'] ?></span>
                                         </div>
                                         <div style="text-align:right;">
-                                            <div style="font-weight:700; font-size:0.9rem;">
-                                                <?= formatPrice($it['item_price'] * $it['quantity']) ?>
-                                            </div>
-                                            <small style="color:var(--success); font-weight:600; font-size: 0.75rem;">Đã gửi</small>
+                                            <div class="cart-item-price"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
+                                            <span class="cart-item-status confirmed">Đã gửi</span>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -233,28 +175,24 @@
                         <?php endif; ?>
                     <?php endif; ?>
                 </div>
+                
                 <div class="cart-footer">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:1.25rem; font-weight:800;">
-                        <span style="color:var(--text-muted);">TỔNG CỘNG</span>
-                        <span style="color:var(--danger); font-size:1.4rem;"
-                            id="orderTotal"><?= formatPrice($orderTotal) ?></span>
+                    <div class="total-row">
+                        <span class="total-label">Tổng cộng</span>
+                        <span class="total-amount" id="orderTotal"><?= formatPrice($orderTotal) ?></span>
                     </div>
                     <div id="cartActionBtn">
                         <?php if ($draftCount > 0): ?>
-                            <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="btn btn-gold btn-block"
-                                style="background:var(--danger); border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);">
-                                <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?> món)
+                            <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="cart-action-btn gold">
+                                <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?>)
                             </button>
                         <?php elseif (!empty($orderItems)): ?>
-                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>"
-                                class="btn btn-gold btn-block"
-                                style="background:var(--success); color:white; border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
-                                <i class="fas fa-check-circle"></i> ĐÃ GỬI BẾP (XEM BILL)
+                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn success">
+                                <i class="fas fa-check-circle"></i> XEM BILL
                             </a>
                         <?php else: ?>
-                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>"
-                                class="btn btn-gold btn-block" style="height:54px; font-size:1rem;">
-                                <i class="fas fa-file-invoice-dollar"></i> XEM CHI TIẾT BILL
+                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn ghost">
+                                <i class="fas fa-file-invoice"></i> CHI TIẾT
                             </a>
                         <?php endif; ?>
                     </div>
@@ -266,67 +204,57 @@
 
 <div id="addToast" class="add-toast"></div>
 
-<!-- Set/Combo Detail Modal -->
+<!-- Set Modal -->
 <div class="modal-backdrop" id="modalSetDetail">
-    <div class="modal modal-premium" style="max-width:600px;">
+    <div class="modal modal-premium" style="max-width:500px;">
         <div class="modal-header">
             <div class="d-flex flex-column">
-                <h3 id="modalSetName" class="playfair"></h3>
+                <h3 id="modalSetName" class="mb-1"></h3>
                 <div id="modalSetPrice" class="text-gold fw-800"></div>
             </div>
-            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+            <button class="modal-close" data-modal-close><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
-            <p id="modalSetDesc" class="text-muted small mb-4"></p>
-            <h4 class="form-label mb-3"><i class="fas fa-list-check me-2"></i> Thành phần trong Combo</h4>
-            <div id="modalSetItemsList" class="d-flex flex-column gap-2 mb-4">
-                <!-- Set items will be injected here -->
-            </div>
-            <div class="d-grid gap-3 mt-4">
-                <button onclick="confirmAddSetToOrder()" class="btn btn-gold py-3 fw-bold">
-                    <i class="fas fa-plus-circle me-2"></i> THÊM COMBO VÀO ĐƠN HÀNG
-                </button>
-                <button class="btn btn-ghost" data-modal-close>ĐÓNG</button>
+            <p id="modalSetDesc" class="text-muted small mb-3"></p>
+            <h4 class="form-label mb-3"><i class="fas fa-list-check me-2"></i> Thành phần</h4>
+            <div id="modalSetItemsList" class="d-flex flex-column gap-2 mb-4"></div>
+            <div class="d-grid gap-2">
+                <button onclick="confirmAddSetToOrder()" class="btn-gold w-100">THÊM COMBO</button>
+                <button class="btn-ghost w-100" data-modal-close>ĐÓNG</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Item Detail Modal -->
+<!-- Item Modal -->
 <div class="modal-backdrop" id="modalItemDetail">
-    <div class="modal modal-premium" style="max-width:500px;">
-        <div class="modal-header p-0 border-0" style="height: 250px; position: relative;" id="modalItemImgContainer">
-            <div id="modalItemImg" style="width: 100%; height: 100%;">
-                <div id="modalItemImgPlaceholder"
-                    class="d-flex align-items-center justify-content-center h-100 bg-light text-muted opacity-30">
-                    <i class="fas fa-image fa-3x"></i>
+    <div class="modal modal-premium" style="max-width:450px;">
+        <div class="modal-header p-0 border-0" style="height:180px; position:relative;" id="modalItemImgContainer">
+            <div id="modalItemImg" style="width:100%; height:100%;">
+                <div id="modalItemImgPlaceholder" class="d-flex align-items-center justify-content-center h-100 bg-light text-muted opacity-30">
+                    <i class="fas fa-image fa-2x"></i>
                 </div>
             </div>
-            <button class="modal-close" data-modal-close
-                style="position: absolute; top: 1rem; right: 1rem; background: rgba(0,0,0,0.4); color: #fff;"><i
-                    class="fas fa-times"></i></button>
+            <button class="modal-close" data-modal-close style="position:absolute; top:0.75rem; right:0.75rem; background:rgba(0,0,0,0.4); color:#fff;"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body pt-4">
-            <h3 id="modalItemName" class="playfair mb-1"></h3>
-            <div id="modalItemPrice" class="text-gold fw-800 mb-3 fs-4"></div>
-            <p id="modalItemDesc" class="text-muted small mb-4"></p>
+            <h3 id="modalItemName" class="mb-1"></h3>
+            <div id="modalItemPrice" class="text-gold fw-800 mb-3"></div>
+            <p id="modalItemDesc" class="text-muted small mb-3"></p>
 
             <div id="orderControlsSection" style="display:none;">
-                <div class="form-group">
-                    <label class="form-label">Ghi chú (Note)</label>
-                    <input type="text" id="modalItemNote" class="form-control"
-                        placeholder="Ví dụ: Không hành, ít cay...">
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú</label>
+                    <input type="text" id="modalItemNote" class="form-control" placeholder="Không hành, ít cay...">
                 </div>
-
                 <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
-                    <div class="qty-stepper d-flex align-items-center bg-light rounded-pill p-1">
-                        <button onclick="changeModalQty(-1)" class="btn btn-icon-sm"><i
-                                class="fas fa-minus"></i></button>
-                        <span id="modalItemQty" class="px-3 fw-800">1</span>
-                        <button onclick="changeModalQty(1)" class="btn btn-icon-sm"><i class="fas fa-plus"></i></button>
+                    <div class="qty-control" style="padding:4px 10px;">
+                        <button onclick="changeModalQty(-1)"><i class="fas fa-minus"></i></button>
+                        <span id="modalItemQty" style="width:24px;">1</span>
+                        <button onclick="changeModalQty(1)"><i class="fas fa-plus"></i></button>
                     </div>
-                    <button onclick="confirmAddToOrder()" class="btn btn-gold flex-fill py-3 fw-bold">
-                        GỌI MÓN: <span id="modalBtnTotal" class="ms-1"></span>
+                    <button onclick="confirmAddToOrder()" class="btn-gold flex-fill">
+                        GỌI MÓN: <span id="modalBtnTotal"></span>
                     </button>
                 </div>
             </div>
@@ -334,12 +262,11 @@
     </div>
 </div>
 
-<!-- CONFIGURATION - PHP values passed to external JS -->
 <script>
-    const MENU_CONFIG = {
-        baseUrl: '<?= BASE_URL ?>',
-        orderId: <?= $orderId ?: 0 ?>,
-        tableId: <?= $tableId ?: 0 ?>
-    };
+const MENU_CONFIG = {
+    baseUrl: '<?= BASE_URL ?>',
+    orderId: <?= $orderId ?: 0 ?>,
+    tableId: <?= $tableId ?: 0 ?>
+};
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/index.js" defer></script>
