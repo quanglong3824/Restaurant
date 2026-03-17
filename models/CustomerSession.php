@@ -11,8 +11,15 @@ class CustomerSession extends Model
     {
         $this->execute(
             "INSERT INTO customer_sessions 
-             (session_id, table_id, order_id, ip_address, user_agent, expires_at) 
-             VALUES (?, ?, ?, ?, ?, ?)",
+             (session_id, table_id, order_id, ip_address, user_agent, is_active, expires_at) 
+             VALUES (?, ?, ?, ?, ?, 1, ?)
+             ON DUPLICATE KEY UPDATE 
+             table_id = VALUES(table_id),
+             ip_address = VALUES(ip_address),
+             user_agent = VALUES(user_agent),
+             is_active = 1,
+             expires_at = VALUES(expires_at),
+             last_activity = NOW()",
             [
                 $data['session_id'],
                 $data['table_id'],

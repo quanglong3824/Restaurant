@@ -146,18 +146,13 @@ class QrMenuController extends Controller
         }
 
         $sessionId = session_id();
-        $existingSession = $this->sessionModel->findBySessionId($sessionId);
-
-        if (!$existingSession) {
-            $this->sessionModel->create([
-                'session_id' => $sessionId,
-                'table_id' => $tableId
-            ]);
-        } else {
-            // If session exists but for different table, update it or keep it?
-            // Usually, a device stays at one table.
-            $this->sessionModel->updateActivity($sessionId);
-        }
+        
+        // Always call create() which uses ON DUPLICATE KEY UPDATE internally
+        // to handle existing/expired/inactive sessions gracefully
+        $this->sessionModel->create([
+            'session_id' => $sessionId,
+            'table_id' => $tableId
+        ]);
 
         $_SESSION['customer_table_id'] = $tableId;
         $_SESSION['qr_token'] = $token;

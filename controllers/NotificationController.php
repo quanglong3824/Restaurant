@@ -20,14 +20,18 @@ class NotificationController extends Controller
     public function waiterIndex(): void
     {
         try {
+            // Check if model works before loading view
+            $this->notifModel->getRecent(1);
+            
             $this->view('layouts/waiter', [
                 'view' => 'notifications/waiter',
                 'pageTitle' => 'Thông báo',
             ]);
         } catch (\Throwable $e) {
             echo "<h1>Lỗi trang thông báo (500)</h1>";
-            echo "<p>Lỗi: " . $e->getMessage() . "</p>";
-            echo "<p>File: " . $e->getFile() . " trên dòng " . $e->getLine() . "</p>";
+            echo "<p>Lỗi SQL/Hệ thống: " . e($e->getMessage()) . "</p>";
+            echo "<p>File: " . e($e->getFile()) . " trên dòng " . e($e->getLine()) . "</p>";
+            echo "<hr><pre>" . e($e->getTraceAsString()) . "</pre>";
             exit;
         }
     }
