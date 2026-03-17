@@ -16,6 +16,8 @@ function setupCategoryNav() {
     const pills = document.querySelectorAll('.cat-pill');
     pills.forEach(pill => {
         pill.addEventListener('click', (e) => {
+            // Smooth scroll to section handled by browser if using href="#id"
+            // But we want to ensure the pills update
             pills.forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
         });
@@ -28,20 +30,28 @@ function setupCategoryNav() {
             if (entry.isIntersecting) {
                 const id = entry.target.id.replace('cat-', '');
                 pills.forEach(p => {
-                    p.classList.toggle('active', p.dataset.category === id);
+                    if (p.dataset.category === id) {
+                        p.classList.add('active');
+                        // Scroll pill into view horizontally
+                        p.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    } else {
+                        p.classList.remove('active');
+                    }
                 });
             }
         });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
 
     sections.forEach(s => observer.observe(s));
 }
 
 function setupSearch() {
     const searchInput = document.getElementById('menuSearch');
+    if (!searchInput) return;
+
     searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        const cards = document.querySelectorAll('.menu-card');
+        const query = e.target.value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.menu-item-card');
         
         cards.forEach(card => {
             const name = card.dataset.name.toLowerCase();
@@ -51,7 +61,7 @@ function setupSearch() {
 
         // Hide empty sections
         document.querySelectorAll('.menu-section').forEach(section => {
-            const hasVisibleItems = Array.from(section.querySelectorAll('.menu-card'))
+            const hasVisibleItems = Array.from(section.querySelectorAll('.menu-item-card'))
                 .some(card => card.style.display !== 'none');
             section.style.display = hasVisibleItems ? 'block' : 'none';
         });
@@ -59,13 +69,17 @@ function setupSearch() {
 }
 
 function formatCurrency(amount) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', '₫');
 }
 
 function loadCart() {
     const saved = localStorage.getItem(`cart_table_${CUSTOMER_CONFIG.tableId}`);
     if (saved) {
-        cart = JSON.parse(saved);
+        try {
+            cart = JSON.parse(saved);
+        } catch (e) {
+            cart = [];
+        }
     }
 }
 
@@ -107,9 +121,40 @@ function quickAdd(id, name, price) {
 
 function showToast(msg) {
     const toast = document.createElement('div');
-    toast.className = 'toast-msg';
-    toast.textContent = msg;
+    toast.className = 'toast-notification';
+    toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${msg}</span>`;
     document.body.appendChild(toast);
+    
+    // Add CSS for toast if not exists
+    if (!document.getElementById('toastStyles')) {
+        const style = document.createElement('style');
+        style.id = 'toastStyles';
+        style.innerHTML = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(15, 23, 42, 0.9);
+                color: white;
+                padding: 12px 25px;
+                border-radius: 50rem;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                animation: toastFadeIn 0.3s forwards, toastFadeOut 0.3s 2.7s forwards;
+                font-weight: 600;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+            @keyframes toastFadeIn { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+            @keyframes toastFadeOut { from { top: 20px; opacity: 1; } to { top: -50px; opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+    }
+
     setTimeout(() => toast.remove(), 3000);
 }
 
@@ -117,20 +162,28 @@ function showItemDetail(item) {
     currentItem = { ...item, quantity: 1, note: '' };
     document.getElementById('detailName').textContent = item.name;
     document.getElementById('detailPrice').textContent = formatCurrency(item.price);
-    document.getElementById('detailDesc').textContent = item.description || 'Không có mô tả.';
+    document.getElementById('detailDesc').textContent = item.description || 'Không có mô tả cho món ăn này.';
     document.getElementById('detailQty').textContent = '1';
     document.getElementById('detailNote').value = '';
     
     const imgContainer = document.getElementById('detailImg');
     if (item.image) {
         imgContainer.style.backgroundImage = `url(${CUSTOMER_CONFIG.baseUrl}/public/uploads/${item.image})`;
+        imgContainer.innerHTML = '';
     } else {
-        imgContainer.style.backgroundColor = '#f0f0f0';
-        imgContainer.innerHTML = '<i class="fas fa-image" style="font-size:3rem; color:#ccc;"></i>';
+        imgContainer.style.backgroundImage = 'none';
+        imgContainer.style.backgroundColor = '#f1f5f9';
+        imgContainer.innerHTML = '<i class="fas fa-utensils" style="font-size:3rem; color:#cbd5e1; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></i>';
     }
 
     updateDetailTotal();
     document.getElementById('itemDetailModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeItemDetail() {
+    document.getElementById('itemDetailModal').classList.add('hidden');
+    document.body.style.overflow = '';
 }
 
 function changeDetailQty(delta) {
@@ -146,8 +199,9 @@ function updateDetailTotal() {
 }
 
 function addFromDetail() {
-    currentItem.note = document.getElementById('detailNote').value;
+    currentItem.note = document.getElementById('detailNote').value.trim();
     
+    // Find item with SAME ID and SAME NOTE
     const existing = cart.find(item => item.id === currentItem.id && item.note === currentItem.note);
     if (existing) {
         existing.quantity += currentItem.quantity;
@@ -156,13 +210,22 @@ function addFromDetail() {
     }
     
     saveCart();
-    document.getElementById('itemDetailModal').classList.add('hidden');
+    closeItemDetail();
     showToast(`Đã thêm ${currentItem.name}`);
 }
 
 function toggleCartModal() {
-    document.getElementById('cartModal').classList.toggle('hidden');
-    updateCartModal();
+    const modal = document.getElementById('cartModal');
+    const isHidden = modal.classList.contains('hidden');
+    
+    if (isHidden) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        updateCartModal();
+    } else {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
 }
 
 function updateCartModal() {
@@ -170,7 +233,13 @@ function updateCartModal() {
     const modalTotal = document.getElementById('modalCartTotal');
     
     if (cart.length === 0) {
-        container.innerHTML = '<div class="text-center py-5 text-muted">Giỏ hàng trống</div>';
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-basket fa-3x text-light mb-3"></i>
+                <p class="text-muted">Giỏ hàng đang trống.</p>
+                <button class="btn-gold mt-3" onclick="toggleCartModal()">TIẾP TỤC CHỌN MÓN</button>
+            </div>
+        `;
         modalTotal.textContent = '0₫';
         return;
     }
@@ -181,16 +250,16 @@ function updateCartModal() {
     cart.forEach((item, index) => {
         total += item.price * item.quantity;
         html += `
-            <div class="cart-item">
-                <div class="cart-item-info">
-                    <div class="cart-item-name">${item.name}</div>
-                    <div class="cart-item-price">${formatCurrency(item.price)}</div>
-                    ${item.note ? `<div class="cart-item-note small text-muted">Lưu ý: ${item.note}</div>` : ''}
+            <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--border);">
+                <div style="flex:1;">
+                    <div style="font-weight:700; color:var(--text-dark);">${item.name}</div>
+                    <div style="color:var(--gold-dark); font-weight:600; font-size:0.85rem;">${formatCurrency(item.price)}</div>
+                    ${item.note ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-light); margin-top:4px;">Lưu ý: ${item.note}</div>` : ''}
                 </div>
-                <div class="qty-control">
-                    <button onclick="changeCartQty(${index}, -1)"><i class="fas fa-minus"></i></button>
-                    <span>${item.quantity}</span>
-                    <button onclick="changeCartQty(${index}, 1)"><i class="fas fa-plus"></i></button>
+                <div class="qty-selector" style="background:#f1f5f9; padding:5px 10px; border-radius:10px; display:flex; align-items:center; gap:15px; scale:0.8;">
+                    <button class="qty-btn" style="width:30px; height:30px; font-size:0.8rem;" onclick="changeCartQty(${index}, -1)"><i class="fas fa-minus"></i></button>
+                    <span class="qty-value" style="font-size:1rem; min-width:20px;">${item.quantity}</span>
+                    <button class="qty-btn" style="width:30px; height:30px; font-size:0.8rem;" onclick="changeCartQty(${index}, 1)"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         `;
@@ -206,17 +275,20 @@ function changeCartQty(index, delta) {
         cart.splice(index, 1);
     }
     saveCart();
+    if (cart.length === 0) {
+        toggleCartModal();
+    }
 }
 
 async function submitOrder() {
     if (cart.length === 0) return;
 
     const notes = document.getElementById('orderNotes').value;
-    const btn = document.querySelector('.btn-submit-order');
+    const btn = document.getElementById('btnSubmitOrder');
     const originalText = btn.innerHTML;
     
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
 
     const formData = new FormData();
     formData.append('cart', JSON.stringify(cart));
@@ -233,16 +305,44 @@ async function submitOrder() {
         if (result.success) {
             cart = [];
             saveCart();
-            window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/order/status`;
+            showToast('Gửi bếp thành công!');
+            setTimeout(() => {
+                window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/order/status`;
+            }, 1000);
         } else {
-            alert(result.error || 'Lỗi gửi order');
+            alert(result.error || 'Lỗi gửi order. Vui lòng thử lại.');
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
     } catch (e) {
-        alert('Lỗi kết nối máy chủ');
+        console.error(e);
+        alert('Lỗi kết nối máy chủ. Vui lòng kiểm tra mạng.');
         btn.disabled = false;
         btn.innerHTML = originalText;
+    }
+}
+
+async function callWaiter(type) {
+    if (!confirm(type === 'payment' ? 'Bạn muốn yêu cầu thanh toán?' : 'Bạn muốn gọi nhân viên phục vụ?')) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('table_id', CUSTOMER_CONFIG.tableId);
+        formData.append('type', type);
+
+        const response = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/support/call-waiter`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            showToast('Yêu cầu đã được gửi đến nhân viên!');
+        } else {
+            alert('Gửi yêu cầu thất bại.');
+        }
+    } catch (e) {
+        alert('Lỗi kết nối.');
     }
 }
 
@@ -251,6 +351,7 @@ document.querySelectorAll('.modal-backdrop').forEach(modal => {
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.add('hidden');
+            document.body.style.overflow = '';
         }
     });
 });
