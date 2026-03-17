@@ -30,84 +30,88 @@
         <?php endif; ?>
 
         <div id="menuItemsContainer">
-            <?php foreach ($grouped as $catName => $items): ?>
-                <div class="menu-section" data-section="<?= e($catName) ?>">
-                    <h3>
-                        <i class="fas fa-caret-right"></i> <?= e($catName) ?>
-                        <?php
-                        $catObj = null;
-                        foreach ($categories as $c) if ($c['name'] === $catName) { $catObj = $c; break; }
-                        if ($catObj && !empty($catObj['name_en'])): ?>
-                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-left:5px;">/ <?= e($catObj['name_en']) ?></span>
-                        <?php endif; ?>
-                    </h3>
-                    <div class="menu-items-grid">
-                        <?php foreach ($items as $item): ?>
-                            <div class="list-item-card">
-                                <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
-                                    data-id="<?= $item['id'] ?>" data-name="<?= e($item['name']) ?>"
-                                    data-price="<?= $item['price'] ?>"
-                                    data-img="<?= $item['image'] ? BASE_URL . '/public/uploads/' . e($item['image']) : '' ?>"
-                                    data-desc="<?= e($item['description'] ?? '') ?>" data-order="<?= $orderId ?: '' ?>"
-                                    onclick="handleOpenItemModal(this)">
-                                    <?php if ($item['image']): ?>
-                                        <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img" alt="<?= e($item['name']) ?>">
-                                    <?php else: ?>
-                                        <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
-                                            <i class="fas fa-image"></i>
+            <?php if ($currentType === 'alacarte'): ?>
+                <!-- Only show Sets & Combo when in Set & Combo tab -->
+                <?php if (!empty($sets)): ?>
+                    <div class="menu-section" data-section="Sets & Combo">
+                        <h3><i class="fas fa-utensils"></i> SETS & COMBO</h3>
+                        <div class="menu-items-grid">
+                            <?php foreach ($sets as $set): ?>
+                                <div class="list-item-card" style="border:1px solid var(--gold-light); background:#fffcf5;">
+                                    <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
+                                        onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                        <?php if ($set['image']): ?>
+                                            <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img" alt="<?= e($set['name']) ?>">
+                                        <?php else: ?>
+                                            <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--gold-dark);">
+                                                <i class="fas fa-box-open"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="list-item-body">
+                                            <div class="list-item-name" style="color:var(--gold-dark);">
+                                                <?= e($set['name']) ?>
+                                                <?php if (!empty($set['name_en'])): ?>
+                                                    <div class="list-item-name-en"><?= e($set['name_en']) ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="list-item-price"><?= formatPrice($set['price']) ?></div>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="list-item-body">
-                                        <div class="list-item-name">
-                                            <?= e($item['name']) ?>
-                                            <?php if (!empty($item['name_en'])): ?>
-                                                <div class="list-item-name-en"><?= e($item['name_en']) ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="list-item-price"><?= formatPrice($item['price']) ?></div>
+                                    </div>
+                                    <div class="list-item-action" style="background:var(--gold); color:white;" onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
+                                        <i class="fas fa-list-ul"></i>
                                     </div>
                                 </div>
-                                <div class="list-item-action" onclick="quickAdd(event, <?= $item['id'] ?>, <?= $orderId ?: 'null' ?>)">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-
-            <?php if ($currentType === 'alacarte' && !empty($sets)): ?>
-                <div class="menu-section" data-section="Sets & Combo">
-                    <h3><i class="fas fa-utensils"></i> SETS & COMBO</h3>
-                    <div class="menu-items-grid">
-                        <?php foreach ($sets as $set): ?>
-                            <div class="list-item-card" style="border:1px solid var(--gold-light); background:#fffcf5;">
-                                <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
-                                    onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
-                                    <?php if ($set['image']): ?>
-                                        <img src="<?= BASE_URL . '/public/uploads/' . e($set['image']) ?>" class="list-item-img" alt="<?= e($set['name']) ?>">
-                                    <?php else: ?>
-                                        <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--gold-dark);">
-                                            <i class="fas fa-box-open"></i>
+                <?php endif; ?>
+            <?php else: ?>
+                <!-- Show regular menu items -->
+                <?php foreach ($grouped as $catName => $items): ?>
+                    <div class="menu-section" data-section="<?= e($catName) ?>">
+                        <h3>
+                            <i class="fas fa-caret-right"></i> <?= e($catName) ?>
+                            <?php
+                            $catObj = null;
+                            foreach ($categories as $c) if ($c['name'] === $catName) { $catObj = $c; break; }
+                            if ($catObj && !empty($catObj['name_en'])): ?>
+                                <span style="font-size:0.75rem; color:var(--text-muted); font-weight:500; margin-left:5px;">/ <?= e($catObj['name_en']) ?></span>
+                            <?php endif; ?>
+                        </h3>
+                        <div class="menu-items-grid">
+                            <?php foreach ($items as $item): ?>
+                                <div class="list-item-card">
+                                    <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
+                                        data-id="<?= $item['id'] ?>" data-name="<?= e($item['name']) ?>"
+                                        data-price="<?= $item['price'] ?>"
+                                        data-img="<?= $item['image'] ? BASE_URL . '/public/uploads/' . e($item['image']) : '' ?>"
+                                        data-desc="<?= e($item['description'] ?? '') ?>" data-order="<?= $orderId ?: '' ?>"
+                                        onclick="handleOpenItemModal(this)">
+                                        <?php if ($item['image']): ?>
+                                            <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img" alt="<?= e($item['name']) ?>">
+                                        <?php else: ?>
+                                            <div class="list-item-img" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="list-item-body">
+                                            <div class="list-item-name">
+                                                <?= e($item['name']) ?>
+                                                <?php if (!empty($item['name_en'])): ?>
+                                                    <div class="list-item-name-en"><?= e($item['name_en']) ?></div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="list-item-price"><?= formatPrice($item['price']) ?></div>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="list-item-body">
-                                        <div class="list-item-name" style="color:var(--gold-dark);">
-                                            <?= e($set['name']) ?>
-                                            <?php if (!empty($set['name_en'])): ?>
-                                                <div class="list-item-name-en"><?= e($set['name_en']) ?></div>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="list-item-price"><?= formatPrice($set['price']) ?></div>
+                                    </div>
+                                    <div class="list-item-action" onclick="quickAdd(event, <?= $item['id'] ?>, <?= $orderId ?: 'null' ?>)">
+                                        <i class="fas fa-plus"></i>
                                     </div>
                                 </div>
-                                <div class="list-item-action" style="background:var(--gold); color:white;" onclick="handleOpenSetModal(<?= e(json_encode($set)) ?>)">
-                                    <i class="fas fa-list-ul"></i>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
+                <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
