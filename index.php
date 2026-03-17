@@ -31,6 +31,10 @@ $router->post('/tables/close', 'TableController', 'close');
 $router->post('/tables/merge', 'TableController', 'merge');
 $router->post('/tables/unmerge', 'TableController', 'unmerge');
 $router->post('/tables/transfer', 'TableController', 'transfer');
+// Split/Merge advanced
+$router->post('/tables/split', 'TableController', 'split');
+$router->post('/tables/transfer-item', 'TableController', 'transfer_item');
+$router->get('/tables/get-items-by-table', 'TableController', 'get_items_by_table');
 $router->post('/tables/merge_areas', 'TableController', 'merge_areas');
 
 $router->post('/tables/unmerge_areas', 'TableController', 'unmerge_areas');

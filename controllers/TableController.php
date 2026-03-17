@@ -248,4 +248,92 @@ class TableController extends Controller
             'children' => $children,
         ]);
     }
+
+    /**
+     * POST /tables/split — Tách bàn với selected items
+     * Expects: table_id (current merged table), order_id, item_ids[], target_table_id (new or existing)
+     */
+    public function split(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $tableId = (int) $this->input('table_id');
+        $orderId = (int) $this->input('order_id');
+        $targetTableId = (int) $this->input('target_table_id');
+        $itemIds = $this->input('item_ids', []);
+        
+        if (!is_array($itemIds) || empty($itemIds)) {
+            $this->json(['ok' => false, 'message' => 'Vui lòng chọn món cần tách']);
+            return;
+        }
+
+        // Convert item_ids to integers
+        $itemIds = array_map('intval', $itemIds);
+
+        try {
+            $result = $this->orderModel->splitItems($orderId, $itemIds, $targetTableId);
+            
+            if ($result['ok']) {
+                // Unmerge the target table from parent if it was merged
+                if ($targetTableId > 0) {
+                    $this->tableModel->unmergeTable($targetTableId);
+                }
+                
+                $this->json([
+                    'ok' => true, 
+                    'message' => $result['message'],
+                    'new_order_id' => $result['new_order_id']
+                ]);
+            } else {
+                $this->json(['ok' => false, 'message' => $result['message']]);
+            }
+        } catch (\Exception $e) {
+            $this->json(['ok' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * POST /tables/transfer-item — Chuyển món từ order này sang order khác
+     * Expects: item_id, target_order_id, target_table_id
+     */
+    public function transfer_item(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $itemId = (int) $this->input('item_id');
+        $targetOrderId = (int) $this->input('target_order_id');
+        $targetTableId = (int) $this->input('target_table_id');
+
+        if ($itemId <= 0 || $targetOrderId <= 0 || $targetTableId <= 0) {
+            $this->json(['ok' => false, 'message' => 'Thông tin không hợp lệ']);
+            return;
+        }
+
+        try {
+            $result = $this->orderModel->transferItem($itemId, $targetOrderId, $targetTableId);
+            $this->json($result);
+        } catch (\Exception $e) {
+            $this->json(['ok' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * GET /tables/get-items-by-table — Lấy món theo bàn (cho merged tables)
+     * Expects: order_id
+     */
+    public function get_items_by_table(): void
+    {
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
+
+        $orderId = (int) $this->input('order_id');
+
+        try {
+            $items = $this->orderModel->getItemsByTable($orderId);
+            $this->json(['ok' => true, 'items' => $items]);
+        } catch (\Exception $e) {
+            $this->json(['ok' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+
 }

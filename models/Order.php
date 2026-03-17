@@ -334,4 +334,150 @@ class Order extends Model
             'revenue' => (float) ($result['revenue'] ?? 0)
         ];
     }
+
+    /**
+     * Split items from one order to a new/existing order
+     * Used for table splitting functionality
+     * 
+     * @param int $sourceOrderId Source order ID
+     * @param array $itemIds Array of order_item IDs to split
+     * @param int $targetTableId Target table ID for the split items
+     * @param int $targetOrderId Optional target order ID (if null, create new order)
+     * @return array ['ok' => bool, 'new_order_id' => int, 'message' => string]
+     */
+    public function splitItems(int $sourceOrderId, array $itemIds, int $targetTableId, ?int $targetOrderId = null): array
+    {
+        if (empty($itemIds)) {
+            return ['ok' => false, 'message' => 'Không có món nào để tách'];
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            // Get source order info
+            $sourceOrder = $this->findById($sourceOrderId);
+            if (!$sourceOrder) {
+                return ['ok' => false, 'message' => 'Không tìm thấy order nguồn'];
+            }
+
+            // Get items to split
+            $placeholders = implode(',', array_fill(0, count($itemIds), '?'));
+            $items = $this->findAll(
+                "SELECT * FROM order_items WHERE id IN ($placeholders)",
+                $itemIds
+            );
+
+            if (count($items) !== count($itemIds)) {
+                throw new \Exception('Không tìm thấy tất cả món cần tách');
+            }
+
+            // Create new order if target not specified
+            $newOrderId = $targetOrderId;
+            if (!$newOrderId) {
+                $this->execute(
+                    "INSERT INTO orders (table_id, status, payment_status, opened_at, created_at) 
+                     VALUES (?, 'open', 'unpaid', NOW(), NOW())",
+                    [$targetTableId]
+                );
+                $newOrderId = $this->db->lastInsertId();
+            }
+
+            // Move items to new order
+            foreach ($items as $item) {
+                // Update item to new order and table
+                $this->execute(
+                    "UPDATE order_items 
+                     SET order_id = ?, table_id = ?, is_split_item = 1, split_from_item_id = ?, updated_at = NOW()
+                     WHERE id = ?",
+                    [$newOrderId, $targetTableId, $item['id'], $item['id']]
+                );
+            }
+
+            $this->db->commit();
+
+            return [
+                'ok' => true, 
+                'new_order_id' => $newOrderId,
+                'message' => 'Tách bàn thành công'
+            ];
+
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Transfer item from one order to another
+     * Used for moving items between merged tables
+     * 
+     * @param int $itemId Order item ID to transfer
+     * @param int $targetOrderId Target order ID
+     * @param int $targetTableId Target table ID
+     * @return array ['ok' => bool, 'message' => string]
+     */
+    public function transferItem(int $itemId, int $targetOrderId, int $targetTableId): array
+    {
+        try {
+            $item = $this->findOne("SELECT * FROM order_items WHERE id = ?", [$itemId]);
+            if (!$item) {
+                return ['ok' => false, 'message' => 'Không tìm thấy món'];
+            }
+
+            if ($item['status'] !== 'draft') {
+                return ['ok' => false, 'message' => 'Chỉ có thể chuyển món nháp'];
+            }
+
+            $this->execute(
+                "UPDATE order_items 
+                 SET order_id = ?, table_id = ?, updated_at = NOW()
+                 WHERE id = ?",
+                [$targetOrderId, $targetTableId, $itemId]
+            );
+
+            return ['ok' => true, 'message' => 'Chuyển món thành công'];
+
+        } catch (\Exception $e) {
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Get order items grouped by table
+     * Used for merged table view
+     * 
+     * @param int $orderId Order ID
+     * @return array Items grouped by table_id
+     */
+    public function getItemsByTable(int $orderId): array
+    {
+        $items = $this->findAll(
+            "SELECT oi.*, t.name as table_name, t.area as table_area
+             FROM order_items oi
+             JOIN tables t ON oi.table_id = t.id
+             WHERE oi.order_id = ?
+             ORDER BY t.id, oi.created_at",
+            [$orderId]
+        );
+
+        $grouped = [];
+        foreach ($items as $item) {
+            $tableId = $item['table_id'];
+            if (!isset($grouped[$tableId])) {
+                $grouped[$tableId] = [
+                    'table_id' => $tableId,
+                    'table_name' => $item['table_name'],
+                    'table_area' => $item['table_area'],
+                    'items' => [],
+                    'total' => 0
+                ];
+            }
+            $grouped[$tableId]['items'][] = $item;
+            $grouped[$tableId]['total'] += $item['item_price'] * $item['quantity'];
+        }
+
+        return $grouped;
+    }
+
+
 }
