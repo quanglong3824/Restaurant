@@ -91,10 +91,14 @@ class Order extends Model
                 [$qty, $existing['id']]
             );
         } else {
+            // Get table_id from order
+            $order = $this->findById($orderId);
+            $tableId = $order ? $order['table_id'] : null;
+            
             $this->execute(
-                "INSERT INTO order_items (order_id, menu_item_id, item_name, item_price, quantity, note, status)
-                 VALUES (?, ?, ?, ?, ?, ?, 'draft')",
-                [$orderId, $menuItemId, $itemName, $itemPrice, $qty, $note]
+                "INSERT INTO order_items (order_id, table_id, menu_item_id, item_name, item_price, quantity, note, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, 'draft')",
+                [$orderId, $tableId, $menuItemId, $itemName, $itemPrice, $qty, $note]
             );
         }
     }
