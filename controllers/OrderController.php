@@ -161,11 +161,14 @@ class OrderController extends Controller
             if ($qty > 0) {
                 $this->orderModel->addItem(
                     $orderId,
-                    $menuItemId,
-                    $item['name'],
-                    $item['price'],
-                    $qty,
-                    $note
+                    [
+                        'menu_item_id' => $menuItemId,
+                        'item_name' => $item['name'],
+                        'item_price' => $item['price'],
+                        'quantity' => $qty,
+                        'note' => $note,
+                        'status' => 'draft'
+                    ]
                 );
             }
         }
@@ -216,11 +219,14 @@ class OrderController extends Controller
             if ($menuItem) {
                 $this->orderModel->addItem(
                     $orderId,
-                    $menuItemId,
-                    $menuItem['name'],
-                    $menuItem['price'],
-                    $qty,
-                    "Set: {$set['name']}"
+                    [
+                        'menu_item_id' => $menuItemId,
+                        'item_name' => $menuItem['name'],
+                        'item_price' => $menuItem['price'],
+                        'quantity' => $qty,
+                        'note' => "Set: {$set['name']}",
+                        'status' => 'draft'
+                    ]
                 );
             }
         }

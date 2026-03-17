@@ -77,6 +77,10 @@
                         <i class="fas fa-table-cells-large"></i>
                         <span>Quản lý Bàn</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/admin/qr-codes" class="nav-item <?= activeClass('/admin/qr-codes') ?>">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Quản lý QR</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
                         <i class="fas fa-database"></i>
                         <span>Dữ liệu (Backup)</span>

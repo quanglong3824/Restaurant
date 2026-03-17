@@ -19,6 +19,9 @@
     <?php if (isset($pageCSS)): ?>
         <link rel="stylesheet" href="<?= asset('public/css/' . e($pageCSS) . '.css') ?>">
     <?php endif; ?>
+    <script>
+        const BASE_URL = '<?= BASE_URL ?>';
+    </script>
 </head>
 
 <body class="waiter-layout">

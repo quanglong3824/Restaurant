@@ -120,4 +120,24 @@ $router->get('/it/database/backup', 'SettingController', 'backup');
 $router->get('/it/database/download', 'SettingController', 'downloadBackup');
 $router->post('/it/database/delete', 'SettingController', 'deleteBackup');
 
+// ── QR Ordering: Customer ──────────────────────────────────
+$router->get('/qr/menu', 'QrMenuController', 'index');
+$router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
+$router->post('/qr/cart/update', 'QrMenuController', 'updateCart');
+$router->post('/qr/cart/remove', 'QrMenuController', 'removeFromCart');
+$router->post('/qr/order/submit', 'QrOrderController', 'submit');
+$router->get('/qr/order/status', 'QrOrderController', 'status');
+$router->get('/qr/order/history', 'QrOrderController', 'history');
+$router->post('/qr/support/call-waiter', 'QrSupportController', 'callWaiter');
+$router->post('/qr/support/request-bill', 'QrSupportController', 'requestBill');
+
+// ── QR Ordering: Admin ─────────────────────────────────────
+$router->get('/admin/qr-codes', 'AdminQrController', 'index');
+$router->post('/admin/qr-codes/generate', 'AdminQrController', 'generate');
+$router->get('/admin/qr-codes/download', 'AdminQrController', 'download');
+
+// ── Notifications: Real-time Polling ───────────────────────
+$router->get('/api/notifications/poll', 'NotificationController', 'poll');
+$router->post('/api/notifications/mark-read', 'NotificationController', 'markRead');
+
 $router->dispatch();

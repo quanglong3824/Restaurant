@@ -6,12 +6,19 @@
 class Order extends Model
 {
     /** Mở order mới cho bàn */
-    public function create(int $tableId, ?int $waiterId = null, int $guestCount = 1, ?int $shiftId = null): int
+    public function create(array $data): int
     {
+        $tableId = $data['table_id'];
+        $waiterId = $data['waiter_id'] ?? null;
+        $shiftId = $data['shift_id'] ?? null;
+        $guestCount = $data['guest_count'] ?? 1;
+        $orderSource = $data['order_source'] ?? 'waiter';
+        $note = $data['note'] ?? '';
+
         $this->execute(
-            "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, opened_at)
-             VALUES (?, ?, ?, ?, 'open', NOW())",
-            [$tableId, $waiterId, $shiftId, $guestCount]
+            "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, order_source, note, opened_at)
+             VALUES (?, ?, ?, ?, 'open', ?, ?, NOW())",
+            [$tableId, $waiterId, $shiftId, $guestCount, $orderSource, $note]
         );
         return (int) $this->lastInsertId();
     }
@@ -76,13 +83,28 @@ class Order extends Model
     }
 
     /** Thêm món vào order (hoặc tăng số lượng nếu đã có) */
-    public function addItem(int $orderId, int $menuItemId, string $itemName, float $itemPrice, int $qty = 1, string $note = ''): void
+    public function addItem(int $orderId, array $data): void
     {
-        // Chỉ gộp chung với các món đang ở trạng thái nháp ('draft')
+        $menuItemId = $data['menu_item_id'];
+        $itemName = $data['item_name'] ?? null;
+        $itemPrice = $data['item_price'] ?? 0;
+        $qty = $data['quantity'] ?? 1;
+        $note = $data['note'] ?? '';
+        $status = $data['status'] ?? 'draft';
+        $customerId = $data['customer_id'] ?? null;
+        $submittedAt = $data['submitted_at'] ?? null;
+
+        if (!$itemName || !$itemPrice) {
+            $menuItem = $this->findOne("SELECT name, price FROM menu_items WHERE id = ?", [$menuItemId]);
+            $itemName = $menuItem['name'];
+            $itemPrice = $menuItem['price'];
+        }
+
+        // Chỉ gộp chung với các món đang ở cùng trạng thái
         $existing = $this->findOne(
             "SELECT id, quantity FROM order_items
-             WHERE order_id = ? AND menu_item_id = ? AND note = ? AND status = 'draft'",
-            [$orderId, $menuItemId, $note]
+             WHERE order_id = ? AND menu_item_id = ? AND note = ? AND status = ?",
+            [$orderId, $menuItemId, $note, $status]
         );
 
         if ($existing) {
@@ -91,14 +113,13 @@ class Order extends Model
                 [$qty, $existing['id']]
             );
         } else {
-            // Get table_id from order
             $order = $this->findById($orderId);
             $tableId = $order ? $order['table_id'] : null;
             
             $this->execute(
-                "INSERT INTO order_items (order_id, table_id, menu_item_id, item_name, item_price, quantity, note, status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, 'draft')",
-                [$orderId, $tableId, $menuItemId, $itemName, $itemPrice, $qty, $note]
+                "INSERT INTO order_items (order_id, table_id, menu_item_id, item_name, item_price, quantity, note, status, customer_id, submitted_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [$orderId, $tableId, $menuItemId, $itemName, $itemPrice, $qty, $note, $status, $customerId, $submittedAt]
             );
         }
     }

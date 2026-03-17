@@ -16,6 +16,18 @@ class MenuItem extends Model
         );
     }
 
+    /** Tất cả món đang active (không phân biệt type) */
+    public function getAllActive(): array
+    {
+        return $this->findAll(
+            "SELECT i.*, c.name AS category_name, c.menu_type
+             FROM menu_items i
+             LEFT JOIN menu_categories c ON c.id = i.category_id
+             WHERE i.is_active = 1
+             ORDER BY c.sort_order, i.sort_order, i.name"
+        );
+    }
+
     /** Món đang hiển thị, kèm category (waiter), lọc theo menu_type */
     public function getActiveByType(string $type = ''): array
     {

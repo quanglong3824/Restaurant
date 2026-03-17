@@ -52,7 +52,12 @@ class TableController extends Controller
 
         try {
             $this->tableModel->open($tableId);
-            $orderId = $this->orderModel->create($tableId, $waiterId, $guestCount, $shiftId);
+            $orderId = $this->orderModel->create([
+                'table_id' => $tableId,
+                'waiter_id' => $waiterId,
+                'guest_count' => $guestCount,
+                'shift_id' => $shiftId
+            ]);
 
             // Redirect to orders page
             $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
@@ -156,7 +161,12 @@ class TableController extends Controller
                 // Tự động tạo một order mới với guest_count = 1 để bàn này có thể click vào và xem chi tiết
                 $waiterId = Auth::user()['id'];
                 $shiftId = $_SESSION['user_shift_id'] ?? null;
-                $this->orderModel->create($mainTableId, $waiterId, 1, $shiftId);
+                $this->orderModel->create([
+                    'table_id' => $mainTableId,
+                    'waiter_id' => $waiterId,
+                    'guest_count' => 1,
+                    'shift_id' => $shiftId
+                ]);
             }
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã ghép các khu vực thành công.'];
         } else {

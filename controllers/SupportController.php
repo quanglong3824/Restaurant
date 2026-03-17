@@ -46,21 +46,37 @@ class SupportController extends Controller
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
         header('Content-Type: application/json');
 
-        $id = (int) $this->input('id');
-        if ($id > 0) {
-            // Lấy thông tin yêu cầu trước khi resolve
-            $db = getDB();
-            $stmt = $db->prepare("SELECT * FROM support_requests WHERE id = ?");
-            $stmt->execute([$id]);
-            $request = $stmt->fetch();
+        $id = $this->input('id');
+        if ($id) {
+            // Lấy thông tin yêu cầu trước khi resolve để xử lý logic phụ
+            // Nếu ID có tiền tố on_ (order_notification), ta cần xử lý thêm nếu là new_order
+            if (strpos($id, 'on_') === 0) {
+                $numericId = (int)str_replace('on_', '', $id);
+                $db = getDB();
+                $stmt = $db->prepare("SELECT * FROM order_notifications WHERE id = ?");
+                $stmt->execute([$numericId]);
+                $notif = $stmt->fetch();
 
-            if ($request && $request['type'] === 'new_order') {
-                // Tự động xác nhận tất cả các món đang pending của bàn này
-                require_once BASE_PATH . '/models/Order.php';
-                $orderModel = new Order();
-                $order = $orderModel->findOpenOrderByTable($request['table_id']);
-                if ($order) {
-                    $orderModel->confirmPendingItems($order['id']);
+                if ($notif && $notif['notification_type'] === 'new_order') {
+                    require_once BASE_PATH . '/models/Order.php';
+                    $orderModel = new Order();
+                    $orderModel->confirmPendingItems($notif['order_id']);
+                }
+            } elseif (strpos($id, 'sr_') === 0 || is_numeric($id)) {
+                // Logic cũ cho support_requests
+                $numericId = (int)str_replace('sr_', '', $id);
+                $db = getDB();
+                $stmt = $db->prepare("SELECT * FROM support_requests WHERE id = ?");
+                $stmt->execute([$numericId]);
+                $request = $stmt->fetch();
+
+                if ($request && $request['type'] === 'new_order') {
+                    require_once BASE_PATH . '/models/Order.php';
+                    $orderModel = new Order();
+                    $order = $orderModel->findOpenOrderByTable($request['table_id']);
+                    if ($order) {
+                        $orderModel->confirmPendingItems($order['id']);
+                    }
                 }
             }
 

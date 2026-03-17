@@ -8,7 +8,7 @@
  * Fetch pending notifications from server
  */
 function fetchNotifications() {
-    fetch('<?= BASE_URL ?>/support/pending')
+    fetch(BASE_URL + '/support/pending')
         .then(res => res.json())
         .then(res => {
             if (res.ok) {
@@ -76,7 +76,7 @@ function resolveNotification(id) {
     const data = new FormData();
     data.append('id', id);
 
-    fetch('<?= BASE_URL ?>/support/resolve', {
+    fetch(BASE_URL + '/support/resolve', {
         method: 'POST',
         body: data
     })

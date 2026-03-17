@@ -1,0 +1,122 @@
+/* Order Status CSS */
+.status-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.status-header {
+    margin-bottom: 30px;
+}
+
+.status-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.status-icon.success {
+    color: #2ecc71;
+}
+
+.order-summary-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: left;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.order-summary-card .card-header {
+    padding: 15px 20px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-summary-card .card-body {
+    padding: 20px;
+}
+
+.status-item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.status-item-row:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-qty {
+    font-weight: 700;
+    color: var(--gold-dark);
+    margin-right: 8px;
+}
+
+.item-name {
+    font-weight: 600;
+}
+
+.item-status {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.item-status.pending { background: #fff3cd; color: #856404; }
+.item-status.confirmed { background: #d1ecf1; color: #0c5460; }
+.item-status.cooking { background: #d4edda; color: #155724; }
+.item-status.served { background: #cce5ff; color: #004085; }
+
+.summary-footer {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-outline {
+    display: block;
+    padding: 12px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-gold {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
