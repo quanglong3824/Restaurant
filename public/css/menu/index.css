@@ -35,7 +35,7 @@ body {
 /* POS Layout */
 .pos-layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
+    grid-template-columns: 1fr 300px;
     gap: 1rem;
     max-width: 1200px;
     margin: 0 auto;
@@ -76,7 +76,25 @@ body {
     overflow: hidden;
 }
 
+/* Tablet - iPad Air */
 @media (max-width: 1024px) {
+    .pos-layout {
+        grid-template-columns: 1fr 280px;
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .cart-header h4 {
+        font-size: 0.8rem;
+    }
+    
+    .cart-header small {
+        font-size: 0.65rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
     .pos-layout {
         grid-template-columns: 1fr;
         height: auto;
@@ -118,9 +136,9 @@ body {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.5rem 0.85rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-muted);
     text-decoration: none;
@@ -147,7 +165,7 @@ body {
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--text-muted);
     cursor: pointer;
@@ -163,7 +181,7 @@ body {
 /* Menu Items Grid */
 .menu-items-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 0.65rem;
 }
 
@@ -196,21 +214,21 @@ body {
 }
 
 .list-item-name {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 0.15rem;
     color: var(--text);
 }
 
 .list-item-name-en {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     font-weight: 500;
     font-style: italic;
 }
 
 .list-item-price {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--gold-dark);
 }
@@ -240,7 +258,7 @@ body {
 }
 
 .menu-section h3 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--gold-dark);
     margin: 0 0 0.5rem;
@@ -260,7 +278,7 @@ body {
 }
 
 .cart-header {
-    padding: 0.75rem;
+    padding: 0.6rem 0.75rem;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
     border-radius: var(--radius) var(--radius) 0 0;
@@ -268,7 +286,7 @@ body {
 }
 
 .cart-header h4 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--gold-dark);
     margin: 0;
@@ -278,20 +296,20 @@ body {
 }
 
 .cart-header small {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     white-space: nowrap;
 }
 
 .cart-body {
-    padding: 0.75rem;
+    padding: 0.6rem;
     overflow-y: auto;
     flex: 1;
     min-height: 0;
 }
 
 .cart-footer {
-    padding: 0.75rem;
+    padding: 0.6rem 0.75rem;
     border-top: 1px solid var(--border);
     background: var(--bg);
     border-radius: 0 0 var(--radius) var(--radius);
@@ -306,32 +324,32 @@ body {
 }
 
 .cart-footer .total-label {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .cart-footer .total-amount {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 800;
     color: var(--danger);
 }
 
 .cart-action-btn {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.55rem;
     border: none;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .cart-action-btn.gold {
@@ -354,8 +372,8 @@ body {
 .cart-item-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.65rem;
-    padding-bottom: 0.65rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px dashed var(--border);
 }
 
@@ -367,25 +385,25 @@ body {
 
 .cart-item-name {
     font-weight: 600;
-    font-size: 0.8rem;
-    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
     word-break: break-word;
 }
 
 .cart-item-qty {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .cart-item-price {
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--gold-dark);
 }
 
 .cart-item-status {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -402,9 +420,9 @@ body {
     display: inline-flex;
     align-items: center;
     background: var(--bg);
-    border-radius: 12px;
-    padding: 2px 6px;
-    gap: 4px;
+    border-radius: 10px;
+    padding: 2px 5px;
+    gap: 3px;
 }
 
 .qty-control button {
@@ -416,22 +434,22 @@ body {
 }
 
 .qty-control span {
-    width: 20px;
+    width: 18px;
     text-align: center;
     font-weight: 700;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
 }
 
 /* Section Labels */
 .section-label {
-    font-size: 0.6rem;
+    font-size: 0.55rem;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin: 0.75rem 0 0.5rem;
+    margin: 0.6rem 0 0.4rem;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
 }
 
 /* Empty State */
@@ -448,12 +466,12 @@ body {
 }
 
 .empty-cart p {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 /* Scrollbar - Menu Items */
 #menuItemsContainer::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
 }
 
 #menuItemsContainer::-webkit-scrollbar-track {
@@ -472,7 +490,7 @@ body {
 
 /* Scrollbar - Cart */
 .cart-body::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
 }
 
 .cart-body::-webkit-scrollbar-thumb {
