@@ -24,6 +24,9 @@ class AdminRealtimeController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
+        // Đồng bộ trạng thái bàn
+        $this->tableModel->syncStatuses();
+
         // Lấy tất cả bàn đang bận và chi tiết order
         $rawOrders = $this->orderModel->getRealtimeOrders();
         $orders = [];
@@ -50,6 +53,9 @@ class AdminRealtimeController extends Controller
     public function data(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
+
+        // Đồng bộ trạng thái bàn
+        $this->tableModel->syncStatuses();
 
         $rawOrders = $this->orderModel->getRealtimeOrders();
         $orders = [];

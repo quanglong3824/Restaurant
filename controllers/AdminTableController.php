@@ -19,6 +19,9 @@ class AdminTableController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
+        // Tự động đồng bộ trạng thái bàn (Sửa lỗi bàn bị kẹt 'Có khách' dù đã xong)
+        $this->model->syncStatuses();
+
         // Auto-cleanup invalid QR tokens (historical garbage data)
         require_once BASE_PATH . '/models/QrTable.php';
         $qrModel = new QrTable();

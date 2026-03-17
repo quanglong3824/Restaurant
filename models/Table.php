@@ -205,6 +205,29 @@ class Table extends Model
         return true;
     }
 
+    /** Tự động đồng bộ trạng thái bàn dựa trên Order thực tế (Sửa lỗi bàn bị kẹt 'occupied') */
+    public function syncStatuses(): void
+    {
+        // 1. Tìm các bàn PARENT đang 'occupied' nhưng không có Order 'open'
+        $stuckParents = $this->findAll(
+            "SELECT id FROM tables 
+             WHERE status = 'occupied' AND parent_id IS NULL 
+             AND id NOT IN (SELECT table_id FROM orders WHERE status = 'open')"
+        );
+
+        foreach ($stuckParents as $p) {
+            $this->close($p['id']); // Hàm close() đã xử lý cả việc giải phóng bàn con
+        }
+
+        // 2. Tìm các bàn CHILD đang 'occupied' nhưng bàn PARENT của nó lại đang 'available'
+        $this->execute(
+            "UPDATE tables t 
+             JOIN tables p ON t.parent_id = p.id 
+             SET t.status = 'available', t.parent_id = NULL 
+             WHERE t.status = 'occupied' AND p.status = 'available'"
+        );
+    }
+
     /** Đếm theo trạng thái (Bàn ghép chỉ tính là 1 đơn vị bận) */
     public function countByStatus(): array
     {

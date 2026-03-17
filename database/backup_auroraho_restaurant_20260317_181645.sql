@@ -1,5 +1,5 @@
 -- Aurora Restaurant Database Backup
--- Generated: 2026-03-17 14:43:46
+-- Generated: 2026-03-17 18:16:45
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -480,11 +480,11 @@ INSERT INTO `orders` VALUES ('47', '20', '3', '1', '3', NULL, NULL, '1', 'closed
 INSERT INTO `orders` VALUES ('48', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:21:24', '2026-03-17 12:23:10', '2026-03-17 12:21:24', '2026-03-17 12:23:10');
 INSERT INTO `orders` VALUES ('49', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:21:28', '2026-03-17 12:23:27', '2026-03-17 12:21:28', '2026-03-17 12:23:27');
 INSERT INTO `orders` VALUES ('50', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:22:47', '2026-03-17 12:42:12', '2026-03-17 12:22:47', '2026-03-17 12:42:12');
-INSERT INTO `orders` VALUES ('51', '19', '3', '1', '10', NULL, NULL, '1', 'open', 'waiter', '0', 'cash', 'pending', '2026-03-17 12:42:16', NULL, '2026-03-17 12:42:16', '2026-03-17 12:42:16');
+INSERT INTO `orders` VALUES ('51', '19', '3', '1', '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:42:16', '2026-03-17 17:33:58', '2026-03-17 12:42:16', '2026-03-17 17:33:58');
 INSERT INTO `orders` VALUES ('52', '21', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:27:16', '2026-03-17 13:30:17', '2026-03-17 13:27:16', '2026-03-17 13:30:17');
 INSERT INTO `orders` VALUES ('53', '21', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:42:53', '2026-03-17 14:04:33', '2026-03-17 13:42:53', '2026-03-17 14:04:33');
 INSERT INTO `orders` VALUES ('54', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-17 14:05:24', '2026-03-17 14:05:26', '2026-03-17 14:05:24', '2026-03-17 14:05:26');
-INSERT INTO `orders` VALUES ('55', '27', '3', '1', '12', NULL, NULL, '1', 'open', 'waiter', '0', 'cash', 'pending', '2026-03-17 14:05:32', NULL, '2026-03-17 14:05:32', '2026-03-17 14:05:32');
+INSERT INTO `orders` VALUES ('55', '27', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 14:05:32', '2026-03-17 18:01:42', '2026-03-17 14:05:32', '2026-03-17 18:01:42');
 
 DROP TABLE IF EXISTS `qr_tables`;
 CREATE TABLE `qr_tables` (
@@ -502,7 +502,7 @@ CREATE TABLE `qr_tables` (
   UNIQUE KEY `qr_hash` (`qr_hash`),
   KEY `idx_qr_active` (`is_active`),
   CONSTRAINT `fk_qr_tables_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `qr_tables` VALUES ('2', '2', NULL, '?ϖ???\\4\n??*?td/?P????>S?E?e??', '2026-03-08 16:50:22', '2026-03-08 16:50:22', '1', '0', NULL);
 INSERT INTO `qr_tables` VALUES ('3', '3', NULL, '????C{??΂C?\n?Φ$??:?5#????p', '2026-03-08 16:50:22', '2026-03-08 16:50:22', '1', '0', NULL);
@@ -534,6 +534,7 @@ INSERT INTO `qr_tables` VALUES ('29', '29', NULL, 'vj?x?|mYG?5?4??ѧ+<l?P?hz??
 INSERT INTO `qr_tables` VALUES ('30', '30', NULL, '0????-V.\0????×I??!?j?c??#g?', '2026-03-08 16:50:22', '2026-03-08 16:50:22', '1', '0', NULL);
 INSERT INTO `qr_tables` VALUES ('31', '31', NULL, 'V??Z??ֆ? ܩ??W?R?g?2???\0?dz', '2026-03-08 16:50:22', '2026-03-08 16:50:22', '1', '0', NULL);
 INSERT INTO `qr_tables` VALUES ('32', '32', NULL, '?{2LJ?޾??RZq?gs??\07A??I?????', '2026-03-08 16:50:22', '2026-03-08 16:50:22', '1', '0', NULL);
+INSERT INTO `qr_tables` VALUES ('64', '1', '/qr/menu?table_id=1&token=c1674174442ac69294484eb54ffe1e2b', 'c1674174442ac69294484eb54ffe1e2b', '2026-03-17 17:59:01', '2026-03-17 18:16:31', '1', '5', '2026-03-17 18:16:31');
 
 DROP TABLE IF EXISTS `realtime_notifications`;
 CREATE TABLE `realtime_notifications` (
@@ -577,10 +578,15 @@ CREATE TABLE `support_requests` (
   PRIMARY KEY (`id`),
   KEY `fk_support_table` (`table_id`),
   CONSTRAINT `fk_support_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `support_requests` VALUES ('1', '1', '', 'pending', '2026-03-17 13:52:40', '2026-03-17 13:52:40');
 INSERT INTO `support_requests` VALUES ('2', '21', '', 'pending', '2026-03-17 14:04:55', '2026-03-17 14:04:55');
+INSERT INTO `support_requests` VALUES ('3', '1', 'scan_qr', 'pending', '2026-03-17 15:03:45', '2026-03-17 15:03:45');
+INSERT INTO `support_requests` VALUES ('4', '3', 'scan_qr', 'pending', '2026-03-17 15:39:27', '2026-03-17 15:39:27');
+INSERT INTO `support_requests` VALUES ('5', '1', 'scan_qr', 'pending', '2026-03-17 17:07:43', '2026-03-17 17:07:43');
+INSERT INTO `support_requests` VALUES ('6', '1', 'scan_qr', 'pending', '2026-03-17 17:37:02', '2026-03-17 17:37:02');
+INSERT INTO `support_requests` VALUES ('7', '1', 'scan_qr', 'pending', '2026-03-17 17:45:25', '2026-03-17 17:45:25');
 
 DROP TABLE IF EXISTS `table_status_history`;
 CREATE TABLE `table_status_history` (
@@ -620,9 +626,9 @@ CREATE TABLE `tables` (
   CONSTRAINT `fk_tables_parent` FOREIGN KEY (`parent_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
+INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'occupied', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-17 17:45:25');
 INSERT INTO `tables` VALUES ('2', NULL, 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
-INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
+INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'occupied', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-17 15:40:00');
 INSERT INTO `tables` VALUES ('4', NULL, 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
 INSERT INTO `tables` VALUES ('5', NULL, 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
 INSERT INTO `tables` VALUES ('6', NULL, 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
@@ -638,17 +644,17 @@ INSERT INTO `tables` VALUES ('15', NULL, 'C.03', 'C1', '4', 'available', '0', '0
 INSERT INTO `tables` VALUES ('16', NULL, 'C.04', 'C1', '4', 'available', '0', '0', '16', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('17', NULL, 'C.05', 'C1', '4', 'available', '0', '0', '17', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('18', NULL, 'C.06', 'C1', '4', 'available', '0', '0', '18', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
-INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'occupied', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-17 12:42:16');
-INSERT INTO `tables` VALUES ('20', '19', 'VIP 1.2', 'VIP 1', '8', 'occupied', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-17 12:42:20');
+INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'available', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-17 17:33:58');
+INSERT INTO `tables` VALUES ('20', NULL, 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-17 17:33:58');
 INSERT INTO `tables` VALUES ('21', NULL, 'VIP 2.1', 'VIP 2', '8', 'available', '0', '0', '21', '1', '2026-03-07 18:20:45', '2026-03-17 14:04:33');
 INSERT INTO `tables` VALUES ('22', NULL, 'VIP 2.2', 'VIP 2', '8', 'available', '0', '0', '22', '1', '2026-03-07 18:20:45', '2026-03-17 14:04:33');
 INSERT INTO `tables` VALUES ('23', NULL, 'VIP 3.1', 'VIP 3', '8', 'available', '0', '0', '23', '1', '2026-03-07 18:20:45', '2026-03-17 11:52:02');
 INSERT INTO `tables` VALUES ('24', NULL, 'VIP 3.2', 'VIP 3', '8', 'available', '0', '0', '24', '1', '2026-03-07 18:20:45', '2026-03-16 21:29:32');
 INSERT INTO `tables` VALUES ('25', NULL, 'VIP 4.1', 'VIP 4', '8', 'available', '0', '0', '25', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('26', NULL, 'VIP 4.2', 'VIP 4', '8', 'available', '0', '0', '26', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
-INSERT INTO `tables` VALUES ('27', NULL, 'Âu 01', 'Âu', '4', 'occupied', '0', '0', '27', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:32');
-INSERT INTO `tables` VALUES ('28', '27', 'Âu 02', 'Âu', '4', 'occupied', '0', '0', '28', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:40');
-INSERT INTO `tables` VALUES ('29', '27', 'Âu 03', 'Âu', '4', 'occupied', '0', '0', '29', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:43');
+INSERT INTO `tables` VALUES ('27', NULL, 'Âu 01', 'Âu', '4', 'available', '0', '0', '27', '1', '2026-03-07 18:20:45', '2026-03-17 18:01:42');
+INSERT INTO `tables` VALUES ('28', NULL, 'Âu 02', 'Âu', '4', 'available', '0', '0', '28', '1', '2026-03-07 18:20:45', '2026-03-17 18:01:42');
+INSERT INTO `tables` VALUES ('29', NULL, 'Âu 03', 'Âu', '4', 'available', '0', '0', '29', '1', '2026-03-07 18:20:45', '2026-03-17 18:01:42');
 INSERT INTO `tables` VALUES ('30', NULL, 'Âu 04', 'Âu', '4', 'available', '0', '0', '30', '1', '2026-03-07 18:20:45', '2026-03-16 21:29:54');
 INSERT INTO `tables` VALUES ('31', NULL, 'Âu 05', 'Âu', '4', 'available', '0', '0', '31', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('32', NULL, 'Âu 06', 'Âu', '4', 'available', '0', '0', '32', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
