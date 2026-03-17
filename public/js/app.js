@@ -93,59 +93,101 @@
 
 // ── Real-time Notification System ────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    const notificationArea = document.getElementById('notificationArea');
-    if (!notificationArea) return; // Only run on pages with the notification area
-
-    const bell = document.getElementById('notificationBell');
-    const panel = document.getElementById('notificationPanel');
-    const countEl = document.getElementById('notificationCount');
-    const listEl = document.getElementById('notificationList');
-    const markAllBtn = document.getElementById('markAllAsReadBtn');
+    // Shared Elements
+    const waiterBadge = document.getElementById('waiterNotiBadge');
+    const adminBell = document.getElementById('notificationBell');
+    const adminPanel = document.getElementById('notificationPanel');
+    const adminCount = document.getElementById('notificationCount');
+    const adminList = document.getElementById('notificationList');
+    
+    if (!waiterBadge && !adminBell && !document.getElementById('waiterFullNotiList')) return;
 
     const notifSound = new Audio('https://raw.githubusercontent.com/shashankmehta/notification-sounds/master/notification.mp3');
     notifSound.preload = 'auto';
 
     let lastNotifTimestamp = 0;
 
-    // Toggle panel
-    bell.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpening = !panel.classList.contains('show');
-        panel.classList.toggle('show');
-        
-        // Mark all as read when opening if there are unread items
-        if (isOpening && countEl.classList.contains('show')) {
-            markAsRead(); // Mark all read on server
-            // Optimistically clear UI count
-            countEl.classList.remove('show');
-            // Optimistically mark all in current list as read (grey out)
-            listEl.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-        }
-    });
+    // Admin Specific Logic
+    if (adminBell) {
+        adminBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpening = !adminPanel.classList.contains('show');
+            adminPanel.classList.toggle('show');
+            if (isOpening && adminCount.classList.contains('show')) {
+                markAsRead();
+                adminCount.classList.remove('show');
+                adminList.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!adminBell.parentElement.contains(e.target)) adminPanel.classList.remove('show');
+        });
+    }
 
-    // Close panel when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!notificationArea.contains(e.target)) {
-            panel.classList.remove('show');
-        }
-    });
+    async function pollNotifications() {
+        try {
+            const response = await fetch(`${BASE_URL}/api/notifications/poll`);
+            const data = await response.json();
+            
+            // Handle sound
+            const unreadItems = data.notifications.filter(n => !parseInt(n.is_read));
+            if (unreadItems.length > 0) {
+                const newestTimestamp = Math.max(...unreadItems.map(n => new Date(n.created_at).getTime()));
+                if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
+                    notifSound.play().catch(e => {});
+                }
+                lastNotifTimestamp = newestTimestamp;
+            } else if (data.notifications.length > 0 && lastNotifTimestamp === 0) {
+                lastNotifTimestamp = Math.max(...data.notifications.map(n => new Date(n.created_at).getTime()));
+            }
 
-    // Mark one as read
-    listEl.addEventListener('click', (e) => {
-        const item = e.target.closest('.notification-item');
-        if (item && item.dataset.id && item.classList.contains('unread')) {
-            markAsRead(item.dataset.id);
-            item.classList.remove('unread');
-            // We don't call updateCount here as we'll wait for next poll or just let it be
-        }
-    });
+            // Update UI - Waiter Badge
+            if (waiterBadge) {
+                if (data.count > 0) {
+                    waiterBadge.textContent = data.count;
+                    waiterBadge.style.display = 'block';
+                } else {
+                    waiterBadge.style.display = 'none';
+                }
+            }
 
-    // Mark all as read
-    markAllBtn.addEventListener('click', () => {
-        markAsRead(); // No ID = all
-        listEl.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-        countEl.classList.remove('show');
-    });
+            // Update UI - Admin Panel
+            if (adminBell) {
+                if (data.count > 0) {
+                    adminCount.textContent = data.count;
+                    adminCount.classList.add('show');
+                } else {
+                    adminCount.classList.remove('show');
+                }
+                renderAdminList(data.notifications);
+            }
+
+        } catch (e) { console.error("Poll failed", e); }
+    }
+
+    function renderAdminList(notifications) {
+        if (!adminList) return;
+        if (notifications.length === 0) {
+            adminList.innerHTML = '<div class="notification-item empty">Chưa có thông báo mới.</div>';
+            return;
+        }
+        adminList.innerHTML = '';
+        notifications.forEach(n => {
+            const isUnread = !parseInt(n.is_read);
+            const item = document.createElement('div');
+            item.className = `notification-item ${isUnread ? 'unread' : ''}`;
+            item.innerHTML = `
+                <div class="notification-item-icon"><i class="fas ${getIcon(n.notification_type)}"></i></div>
+                <div class="notification-item-content">
+                    <h5>${n.title}</h5>
+                    <p>${n.message}</p>
+                    <div class="notification-item-time">${formatTimeAgo(new Date(n.created_at))}</div>
+                </div>
+            `;
+            item.onclick = () => window.location.href = `${BASE_URL}/admin/realtime?order_id=${n.order_id}`;
+            adminList.appendChild(item);
+        });
+    }
 
     function getIcon(type) {
         switch(type) {
@@ -156,101 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderNotifications(notifications, unreadCount) {
-        if (notifications.length === 0) {
-            listEl.innerHTML = '<div class="notification-item empty">Chưa có thông báo mới.</div>';
-            countEl.classList.remove('show');
-            return;
-        }
-
-        // Only play sound for notifications newer than the last one we saw
-        // and if they are unread
-        const unreadItems = notifications.filter(n => !parseInt(n.is_read));
-        if (unreadItems.length > 0) {
-            const newestTimestamp = Math.max(...unreadItems.map(n => new Date(n.created_at).getTime()));
-            if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
-                 notifSound.play().catch(err => console.error("Audio play failed:", err));
-            }
-            lastNotifTimestamp = newestTimestamp;
-        } else if (notifications.length > 0 && lastNotifTimestamp === 0) {
-            // Initialize timestamp on first load
-            lastNotifTimestamp = Math.max(...notifications.map(n => new Date(n.created_at).getTime()));
-        }
-
-        listEl.innerHTML = ''; // Clear
-        notifications.forEach(n => {
-            const isUnread = !parseInt(n.is_read);
-            const timeAgo = formatTimeAgo(new Date(n.created_at));
-
-            const item = document.createElement('div');
-            item.className = `notification-item ${isUnread ? 'unread' : ''}`;
-            item.dataset.id = n.id;
-
-            item.innerHTML = `
-                <div class="notification-item-icon"><i class="fas ${getIcon(n.notification_type)}"></i></div>
-                <div class="notification-item-content">
-                    <h5>${n.title}</h5>
-                    <p>${n.message}</p>
-                    <div class="notification-item-time">${timeAgo}</div>
-                </div>
-            `;
-            listEl.appendChild(item);
-        });
-
-        updateCount(unreadCount);
-    }
-    
-    function updateCount(count) {
-        if (count > 0) {
-            countEl.textContent = count;
-            countEl.classList.add('show');
-        } else {
-            countEl.classList.remove('show');
-        }
-    }
-
-    async function pollNotifications() {
-        try {
-            const response = await fetch(`${BASE_URL}/notifications/poll`);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const data = await response.json();
-            renderNotifications(data.notifications, data.count);
-        } catch (error) {
-            console.error("Failed to poll notifications:", error);
-        }
-    }
-    
-    async function markAsRead(notificationId = null) {
-        try {
-            const formData = new FormData();
-            if (notificationId) {
-                formData.append('id', notificationId);
-            }
-            await fetch(`${BASE_URL}/notifications/mark-read`, {
-                method: 'POST',
-                body: formData
-            });
-        } catch (error) {
-            console.error("Failed to mark notification as read:", error);
-        }
+    async function markAsRead(id = null) {
+        const fd = new FormData();
+        if (id) fd.append('id', id);
+        await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST', body: fd });
     }
 
     function formatTimeAgo(date) {
         const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " năm trước";
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " tháng trước";
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " ngày trước";
-        interval = seconds / 3600;
+        if (seconds < 60) return "vừa xong";
+        let interval = seconds / 3600;
         if (interval > 1) return Math.floor(interval) + " giờ trước";
         interval = seconds / 60;
         if (interval > 1) return Math.floor(interval) + " phút trước";
         return Math.floor(seconds) + " giây trước";
     }
 
-    // Initial poll and then start interval
     pollNotifications();
-    setInterval(pollNotifications, 5000); // Poll every 5 seconds
+    setInterval(pollNotifications, 5000);
 });

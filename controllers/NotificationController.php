@@ -16,6 +16,15 @@ class NotificationController extends Controller
         $this->notifModel = new OrderNotification();
     }
 
+    /** GET /notifications */
+    public function waiterIndex(): void
+    {
+        $this->view('layouts/waiter', [
+            'view' => 'notifications/waiter',
+            'pageTitle' => 'Thông báo',
+        ]);
+    }
+
     /** Poll for notifications (recent history) */
     public function poll(): void
     {

@@ -22,6 +22,9 @@ class TableController extends Controller
     {
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
 
+        // Đồng bộ trạng thái bàn
+        $this->tableModel->syncStatuses();
+
         $grouped = $this->tableModel->getAllGroupedByArea();
         $counts = $this->tableModel->countByStatus();
 

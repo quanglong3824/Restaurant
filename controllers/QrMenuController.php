@@ -84,9 +84,20 @@ class QrMenuController extends Controller
             $categories = $this->categoryModel->getAll();
             $menuItems = $this->menuModel->getAllActive();
 
-            // Get open order for this table if exists
+            // Get open order for this table if exists, or create one immediately
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-            $orderId = $openOrder ? $openOrder['id'] : 0;
+            
+            if (!$openOrder) {
+                // Mark table as busy immediately upon scan
+                $this->tableModel->open($tableId);
+                $orderId = $this->orderModel->create([
+                    'table_id' => $tableId,
+                    'order_source' => 'customer_qr',
+                    'status' => 'open'
+                ]);
+            } else {
+                $orderId = $openOrder['id'];
+            }
 
             // Notify staff about QR scan
             $this->notifModel->create([
@@ -146,10 +157,6 @@ class QrMenuController extends Controller
         $quantity = (int)($_POST['quantity'] ?? 1);
         $note = $_POST['note'] ?? '';
 
-        // Implementation for adding to cart
-        // In this system, we can either use PHP Session for cart
-        // Or directly create/update a 'draft' order in the database
-        
         $this->json(['success' => true, 'message' => 'Đã thêm vào giỏ hàng']);
     }
 

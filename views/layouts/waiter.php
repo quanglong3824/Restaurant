@@ -38,21 +38,6 @@
             <span class="topbar-page"><?= e($pageTitle ?? '') ?></span>
         </div>
         <div class="topbar-right">
-
-            <!-- Notifications -->
-            <div class="topbar-noti" onclick="document.getElementById('notiDropdown').classList.toggle('show')">
-                <i class="fas fa-bell"></i>
-                <span class="noti-badge" id="notiBadge">0</span>
-
-                <div class="noti-dropdown" id="notiDropdown" onclick="event.stopPropagation()">
-                    <div class="noti-header">Yêu cầu từ Khách hàng</div>
-                    <div class="noti-list" id="notiList">
-                        <div style="padding:15px; text-align:center; color:var(--text-dim); font-size:0.85rem;">Không có
-                            yêu cầu nào.</div>
-                    </div>
-                </div>
-            </div>
-
             <div class="topbar-user">
                 <i class="fas fa-user-circle" aria-hidden="true"></i>
                 <span><?= e(Auth::user()['name'] ?? '') ?></span>
@@ -92,6 +77,12 @@
             <i class="fas fa-book-open" aria-hidden="true"></i>
             <span>Menu</span>
         </a>
+        <a href="<?= BASE_URL ?>/notifications" class="bottomnav-item <?= activeClass('/notifications') ?>" aria-label="Thông báo">
+            <span class="liquid-ring"></span>
+            <i class="fas fa-bell" aria-hidden="true"></i>
+            <span class="noti-badge" id="waiterNotiBadge" style="display:none">0</span>
+            <span>Thông báo</span>
+        </a>
         <a href="<?= BASE_URL ?>/orders" class="bottomnav-item <?= activeClass('/orders') ?>" aria-label="Order">
             <span class="liquid-ring"></span>
             <i class="fas fa-receipt" aria-hidden="true"></i>
@@ -114,7 +105,6 @@
 */ ?>
 
     <!-- Layout JS (tải trước nội dung trang) -->
-    <script src="<?= asset('public/js/layout/waiter-notify.js') ?>" defer></script>
     <script src="<?= asset('public/js/layout/waiter-ai.js') ?>" defer></script>
 
     <!-- App JS -->

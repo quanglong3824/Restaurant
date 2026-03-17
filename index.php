@@ -139,6 +139,7 @@ $router->get('/admin/qr-codes/download', 'AdminQrController', 'download');
 $router->post('/admin/qr-codes/delete', 'AdminQrController', 'delete');
 
 // ── Notifications: Real-time Polling ───────────────────────
+$router->get('/notifications', 'NotificationController', 'waiterIndex');
 $router->get('/api/notifications/poll', 'NotificationController', 'poll');
 $router->post('/api/notifications/mark-read', 'NotificationController', 'markRead');
 

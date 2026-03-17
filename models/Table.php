@@ -219,7 +219,29 @@ class Table extends Model
             $this->close($p['id']); // Hàm close() đã xử lý cả việc giải phóng bàn con
         }
 
-        // 2. Tìm các bàn CHILD đang 'occupied' nhưng bàn PARENT của nó lại đang 'available'
+        // 2. Sửa lỗi bàn "khách ảo": Occupied nhưng không có món nào trong order và đã quá 5 phút
+        // Đặc biệt ưu tiên dọn dẹp các bàn do khách quét QR (waiter_id IS NULL)
+        $stuckSessions = $this->findAll(
+            "SELECT o.table_id, o.id as order_id 
+             FROM orders o 
+             JOIN tables t ON o.table_id = t.id
+             WHERE o.status = 'open' 
+             AND t.status = 'occupied'
+             AND (
+                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 5 MINUTE)
+                OR 
+                (o.opened_at < NOW() - INTERVAL 1 HOUR)
+             )
+             AND o.id NOT IN (SELECT DISTINCT order_id FROM order_items)"
+        );
+
+        foreach ($stuckSessions as $s) {
+            // Đóng order trống này và trả bàn về trống
+            $this->execute("UPDATE orders SET status = 'closed', closed_at = NOW() WHERE id = ?", [$s['order_id']]);
+            $this->close($s['table_id']);
+        }
+
+        // 3. Tìm các bàn CHILD đang 'occupied' nhưng bàn PARENT của nó lại đang 'available'
         $this->execute(
             "UPDATE tables t 
              JOIN tables p ON t.parent_id = p.id 

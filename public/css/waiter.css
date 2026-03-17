@@ -244,6 +244,26 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     display: block;
 }
 
+.noti-badge {
+    position: absolute;
+    top: 5px;
+    right: 15%;
+    background: var(--danger);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 50rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 /* Ripple Effect on Tap */
 .bottomnav-item:not(.active):active::before {
     content: '';
