@@ -174,7 +174,7 @@
 
 .section-label {
     text-transform: uppercase;
-    font-size: 0.7rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: var(--text-muted);
     letter-spacing: 1px;
@@ -241,7 +241,7 @@
 
 .plate-name {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.7rem;
     color: var(--text);
     margin-bottom: 0.25rem;
     line-height: 1.35;
@@ -263,7 +263,7 @@
     color: var(--gold-dark);
     min-width: 32px;
     text-align: center;
-    font-size: 0.95rem;
+    font-size: 0.7rem;
     background: var(--gold-light);
     padding: 0.35rem 0.5rem;
     border-radius: var(--radius-sm);
@@ -275,7 +275,7 @@
     color: var(--text-muted);
     min-width: 80px;
     text-align: right;
-    font-size: 0.85rem;
+    font-size: 0.65rem;
 }
 
 .plate-price-total {
@@ -283,7 +283,7 @@
     color: var(--text);
     min-width: 100px;
     text-align: right;
-    font-size: 0.95rem;
+    font-size: 0.75rem;
 }
 
 .plate-status {
