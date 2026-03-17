@@ -84,6 +84,11 @@ body {
         gap: 0.75rem;
     }
     
+    .pos-cart-col {
+        height: calc(100vh - 120px);
+        max-height: 600px;
+    }
+    
     .cart-header h4 {
         font-size: 0.8rem;
     }
@@ -99,6 +104,7 @@ body {
         grid-template-columns: 1fr;
         height: auto;
         overflow: visible;
+        padding-bottom: 80px;
     }
     
     .pos-menu-col {
@@ -274,7 +280,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-height: calc(100vh - 100px);
+    max-height: inherit;
 }
 
 .cart-header {
