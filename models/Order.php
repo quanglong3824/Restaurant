@@ -32,6 +32,15 @@ class Order extends Model
         );
     }
 
+    /** Lấy order gần nhất của một bàn (kể cả đã đóng) */
+    public function findLastOrderByTable(int $tableId): ?array
+    {
+        return $this->findOne(
+            "SELECT * FROM orders WHERE table_id = ? ORDER BY opened_at DESC LIMIT 1",
+            [$tableId]
+        );
+    }
+
     /** Cập nhật số lượng khách */
     public function updateGuestCount(int $orderId, int $guestCount): void
     {

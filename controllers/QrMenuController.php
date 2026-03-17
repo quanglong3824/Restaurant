@@ -84,6 +84,28 @@ class QrMenuController extends Controller
             $categories = $this->categoryModel->getAll();
             $menuItems = $this->menuModel->getAllActive();
 
+            // Get the most recent order for this table
+            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
+            
+            // If the last order is closed within a reasonable time (e.g., 2 hours)
+            // or if the current session is linked to a closed order, show the bill.
+            if ($lastOrder && $lastOrder['status'] === 'closed') {
+                $closedTime = strtotime($lastOrder['closed_at']);
+                // If closed less than 2 hours ago, show the bill
+                if ((time() - $closedTime) < 7200) {
+                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
+                    $this->view('layouts/public', [
+                        'view' => 'orders/paid_bill',
+                        'pageTitle' => 'Hóa đơn đã thanh toán',
+                        'table' => $table,
+                        'order' => $lastOrder,
+                        'items' => $orderItems,
+                        'isCustomer' => true
+                    ]);
+                    return;
+                }
+            }
+
             // Get open order for this table if exists, or create one immediately
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             $orderItems = [];

@@ -20,9 +20,6 @@ class NotificationController extends Controller
     public function waiterIndex(): void
     {
         try {
-            // Check if model works before loading view
-            $this->notifModel->getRecent(1);
-            
             $this->view('layouts/waiter', [
                 'view' => 'notifications/waiter',
                 'pageTitle' => 'Thông báo',
