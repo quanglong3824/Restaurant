@@ -35,9 +35,9 @@ body {
 /* POS Layout */
 .pos-layout {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 1fr 320px;
     gap: 1rem;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 1rem;
     height: calc(100vh - 100px);
@@ -73,6 +73,7 @@ body {
     max-height: calc(100vh - 100px);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 @media (max-width: 1024px) {
@@ -255,6 +256,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    max-height: calc(100vh - 100px);
 }
 
 .cart-header {
@@ -270,11 +272,15 @@ body {
     font-weight: 700;
     color: var(--gold-dark);
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cart-header small {
     font-size: 0.7rem;
     color: var(--text-muted);
+    white-space: nowrap;
 }
 
 .cart-body {
@@ -307,18 +313,18 @@ body {
 }
 
 .cart-footer .total-amount {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: var(--danger);
 }
 
 .cart-action-btn {
     width: 100%;
-    padding: 0.65rem;
+    padding: 0.6rem;
     border: none;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
@@ -361,24 +367,25 @@ body {
 
 .cart-item-name {
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin-bottom: 0.2rem;
+    word-break: break-word;
 }
 
 .cart-item-qty {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     font-weight: 600;
 }
 
 .cart-item-price {
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--gold-dark);
 }
 
 .cart-item-status {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -412,12 +419,12 @@ body {
     width: 20px;
     text-align: center;
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
 }
 
 /* Section Labels */
 .section-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -441,7 +448,7 @@ body {
 }
 
 .empty-cart p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
 
 /* Scrollbar - Menu Items */
