@@ -209,18 +209,24 @@ class Table extends Model
     /** Tự động đồng bộ trạng thái bàn dựa trên Order thực tế (Sửa lỗi bàn bị kẹt 'occupied') */
     public function syncStatuses(): void
     {
-        // 1. Tìm các bàn PARENT đang 'occupied' nhưng không có Order 'open'
-        $stuckParents = $this->findAll(
-            "SELECT id FROM tables 
-             WHERE status = 'occupied' AND parent_id IS NULL 
-             AND id NOT IN (SELECT table_id FROM orders WHERE status = 'open')"
+        // 1. Giải phóng các bàn đang 'occupied' nhưng không có đơn hàng 'open' nào
+        $this->execute(
+            "UPDATE tables t 
+             LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
+             SET t.status = 'available'
+             WHERE t.status = 'occupied' AND o.id IS NULL AND t.parent_id IS NULL"
         );
 
-        foreach ($stuckParents as $p) {
-            $this->close($p['id']); // Hàm close() đã xử lý cả việc giải phóng bàn con
-        }
+        // 2. Giải phóng các bàn con (merged child) nếu bàn cha không có đơn hàng 'open'
+        $this->execute(
+            "UPDATE tables t
+             JOIN tables p ON t.parent_id = p.id
+             LEFT JOIN orders o ON o.table_id = p.id AND o.status = 'open'
+             SET t.status = 'available', t.parent_id = NULL
+             WHERE p.status = 'available' OR o.id IS NULL"
+        );
 
-        // 2. Sửa lỗi bàn "khách ảo": Occupied nhưng không có món nào trong order và đã quá 5 phút
+        // 3. Sửa lỗi bàn "khách ảo": Occupied nhưng không có món nào trong order và đã quá 5 phút
         // Đặc biệt ưu tiên dọn dẹp các bàn do khách quét QR (waiter_id IS NULL)
         $stuckSessions = $this->findAll(
             "SELECT o.table_id, o.id as order_id 
@@ -229,9 +235,9 @@ class Table extends Model
              WHERE o.status = 'open' 
              AND t.status = 'occupied'
              AND (
-                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 5 MINUTE)
+                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 10 MINUTE)
                 OR 
-                (o.opened_at < NOW() - INTERVAL 1 HOUR)
+                (o.opened_at < NOW() - INTERVAL 2 HOUR)
              )
              AND o.id NOT IN (SELECT DISTINCT order_id FROM order_items)"
         );
@@ -241,14 +247,6 @@ class Table extends Model
             $this->execute("UPDATE orders SET status = 'closed', closed_at = NOW() WHERE id = ?", [$s['order_id']]);
             $this->close($s['table_id']);
         }
-
-        // 3. Tìm các bàn CHILD đang 'occupied' nhưng bàn PARENT của nó lại đang 'available'
-        $this->execute(
-            "UPDATE tables t 
-             JOIN tables p ON t.parent_id = p.id 
-             SET t.status = 'available', t.parent_id = NULL 
-             WHERE t.status = 'occupied' AND p.status = 'available'"
-        );
     }
 
     /** Đếm theo trạng thái (Bàn ghép chỉ tính là 1 đơn vị bận) */
@@ -367,27 +365,6 @@ class Table extends Model
         $this->execute(
             "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id IN ($idPlaceholders)",
             $tableIds
-        );
-    }
-
-    /** Tự động đồng bộ trạng thái bàn dựa trên các đơn hàng đang mở */
-    public function syncStatuses(): void
-    {
-        // Giải phóng các bàn đang 'occupied' nhưng không có đơn hàng 'open' nào
-        $this->execute(
-            "UPDATE tables t 
-             LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
-             SET t.status = 'available'
-             WHERE t.status = 'occupied' AND o.id IS NULL AND t.parent_id IS NULL"
-        );
-
-        // Giải phóng các bàn con (merged child) nếu bàn cha không có đơn hàng 'open'
-        $this->execute(
-            "UPDATE tables t
-             JOIN tables p ON t.parent_id = p.id
-             LEFT JOIN orders o ON o.table_id = p.id AND o.status = 'open'
-             SET t.status = 'available', t.parent_id = NULL
-             WHERE p.status = 'available' OR o.id IS NULL"
         );
     }
 }
