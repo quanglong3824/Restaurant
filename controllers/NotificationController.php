@@ -16,13 +16,15 @@ class NotificationController extends Controller
         $this->notifModel = new OrderNotification();
     }
 
-    /** Poll for new unread notifications */
+    /** Poll for notifications (recent history) */
     public function poll(): void
     {
-        $notifications = $this->notifModel->getUnread();
+        $recent = $this->notifModel->getRecent(20);
+        $unreadCount = count(array_filter($recent, fn($n) => !$n['is_read']));
+        
         $this->json([
-            'count' => count($notifications),
-            'notifications' => $notifications
+            'count' => $unreadCount,
+            'notifications' => $recent
         ]);
     }
 

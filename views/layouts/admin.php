@@ -22,6 +22,7 @@
 
     <!-- App CSS -->
     <link rel="stylesheet" href="<?= asset('public/css/admin.css') ?>">
+    <script>const BASE_URL = '<?= BASE_URL ?>';</script>
     <?php if (isset($pageCSS)): ?>
         <link rel="stylesheet" href="<?= asset('public/css/' . e($pageCSS) . '.css') ?>">
     <?php endif; ?>

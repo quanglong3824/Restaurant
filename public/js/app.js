@@ -105,14 +105,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifSound = new Audio('https://raw.githubusercontent.com/shashankmehta/notification-sounds/master/notification.mp3');
     notifSound.preload = 'auto';
 
-    const BASE_URL = window.location.origin;
-
     let lastNotifTimestamp = 0;
 
     // Toggle panel
     bell.addEventListener('click', (e) => {
         e.stopPropagation();
+        const isOpening = !panel.classList.contains('show');
         panel.classList.toggle('show');
+        
+        // Mark all as read when opening if there are unread items
+        if (isOpening && countEl.classList.contains('show')) {
+            markAsRead(); // Mark all read on server
+            // Optimistically clear UI count
+            countEl.classList.remove('show');
+            // Optimistically mark all in current list as read (grey out)
+            listEl.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+        }
     });
 
     // Close panel when clicking outside
@@ -125,10 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mark one as read
     listEl.addEventListener('click', (e) => {
         const item = e.target.closest('.notification-item');
-        if (item && item.dataset.id) {
+        if (item && item.dataset.id && item.classList.contains('unread')) {
             markAsRead(item.dataset.id);
             item.classList.remove('unread');
-            updateCount();
+            // We don't call updateCount here as we'll wait for next poll or just let it be
         }
     });
 
@@ -136,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     markAllBtn.addEventListener('click', () => {
         markAsRead(); // No ID = all
         listEl.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-        updateCount();
+        countEl.classList.remove('show');
     });
 
     function getIcon(type) {
@@ -148,22 +156,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderNotifications(notifications) {
+    function renderNotifications(notifications, unreadCount) {
         if (notifications.length === 0) {
             listEl.innerHTML = '<div class="notification-item empty">Chưa có thông báo mới.</div>';
+            countEl.classList.remove('show');
             return;
         }
 
         // Only play sound for notifications newer than the last one we saw
-        const newestTimestamp = Math.max(...notifications.map(n => new Date(n.created_at).getTime()));
-        if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
-             notifSound.play().catch(err => console.error("Audio play failed:", err));
+        // and if they are unread
+        const unreadItems = notifications.filter(n => !parseInt(n.is_read));
+        if (unreadItems.length > 0) {
+            const newestTimestamp = Math.max(...unreadItems.map(n => new Date(n.created_at).getTime()));
+            if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
+                 notifSound.play().catch(err => console.error("Audio play failed:", err));
+            }
+            lastNotifTimestamp = newestTimestamp;
+        } else if (notifications.length > 0 && lastNotifTimestamp === 0) {
+            // Initialize timestamp on first load
+            lastNotifTimestamp = Math.max(...notifications.map(n => new Date(n.created_at).getTime()));
         }
-        lastNotifTimestamp = newestTimestamp;
 
         listEl.innerHTML = ''; // Clear
         notifications.forEach(n => {
-            const isUnread = !n.read_at;
+            const isUnread = !parseInt(n.is_read);
             const timeAgo = formatTimeAgo(new Date(n.created_at));
 
             const item = document.createElement('div');
@@ -181,13 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {
             listEl.appendChild(item);
         });
 
-        updateCount();
+        updateCount(unreadCount);
     }
     
-    function updateCount() {
-        const unreadCount = listEl.querySelectorAll('.notification-item.unread').length;
-        if (unreadCount > 0) {
-            countEl.textContent = unreadCount;
+    function updateCount(count) {
+        if (count > 0) {
+            countEl.textContent = count;
             countEl.classList.add('show');
         } else {
             countEl.classList.remove('show');
@@ -199,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${BASE_URL}/notifications/poll`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
-            renderNotifications(data.notifications);
+            renderNotifications(data.notifications, data.count);
         } catch (error) {
             console.error("Failed to poll notifications:", error);
         }

@@ -44,6 +44,18 @@ class OrderNotification extends Model
         );
     }
 
+    public function getRecent(int $limit = 20): array
+    {
+        return $this->findAll(
+            "SELECT n.*, t.name as table_name, t.area as table_area 
+             FROM order_notifications n
+             JOIN tables t ON n.table_id = t.id
+             ORDER BY n.created_at DESC
+             LIMIT ?",
+            [$limit]
+        );
+    }
+
     public function markAsRead(int $id, int $userId): void
     {
         $this->execute(
