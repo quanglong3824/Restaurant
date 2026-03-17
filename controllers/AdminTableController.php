@@ -39,13 +39,20 @@ class AdminTableController extends Controller
             $this->redirect('/admin/tables');
         }
 
-        $this->model->create([
+        $tableId = $this->model->create([
             'name' => $name,
             'area' => trim((string) $this->input('area', '')) ?: null,
             'capacity' => max(1, (int) $this->input('capacity', 4)),
             'sort_order' => (int) $this->input('sort_order', 0),
         ]);
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã thêm bàn!'];
+
+        // Auto-generate QR code for the new table
+        require_once BASE_PATH . '/models/QrTable.php';
+        $qrModel = new QrTable();
+        $token = bin2hex(random_bytes(16));
+        $qrModel->generate($tableId, $token);
+
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã thêm bàn và tạo mã QR!'];
         $this->redirect('/admin/tables');
     }
 

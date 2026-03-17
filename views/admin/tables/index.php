@@ -45,7 +45,7 @@
                                 <div style="display:flex;gap:.4rem;">
                                     <!-- QR Button -->
                                     <button type="button" class="btn btn-outline btn-sm btn-qr" data-id="<?= $t['id'] ?>"
-                                        data-name="<?= e($t['name']) ?>" title="Tạo QR">
+                                        data-name="<?= e($t['name']) ?>" data-token="<?= e($t['qr_token'] ?? '') ?>" title="Tạo QR">
                                         <i class="fas fa-qrcode"></i>
                                     </button>
 
@@ -275,7 +275,25 @@
             btn.addEventListener('click', () => {
                 const tableId = btn.dataset.id;
                 const tableName = btn.dataset.name;
-                const fullUrl = `<?= BASE_URL ?>/menu?table_id=${tableId}`;
+                const token = btn.dataset.token;
+                
+                if (!token) {
+                    if (confirm('Bàn này chưa có mã QR định danh. Bạn có muốn hệ thống tự động tạo mã ngay bây giờ?')) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '<?= BASE_URL ?>/admin/qr-codes/generate';
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'table_id';
+                        input.value = tableId;
+                        form.appendChild(input);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                    return;
+                }
+
+                const fullUrl = `<?= BASE_URL ?>/qr/menu?table_id=${tableId}&token=${token}`;
 
                 qrTitle.innerText = `Mã QR: ${tableName}`;
                 qrTableDisplay.innerText = tableName.toUpperCase();

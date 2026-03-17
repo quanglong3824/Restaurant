@@ -230,9 +230,10 @@ class Table extends Model
     public function getAllForAdmin(): array
     {
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name
+            "SELECT t.*, p.name as parent_name, qr.qr_hash as qr_token
              FROM tables t
              LEFT JOIN tables p ON t.parent_id = p.id
+             LEFT JOIN qr_tables qr ON t.id = qr.table_id AND qr.is_active = 1
              ORDER BY 
                 CASE t.area
                     WHEN 'A1' THEN 1

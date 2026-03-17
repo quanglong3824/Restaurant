@@ -34,8 +34,10 @@ class AdminQrController extends Controller
     public function generate(): void
     {
         $tableId = (int)$_POST['table_id'];
+        $referer = $_SERVER['HTTP_REFERER'] ?? '/admin/qr-codes';
+        
         if (!$tableId) {
-            $this->redirect('/admin/qr-codes');
+            $this->redirect($referer);
             return;
         }
 
@@ -43,7 +45,8 @@ class AdminQrController extends Controller
         $token = bin2hex(random_bytes(16));
         $this->qrModel->generate($tableId, $token);
 
-        $this->redirect('/admin/qr-codes');
+        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tạo mã QR mới thành công.'];
+        $this->redirect($referer);
     }
 
     public function download(): void
