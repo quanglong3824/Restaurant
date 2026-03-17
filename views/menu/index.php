@@ -117,7 +117,12 @@
     </div>
 
     <!-- CART SIDEBAR - Fixed -->
-    <?php if ($orderId > 0): ?>
+    <?php if ($orderId > 0): 
+        $draftItems = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
+        $confirmedItems = array_filter($orderItems, fn($it) => $it['status'] === 'confirmed');
+        $pendingItems = array_filter($orderItems, fn($it) => $it['status'] === 'pending');
+        $draftCount = count($draftItems);
+    ?>
         <div class="pos-cart-col">
             <div class="cart-panel">
                 <div class="cart-header">
@@ -131,12 +136,7 @@
                 </div>
                 
                 <div class="cart-body" onclick="handleBodyClick(event)">
-                    <?php
-                    $draftItems = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
-                    $confirmedItems = array_filter($orderItems, fn($it) => $it['status'] === 'confirmed');
-                    $draftCount = count($draftItems);
-
-                    if (empty($orderItems)): ?>
+                    <?php if (empty($orderItems)): ?>
                         <div class="empty-cart">
                             <i class="fas fa-shopping-basket"></i>
                             <p>Chưa có món nào</p>
@@ -145,8 +145,7 @@
                         <?php if ($draftCount > 0): ?>
                             <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
                             <?php foreach ($draftItems as $it): ?>
-                                <div class="cart-item-row <?= isset($selectedItems) && in_array($it['id'], $selectedItems) ? 'is-selected' : '' ?>" 
-                                     data-item-id="<?= $it['id'] ?>">
+                                <div class="cart-item-row" data-item-id="<?= $it['id'] ?>">
                                     <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
                                         <input type="checkbox" class="item-select-cb" 
                                                data-item-id="<?= $it['id'] ?>" 
@@ -170,6 +169,24 @@
                                     </div>
                                 </div>
                             <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if (!empty($pendingItems)): ?>
+                            <div class="section-label" style="color:var(--warning)"><i class="fas fa-clock"></i> Chờ xác nhận</div>
+                            <div style="background:rgba(255, 193, 7, 0.05); border-radius:6px; padding:0.5rem; margin-bottom:1rem;">
+                                <?php foreach ($pendingItems as $it): ?>
+                                    <div class="cart-item-row" style="border-bottom:1px dashed rgba(0,0,0,0.05); margin-bottom:0.5rem; padding-bottom:0.5rem;">
+                                        <div style="flex:1;">
+                                            <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                            <span class="cart-item-qty">x<?= $it['quantity'] ?></span>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <div class="cart-item-price"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
+                                            <span class="cart-item-status pending" style="background:var(--warning); color:#000;">Chờ NV</span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         <?php endif; ?>
 
                         <?php if (!empty($confirmedItems)): ?>

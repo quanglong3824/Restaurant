@@ -95,7 +95,7 @@ class MenuController extends Controller
             'order' => $order,
             'orderItems' => $orderItems,
             'orderTotal' => $orderTotal,
-            'allTables' => $allTables,
+            'tables' => $allTables,
             'isCustomer' => !Auth::isLoggedIn(),
             'tableModel' => $tableModel,
         ]);
