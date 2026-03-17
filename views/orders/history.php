@@ -1,14 +1,12 @@
 <?php
 // views/orders/history.php — Order History for Waiters/Admins
-// Use pagination data from controller
 $page = $currentPage ?? 1;
-$limit = 10; // Items per page
+$limit = 10;
 $totalPages = $totalPages ?? 1;
 $totalItems = $totalCount ?? 0;
 $totalRevenueVal = $totalRevenue ?? 0;
 $pagedOrders = $orders;
 
-// Get filters
 $filters = [
     'type' => $_GET['filter_type'] ?? 'date',
     'date' => $_GET['date'] ?? date('Y-m-d'),
@@ -23,25 +21,23 @@ $filters = [
 
         <!-- Header Section -->
         <div class="page-header-minimal mb-4">
-            <div class="d-flex justify-content-between align-items-end">
-                <div>
-                    <div class="header-breadcrumb mb-2">
-                        <span class="text-muted">Quản lý</span>
-                        <i class="fas fa-chevron-right mx-2 text-muted"></i>
-                        <span class="text-gold fw-bold">Lịch sử</span>
-                    </div>
-                    <h1 class="playfair fw-900 mb-1">Lịch sử giao dịch</h1>
-                    <p class="text-muted-gold mb-0"><i class="fas fa-layer-group me-1" style="color: var(--gold)"></i> Hệ thống quản lý hóa đơn</p>
+            <div>
+                <div class="header-breadcrumb mb-2">
+                    <span class="text-muted">Quản lý</span>
+                    <i class="fas fa-chevron-right mx-2 text-muted"></i>
+                    <span class="text-gold fw-bold">Lịch sử</span>
                 </div>
-                <div class="header-stats">
-                    <div class="total-revenue-display">
-                        <div class="revenue-amount"><?= formatPrice($totalRevenueVal) ?></div>
-                        <div class="revenue-label">Tổng doanh thu</div>
-                    </div>
-                    <div class="results-counter">
-                        <span class="count-badge"><?= number_format($totalItems) ?></span>
-                        <span class="count-label">Hóa đơn</span>
-                    </div>
+                <h1 class="playfair fw-900 mb-1">Lịch sử giao dịch</h1>
+                <p class="text-muted mb-0"><i class="fas fa-layer-group me-1" style="color: var(--gold)"></i> Hệ thống quản lý hóa đơn</p>
+            </div>
+            <div class="header-stats">
+                <div class="total-revenue-display">
+                    <div class="revenue-amount"><?= formatPrice($totalRevenueVal) ?></div>
+                    <div class="revenue-label">Tổng doanh thu</div>
+                </div>
+                <div class="results-counter">
+                    <span class="count-badge"><?= number_format($totalItems) ?></span>
+                    <span class="count-label">Hóa đơn</span>
                 </div>
             </div>
         </div>
@@ -116,12 +112,12 @@ $filters = [
                 </div>
                 <div class="summary-stats-group">
                     <div class="stat-mini-card">
-                        <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                        <div class="stat-icon text-success"><i class="fas fa-receipt"></i></div>
                         <span class="val"><?= number_format($totalItems) ?></span>
                         <span class="lbl">Giao dịch</span>
                     </div>
                     <div class="stat-mini-card">
-                        <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
+                        <div class="stat-icon text-gold"><i class="fas fa-file-invoice"></i></div>
                         <span class="val"><?= count($pagedOrders) ?></span>
                         <span class="lbl">Trang này</span>
                     </div>
@@ -132,7 +128,7 @@ $filters = [
         <!-- Content Listing -->
         <section class="history-list-section">
             <div class="section-title-row mb-3">
-                <h3 class="playfair fw-800"><i class="fas fa-stream text-gold me-2"></i> Dòng thời gian</h3>
+                <h3 class="fw-800"><i class="fas fa-stream text-gold me-2"></i> Dòng thời gian</h3>
                 <div class="pagination-info">Hiển thị <?= (($page - 1) * $limit) + 1 ?> - <?= min($page * $limit, $totalItems) ?></div>
             </div>
 
@@ -150,14 +146,14 @@ $filters = [
                             <div class="card-inner">
                                 <div class="order-header">
                                     <div class="table-avatar">
-                                        <span><?= e(str_replace('Bàn ', '', $order['table_name'])) ?></span>
+                                        <?= e(str_replace('Bàn ', '', $order['table_name'])) ?>
                                     </div>
                                     <div class="order-meta">
                                         <div class="d-flex justify-content-between align-items-start">
-                                            <h5 class="m-0 fw-800 text-dark"><?= e($order['table_name']) ?></h5>
-                                            <span class="order-id" style="font-size: 0.7rem; padding: 0.2rem 0.6rem;"><?= sprintf('%06d', $order['id']) ?></span>
+                                            <h5 class="m-0 fw-800"><?= e($order['table_name']) ?></h5>
+                                            <span class="order-id"><?= sprintf('%06d', $order['id']) ?></span>
                                         </div>
-                                        <div class="timestamp" style="font-size: 0.75rem; margin-top: 0.3rem;">
+                                        <div class="timestamp">
                                             <span class="timestamp-item"><i class="far fa-calendar-check me-1" style="color: var(--success)"></i> <?= date('d/m/Y', strtotime($order['closed_at'])) ?></span>
                                             <span class="separator"></span>
                                             <span class="timestamp-item"><i class="far fa-clock me-1" style="color: var(--gold)"></i> <?= date('H:i', strtotime($order['closed_at'])) ?></span>
@@ -192,7 +188,7 @@ $filters = [
                                 <div class="order-pricing border-top pt-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="pricing-label">TỔNG TIỀN</span>
-                                        <span class="pricing-value" style="color: var(--gold); font-weight: 900;"><?= formatPrice($order['total']) ?></span>
+                                        <span class="pricing-value"><?= formatPrice($order['total']) ?></span>
                                     </div>
                                 </div>
 
@@ -270,7 +266,7 @@ $filters = [
                 <p class="text-muted">Đang chuẩn bị dữ liệu...</p>
             </div>
         </div>
-        <div class="modal-footer-premium" style="padding: 1rem 1.5rem; gap: 0.5rem;">
+        <div class="modal-footer-premium px-2" style="padding: 1rem 0.5rem; gap: 0.5rem;">
             <button type="button" class="btn-modal-close" data-modal-close>Đóng</button>
             <a href="" target="_blank" class="btn-modal-print" id="btnPrintOrder">IN</a>
         </div>
