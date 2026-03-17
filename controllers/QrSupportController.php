@@ -58,6 +58,10 @@ class QrSupportController extends Controller
 
         $orderId = $order['id'];
 
+        // Update order notes or a specific field to indicate payment request
+        // Using a custom note or status for immediate visual cue in admin
+        $this->orderModel->appendNote($orderId, "KHÁCH YÊU CẦU THANH TOÁN");
+
         $this->notifModel->create([
             'order_id' => $orderId,
             'table_id' => $tableId,

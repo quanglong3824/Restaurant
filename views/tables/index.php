@@ -61,12 +61,20 @@ foreach ($uniqueAreas as $a) {
 function renderTableToken($t, $tableModel) {
     $isOccupied = ($t['status'] === 'occupied');
     $isChild = !empty($t['parent_id']);
+    $isPaymentRequested = isset($t['order_note']) && strpos($t['order_note'], 'KHÁCH YÊU CẦU THANH TOÁN') !== false;
+    
     $cardClass = $isOccupied ? 'occupied' : 'available';
     if ($isChild) {
         $cardClass .= ' merged-child';
     }
+    if ($isPaymentRequested) {
+        $cardClass .= ' payment-requested';
+    }
     ?>
     <div class="table-token <?= $cardClass ?>" onclick="handleTableClick(<?= htmlspecialchars(json_encode($t)) ?>)" role="button">
+        <?php if ($isPaymentRequested): ?>
+            <div class="payment-badge-pulse"><i class="fas fa-hand-holding-usd"></i></div>
+        <?php endif; ?>
         <div class="token-status-ring"></div>
         <div class="token-body">
             <div class="token-name"><?= e($t['name']) ?></div>
@@ -91,6 +99,40 @@ function renderTableToken($t, $tableModel) {
     <?php
 }
 ?>
+
+<style>
+    .payment-requested {
+        border: 3px solid #f59e0b !important;
+        background: #fffbeb !important;
+        animation: border-pulse 1.5s infinite;
+    }
+    .payment-badge-pulse {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #f59e0b;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+        animation: badge-pulse 1s infinite;
+    }
+    @keyframes border-pulse {
+        0% { border-color: #f59e0b; }
+        50% { border-color: #fbbf24; }
+        100% { border-color: #f59e0b; }
+    }
+    @keyframes badge-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+</style>
 
 <div class="page-content" style="padding-bottom: 2rem;">
     <!-- Summary Header -->

@@ -23,9 +23,10 @@ class Table extends Model
     public function getAll(): array
     {
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name
+            "SELECT t.*, p.name as parent_name, o.note as order_note
              FROM tables t
              LEFT JOIN tables p ON t.parent_id = p.id
+             LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
              WHERE t.is_active = 1
              ORDER BY 
                 CASE t.area
@@ -366,6 +367,27 @@ class Table extends Model
         $this->execute(
             "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id IN ($idPlaceholders)",
             $tableIds
+        );
+    }
+
+    /** Tự động đồng bộ trạng thái bàn dựa trên các đơn hàng đang mở */
+    public function syncStatuses(): void
+    {
+        // Giải phóng các bàn đang 'occupied' nhưng không có đơn hàng 'open' nào
+        $this->execute(
+            "UPDATE tables t 
+             LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
+             SET t.status = 'available'
+             WHERE t.status = 'occupied' AND o.id IS NULL AND t.parent_id IS NULL"
+        );
+
+        // Giải phóng các bàn con (merged child) nếu bàn cha không có đơn hàng 'open'
+        $this->execute(
+            "UPDATE tables t
+             JOIN tables p ON t.parent_id = p.id
+             LEFT JOIN orders o ON o.table_id = p.id AND o.status = 'open'
+             SET t.status = 'available', t.parent_id = NULL
+             WHERE p.status = 'available' OR o.id IS NULL"
         );
     }
 }
