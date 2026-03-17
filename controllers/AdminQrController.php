@@ -20,6 +20,15 @@ class AdminQrController extends Controller
 
     public function index(): void
     {
+        // Auto-cleanup invalid QR tokens (historical garbage data)
+        $allQr = $this->qrModel->findAll("SELECT id, table_id, qr_hash FROM qr_tables");
+        foreach ($allQr as $qr) {
+            if (strlen(trim($qr['qr_hash'])) !== 32 || !ctype_xdigit(trim($qr['qr_hash']))) {
+                $newToken = bin2hex(random_bytes(16));
+                $this->qrModel->generate($qr['table_id'], $newToken);
+            }
+        }
+
         $qrCodes = $this->qrModel->getAllWithTableInfo();
         $tables = $this->tableModel->getAll();
 

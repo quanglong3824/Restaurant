@@ -18,6 +18,18 @@ class AdminTableController extends Controller
     public function index(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
+
+        // Auto-cleanup invalid QR tokens (historical garbage data)
+        require_once BASE_PATH . '/models/QrTable.php';
+        $qrModel = new QrTable();
+        $allQr = $qrModel->findAll("SELECT id, table_id, qr_hash FROM qr_tables");
+        foreach ($allQr as $qr) {
+            if (strlen(trim($qr['qr_hash'])) !== 32 || !ctype_xdigit(trim($qr['qr_hash']))) {
+                $newToken = bin2hex(random_bytes(16));
+                $qrModel->generate($qr['table_id'], $newToken);
+            }
+        }
+
         $tables = $this->model->getAllForAdmin();
         $this->view('layouts/admin', [
             'view' => 'admin/tables/index',
