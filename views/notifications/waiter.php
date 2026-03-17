@@ -77,10 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const markAllBtn = document.getElementById('waiterMarkAllRead');
 
     async function fetchNotifications() {
+        console.log("Calling API:", `${BASE_URL}/api/notifications/poll`);
         try {
             const response = await fetch(`${BASE_URL}/api/notifications/poll`);
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
+            console.log("Data received:", data);
             renderList(data.notifications || []);
 
             // Update badge globally if function exists
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.updateNotiBadge(data.count || 0);
             }
         } catch (e) {
-            console.error(e);
+            console.error("Fetch error:", e);
             listEl.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-exclamation-triangle text-danger"></i>
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderList(notifications) {
+        console.log("Rendering notifications list, count:", notifications.length);
         if (!notifications || notifications.length === 0) {
             listEl.innerHTML = `
                 <div class="empty-state">
@@ -108,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             return;
         }
-
         const fragment = document.createDocumentFragment();
         notifications.forEach(n => {
             const isUnread = n.is_read == 0 || n.is_read === false || n.is_read === null;
