@@ -77,15 +77,15 @@ class QrMenuController extends Controller
             'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
         ]);
         
-        $this->view('layouts/public', [
-            'view' => 'menu/customer',
-            'pageTitle' => 'Thực đơn bàn ' . ($table['name'] ?? $tableId),
-            'table' => $table,
-            'categories' => $categories,
-            'menuItems' => $menuItems,
-            'openOrder' => $openOrder,
-            'isCustomer' => true
-        ]);
+        // --- TEST MODE: Chế độ test chỉ hiện số bàn ---
+        echo "<!DOCTYPE html><html lang='vi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Quét QR Thành Công</title></head>";
+        echo "<body style='background-color:#0f172a; color:#f8fafc; font-family:sans-serif; text-align:center; padding-top:20vh;'>";
+        echo "<i class='fas fa-check-circle' style='font-size:4rem; color:#10b981; margin-bottom:20px;'></i>";
+        echo "<h1 style='color:#c5a059; font-size:2rem; margin-bottom:10px;'>ĐÃ QUÉT MÃ QR</h1>";
+        echo "<h2 style='font-size:3rem; margin:0;'>BÀN " . e($table['name'] ?? $tableId) . "</h2>";
+        echo "<p style='color:#94a3b8; margin-top:20px;'>Hệ thống đã ghi nhận. Vui lòng đợi trong giây lát...</p>";
+        echo "</body></html>";
+        exit;
     }
 
     private function setupCustomerSession(int $tableId, string $token): void

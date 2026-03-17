@@ -49,6 +49,14 @@
                                         <i class="fas fa-qrcode"></i>
                                     </button>
 
+                                    <!-- Reset QR Button -->
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/qr-codes/generate" style="display:inline;">
+                                        <input type="hidden" name="table_id" value="<?= $t['id'] ?>">
+                                        <button type="submit" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR" data-confirm="Tạo mới hoặc làm mới mã QR cho bàn này? Mã cũ sẽ không dùng được nữa.">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </form>
+
                                     <a href="<?= BASE_URL ?>/admin/tables/edit?id=<?= $t['id'] ?>"
                                         class="btn btn-outline btn-sm" title="Sửa">
                                         <i class="fas fa-pen"></i>
