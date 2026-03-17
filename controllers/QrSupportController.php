@@ -32,7 +32,7 @@ class QrSupportController extends Controller
     public function callWaiter(): void
     {
         $tableId = $this->requireCustomer();
-        $order = $this->orderModel->findOpenByTable($tableId);
+        $order = $this->orderModel->findOpenOrderByTable($tableId);
         $orderId = $order ? $order['id'] : 0; // If no order yet, order_id is 0
 
         $this->notifModel->create([
@@ -49,7 +49,7 @@ class QrSupportController extends Controller
     public function requestBill(): void
     {
         $tableId = $this->requireCustomer();
-        $order = $this->orderModel->findOpenByTable($tableId);
+        $order = $this->orderModel->findOpenOrderByTable($tableId);
         
         if (!$order) {
             $this->json(['error' => 'Chưa có order nào để thanh toán'], 400);

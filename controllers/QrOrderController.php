@@ -49,7 +49,7 @@ class QrOrderController extends Controller
 
         try {
             // Check if open order exists
-            $order = $this->orderModel->findOpenByTable($tableId);
+            $order = $this->orderModel->findOpenOrderByTable($tableId);
             $isNewOrder = false;
 
             if (!$order) {
@@ -109,7 +109,7 @@ class QrOrderController extends Controller
     public function status(): void
     {
         $tableId = $this->requireCustomer();
-        $order = $this->orderModel->findOpenByTable($tableId);
+        $order = $this->orderModel->findOpenOrderByTable($tableId);
         
         if (!$order) {
             $this->view('layouts/public', [

@@ -41,6 +41,21 @@ class Order extends Model
         );
     }
 
+    /** Nối thêm ghi chú vào order */
+    public function appendNote(int $orderId, string $newNote): void
+    {
+        $order = $this->findById($orderId);
+        if (!$order) return;
+
+        $currentNote = $order['note'] ?? '';
+        $updatedNote = empty($currentNote) ? $newNote : $currentNote . " | " . $newNote;
+
+        $this->execute(
+            "UPDATE orders SET note = ? WHERE id = ?",
+            [$updatedNote, $orderId]
+        );
+    }
+
     /** Lấy order đang mở của một bàn (JOIN chi tiết) */
     public function getOpenByTable(int $tableId): ?array
     {

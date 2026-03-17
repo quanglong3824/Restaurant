@@ -56,11 +56,16 @@ class QrMenuController extends Controller
         $this->setupCustomerSession($tableId, $token);
 
         $table = $this->tableModel->findById($tableId);
+        if (!$table) {
+            $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
+            return;
+        }
+
         $categories = $this->categoryModel->getAll();
         $menuItems = $this->menuModel->getAllActive();
 
         // Get open order for this table if exists
-        $openOrder = $this->orderModel->findOpenByTable($tableId);
+        $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
         $orderId = $openOrder ? $openOrder['id'] : 0;
 
         // Notify staff about QR scan

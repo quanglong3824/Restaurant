@@ -13,7 +13,7 @@ class AdminQrController extends Controller
 
     public function __construct()
     {
-        Auth::requireRole(['admin', 'it']);
+        Auth::requireRole(ROLE_ADMIN, ROLE_IT);
         $this->qrModel = new QrTable();
         $this->tableModel = new Table();
     }

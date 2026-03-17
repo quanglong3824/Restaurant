@@ -26,7 +26,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const url = window.location.origin + '<?= BASE_URL ?>/qr/menu?table_id=<?= $tableId ?>&token=<?= $token ?>';
+        const url = '<?= BASE_URL ?>/qr/menu?table_id=<?= $tableId ?>&token=<?= $token ?>';
         new QRCode(document.getElementById("qrcode"), {
             text: url,
             width: 200,
