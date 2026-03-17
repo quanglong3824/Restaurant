@@ -123,6 +123,11 @@
                 <div class="cart-header">
                     <h4><?= e($tableModel->getFullDisplayName($tableId)) ?></h4>
                     <small><?= e($order['guest_count'] ?? 1) ?> khách</small>
+                    <?php if ($draftCount > 0): ?>
+                    <button type="button" class="split-btn" onclick="openSplitModal()" title="Tách bàn">
+                        <i class="fas fa-cut"></i>
+                    </button>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="cart-body" onclick="handleBodyClick(event)">
@@ -140,15 +145,22 @@
                         <?php if ($draftCount > 0): ?>
                             <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
                             <?php foreach ($draftItems as $it): ?>
-                                <div class="cart-item-row">
-                                    <div style="flex:1;">
-                                        <div class="cart-item-name"><?= e($it['item_name']) ?></div>
-                                        <div style="display:flex; align-items:center; gap:0.5rem;">
-                                            <span class="cart-item-price"><?= formatPrice($it['item_price']) ?></span>
-                                            <div class="qty-control">
-                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)"><i class="fas fa-minus"></i></button>
-                                                <span><?= $it['quantity'] ?></span>
-                                                <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)"><i class="fas fa-plus"></i></button>
+                                <div class="cart-item-row <?= isset($selectedItems) && in_array($it['id'], $selectedItems) ? 'is-selected' : '' ?>" 
+                                     data-item-id="<?= $it['id'] ?>">
+                                    <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
+                                        <input type="checkbox" class="item-select-cb" 
+                                               data-item-id="<?= $it['id'] ?>" 
+                                               onchange="toggleSplitButton()"
+                                               onclick="event.stopPropagation()">
+                                        <div style="flex:1;">
+                                            <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                                <span class="cart-item-price"><?= formatPrice($it['item_price']) ?></span>
+                                                <div class="qty-control">
+                                                    <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, -1)"><i class="fas fa-minus"></i></button>
+                                                    <span><?= $it['quantity'] ?></span>
+                                                    <button onclick="event.stopPropagation(); changeCartQty(<?= $it['id'] ?>, 1)"><i class="fas fa-plus"></i></button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -189,6 +201,9 @@
                         <?php if ($draftCount > 0): ?>
                             <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="cart-action-btn gold">
                                 <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?>)
+                            </button>
+                            <button type="button" id="splitTableBtn" onclick="openSplitModal()" class="cart-action-btn" style="background:#dc3545; color:white; display:none;">
+                                <i class="fas fa-cut"></i> TÁCH (<span id="selectedCount">0</span>)
                             </button>
                         <?php elseif (!empty($orderItems)): ?>
                             <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn success">
@@ -272,5 +287,52 @@ const MENU_CONFIG = {
     orderId: <?= $orderId ?: 0 ?>,
     tableId: <?= $tableId ?: 0 ?>
 };
+
+<!-- Split Table Modal -->
+<div class="modal-backdrop" id="modalSplitTable">
+    <div class="modal modal-premium" style="max-width:600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-cut me-2"></i> TÁCH BÀN</h3>
+            <button class="modal-close" data-modal-close><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-chair me-1"></i> CHỌN BÀN ĐỂ TÁCH
+                </label>
+                <select id="splitTargetTable" class="form-control" style="width:100%; padding:0.75rem; font-size:0.9rem;">
+                    <option value="">-- Chọn bàn mới --</option>
+                    <?php foreach ($tables as $t): ?>
+                        <?php if ($t['id'] != $tableId && $t['status'] == 'available'): ?>
+                        <option value="<?= $t['id'] ?>">
+                            <?= e($t['name']) ?> <?= !empty($t['area']) ? '(' . e($t['area']) . ')' : '' ?>
+                        </option>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                    <option value="new">-- Tạo bàn mới --</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-list me-1"></i> MÓN SẼ TÁCH (<span id="splitItemCount">0</span>)
+                </label>
+                <div id="splitItemsList" style="max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; padding:0.5rem;">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button onclick="confirmSplitTable()" class="btn-gold flex-fill">
+                    <i class="fas fa-cut me-1"></i> TÁCH BÀN
+                </button>
+                <button class="btn-ghost" data-modal-close>
+                    <i class="fas fa-times me-1"></i> HỦY
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/index.js" defer></script>

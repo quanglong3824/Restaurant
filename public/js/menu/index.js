@@ -214,6 +214,114 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+
+// ==================== SPLIT TABLE FUNCTIONS ====================
+
+let selectedItems = [];
+
+function toggleSplitButton() {
+    const checkboxes = document.querySelectorAll('.item-select-cb:checked');
+    selectedItems = Array.from(checkboxes).map(cb => parseInt(cb.dataset.itemId));
+    
+    const splitBtn = document.getElementById('splitTableBtn');
+    const countSpan = document.getElementById('selectedCount');
+    
+    if (selectedItems.length > 0) {
+        splitBtn.style.display = 'flex';
+        countSpan.textContent = selectedItems.length;
+    } else {
+        splitBtn.style.display = 'none';
+    }
+}
+
+function openSplitModal() {
+    if (selectedItems.length === 0) {
+        // If no items selected via checkbox, get all draft items
+        const allCheckboxes = document.querySelectorAll('.item-select-cb');
+        if (allCheckboxes.length === 0) {
+            alert('Không có món nháp để tách!');
+            return;
+        }
+    }
+    
+    // Populate selected items list
+    const itemsList = document.getElementById('splitItemsList');
+    const countSpan = document.getElementById('splitItemCount');
+    
+    let html = '';
+    selectedItems.forEach(itemId => {
+        const itemRow = document.querySelector(`.cart-item-row[data-item-id="${itemId}"]`);
+        if (itemRow) {
+            const itemName = itemRow.querySelector('.cart-item-name').textContent;
+            const itemPrice = itemRow.querySelector('.cart-item-price').textContent;
+            html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem; border-bottom:1px solid var(--border);">
+                <span style="font-size:0.8rem; font-weight:600;">${itemName}</span>
+                <span style="font-size:0.75rem; color:var(--gold-dark);">${itemPrice}</span>
+            </div>`;
+        }
+    });
+    
+    itemsList.innerHTML = html || '<div class="text-muted small">Chưa chọn món nào</div>';
+    countSpan.textContent = selectedItems.length;
+    
+    // Open modal
+    Aurora.openModal('modalSplitTable');
+}
+
+function confirmSplitTable() {
+    if (selectedItems.length === 0) {
+        alert('Vui lòng chọn món cần tách!');
+        return;
+    }
+    
+    const targetTable = document.getElementById('splitTargetTable').value;
+    if (!targetTable) {
+        alert('Vui lòng chọn bàn để tách!');
+        return;
+    }
+    
+    const btn = document.querySelector('#modalSplitTable .btn-gold');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+    
+    const formData = new FormData();
+    formData.append('table_id', MENU_CONFIG.tableId);
+    formData.append('order_id', MENU_CONFIG.orderId);
+    formData.append('target_table_id', targetTable === 'new' ? 0 : targetTable);
+    selectedItems.forEach(id => formData.append('item_ids[]', id));
+    formData.append('ajax', '1');
+    
+    fetch(MENU_CONFIG.baseUrl + '/tables/split', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData)
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.ok) {
+            Aurora.closeModal('modalSplitTable');
+            alert('Tách bàn thành công! Bàn mới sẽ được tạo.');
+            // Reload to update UI
+            setTimeout(() => {
+                location.href = MENU_CONFIG.baseUrl + '/menu?table_id=' + (targetTable === 'new' ? res.new_order_id : targetTable) + '&order_id=' + res.new_order_id;
+            }, 1000);
+        } else {
+            alert(res.message || 'Có lỗi xảy ra!');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    })
+    .catch(err => {
+        console.error('Split error:', err);
+        alert('Lỗi: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+}
+
+// ==================== END SPLIT FUNCTIONS ====================
+
 document.querySelectorAll('.filter-pill').forEach(pill => {
     pill.addEventListener('click', () => {
         document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('is-active'));
