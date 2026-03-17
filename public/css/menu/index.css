@@ -273,8 +273,8 @@ html, body {
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
-    height: 100%;
-    max-height: inherit;
+    height: 500px;
+    max-height: 500px;
 }
 
 .cart-header {
@@ -306,6 +306,7 @@ html, body {
     overflow-y: auto;
     flex: 1;
     min-height: 0;
+    max-height: 380px;
 }
 
 .cart-footer {
@@ -314,6 +315,7 @@ html, body {
     background: var(--bg);
     border-radius: 0 0 var(--radius) var(--radius);
     flex-shrink: 0;
+    min-height: 80px;
 }
 
 .cart-footer .total-row {
