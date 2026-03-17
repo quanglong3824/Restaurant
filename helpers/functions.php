@@ -20,6 +20,19 @@ function e(?string $value): string
 }
 
 /**
+ * Helper gọi file asset với Cache Busting (đặc biệt cho Safari iPad trên Prod)
+ */
+function asset(string $path): string
+{
+    $baseUrl = defined('BASE_URL') ? BASE_URL : '';
+    $fullPath = rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
+
+    // Luôn thêm version bằng timestamp trên Prod để iPad không cache CSS/JS cũ
+    $version = APP_VERSION . '-' . date('YmdHi');
+    return $fullPath . '?v=' . $version;
+}
+
+/**
  * Active nav class helper
  */
 function activeClass(string $path): string

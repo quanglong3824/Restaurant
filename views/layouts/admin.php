@@ -21,9 +21,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <!-- App CSS -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/admin.css">
+    <link rel="stylesheet" href="<?= asset('public/css/admin.css') ?>">
     <?php if (isset($pageCSS)): ?>
-        <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/<?= e($pageCSS) ?>.css">
+        <link rel="stylesheet" href="<?= asset('public/css/' . e($pageCSS) . '.css') ?>">
     <?php endif; ?>
 </head>
 
@@ -182,9 +182,9 @@
     </div>
 
     <!-- App JS -->
-    <script src="<?= BASE_URL ?>/public/js/app.js" defer></script>
+    <script src="<?= asset('public/js/app.js') ?>" defer></script>
     <?php if (isset($pageJS)): ?>
-        <script src="<?= BASE_URL ?>/public/js/<?= e($pageJS) ?>.js" defer></script>
+        <script src="<?= asset('public/js/' . e($pageJS) . '.js') ?>" defer></script>
     <?php endif; ?>
 
 </body>

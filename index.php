@@ -5,6 +5,12 @@
 
 require_once __DIR__ . '/config/constants.php';
 require_once __DIR__ . '/config/database.php';
+
+// Chống cache toàn cục (đặc biệt quan trọng cho Safari iPad trên Prod)
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
 require_once __DIR__ . '/core/Auth.php';
 require_once __DIR__ . '/core/Controller.php';
 require_once __DIR__ . '/core/Model.php';

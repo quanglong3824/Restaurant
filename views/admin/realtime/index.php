@@ -366,58 +366,40 @@
 </style>
 
 <script>
-    let timerCount = 15;
+    let timerCount = 12; // Giảm xuống 12s cho nhanh hơn
     const reloadCountEl = document.getElementById('reloadCount');
 
-    // Reuse existing functions but ensure UI is updated
-    function dismissOrder(orderId) {
-        if (!confirm('Bạn muốn lưu trữ và ẩn đơn này khỏi danh sách giám sát trực tiếp?')) return;
+    function refreshData() {
+        const btn = document.querySelector('button[onclick="refreshData()"]');
+        if (btn) btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> ĐANG TẢI...';
 
-        fetch('<?= BASE_URL ?>/admin/realtime/dismiss', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ order_id: orderId })
+        // Phá cache bằng timestamp t=... và cache: "no-store" cho Safari
+        fetch('<?= BASE_URL ?>/admin/realtime/data?t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
         })
             .then(res => res.json())
             .then(res => {
                 if (res.ok) {
-                    const el = document.getElementById('order-row-' + orderId);
-                    if (el) {
-                        el.style.transform = 'scale(0.95)';
-                        el.style.opacity = '0';
-                        setTimeout(() => el.remove(), 300);
-                    }
+                    // Nếu dữ liệu có thay đổi so với bản cũ (có thể check hash nếu cần), 
+                    // nhưng an toàn nhất trên Prod vẫn là reload để UI đồng bộ 100%
+                    location.reload(); 
                 }
-            });
-    }
-
-    function refreshData() {
-        const btn = document.querySelector('button[onclick="refreshData()"]');
-        btn.innerHTML = '<i class="fas fa-sync fa-spin"></i> ĐANG TẢI...';
-
-        fetch('<?= BASE_URL ?>/admin/realtime/data')
-            .then(res => res.json())
-            .then(res => {
-                if (res.ok) {
-                    // Note: Here you'd ideally use a front-end framework like Vue/React 
-                    // for seamless updates. Since this is vanilla PHP, a full refresh 
-                    // is cleaner for complex UI like this, or we'd have to rewrite renderList.
-                    // For now, let's reload the page to apply the luxury styles correctly.
-                    location.reload();
-                }
-                btn.innerHTML = '<i class="fas fa-redo"></i> CẬP NHẬT NGAY';
+                if (btn) btn.innerHTML = '<i class="fas fa-redo"></i> CẬP NHẬT NGAY';
             })
             .catch(err => {
-                console.error(err);
-                btn.innerHTML = '<i class="fas fa-redo"></i> CẬP NHẬT NGAY';
+                console.error('Lỗi đồng bộ:', err);
+                if (btn) btn.innerHTML = '<i class="fas fa-redo"></i> CẬP NHẬT NGAY';
             });
     }
 
-    // Timer logic
+    // Timer logic - đồng bộ đa luồng nhẹ
     setInterval(() => {
         timerCount--;
         if (timerCount <= 0) {
-            location.reload(); // Simple reload to maintain luxury UI
+            // Tự động gọi refreshData thay vì location.reload() trực tiếp để có log/xử lý
+            refreshData();
+            timerCount = 12; // Reset timer
         }
         if (reloadCountEl) reloadCountEl.textContent = timerCount;
     }, 1000);

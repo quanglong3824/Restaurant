@@ -14,10 +14,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/waiter.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/layout/waiter-notify.css">
+    <link rel="stylesheet" href="<?= asset('public/css/waiter.css') ?>">
+    <link rel="stylesheet" href="<?= asset('public/css/layout/waiter-notify.css') ?>">
     <?php if (isset($pageCSS)): ?>
-        <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/<?= e($pageCSS) ?>.css">
+        <link rel="stylesheet" href="<?= asset('public/css/' . e($pageCSS) . '.css') ?>">
     <?php endif; ?>
 </head>
 
@@ -111,13 +111,13 @@
 */ ?>
 
     <!-- Layout JS (tải trước nội dung trang) -->
-    <script src="<?= BASE_URL ?>/public/js/layout/waiter-notify.js" defer></script>
-    <script src="<?= BASE_URL ?>/public/js/layout/waiter-ai.js" defer></script>
+    <script src="<?= asset('public/js/layout/waiter-notify.js') ?>" defer></script>
+    <script src="<?= asset('public/js/layout/waiter-ai.js') ?>" defer></script>
 
     <!-- App JS -->
-    <script src="<?= BASE_URL ?>/public/js/app.js" defer></script>
+    <script src="<?= asset('public/js/app.js') ?>" defer></script>
     <?php if (isset($pageJS)): ?>
-        <script src="<?= BASE_URL ?>/public/js/<?= e($pageJS) ?>.js" defer></script>
+        <script src="<?= asset('public/js/' . e($pageJS) . '.js') ?>" defer></script>
     <?php endif; ?>
 </body>
 

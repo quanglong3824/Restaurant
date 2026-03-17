@@ -14,9 +14,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- App CSS -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/app.css">
+    <link rel="stylesheet" href="<?= asset('public/css/app.css') ?>">
     <!-- Layout CSS -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/layout/public.css">
+    <link rel="stylesheet" href="<?= asset('public/css/layout/public.css') ?>">
 </head>
 
 <body>
@@ -49,9 +49,9 @@
     <?php endif; ?>
 
     <!-- App JS (defer - không block HTML parse) -->
-    <script src="<?= BASE_URL ?>/public/js/app.js" defer></script>
+    <script src="<?= asset('public/js/app.js') ?>" defer></script>
     <!-- Layout JS (defer - không block HTML parse) -->
-    <script src="<?= BASE_URL ?>/public/js/layout/public.js" defer></script>
+    <script src="<?= asset('public/js/layout/public.js') ?>" defer></script>
 </body>
 
 </html>
