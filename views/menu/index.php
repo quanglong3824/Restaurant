@@ -221,10 +221,16 @@
                     <?php if (!empty($confirmedItems)): ?>
                         <div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi</div>
                         <?php foreach ($confirmedItems as $it): ?>
-                            <div class="cart-item-row opacity-75">
-                                <div style="flex:1;">
-                                    <div class="cart-item-name"><?= e($it['item_name']) ?></div>
-                                    <span class="cart-item-qty">x<?= $it['quantity'] ?></span>
+                            <div class="cart-item-row" data-item-id="<?= $it['id'] ?>">
+                                <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
+                                    <input type="checkbox" class="item-select-cb" 
+                                            data-item-id="<?= $it['id'] ?>" 
+                                            onchange="toggleSplitButton()"
+                                            onclick="event.stopPropagation()">
+                                    <div style="flex:1;">
+                                        <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                        <span class="cart-item-qty">x<?= $it['quantity'] ?></span>
+                                    </div>
                                 </div>
                                 <div style="text-align:right;">
                                     <div class="cart-item-price"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
@@ -241,15 +247,12 @@
                     <span class="total-label">Tổng cộng</span>
                     <span class="total-amount" id="orderTotal"><?= formatPrice($orderTotal) ?></span>
                 </div>
-                <div id="cartActionBtn">
+                <div id="cartActionBtn" class="d-flex flex-column gap-2">
                     <?php if ($tableId > 0): ?>
                         <?php $draftCount = $orderId > 0 ? count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) : 0; ?>
                         <?php if ($draftCount > 0): ?>
                             <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="cart-action-btn gold">
                                 <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?>)
-                            </button>
-                            <button type="button" id="splitTableBtn" onclick="openSplitModal()" class="cart-action-btn" style="background:#dc3545; color:white; display:none;">
-                                <i class="fas fa-cut"></i> TÁCH (<span id="selectedCount">0</span>)
                             </button>
                         <?php elseif ($orderId > 0 && !empty($orderItems)): ?>
                             <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn success">
@@ -258,6 +261,10 @@
                         <?php else: ?>
                             <button disabled class="cart-action-btn ghost w-100">BÀN CHƯA CÓ MÓN</button>
                         <?php endif; ?>
+                        
+                        <button type="button" id="splitTableBtn" onclick="openSplitModal()" class="cart-action-btn" style="background:#dc3545; color:white; display:none; border:none;">
+                            <i class="fas fa-cut"></i> TÁCH BÀN (<span id="selectedCount">0</span>)
+                        </button>
                     <?php else: ?>
                         <button disabled class="cart-action-btn ghost w-100">CHƯA CHỌN BÀN</button>
                     <?php endif; ?>

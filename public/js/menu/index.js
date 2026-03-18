@@ -107,19 +107,25 @@ function updateCartUI(data) {
             let draftsHtml = ''; let confirmedHtml = ''; let draftCount = 0;
             data.items.forEach(it => {
                 const itemHtml = `<div class="cart-item-row" data-item-id="${it.id}">
-                    <div style="flex:1;">
-                        <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
-                        <div style="display:flex; align-items:center; gap:0.75rem;">
-                            <span style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
-                            ${it.status === 'draft' ? `
-                            <div style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
-                                <button onclick="event.stopPropagation(); changeCartQty(${it.id}, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
-                                <span style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;">${it.quantity}</span>
-                                <button onclick="event.stopPropagation(); changeCartQty(${it.id}, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                    <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
+                        <input type="checkbox" class="item-select-cb" 
+                                data-item-id="${it.id}" 
+                                onchange="toggleSplitButton()"
+                                onclick="event.stopPropagation()">
+                        <div style="flex:1;">
+                            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
+                            <div style="display:flex; align-items:center; gap:0.75rem;">
+                                <span style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
+                                ${it.status === 'draft' ? `
+                                <div style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
+                                    <button onclick="event.stopPropagation(); changeCartQty(${it.id}, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
+                                    <span style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;">${it.quantity}</span>
+                                    <button onclick="event.stopPropagation(); changeCartQty(${it.id}, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
+                                </div>
+                                ` : `
+                                <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">x${it.quantity}</span>
+                                `}
                             </div>
-                            ` : `
-                            <span style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">x${it.quantity}</span>
-                            `}
                         </div>
                     </div>
                     <div style="text-align:right;">
@@ -149,11 +155,18 @@ function updateCartUI(data) {
 
             if (btnContainer) {
                 const currentOrderId = MENU_CONFIG.orderId;
+                let btnsHtml = '';
+                
                 if (draftCount > 0) {
-                    btnContainer.innerHTML = `<button type="button" onclick="confirmOrderAjax(${currentOrderId})" class="cart-action-btn gold"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
-                } else {
-                    btnContainer.innerHTML = `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${currentOrderId}" class="cart-action-btn success"><i class="fas fa-check-circle"></i> XEM BILL</a>`;
+                    btnsHtml += `<button type="button" onclick="confirmOrderAjax(${currentOrderId})" class="cart-action-btn gold w-100 mb-2"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
+                } else if (data.items.length > 0) {
+                    btnsHtml += `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${currentOrderId}" class="cart-action-btn success w-100 mb-2"><i class="fas fa-check-circle"></i> XEM BILL</a>`;
                 }
+                
+                // Luôn render nút tách bàn nhưng ẩn đi, JS sẽ hiện khi có checkbox được tích
+                btnsHtml += `<button type="button" id="splitTableBtn" onclick="openSplitModal()" class="cart-action-btn" style="background:#dc3545; color:white; display:none; border:none; width:100%;"><i class="fas fa-cut"></i> TÁCH BÀN (<span id="selectedCount">0</span>)</button>`;
+                
+                btnContainer.innerHTML = btnsHtml;
             }
         }
     }
