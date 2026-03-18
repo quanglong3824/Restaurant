@@ -19,14 +19,6 @@ function checkLocation() {
     const btn = document.getElementById('btnAllowLocation');
     const errorEl = document.getElementById('locationError');
 
-    // Nếu là IT/Admin dev, cho phép bỏ qua để test (có thể xóa phần này trên Prod nếu muốn gắt)
-    if (CUSTOMER_CONFIG.isIT) {
-        console.log("IT Mode: Skipping location check.");
-        overlay.style.display = 'none';
-        wrapper.style.display = 'block';
-        return;
-    }
-
     btn.addEventListener('click', () => {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
         btn.disabled = true;
