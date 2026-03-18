@@ -59,6 +59,10 @@ class AdminQrController extends Controller
         $tableId = (int)$_GET['table_id'];
         $token = $_GET['token'];
 
+        // Get table info
+        $table = $this->tableModel->findById($tableId);
+        $tableName = $table ? $table['name'] : $tableId;
+
         // Mark as printed
         $this->qrModel->markAsPrinted($tableId);
 
@@ -67,6 +71,7 @@ class AdminQrController extends Controller
             'view' => 'admin/tables/qr_download',
             'pageTitle' => 'Tải mã QR',
             'tableId' => $tableId,
+            'tableName' => $tableName,
             'token' => $token
         ]);
     }

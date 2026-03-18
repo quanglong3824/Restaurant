@@ -14,10 +14,11 @@
         
         <div class="qr-code-wrapper">
             <div id="qrcode"></div>
+            <img src="<?= BASE_URL ?>/public/src/logo/favicon.png" class="qr-logo" alt="Logo">
         </div>
         
         <div class="qr-card-footer">
-            <div class="table-number">BÀN <?= e($tableId) ?></div>
+            <div class="table-number">BÀN <?= e($tableName) ?></div>
             <p>Quét mã để xem menu & đặt món</p>
             <small>Scan to order</small>
         </div>
@@ -33,7 +34,7 @@
             height: 250,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.L,
+            correctLevel : QRCode.CorrectLevel.H, // Changed to H (High) for better logo tolerance
             margin: 2
         });
     });
@@ -88,6 +89,21 @@
         padding: 15px;
         background: #fdfdfd;
         border-radius: 12px;
+        position: relative; /* Add this */
+    }
+
+    .qr-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 45px;
+        height: 45px;
+        background: white;
+        padding: 4px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     
     .qr-card-footer .table-number {
