@@ -126,40 +126,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function pollNotifications() {
         try {
-            const response = await fetch(`${BASE_URL}/api/notifications/poll`);
+            const response = await fetch(`${BASE_URL}/notifications/poll`);
             const data = await response.json();
             
-            // Handle sound
-            const unreadItems = data.notifications.filter(n => !parseInt(n.is_read));
-            if (unreadItems.length > 0) {
-                const newestTimestamp = Math.max(...unreadItems.map(n => new Date(n.created_at).getTime()));
+            if (!data.ok) return;
+
+            const unreadCount = data.stats.unread;
+            const notifications = data.notifications;
+
+            // Sound logic
+            if (unreadCount > 0) {
+                const newestTimestamp = Math.max(...notifications.filter(n => !parseInt(n.is_read)).map(n => new Date(n.created_at).getTime()));
                 if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
                     notifSound.play().catch(e => {});
                 }
                 lastNotifTimestamp = newestTimestamp;
-            } else if (data.notifications.length > 0 && lastNotifTimestamp === 0) {
-                lastNotifTimestamp = Math.max(...data.notifications.map(n => new Date(n.created_at).getTime()));
+            } else if (notifications.length > 0 && lastNotifTimestamp === 0) {
+                lastNotifTimestamp = Math.max(...notifications.map(n => new Date(n.created_at).getTime()));
             }
 
-            // Update UI - Waiter Badge
+            // Update UI Badges
+            const waiterBadge = document.getElementById('waiterNotiBadge');
             if (waiterBadge) {
-                if (data.count > 0) {
-                    waiterBadge.textContent = data.count;
-                    waiterBadge.style.display = 'block';
-                } else {
-                    waiterBadge.style.display = 'none';
-                }
+                waiterBadge.textContent = unreadCount;
+                waiterBadge.style.display = unreadCount > 0 ? 'block' : 'none';
             }
 
-            // Update UI - Admin Panel
-            if (adminBell) {
-                if (data.count > 0) {
-                    adminCount.textContent = data.count;
-                    adminCount.classList.add('show');
-                } else {
-                    adminCount.classList.remove('show');
-                }
-                renderAdminList(data.notifications);
+            if (adminCount) {
+                adminCount.textContent = unreadCount;
+                adminCount.classList.toggle('show', unreadCount > 0);
+            }
+
+            // Render list if panel is visible or if we are on notifications page
+            if (adminPanel?.classList.contains('show') || !adminBell) {
+                renderAdminList(notifications);
             }
 
         } catch (e) { console.error("Poll failed", e); }
@@ -171,22 +171,22 @@ document.addEventListener('DOMContentLoaded', () => {
             adminList.innerHTML = '<div class="notification-item empty">Chưa có thông báo mới.</div>';
             return;
         }
-        adminList.innerHTML = '';
+        
+        let html = '';
         notifications.forEach(n => {
             const isUnread = !parseInt(n.is_read);
-            const item = document.createElement('div');
-            item.className = `notification-item ${isUnread ? 'unread' : ''}`;
-            item.innerHTML = `
-                <div class="notification-item-icon"><i class="fas ${getIcon(n.notification_type)}"></i></div>
-                <div class="notification-item-content">
-                    <h5>${n.title}</h5>
-                    <p>${n.message}</p>
-                    <div class="notification-item-time">${formatTimeAgo(new Date(n.created_at))}</div>
+            html += `
+                <div class="notification-item ${isUnread ? 'unread' : ''}" onclick="window.location.href='${BASE_URL}/admin/realtime?order_id=${n.order_id}'">
+                    <div class="notification-item-icon"><i class="fas ${getIcon(n.notification_type)}"></i></div>
+                    <div class="notification-item-content">
+                        <h5>${n.title}</h5>
+                        <p>${n.message}</p>
+                        <div class="notification-item-time">${formatTimeAgo(new Date(n.created_at))}</div>
+                    </div>
                 </div>
             `;
-            item.onclick = () => window.location.href = `${BASE_URL}/admin/realtime?order_id=${n.order_id}`;
-            adminList.appendChild(item);
         });
+        adminList.innerHTML = html;
     }
 
     function getIcon(type) {
@@ -194,14 +194,28 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'new_order': return 'fa-file-invoice-dollar';
             case 'scan_qr': return 'fa-qrcode';
             case 'support_request': return 'fa-life-ring';
+            case 'payment_request': return 'fa-hand-holding-usd';
             default: return 'fa-bell';
         }
     }
 
     async function markAsRead(id = null) {
-        const fd = new FormData();
-        if (id) fd.append('id', id);
-        await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST', body: fd });
+        try {
+            const fd = new FormData();
+            if (id) fd.append('id', id);
+            const response = await fetch(`${BASE_URL}/notifications/mark-read`, { method: 'POST', body: fd });
+            const data = await response.json();
+            if (data.ok) pollNotifications();
+        } catch (e) { console.error("Mark read failed", e); }
+    }
+
+    // Mark all as read button
+    const markAllBtn = document.getElementById('markAllAsReadBtn');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            markAsRead();
+        });
     }
 
     function formatTimeAgo(date) {
@@ -215,5 +229,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     pollNotifications();
-    setInterval(pollNotifications, 5000);
+    setInterval(pollNotifications, 4000);
 });

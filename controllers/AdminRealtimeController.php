@@ -66,9 +66,21 @@ class AdminRealtimeController extends Controller
             $order['full_name'] = $this->tableModel->getFullDisplayName($order['table_id']);
             $order['opened_at_fmt'] = date('H:i', strtotime($order['opened_at']));
             $order['closed_at_fmt'] = $order['closed_at'] ? date('H:i', strtotime($order['closed_at'])) : null;
+            $order['total_fmt'] = formatPrice($order['total']);
+            
+            // Format items prices
+            foreach ($order['items'] as &$it) {
+                $it['item_price_fmt'] = formatPrice($it['item_price']);
+                $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+            }
             $orders[] = $order;
         }
-        $this->json(['ok' => true, 'data' => $orders]);
+        
+        $this->json([
+            'ok' => true, 
+            'data' => $orders,
+            'counts' => $this->tableModel->countByStatus()
+        ]);
     }
 
     /**
