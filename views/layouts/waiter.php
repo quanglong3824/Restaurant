@@ -77,7 +77,21 @@
         <?php endif; ?>
 
         <?php require BASE_PATH . "/views/{$view}.php"; ?>
+        
+        <div class="waiter-copyright">
+            &copy; 2026 LongDev. v<?= APP_VERSION ?>
+        </div>
     </main>
+
+    <style>
+        .waiter-copyright {
+            text-align: center;
+            padding: 20px 0 100px;
+            font-size: 0.65rem;
+            color: #94a3b8;
+            opacity: 0.6;
+        }
+    </style>
 
     <!-- Bottom Navigation - Floating with Apple Liquid Glass Design -->
     <nav class="waiter-bottomnav" role="navigation" aria-label="Menu chính">

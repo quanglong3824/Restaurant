@@ -6,7 +6,7 @@
 
 // App info
 define('APP_NAME', 'Aurora Restaurant');
-define('APP_VERSION', '1.0.0');
+define('APP_VERSION', '2.0.0 (Pre-release)');
 define('APP_LANG', 'vi');
 
 // Paths

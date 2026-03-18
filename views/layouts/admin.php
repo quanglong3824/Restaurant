@@ -149,9 +149,22 @@
                     <span><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></span>
                 </div>
             </div>
+            <div class="copyright-info">
+                <p>&copy; 2026 LongDev. v<?= APP_VERSION ?></p>
+            </div>
         </div>
 
     </aside>
+
+    <style>
+        .copyright-info {
+            padding: 10px 1.5rem;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center;
+        }
+    </style>
 
     <!-- Main Content -->
     <div class="admin-body">

@@ -144,4 +144,4 @@ The AI assistant is currently in development (Beta phase) as noted in the `/admi
 - Unit tests for AI functions
 - Integration testing with existing systems
 - User acceptance testing with restaurant staff
-- Performance testing under load conditions
+- Performance testing under load conditions\n## [2.0.0 (Pre-release)] - 2026-03-18\n- Toàn bộ hệ thống nâng cấp Realtime Ajax.\n- Triển khai Geofencing (giới hạn địa lý 500m).\n- Quản lý Session QR chặt chẽ chống Spam.\n- Giao diện Landing Page cao cấp cho iPad shortcut.\n- Tích hợp bản quyền © LongDev 2026.
