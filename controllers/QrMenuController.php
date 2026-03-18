@@ -145,19 +145,9 @@ class QrMenuController extends Controller
                 'order_id' => $orderId ?: null,
                 'table_id' => $tableId,
                 'notification_type' => 'scan_qr',
-                'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
-                'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
+                'title' => "Khách xem menu",
+                'message' => "Bàn " . ($table['name'] ?? $tableId) . " vừa quét mã xem thực đơn."
             ]);
-
-            // Notify staff about QR scan
-            if ($orderId) {
-                $this->notifModel->create([
-                    'order_id' => $orderId,
-                    'table_id' => $tableId,
-                    'type' => 'call_waiter',
-                    'message' => "Khách tại {$table['name']} vừa truy cập menu qua QR."
-                ]);
-            }
             
             $this->view('layouts/public', [
                 'view' => 'menu/customer',
