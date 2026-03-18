@@ -14,11 +14,12 @@ class Order extends Model
         $guestCount = $data['guest_count'] ?? 1;
         $orderSource = $data['order_source'] ?? 'waiter';
         $note = $data['note'] ?? '';
+        $sessionId = $data['session_id'] ?? null;
 
         $this->execute(
-            "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, order_source, note, opened_at)
-             VALUES (?, ?, ?, ?, 'open', ?, ?, NOW())",
-            [$tableId, $waiterId, $shiftId, $guestCount, $orderSource, $note]
+            "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, order_source, note, session_id, opened_at)
+             VALUES (?, ?, ?, ?, 'open', ?, ?, ?, NOW())",
+            [$tableId, $waiterId, $shiftId, $guestCount, $orderSource, $note, $sessionId]
         );
         return (int) $this->lastInsertId();
     }
@@ -47,6 +48,15 @@ class Order extends Model
         $this->execute(
             "UPDATE orders SET guest_count = ? WHERE id = ?",
             [$guestCount, $orderId]
+        );
+    }
+
+    /** Cập nhật session_id và nguồn order cho khách quét QR */
+    public function updateSession(int $orderId, string $sessionId): void
+    {
+        $this->execute(
+            "UPDATE orders SET session_id = ?, order_source = 'customer_qr' WHERE id = ?",
+            [$sessionId, $orderId]
         );
     }
 

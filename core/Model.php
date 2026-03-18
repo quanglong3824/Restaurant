@@ -14,7 +14,7 @@ abstract class Model
         $this->db = getDB();
     }
 
-    protected function query(string $sql, array $params = []): PDOStatement
+    public function query(string $sql, array $params = []): PDOStatement
     {
         $stmt = $this->db->prepare($sql);
         foreach ($params as $key => $value) {
@@ -35,24 +35,24 @@ abstract class Model
         return $stmt;
     }
 
-    protected function findAll(string $sql, array $params = []): array
+    public function findAll(string $sql, array $params = []): array
     {
         return $this->query($sql, $params)->fetchAll();
     }
 
-    protected function findOne(string $sql, array $params = []): ?array
+    public function findOne(string $sql, array $params = []): ?array
     {
         $result = $this->query($sql, $params)->fetch();
         return $result !== false ? $result : null;
     }
 
-    protected function execute(string $sql, array $params = []): int
+    public function execute(string $sql, array $params = []): int
     {
         $stmt = $this->query($sql, $params);
         return $stmt->rowCount();
     }
 
-    protected function lastInsertId(): string
+    public function lastInsertId(): string
     {
         return $this->db->lastInsertId();
     }

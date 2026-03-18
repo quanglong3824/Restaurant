@@ -159,10 +159,7 @@ class QrMenuController extends Controller
                 // Nếu order đang mở nhưng chưa có session_id (do nhân viên mở tay)
                 // Ta gán session_id hiện tại vào để sau này biết đường mà chặn re-scan
                 if (empty($openOrder['session_id'])) {
-                    $this->orderModel->execute(
-                        "UPDATE orders SET session_id = ?, order_source = 'customer_qr' WHERE id = ?", 
-                        [$currentSessionId, $orderId]
-                    );
+                    $this->orderModel->updateSession($orderId, $currentSessionId);
                 }
                 
                 $orderItems = $this->orderModel->getItems($orderId);
