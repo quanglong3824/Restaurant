@@ -337,21 +337,6 @@
         };
     });
 
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            });
-        });
-
-        window.onclick = (e) => {
-            if (e.target == modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        };
-    });
-
     function printQR() {
         window.print();
     }
