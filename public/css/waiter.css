@@ -674,6 +674,8 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .modal-backdrop.is-open {
@@ -685,11 +687,21 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     background: var(--surface);
     width: 92%;
     max-width: 500px;
+    max-height: calc(100vh - 40px);
+    margin: auto;
     border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     transform: translateY(30px) scale(0.95);
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    position: relative;
+}
+
+.modal-premium {
+    max-width: 500px;
+    border: 1px solid var(--border-gold);
 }
 
 .modal-backdrop.is-open .modal {
@@ -697,14 +709,16 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
 }
 
 .modal-header {
-    padding: 1.5rem;
+    padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-shrink: 0;
+    background: white;
 }
 
-.modal-header h3 { margin: 0; font-size: 1.3rem; color: var(--gold-dark); }
+.modal-header h3 { margin: 0; font-size: 1.25rem; color: var(--gold-dark); }
 
 .modal-close {
     background: var(--bg);
@@ -722,7 +736,27 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
 
 .modal-close:hover { background: var(--border); color: var(--danger); }
 
-.modal-body { padding: 1.5rem; }
+.modal-body { 
+    padding: 1.5rem; 
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar cho Modal Body */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-dark);
+}
 
 /* ── Forms ────────────────────────────────────────────────── */
 .form-group { margin-bottom: 1.5rem; }
