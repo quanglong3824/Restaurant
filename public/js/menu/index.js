@@ -106,6 +106,7 @@ function updateCartUI(data) {
         } else {
             let draftsHtml = ''; let confirmedHtml = ''; let draftCount = 0;
             data.items.forEach(it => {
+                const isDraft = it.status === 'draft';
                 const itemHtml = `<div class="cart-item-row" data-item-id="${it.id}">
                     <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
                         <input type="checkbox" class="item-select-cb" 
@@ -113,11 +114,11 @@ function updateCartUI(data) {
                                 onchange="toggleSplitButton()"
                                 onclick="event.stopPropagation()">
                         <div style="flex:1;">
-                            <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
+                            <div class="cart-item-name" style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
                             <div style="display:flex; align-items:center; gap:0.75rem;">
-                                <span style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
-                                ${it.status === 'draft' ? `
-                                <div style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
+                                <span class="cart-item-price" style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
+                                ${isDraft ? `
+                                <div class="qty-control" style="display:inline-flex; align-items:center; background:var(--surface-2); border-radius:20px; padding:2px 8px;">
                                     <button onclick="event.stopPropagation(); changeCartQty(${it.id}, -1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-minus" style="font-size:0.7rem;"></i></button>
                                     <span style="width:24px; text-align:center; font-weight:800; font-size:0.85rem;">${it.quantity}</span>
                                     <button onclick="event.stopPropagation(); changeCartQty(${it.id}, 1)" style="border:none; background:none; padding:4px; cursor:pointer;"><i class="fas fa-plus" style="font-size:0.7rem;"></i></button>
@@ -128,11 +129,18 @@ function updateCartUI(data) {
                             </div>
                         </div>
                     </div>
-                    <div style="text-align:right;">
+                    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
                         <div style="font-weight:800; font-size:0.95rem;">${it.subtotal_fmt}</div>
-                        <small style="color:${it.status === 'confirmed' ? 'var(--success)' : 'var(--text-muted)'}; font-weight:600;">
-                            ${it.status === 'confirmed' ? 'Đã gửi' : 'Món nháp'}
-                        </small>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            ${isDraft ? `
+                                <button onclick="event.stopPropagation(); removeCartItem(${it.id})" style="border:none; background:none; color:var(--danger); padding:4px; cursor:pointer; font-size:0.9rem;" title="Xóa món">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            ` : ''}
+                            <span class="cart-item-status ${it.status}" style="font-size:0.7rem; padding:2px 6px; border-radius:4px; font-weight:700; text-transform:uppercase;">
+                                ${it.status === 'confirmed' ? '<i class="fas fa-check-circle"></i> ĐÃ GỬI' : (it.status === 'pending' ? '<i class="fas fa-clock"></i> CHỜ NV' : 'NHÁP')}
+                            </span>
+                        </div>
                     </div>
                 </div>`;
 
@@ -177,6 +185,15 @@ function changeCartQty(itemId, delta) {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ item_id: itemId, order_id: MENU_CONFIG.orderId, qty: 'delta:' + delta })
+    }).then(r => r.json()).then(data => { if (data.ok) updateCartUI(data); });
+}
+
+function removeCartItem(itemId) {
+    if (!confirm('Bạn có chắc muốn xoá món này?')) return;
+    fetch(MENU_CONFIG.baseUrl + '/orders/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ item_id: itemId, order_id: MENU_CONFIG.orderId })
     }).then(r => r.json()).then(data => { if (data.ok) updateCartUI(data); });
 }
 

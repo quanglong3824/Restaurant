@@ -76,11 +76,17 @@ class Auth
     }
 
     /**
-     * Bắt buộc đăng nhập — nếu chưa, redirect về login
+     * Bắt buộc đăng nhập — nếu chưa, redirect về login (hoặc trả JSON nếu là AJAX)
      */
     public static function require(): void
     {
         if (!self::check()) {
+            if (self::isAjax()) {
+                http_response_code(401);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'message' => 'Unauthorized']);
+                exit;
+            }
             header('Location: ' . BASE_URL . '/auth/login');
             exit;
         }
@@ -93,9 +99,21 @@ class Auth
     {
         self::require();
         if (!in_array(self::role(), $roles)) {
+            if (self::isAjax()) {
+                http_response_code(403);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'message' => 'Forbidden']);
+                exit;
+            }
             http_response_code(403);
             require_once BASE_PATH . '/views/403.php';
             exit;
         }
+    }
+
+    private static function isAjax(): bool
+    {
+        return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') || 
+               (isset($_SERVER['HTTP_ACCEPT']) && str_contains($_SERVER['HTTP_ACCEPT'], 'application/json'));
     }
 }

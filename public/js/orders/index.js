@@ -193,6 +193,85 @@ function handleSubmitPayment(e) {
     });
 }
 
+// Split Order Functions
+function toggleSplitItem(itemId) {
+    const chk = document.getElementById('chk-' + itemId);
+    if (chk) {
+        chk.checked = !chk.checked;
+        const plate = chk.closest('.item-plate');
+        plate.classList.toggle('selected-for-split', chk.checked);
+        updateSplitCount();
+    }
+}
+
+function updateSplitCount() {
+    const checked = document.querySelectorAll('input[name="split_items[]"]:checked');
+    const count = checked.length;
+    const countEl = document.getElementById('splitCount');
+    if (countEl) countEl.textContent = count + ' món';
+    
+    // Update visual state for all plates based on checkbox
+    document.querySelectorAll('input[name="split_items[]"]').forEach(chk => {
+        const plate = chk.closest('.item-plate');
+        plate.classList.toggle('selected-for-split', chk.checked);
+    });
+}
+
+function openConfirmSplitModal() {
+    const checked = document.querySelectorAll('input[name="split_items[]"]:checked');
+    if (checked.length === 0) {
+        alert('Vui lòng chọn ít nhất một món để tách!');
+        return;
+    }
+    document.getElementById('modalSplitCountText').textContent = checked.length + ' món';
+    Aurora.openModal('modalConfirmSplit');
+}
+
+function submitSplitOrder() {
+    const targetTableId = document.getElementById('splitTargetTableId').value;
+    const checked = document.querySelectorAll('input[name="split_items[]"]:checked');
+    const guestCount = document.querySelector('input[name="split_guest_count"]:checked').value;
+
+    if (targetTableId === "") {
+        alert('Vui lòng chọn bàn đích!');
+        return;
+    }
+
+    const btn = document.querySelector('button[onclick="submitSplitOrder()"]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XỬ LÝ...';
+
+    const params = new URLSearchParams();
+    params.append('source_table_id', ORDERS_CONFIG.tableId);
+    params.append('order_id', ORDERS_CONFIG.orderId);
+    params.append('target_table_id', targetTableId);
+    params.append('guest_count', guestCount);
+    checked.forEach(chk => params.append('item_ids[]', chk.value));
+
+    fetch(ORDERS_CONFIG.baseUrl + '/tables/split', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            alert('Tách bàn thành công!');
+            window.location.href = ORDERS_CONFIG.baseUrl + '/tables';
+        } else {
+            alert(data.message || 'Có lỗi xảy ra!');
+            btn.disabled = false;
+            btn.innerHTML = 'XÁC NHẬN TÁCH BÀN';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Lỗi hệ thống!');
+        btn.disabled = false;
+        btn.innerHTML = 'XÁC NHẬN TÁCH BÀN';
+    });
+}
+
 // Confirm order via AJAX
 document.addEventListener('DOMContentLoaded', function () {
     const confirmForms = document.querySelectorAll('form[action$="/orders/confirm"]');

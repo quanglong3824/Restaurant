@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function pollNotifications() {
         try {
-            const response = await fetch(`${BASE_URL}/notifications/poll`);
+            const response = await fetch(`${BASE_URL}/api/notifications/poll`);
             const data = await response.json();
             
             if (!data.ok) return;
@@ -134,15 +134,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const unreadCount = data.stats.unread;
             const notifications = data.notifications;
 
-            // Sound logic
+            // Sound logic: Play if there's a NEW unread notification
             if (unreadCount > 0) {
-                const newestTimestamp = Math.max(...notifications.filter(n => !parseInt(n.is_read)).map(n => new Date(n.created_at).getTime()));
-                if (newestTimestamp > lastNotifTimestamp && lastNotifTimestamp !== 0) {
-                    notifSound.play().catch(e => {});
+                // Find the newest unread notification
+                const newestUnread = notifications.filter(n => !parseInt(n.is_read))[0];
+                if (newestUnread) {
+                    const newestTimestamp = new Date(newestUnread.created_at).getTime();
+                    if (newestTimestamp > lastNotifTimestamp) {
+                        // Play sound and update timestamp
+                        notifSound.play().catch(e => console.log("Audio play blocked", e));
+                        lastNotifTimestamp = newestTimestamp;
+                    }
                 }
-                lastNotifTimestamp = newestTimestamp;
             } else if (notifications.length > 0 && lastNotifTimestamp === 0) {
-                lastNotifTimestamp = Math.max(...notifications.map(n => new Date(n.created_at).getTime()));
+                // Initialize timestamp if none exists
+                lastNotifTimestamp = new Date(notifications[0].created_at).getTime();
             }
 
             // Update UI Badges

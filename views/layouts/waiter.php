@@ -93,32 +93,27 @@
         }
     </style>
 
-    <!-- Bottom Navigation - Floating with Apple Liquid Glass Design -->
+    <!-- Bottom Navigation - Modern Rectangular Design -->
     <nav class="waiter-bottomnav" role="navigation" aria-label="Menu chính">
         <a href="<?= BASE_URL ?>/tables" class="bottomnav-item <?= activeClass('/tables') ?>" aria-label="Sơ đồ bàn">
-            <span class="liquid-ring"></span>
             <i class="fas fa-table-cells-large" aria-hidden="true"></i>
             <span>Bàn</span>
         </a>
         <a href="<?= BASE_URL ?>/menu" class="bottomnav-item <?= activeClass('/menu') ?>" aria-label="Menu">
-            <span class="liquid-ring"></span>
             <i class="fas fa-book-open" aria-hidden="true"></i>
             <span>Menu</span>
         </a>
         <a href="<?= BASE_URL ?>/notifications" class="bottomnav-item <?= activeClass('/notifications') ?>" aria-label="Thông báo">
-            <span class="liquid-ring"></span>
             <i class="fas fa-bell" aria-hidden="true"></i>
             <span class="noti-badge" id="waiterNotiBadge" style="display:none">0</span>
             <span>Thông báo</span>
         </a>
         <a href="<?= BASE_URL ?>/orders" class="bottomnav-item <?= activeClass('/orders') ?>" aria-label="Order">
-            <span class="liquid-ring"></span>
             <i class="fas fa-receipt" aria-hidden="true"></i>
             <span>Order</span>
         </a>
         <a href="<?= BASE_URL ?>/orders/history" class="bottomnav-item <?= activeClass('/orders/history') ?>"
             aria-label="Lịch sử">
-            <span class="liquid-ring"></span>
             <i class="fas fa-history" aria-hidden="true"></i>
             <span>Lịch sử</span>
         </a>

@@ -2,6 +2,7 @@
 $draftItems = [];
 $confirmedItems = [];
 $hasDraft = false;
+$isSplitAction = (isset($_GET['action']) && $_GET['action'] === 'split');
 
 if (!empty($items)) {
     foreach ($items as $item) {
@@ -81,6 +82,20 @@ if (!empty($items)) {
 
         <!-- Order Items Stream -->
         <div class="order-stream">
+            <?php if ($isSplitAction): ?>
+                <div class="alert alert-info py-3 mb-4 shadow-sm border-0" style="border-radius: 12px; background: #e0f2fe; color: #0369a1;">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-cut fa-2x opacity-50"></i>
+                        <div>
+                            <h5 class="fw-bold mb-1">CHẾ ĐỘ TÁCH BÀN / CHUYỂN MÓN</h5>
+                            <p class="small mb-0">Vui lòng chọn các món muốn tách sang bàn mới hoặc chuyển sang bàn khác.</p>
+                        </div>
+                        <a href="<?= BASE_URL ?>/orders?table_id=<?= $table['id'] ?>&order_id=<?= $order['id'] ?>" class="btn btn-sm btn-outline-secondary ms-auto">
+                            HỦY
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <!-- Confirmed Items Section -->
             <?php if (!empty($confirmedItems)): ?>
@@ -110,7 +125,13 @@ if (!empty($items)) {
                         <?php endif; ?>
 
                         <?php foreach ($itemsInSet as $item): ?>
-                            <div class="item-plate plate-confirmed">
+                            <div class="item-plate plate-confirmed <?= $isSplitAction ? 'split-selectable' : '' ?>" 
+                                 onclick="<?= $isSplitAction ? 'toggleSplitItem(' . $item['id'] . ')' : '' ?>">
+                                <?php if ($isSplitAction): ?>
+                                    <div class="split-checkbox">
+                                        <input type="checkbox" name="split_items[]" value="<?= $item['id'] ?>" id="chk-<?= $item['id'] ?>" onclick="event.stopPropagation(); updateSplitCount();">
+                                    </div>
+                                <?php endif; ?>
                                 <div class="plate-info">
                                     <div class="plate-name"><?= e($item['item_name']) ?></div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
@@ -158,7 +179,13 @@ if (!empty($items)) {
                         <?php endif; ?>
 
                         <?php foreach ($itemsInSet as $item): ?>
-                            <div class="item-plate plate-draft">
+                            <div class="item-plate plate-draft <?= $isSplitAction ? 'split-selectable' : '' ?>"
+                                 onclick="<?= $isSplitAction ? 'toggleSplitItem(' . $item['id'] . ')' : '' ?>">
+                                <?php if ($isSplitAction): ?>
+                                    <div class="split-checkbox">
+                                        <input type="checkbox" name="split_items[]" value="<?= $item['id'] ?>" id="chk-<?= $item['id'] ?>" onclick="event.stopPropagation(); updateSplitCount();">
+                                    </div>
+                                <?php endif; ?>
                                 <div class="plate-info">
                                     <div class="plate-name"><?= e($item['item_name']) ?></div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
@@ -167,6 +194,7 @@ if (!empty($items)) {
                                         </div>
                                     <?php endif; ?>
                                 </div>
+                                <?php if (!$isSplitAction): ?>
                                 <div class="plate-controls">
                                     <button class="q-btn" onclick="changeQty(<?= $item['id'] ?>, <?= $order['id'] ?>, -1)" title="Giảm">
                                         <i class="fas fa-minus"></i>
@@ -176,10 +204,15 @@ if (!empty($items)) {
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
+                                <?php else: ?>
+                                    <div class="plate-qty">x<?= $item['quantity'] ?></div>
+                                <?php endif; ?>
                                 <div class="plate-price-total"><?= formatPrice($item['item_price'] * $item['quantity']) ?></div>
+                                <?php if (!$isSplitAction): ?>
                                 <button class="plate-del" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
@@ -202,45 +235,65 @@ if (!empty($items)) {
         <!-- Floating Bill Bar -->
         <div class="bill-dock">
             <div class="dock-summary">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <div class="dock-label">TỔNG TẠM TÍNH</div>
-                        <div class="dock-amount" id="orderTotal"><?= formatPrice($total) ?></div>
+                <?php if ($isSplitAction): ?>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="dock-label">ĐÃ CHỌN ĐỂ TÁCH</div>
+                            <div class="dock-amount" id="splitCount">0 món</div>
+                        </div>
+                        <button type="button" class="btn btn-gold w-100 py-3 shadow-lg" onclick="openConfirmSplitModal()">
+                            <i class="fas fa-cut me-2"></i> XÁC NHẬN TÁCH MÓN
+                        </button>
                     </div>
-                    <div class="text-end">
-                        <div class="small text-muted">Đã bao gồm VAT</div>
+                <?php else: ?>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <div class="dock-label">TỔNG TẠM TÍNH</div>
+                            <div class="dock-amount" id="orderTotal"><?= formatPrice($total) ?></div>
+                        </div>
+                        <div class="text-end">
+                            <div class="small text-muted">Đã bao gồm VAT</div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="actions-container">
-                    <?php if ($hasDraft): ?>
-                        <form method="POST" action="<?= BASE_URL ?>/orders/confirm">
-                            <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
-                            <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                            <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
-                                <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN ORDER
-                            </button>
-                        </form>
-                    <?php endif; ?>
+                    <div class="actions-container">
+                        <?php if ($hasDraft): ?>
+                            <form method="POST" action="<?= BASE_URL ?>/orders/confirm">
+                                <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
+                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                                <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
+                                    <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN ORDER
+                                </button>
+                            </form>
+                        <?php endif; ?>
 
-                    <div class="d-flex gap-2">
+                        <div class="d-flex gap-2">
+                            <?php if ($total > 0): ?>
+                                <button class="btn btn-success-luxury w-100 py-3"
+                                    onclick="confirmPayment(<?= $table['id'] ?>, <?= $order['id'] ?>, <?= $total ?>)">
+                                    <i class="fas fa-credit-card me-2"></i> THANH TOÁN
+                                </button>
+                                <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank"
+                                    class="btn btn-ghost py-3" style="min-width: 120px;">
+                                    <i class="fas fa-print me-1"></i> IN BILL
+                                </a>
+                            <?php else: ?>
+                                <button class="btn btn-outline-danger w-100 py-3"
+                                    onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
+                                    <i class="fas fa-door-closed me-2"></i> ĐÓNG BÀN
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                        
                         <?php if ($total > 0): ?>
-                            <button class="btn btn-success-luxury w-100 py-3"
-                                onclick="confirmPayment(<?= $table['id'] ?>, <?= $order['id'] ?>, <?= $total ?>)">
-                                <i class="fas fa-credit-card me-2"></i> THANH TOÁN
-                            </button>
-                            <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank"
-                                class="btn btn-ghost py-3" style="min-width: 120px;">
-                                <i class="fas fa-print me-1"></i> IN BILL
-                            </a>
-                        <?php else: ?>
-                            <button class="btn btn-outline-danger w-100 py-3"
-                                onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
-                                <i class="fas fa-door-closed me-2"></i> ĐÓNG BÀN
-                            </button>
+                            <div class="mt-2 text-center">
+                                <a href="<?= BASE_URL ?>/orders?table_id=<?= $table['id'] ?>&order_id=<?= $order['id'] ?>&action=split" class="text-gold small fw-bold" style="text-decoration: none;">
+                                    <i class="fas fa-cut"></i> TÁCH BÀN / CHUYỂN MÓN
+                                </a>
+                            </div>
                         <?php endif; ?>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -348,6 +401,64 @@ if (!empty($items)) {
     </div>
 </div>
 
+<!-- Modal: Confirm Split -->
+<div class="modal-backdrop" id="modalConfirmSplit">
+    <div class="modal modal-premium" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-cut me-2"></i> XÁC NHẬN TÁCH</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-4 text-center">
+                <div class="small text-muted mb-1">MÓN ĐÃ CHỌN</div>
+                <div class="fw-bold h4" id="modalSplitCountText">0 món</div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">CHỌN BÀN ĐÍCH</label>
+                <select id="splitTargetTableId" class="form-control" required>
+                    <option value="">-- Chọn bàn trống --</option>
+                    <?php foreach ($grouped as $area => $tbls): ?>
+                        <optgroup label="<?= e($area) ?>">
+                            <?php foreach ($tbls as $t): ?>
+                                <?php if ($t['status'] === 'available' && empty($t['parent_id']) && $t['id'] != ($table['id'] ?? 0)): ?>
+                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?> (Sức chứa: <?= $t['capacity'] ?>)</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                    <option value="0">-- Tách ra bàn mới (tự động) --</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="form-label">SỐ LƯỢNG KHÁCH (BÀN MỚI)</label>
+                <div class="guest-selector-grid">
+                    <?php for ($i = 1; $i <= 6; $i++): ?>
+                        <label class="guest-option">
+                            <input type="radio" name="split_guest_count" value="<?= $i ?>" <?= $i == 2 ? 'checked' : '' ?>>
+                            <span class="guest-option-span"><?= $i ?></span>
+                        </label>
+                    <?php endfor; ?>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-gold py-3 fw-bold" onclick="submitSplitOrder()">XÁC NHẬN TÁCH BÀN</button>
+                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .split-selectable { cursor: pointer; position: relative; }
+    .split-selectable:hover { background: #f0f9ff !important; border-color: #7dd3fc !important; }
+    .split-checkbox { padding-right: 15px; display: flex; align-items: center; }
+    .split-checkbox input { width: 22px; height: 22px; cursor: pointer; accent-color: var(--gold); }
+    .item-plate.selected-for-split { background: #fefce8 !important; border-color: #fde047 !important; }
+</style>
+
 <!-- Modal: Merge Tables -->
 <div class="modal-backdrop" id="modalMergeAreaFromOrder">
     <div class="modal">
@@ -403,7 +514,9 @@ if (!empty($items)) {
 <!-- Config -->
 <script>
 const ORDERS_CONFIG = {
-    baseUrl: '<?= BASE_URL ?>'
+    baseUrl: '<?= BASE_URL ?>',
+    tableId: <?= $table['id'] ?? 0 ?>,
+    orderId: <?= $order['id'] ?? 0 ?>
 };
 </script>
 

@@ -58,6 +58,7 @@ $router->post('/orders/update-guest-count', 'OrderController', 'updateGuestCount
 $router->post('/orders/remove', 'OrderController', 'removeItem');
 $router->post('/orders/confirm', 'OrderController', 'confirmOrder');
 $router->get('/orders/history', 'OrderController', 'history');
+$router->get('/orders/get-detail', 'OrderController', 'getOrderDetail');
 $router->get('/orders/print', 'OrderController', 'print');
 
 // ── Customer & Waiter: Support & Payment Requests ───────

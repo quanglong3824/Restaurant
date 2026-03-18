@@ -162,6 +162,7 @@
     background: var(--gold);
     color: white;
     box-shadow: 0 4px 12px var(--gold-glow);
+    border: 1px solid transparent;
 }
 
 .btn-outline {

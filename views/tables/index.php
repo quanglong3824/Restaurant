@@ -254,18 +254,34 @@ function renderTableToken($t, $tableModel) {
 
 <!-- Modal: Bàn đang bận -->
 <div class="modal-backdrop" id="modalOccupied">
-    <div class="modal modal-premium" style="max-width: 400px;">
+    <div class="modal modal-premium" style="max-width: 450px;">
         <div class="modal-header">
             <h3 id="occupiedTableName" class="playfair">Bàn đang phục vụ</h3>
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body py-4">
-            <!-- Merged table info removed - QR System feature -->
-
             <div class="d-grid gap-3">
-                <a id="viewOrderBtn" href="#" class="btn btn-gold py-3 shadow-lg">
+                <a id="viewOrderBtn" href="#" class="btn btn-gold py-3 shadow-sm">
                     <i class="fas fa-file-invoice-dollar me-2"></i> XEM CHI TIẾT & GỌI MÓN
                 </a>
+                
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">
+                        <i class="fas fa-exchange-alt me-2"></i> CHUYỂN BÀN
+                    </button>
+                    <button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">
+                        <i class="fas fa-link me-2"></i> GHÉP BÀN
+                    </a>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleUnmergeTableClick()" id="unmergeTableBtn" style="display:none;">
+                        <i class="fas fa-unlink me-2"></i> HỦY GHÉP
+                    </button>
+                    <button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">
+                        <i class="fas fa-cut me-2"></i> TÁCH BÀN
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -385,99 +401,205 @@ function renderTableToken($t, $tableModel) {
 
 <!-- Modal: Tách Khu Vực -->
 <div class="modal-backdrop" id="modalUnmergeArea">
-    <div class="modal modal-premium" style="max-width: 450px;">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header">
             <h3 class="playfair text-danger"><i class="fas fa-object-ungroup me-2"></i> Tách Khu Vực</h3>
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
         <form method="POST" action="<?= BASE_URL ?>/tables/unmerge_areas" class="modal-body">
-            <p class="small text-muted mb-3">Tất cả bàn trong khu sẽ được trả về trạng thái <span class="fw-bold text-success">trống</span>.</p>
+            <p class="small text-muted mb-3">Khu vực <span class="badge bg-danger">Màu đỏ</span> là đang ghép. Bấm chọn để đổi sang <span class="badge bg-warning text-dark">Màu vàng</span> để tách.</p>
 
-            <div class="form-group mb-5">
-                <label class="form-label text-muted d-block mb-3 border-bottom pb-2">CHỌN KHU CẦN TÁCH:</label>
-
-                <?php if (!empty($abcAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-layer-group me-2"></i> Sảnh Thường</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(3, 1fr);">
-                            <?php foreach ($abcAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="unmerge_areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
+            <div class="form-group mb-4">
+                <div class="area-selector-interactive">
+                    <?php 
+                    // Logic xác định khu nào đang được ghép (có bàn là con hoặc cha của bàn ở khu khác)
+                    $allTablesFlat = $tableModel->getAll();
+                    $areaConnections = []; // area_name => is_merged (bool)
+                    
+                    // Simple heuristic: an area is "merged" if it contains ANY table that has a parent_id
+                    // OR if it contains ANY table that is a parent of a table in ANOTHER area.
+                    foreach ($allTablesFlat as $tbl) {
+                        $area = $tbl['area'];
+                        if (!empty($tbl['parent_id'])) {
+                            $areaConnections[$area] = true;
+                            // Also mark the parent's area
+                            foreach ($allTablesFlat as $p) {
+                                if ($p['id'] == $tbl['parent_id'] && $p['area'] !== $area) {
+                                    $areaConnections[$p['area']] = true;
+                                }
+                            }
+                        }
+                    }
+                    
+                    $displayAreas = [
+                        'Sảnh Thường' => $abcAreas,
+                        'Khu VIP' => $vipAreas,
+                        'Khu Âu' => $auAreas,
+                        'Khác' => $otherModalAreas
+                    ];
+                    
+                    foreach ($displayAreas as $groupName => $areas): if (empty($areas)) continue; ?>
+                        <div class="mb-3">
+                            <div class="area-group-title small fw-bold text-muted mb-2"><?= e($groupName) ?></div>
+                            <div class="interactive-grid">
+                                <?php foreach ($areas as $a): 
+                                    $isMerged = !empty($areaConnections[$a]);
+                                ?>
+                                    <label class="interactive-area-item <?= $isMerged ? 'is-merged' : '' ?>">
+                                        <input type="checkbox" name="unmerge_areas[]" value="<?= e($a) ?>" class="d-none">
+                                        <div class="area-box">
+                                            <div class="area-box-name"><?= e($a) ?></div>
+                                            <div class="area-box-status"><?= $isMerged ? 'ĐANG GHÉP' : 'ĐỘC LẬP' ?></div>
+                                        </div>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($vipAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-crown me-2"></i> Khu VIP</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($vipAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="unmerge_areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($auAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-wine-glass me-2"></i> Khu Âu</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($auAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="unmerge_areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($otherModalAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-ellipsis-h me-2"></i> Khác</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($otherModalAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="unmerge_areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
             </div>
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn fw-bold text-white bg-danger py-3">XÁC NHẬN TÁCH KHU</button>
+                <button type="submit" class="btn fw-bold text-white bg-danger py-3">XÁC NHẬN TÁCH CÁC KHU ĐÃ CHỌN</button>
             </div>
         </form>
     </div>
 </div>
 
+<style>
+    .interactive-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    .interactive-area-item {
+        cursor: pointer;
+    }
+    .area-box {
+        background: #f1f5f9;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 8px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .area-box-name {
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--text);
+    }
+    .area-box-status {
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+    
+    /* Khu vực đang ghép hiển thị màu đỏ */
+    .interactive-area-item.is-merged .area-box {
+        background: #fee2e2;
+        border-color: #fca5a5;
+    }
+    .interactive-area-item.is-merged .area-box-name { color: #b91c1c; }
+    .interactive-area-item.is-merged .area-box-status { color: #ef4444; }
+    
+    /* Khi được chọn để tách hiển thị màu vàng */
+    .interactive-area-item input:checked + .area-box {
+        background: #fef3c7 !important;
+        border-color: #f59e0b !important;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+    .interactive-area-item input:checked + .area-box .area-box-name { color: #92400e !important; }
+    .interactive-area-item input:checked + .area-box .area-box-status { color: #d97706 !important; }
+</style>
+
 <!-- Link CSS -->
 <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/tables.css">
 
-<!-- Tables functionality -->
 <script>
-// Simple table click handler for non-QR version
+let currentSelectedTable = null;
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Simple handler to just show modal with table info
     window.handleTableClick = function(table) {
+        currentSelectedTable = table;
         if (table.status === 'occupied') {
             document.getElementById('occupiedTableName').textContent = table.name;
             document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
+            
+            // Hiện nút Hủy ghép nếu là bàn con
+            const unmergeBtn = document.getElementById('unmergeTableBtn');
+            if (unmergeBtn) {
+                unmergeBtn.style.display = table.parent_id ? 'block' : 'none';
+            }
+            
             Aurora.openModal('modalOccupied');
         } else {
             document.getElementById('modalTableName').textContent = table.name;
             document.getElementById('openTableId').value = table.id;
             Aurora.openModal('modalOpenTable');
         }
+    };
+
+    window.handleTransferClick = function() {
+        Aurora.closeModal('modalOccupied');
+        document.getElementById('targetModalTitle').textContent = 'Chuyển bàn: ' + currentSelectedTable.name;
+        document.getElementById('targetModalDesc').textContent = 'Chọn bàn trống để chuyển khách sang.';
+        document.getElementById('sourceTableId').value = currentSelectedTable.id;
+        document.getElementById('targetForm').action = '<?= BASE_URL ?>/tables/transfer';
+        document.getElementById('targetSubmitBtn').textContent = 'CHUYỂN BÀN';
+        Aurora.openModal('modalSelectTarget');
+    };
+
+    window.handleMergeTableClick = function() {
+        Aurora.closeModal('modalOccupied');
+        document.getElementById('targetModalTitle').textContent = 'Ghép bàn vào: ' + currentSelectedTable.name;
+        document.getElementById('targetModalDesc').textContent = 'Chọn bàn trống để ghép chung với bàn này.';
+        document.getElementById('sourceTableId').value = currentSelectedTable.id;
+        document.getElementById('targetForm').action = '<?= BASE_URL ?>/tables/merge';
+        
+        // Cần đổi tên input trong form hoặc xử lý route ghép bàn (thường là POST child_id, parent_id)
+        // Trong TableController->merge: child_id = input('child_id'), parent_id = input('parent_id')
+        const form = document.getElementById('targetForm');
+        form.innerHTML = `
+            <input type="hidden" name="parent_id" value="${currentSelectedTable.id}">
+            <p class="small text-muted mb-3">Chọn bàn trống để ghép vào <strong>${currentSelectedTable.name}</strong>.</p>
+            <div class="form-group mb-4">
+                <label class="form-label">Chọn bàn con</label>
+                <select name="child_id" class="form-control" required>
+                    <option value="">-- Chọn bàn --</option>
+                    <?php foreach ($grouped as $area => $tables): ?>
+                        <optgroup label="<?= e($area) ?>">
+                            <?php foreach ($tables as $t): ?>
+                                <?php if ($t['status'] === 'available' && empty($t['parent_id'])): ?>
+                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-gold py-3 fw-bold">GHÉP BÀN</button>
+                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
+            </div>
+        `;
+        Aurora.openModal('modalSelectTarget');
+    };
+
+    window.handleUnmergeTableClick = function() {
+        if (!confirm('Bạn có chắc muốn tách bàn này ra khỏi nhóm ghép?')) return;
+        const f = document.createElement('form');
+        f.method = 'POST';
+        f.action = '<?= BASE_URL ?>/tables/unmerge';
+        f.innerHTML = `<input type="hidden" name="table_id" value="${currentSelectedTable.id}">`;
+        document.body.appendChild(f);
+        f.submit();
+    };
+
+    window.handleSplitTableClick = function() {
+        // Tách bàn (Split Items) -> Chuyển sang trang order để chọn món cho chính xác
+        window.location.href = '<?= BASE_URL ?>/orders?table_id=' + currentSelectedTable.id + '&action=split';
     };
 });
 </script>
