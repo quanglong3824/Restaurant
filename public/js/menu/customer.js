@@ -31,14 +31,19 @@ function checkLocation() {
         return;
     }
 
+    // Force overlay visible if not verified
+    if (overlay) overlay.style.display = 'flex';
+    if (wrapper) wrapper.style.display = 'none';
+
     const requestLocation = () => {
         if (btn) {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
             btn.disabled = true;
         }
+        if (errorEl) errorEl.style.display = 'none';
 
         if (!navigator.geolocation) {
-            showLocError("Trình duyệt của bạn không hỗ trợ định vị. Vui lòng sử dụng trình duyệt khác (Chrome, Safari).");
+            showLocError("Trình duyệt không hỗ trợ định vị. Vui lòng dùng Chrome hoặc Safari.");
             return;
         }
 
@@ -53,40 +58,43 @@ function checkLocation() {
                 );
 
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
-                    showLocError(`Bạn đang ở quá xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn để đặt món.`);
+                    showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
                 } else {
-                    // Success!
                     sessionStorage.setItem('locationVerified', 'true');
                     if (overlay) {
-                        overlay.style.transition = 'opacity 0.5s';
+                        overlay.style.transition = 'opacity 0.4s';
                         overlay.style.opacity = '0';
                         setTimeout(() => {
                             overlay.style.display = 'none';
                             wrapper.style.display = 'block';
-                        }, 500);
+                        }, 400);
                     } else {
                         wrapper.style.display = 'block';
                     }
                 }
             },
             (err) => {
-                let msg = "Không thể lấy vị trí. ";
+                let msg = "Vui lòng cấp quyền định vị: ";
                 switch(err.code) {
                     case err.PERMISSION_DENIED: 
-                        msg += "Vui lòng cho phép truy cập vị trí trong cài đặt trình duyệt để tiếp tục."; 
+                        msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng vào Cài đặt trình duyệt để cho phép truy cập vị trí và Tải lại trang."; 
                         break;
                     case err.POSITION_UNAVAILABLE: msg += "Thông tin vị trí không khả dụng."; break;
-                    case err.TIMEOUT: msg += "Yêu cầu lấy vị trí hết hạn."; break;
+                    case err.TIMEOUT: msg += "Hết thời gian yêu cầu vị trí."; break;
                     default: msg += "Lỗi định vị không xác định.";
                 }
                 showLocError(msg);
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
     };
 
-    // Auto request on load
-    setTimeout(requestLocation, 500);
+    // Auto request on load with a slight delay for better reliability on iOS
+    setTimeout(() => {
+        if (sessionStorage.getItem('locationVerified') !== 'true') {
+            requestLocation();
+        }
+    }, 800);
 
     if (btn) {
         btn.addEventListener('click', requestLocation);
@@ -94,11 +102,11 @@ function checkLocation() {
 
     function showLocError(msg) {
         if (errorEl) {
-            errorEl.textContent = msg;
+            errorEl.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> ${msg}`;
             errorEl.style.display = 'block';
         }
         if (btn) {
-            btn.innerHTML = '<i class="fas fa-redo me-2"></i> THỬ LẠI';
+            btn.innerHTML = '<i class="fas fa-location-arrow me-2"></i> THỬ LẠI XÁC THỰC';
             btn.disabled = false;
         }
     }
