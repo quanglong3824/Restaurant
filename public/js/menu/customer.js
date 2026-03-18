@@ -47,23 +47,60 @@ function setupCategoryNav() {
 
 function setupSearch() {
     const searchInput = document.getElementById('menuSearch');
+    const typeBtns = document.querySelectorAll('.type-btn');
+    const categoryPills = document.querySelectorAll('.cat-pill');
+    
     if (!searchInput) return;
 
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
+    const filterMenu = () => {
+        const query = searchInput.value.toLowerCase().trim();
+        const activeType = document.querySelector('.type-btn.active').dataset.type;
         const cards = document.querySelectorAll('.menu-item-card');
         
         cards.forEach(card => {
             const name = card.dataset.name.toLowerCase();
-            const isMatch = name.includes(query);
-            card.style.display = isMatch ? 'flex' : 'none';
+            const nameEn = (card.dataset.nameEn || '').toLowerCase();
+            const type = card.dataset.type;
+            
+            const isMatchText = name.includes(query) || nameEn.includes(query);
+            const isMatchType = (activeType === 'all' || type === activeType);
+            
+            card.style.display = (isMatchText && isMatchType) ? 'flex' : 'none';
         });
 
-        // Hide empty sections
+        // Hide/Show sections and category pills
         document.querySelectorAll('.menu-section').forEach(section => {
+            const sectionType = section.dataset.type;
             const hasVisibleItems = Array.from(section.querySelectorAll('.menu-item-card'))
                 .some(card => card.style.display !== 'none');
-            section.style.display = hasVisibleItems ? 'block' : 'none';
+            
+            const shouldShowSection = hasVisibleItems && (activeType === 'all' || sectionType === activeType);
+            section.style.display = shouldShowSection ? 'block' : 'none';
+            
+            // Sync category pills visibility
+            const catId = section.id.replace('cat-', '');
+            categoryPills.forEach(pill => {
+                if (pill.dataset.category === catId) {
+                    pill.style.display = shouldShowSection ? 'inline-block' : 'none';
+                }
+            });
+        });
+        
+        // Ensure "All" pill is always visible if not searching
+        const allPill = document.querySelector('.cat-pill[data-category="all"]');
+        if (allPill) allPill.style.display = (query === '' && activeType === 'all') ? 'inline-block' : 'none';
+    };
+
+    searchInput.addEventListener('input', filterMenu);
+    
+    typeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterMenu();
+            
+            // Scroll to top of menu when changing type
+            window.scrollTo({ top: document.querySelector('.menu-sections').offsetTop - 100, behavior: 'smooth' });
         });
     });
 }

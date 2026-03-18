@@ -274,7 +274,10 @@ class Table extends Model
     public function getAllForAdmin(): array
     {
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name, qr.qr_hash as qr_token
+            "SELECT t.*, p.name as parent_name, 
+                    qr.qr_hash as qr_token, qr.is_printed, qr.scan_count,
+                    (SELECT COUNT(*) FROM orders o WHERE o.table_id = t.id AND o.status = 'open') as has_order,
+                    (SELECT COUNT(*) FROM order_items oi JOIN orders o2 ON oi.order_id = o2.id WHERE o2.table_id = t.id AND o2.status = 'open') as items_count
              FROM tables t
              LEFT JOIN tables p ON t.parent_id = p.id
              LEFT JOIN qr_tables qr ON t.id = qr.table_id AND qr.is_active = 1

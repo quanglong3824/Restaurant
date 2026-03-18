@@ -59,6 +59,9 @@ class AdminQrController extends Controller
         $tableId = (int)$_GET['table_id'];
         $token = $_GET['token'];
 
+        // Mark as printed
+        $this->qrModel->markAsPrinted($tableId);
+
         // Redirect to a page that renders the QR code
         $this->view('layouts/admin', [
             'view' => 'admin/tables/qr_download',

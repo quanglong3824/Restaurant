@@ -48,13 +48,21 @@ class QrTable extends Model
         }
     }
 
+    public function markAsPrinted(int $tableId): void
+    {
+        $this->execute(
+            "UPDATE qr_tables SET is_printed = 1 WHERE table_id = ?",
+            [$tableId]
+        );
+    }
+
     public function generate(int $tableId, string $token): int
     {
         $url = "/qr/menu?table_id=$tableId&token=$token";
         $this->execute(
-            "INSERT INTO qr_tables (table_id, qr_hash, qr_code, is_active) 
-             VALUES (?, ?, ?, 1)
-             ON DUPLICATE KEY UPDATE qr_hash = VALUES(qr_hash), qr_code = VALUES(qr_code), updated_at = NOW()",
+            "INSERT INTO qr_tables (table_id, qr_hash, qr_code, is_active, is_printed) 
+             VALUES (?, ?, ?, 1, 0)
+             ON DUPLICATE KEY UPDATE qr_hash = VALUES(qr_hash), qr_code = VALUES(qr_code), is_printed = 0, updated_at = NOW()",
             [$tableId, $token, $url]
         );
         return (int) $this->lastInsertId();

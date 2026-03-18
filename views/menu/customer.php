@@ -44,6 +44,33 @@
     </header>
 
     <style>
+        .menu-type-filter {
+            display: flex;
+            gap: 8px;
+            padding: 10px 15px;
+            overflow-x: auto;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            scrollbar-width: none;
+        }
+        .menu-type-filter::-webkit-scrollbar { display: none; }
+        .type-btn {
+            white-space: nowrap;
+            padding: 6px 16px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .type-btn.active {
+            background: var(--gold);
+            color: #fff;
+            border-color: var(--gold);
+        }
+
         .glow-payment {
             background: var(--gold) !important;
             color: white !important;
@@ -60,20 +87,29 @@
     <!-- Category Navigation (Sticky) -->
     <nav class="category-nav">
         <div class="category-nav-inner">
-            <a href="#all" class="cat-pill active" data-category="all">Tất cả</a>
+            <a href="javascript:void(0)" class="cat-pill active" data-category="all">Tất cả</a>
             <?php foreach ($categories as $cat): ?>
-                <a href="#cat-<?= $cat['id'] ?>" class="cat-pill" data-category="<?= $cat['id'] ?>">
+                <a href="#cat-<?= $cat['id'] ?>" class="cat-pill" data-category="<?= $cat['id'] ?>" data-type="<?= $cat['menu_type'] ?>">
                     <?= e($cat['name']) ?>
                 </a>
             <?php endforeach; ?>
         </div>
     </nav>
 
+    <!-- Menu Type Filter (Quick Access) -->
+    <div class="menu-type-filter">
+        <button class="type-btn active" data-type="all">TẤT CẢ</button>
+        <button class="type-btn" data-type="asia">MÓN Á</button>
+        <button class="type-btn" data-type="europe">MÓN ÂU</button>
+        <button class="type-btn" data-type="set">SET MENU</button>
+        <button class="type-btn" data-type="alacarte">ALACARTE</button>
+    </div>
+
     <!-- Search Bar -->
     <div class="menu-search-container">
         <div class="menu-search-bar">
             <i class="fas fa-search"></i>
-            <input type="text" id="menuSearch" placeholder="Tìm kiếm món ăn...">
+            <input type="text" id="menuSearch" placeholder="Tìm món ăn (Vietnamese / English)...">
         </div>
     </div>
 
@@ -89,7 +125,7 @@
 
         <?php foreach ($categories as $cat): ?>
             <?php if (isset($grouped[$cat['id']])): ?>
-                <section class="menu-section" id="cat-<?= $cat['id'] ?>">
+                <section class="menu-section" id="cat-<?= $cat['id'] ?>" data-type="<?= $cat['menu_type'] ?>">
                     <div class="section-header">
                         <h2 class="section-title"><?= e($cat['name']) ?></h2>
                         <?php if (!empty($cat['name_en'])): ?>
@@ -102,7 +138,9 @@
                             <div class="menu-item-card" 
                                  data-id="<?= $item['id'] ?>" 
                                  data-name="<?= e($item['name']) ?>" 
+                                 data-name-en="<?= e($item['name_en'] ?? '') ?>"
                                  data-price="<?= $item['price'] ?>"
+                                 data-type="<?= $cat['menu_type'] ?>"
                                  onclick="showItemDetail(<?= e(json_encode($item)) ?>)">
                                 
                                 <div class="item-img-box">

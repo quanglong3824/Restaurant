@@ -50,12 +50,10 @@
                                     </button>
 
                                     <!-- Reset QR Button -->
-                                    <form method="POST" action="<?= BASE_URL ?>/admin/qr-codes/generate" style="display:inline;">
-                                        <input type="hidden" name="table_id" value="<?= $t['id'] ?>">
-                                        <button type="submit" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR" data-confirm="Tạo mới hoặc làm mới mã QR cho bàn này? Mã cũ sẽ không dùng được nữa.">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR"
+                                        onclick="confirmResetQR(<?= $t['id'] ?>, '<?= e($t['name']) ?>', <?= (int)$t['is_printed'] ?>, <?= (int)$t['scan_count'] ?>, <?= (int)$t['items_count'] ?>)">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
 
                                     <a href="<?= BASE_URL ?>/admin/tables/edit?id=<?= $t['id'] ?>"
                                         class="btn btn-outline btn-sm" title="Sửa">
@@ -349,5 +347,39 @@
         link.download = `QR-${document.getElementById('qrTableDisplay').innerText}.png`;
         link.href = img.src;
         link.click();
+    }
+
+    function confirmResetQR(tableId, tableName, isPrinted, scanCount, itemsCount) {
+        let message = `Bạn có chắc chắn muốn làm mới mã QR cho ${tableName}?\n\n`;
+        
+        if (itemsCount > 0) {
+            alert(`CẢNH BÁO: Bàn ${tableName} đang có khách đã đặt món (${itemsCount} món).\n\nVui lòng hoàn tất đơn hàng và thanh toán trước khi reset QR.`);
+            return;
+        }
+
+        if (isPrinted) {
+            if (!confirm(`Mã QR của ${tableName} ĐÃ ĐƯỢC IN ra giấy.\n\nNếu bạn reset, mã QR cũ trên giấy sẽ không còn tác dụng và khách không thể quét được nữa.\n\nBạn có CHẮC CHẮN vẫn muốn tạo mã mới?`)) {
+                return;
+            }
+        } else if (scanCount > 0) {
+             if (!confirm(`Mã QR này đã được quét ${scanCount} lần.\n\nBạn có chắc chắn muốn reset không?`)) {
+                return;
+            }
+        } else {
+            if (!confirm(`Xác nhận tạo mã QR mới cho ${tableName}?`)) {
+                return;
+            }
+        }
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?= BASE_URL ?>/admin/qr-codes/generate';
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'table_id';
+        input.value = tableId;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
