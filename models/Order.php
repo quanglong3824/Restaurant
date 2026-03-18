@@ -152,16 +152,16 @@ class Order extends Model
     public function updateItem(int $itemId, int $qty): void
     {
         if ($qty <= 0) {
-            $this->execute("DELETE FROM order_items WHERE id = ? AND status = 'draft'", [$itemId]);
+            $this->execute("DELETE FROM order_items WHERE id = ? AND (status = 'draft' OR status = 'pending')", [$itemId]);
         } else {
-            $this->execute("UPDATE order_items SET quantity = ? WHERE id = ? AND status = 'draft'", [$qty, $itemId]);
+            $this->execute("UPDATE order_items SET quantity = ? WHERE id = ? AND (status = 'draft' OR status = 'pending')", [$qty, $itemId]);
         }
     }
 
     /** Xóa một dòng order item */
     public function removeItem(int $itemId): void
     {
-        $this->execute("DELETE FROM order_items WHERE id = ? AND status = 'draft'", [$itemId]);
+        $this->execute("DELETE FROM order_items WHERE id = ? AND (status = 'draft' OR status = 'pending')", [$itemId]);
     }
 
     /** Đóng order & đóng bàn (Thanh toán) */

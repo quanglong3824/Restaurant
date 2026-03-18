@@ -133,7 +133,12 @@ if (!empty($items)) {
                                     </div>
                                 <?php endif; ?>
                                 <div class="plate-info">
-                                    <div class="plate-name"><?= e($item['item_name']) ?></div>
+                                    <div class="plate-name">
+                                        <?= e($item['item_name']) ?>
+                                        <?php if (($item['status'] ?? '') === 'pending'): ?>
+                                            <span class="badge bg-warning text-dark ms-1" style="font-size: 0.6rem; vertical-align: middle;">QR: CHỜ XÁC NHẬN</span>
+                                        <?php endif; ?>
+                                    </div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
                                         <div class="plate-note">
                                             <i class="fas fa-comment-dots me-1"></i> <?= e($item['note']) ?>
@@ -187,7 +192,12 @@ if (!empty($items)) {
                                     </div>
                                 <?php endif; ?>
                                 <div class="plate-info">
-                                    <div class="plate-name"><?= e($item['item_name']) ?></div>
+                                    <div class="plate-name">
+                                        <?= e($item['item_name']) ?>
+                                        <?php if (($item['status'] ?? '') === 'pending'): ?>
+                                            <span class="badge bg-warning text-dark ms-1" style="font-size: 0.6rem; vertical-align: middle;">QR: CHỜ XÁC NHẬN</span>
+                                        <?php endif; ?>
+                                    </div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
                                         <div class="plate-note">
                                             <i class="fas fa-comment-dots me-1"></i> <?= e($item['note']) ?>
@@ -262,7 +272,7 @@ if (!empty($items)) {
                                 <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                 <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
-                                    <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN ORDER
+                                    <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN MÓN MỚI (GỬI BẾP)
                                 </button>
                             </form>
                         <?php endif; ?>
