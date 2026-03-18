@@ -113,13 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchNotifications() {
         try {
+            console.log("Polling notifications...");
             const response = await fetch(`${BASE_URL}/api/notifications/poll`);
-            if (!response.ok) return;
+            if (!response.ok) {
+                console.error("Poll response not OK", response.status);
+                return;
+            }
             const data = await response.json();
+            console.log("Received data:", data);
             
-            updateStats(data.notifications);
-            renderList(data.notifications);
-            checkNewNoti(data.notifications);
+            if (data.ok && data.notifications) {
+                updateStats(data.notifications);
+                renderList(data.notifications);
+                checkNewNoti(data.notifications);
+            }
             
             isFirstLoad = false;
         } catch (e) {
