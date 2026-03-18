@@ -383,6 +383,44 @@
     .bill-item-status.confirmed { color: #10b981; }
     .bill-item-status.pending { color: #f59e0b; }
     .bill-summary { background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+
+    .btn-gold {
+        background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px var(--gold-glow);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+    }
+    .btn-gold:active { transform: scale(0.98); }
+
+    .btn-ghost {
+        background: #fff;
+        color: var(--text-light);
+        border: 1px solid var(--border);
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+    }
+    .btn-ghost:active { background: var(--bg); }
+
+    .w-100 { width: 100%; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .me-2 { margin-right: 0.5rem; }
 </style>
 
 <!-- Scripts Configuration -->
