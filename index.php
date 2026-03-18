@@ -129,6 +129,7 @@ $router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
 $router->post('/qr/cart/update', 'QrMenuController', 'updateCart');
 $router->post('/qr/cart/remove', 'QrMenuController', 'removeFromCart');
 $router->post('/qr/order/submit', 'QrOrderController', 'submit');
+$router->post('/qr/session/clear', 'QrOrderController', 'clearSession');
 $router->get('/qr/order/status', 'QrOrderController', 'status');
 $router->get('/qr/order/history', 'QrOrderController', 'history');
 $router->post('/qr/support/call-waiter', 'QrSupportController', 'callWaiter');

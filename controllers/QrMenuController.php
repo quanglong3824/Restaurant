@@ -88,20 +88,25 @@ class QrMenuController extends Controller
             // Lấy đơn hàng cuối cùng của bàn này
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
             
-            // Nếu Session hiện tại trùng với Session của đơn hàng vừa đóng
-            // -> Khách cũ đã thanh toán/nhân viên đã đóng bàn của họ -> Không cho mở lại
             if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
-                $orderItems = $this->orderModel->getItems($lastOrder['id']);
-                $this->view('layouts/public', [
-                    'view' => 'orders/paid_bill',
-                    'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
-                    'table' => $table,
-                    'order' => $lastOrder,
-                    'items' => $orderItems,
-                    'isCustomer' => true,
-                    'message' => 'Phiên làm việc của bạn tại bàn này đã kết thúc. Cảm ơn quý khách!'
-                ]);
-                return;
+                $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
+                $minutesSinceClose = (time() - $closedTime) / 60;
+
+                // Nếu vừa đóng trong vòng 30 phút -> Hiển thị trang thanh toán (chặn reload vô tình)
+                // Nếu đã quá 30 phút -> Cho phép mở bàn mới (khách quay lại sau vài tiếng)
+                if ($minutesSinceClose < 30) {
+                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
+                    $this->view('layouts/public', [
+                        'view' => 'orders/paid_bill',
+                        'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
+                        'table' => $table,
+                        'order' => $lastOrder,
+                        'items' => $orderItems,
+                        'isCustomer' => true,
+                        'message' => 'Phiên làm việc vừa kết thúc. Cảm ơn quý khách!'
+                    ]);
+                    return;
+                }
             }
 
             // --- MỞ BÀN TỰ ĐỘNG (Dành cho khách mới hoặc Session mới) ---

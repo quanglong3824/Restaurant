@@ -63,16 +63,54 @@
             <p class="text-center text-muted my-4">Không có thông tin món ăn.</p>
         <?php endif; ?>
     </div>
-
-    <div class="bill-actions">
-        <p class="text-muted small mb-4">Màn hình gọi món sẽ được mở lại khi có khách mới vào bàn.</p>
+<div class="bill-actions">
+    <p class="text-muted small mb-4">Màn hình gọi món sẽ được mở lại khi có khách mới vào bàn.</p>
+    <div class="d-grid gap-2">
+        <button class="btn-gold w-100" onclick="startNewOrder()">
+            <i class="fas fa-plus-circle me-2"></i> BẮT ĐẦU LƯỢT MỚI
+        </button>
         <button class="btn-gold-outline w-100" onclick="window.location.reload()">
             <i class="fas fa-sync-alt me-2"></i> LÀM MỚI TRANG
         </button>
     </div>
 </div>
+</div>
+
+<script>
+function startNewOrder() {
+if (!confirm('Bạn muốn bắt đầu lượt gọi món mới cho bàn này?')) return;
+
+fetch('<?= BASE_URL ?>/qr/session/clear', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+})
+.then(r => r.json())
+.then(data => {
+    if (data.success) {
+        window.location.href = '<?= BASE_URL ?>/qr/menu?table_id=<?= $table['id'] ?>&token=<?= $_GET['token'] ?? "" ?>';
+    }
+})
+.catch(err => {
+    console.error('Error clearing session:', err);
+    window.location.reload();
+});
+}
+</script>
 
 <style>
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px var(--gold-glow);
+}
+.btn-gold:active { transform: scale(0.98); }
+.btn-gold-outline {
     .paid-bill-wrapper { padding: 20px; max-width: 500px; margin: 0 auto; text-align: center; }
     .bill-success-header { margin-bottom: 30px; }
     .success-icon { font-size: 4rem; color: #10b981; margin-bottom: 15px; }

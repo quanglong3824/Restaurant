@@ -57,11 +57,16 @@ class QrOrderController extends Controller
             }
 
             // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA ---
-            // Nếu bàn đang 'available' nhưng khách cũ vẫn dùng Session cũ gửi Ajax lên
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
             if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
-                $this->json(['error' => 'Phiên làm việc của bạn đã kết thúc. Vui lòng quét lại mã QR (Session mới) để đặt món tiếp.'], 403);
-                return;
+                $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
+                $minutesSinceClose = (time() - $closedTime) / 60;
+                
+                // Chỉ chặn nếu vừa đóng trong vòng 30 phút
+                if ($minutesSinceClose < 30) {
+                    $this->json(['error' => 'Phiên làm việc vừa kết thúc. Vui lòng đợi hoặc liên hệ nhân viên nếu muốn đặt lượt mới.'], 403);
+                    return;
+                }
             }
 
             // Check if open order exists
@@ -123,6 +128,18 @@ class QrOrderController extends Controller
         } catch (Exception $e) {
             $this->json(['error' => 'Lỗi xử lý order: ' . $e->getMessage()], 500);
         }
+    }
+
+    /** Clear customer session for this table to allow new session */
+    public function clearSession(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $tableId = $_SESSION['customer_table_id'] ?? 0;
+        
+        // Regenerate session ID to get a fresh start
+        session_regenerate_id(true);
+        
+        $this->json(['success' => true, 'message' => 'Đã làm mới phiên làm việc.']);
     }
 
     /** View order status */
