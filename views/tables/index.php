@@ -233,20 +233,20 @@ function renderTableToken($t, $tableModel) {
             <h3 id="modalTableName" class="playfair">Phục vụ bàn</h3>
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
-        <form method="POST" action="<?= BASE_URL ?>/tables/open" class="modal-body">
+        <form method="POST" action="<?= BASE_URL ?>/tables/open" class="modal-body py-3">
             <input type="hidden" name="table_id" id="openTableId">
-            <div class="form-group mb-4">
-                <label class="form-label text-gold small fw-bold text-uppercase">Số lượng khách</label>
-                <div class="guest-selector-grid">
+            <div class="form-group mb-3">
+                <label class="form-label text-gold tiny fw-bold text-uppercase">Số lượng khách</label>
+                <div class="guest-selector-grid" style="grid-template-columns: repeat(6, 1fr); gap: 8px;">
                     <?php for ($i = 1; $i <= 12; $i++): ?>
                         <label class="guest-option">
                             <input type="radio" name="guest_count" value="<?= $i ?>" <?= $i === 2 ? 'checked' : '' ?>>
-                            <span><?= $i ?></span>
+                            <span style="height: 40px; font-size: 0.9rem;"><?= $i ?></span>
                         </label>
                     <?php endfor; ?>
                 </div>
             </div>
-            <button type="submit" class="btn btn-gold w-100 py-3 fw-bold">
+            <button type="submit" class="btn btn-gold w-100 py-3 fw-bold shadow-sm">
                 <i class="fas fa-play me-2"></i> BẮT ĐẦU PHỤC VỤ
             </button>
         </form>
@@ -299,7 +299,7 @@ function renderTableToken($t, $tableModel) {
             <input type="hidden" name="from_table_id" id="sourceTableId">
             <p id="targetModalDesc" class="small text-muted mb-3">Chọn bàn để thực hiện thao tác này.</p>
 
-            <div class="form-group mb-4">
+            <div class="form-group mb-3">
                 <label class="form-label">Danh sách bàn trống</label>
                 <select name="to_table_id" id="targetSelect" class="form-control" required>
                     <option value="">-- Chọn bàn --</option>
@@ -334,7 +334,7 @@ function renderTableToken($t, $tableModel) {
             <input type="hidden" name="parent_id" id="mergeParentTableId">
             <p class="small text-muted mb-3">Chọn bàn trống để ghép vào <strong id="mergeParentTableName">...</strong>.</p>
 
-            <div class="form-group mb-4">
+            <div class="form-group mb-3">
                 <label class="form-label">Chọn bàn con</label>
                 <select name="child_id" class="form-control" required>
                     <option value="">-- Chọn bàn trống --</option>
@@ -368,7 +368,7 @@ function renderTableToken($t, $tableModel) {
         <form method="POST" action="<?= BASE_URL ?>/tables/merge_areas" class="modal-body">
             <p class="small text-muted mb-3">Chọn các khu vực muốn ghép chung (tối thiểu 2).</p>
 
-            <div class="form-group mb-4">
+            <div class="form-group mb-3">
                 <div class="area-selector-interactive">
                     <?php 
                     $displayGroups = [
@@ -429,7 +429,7 @@ function renderTableToken($t, $tableModel) {
         <form method="POST" action="<?= BASE_URL ?>/tables/unmerge_areas" class="modal-body">
             <p class="small text-muted mb-3">Khu vực <span class="badge bg-danger">Màu đỏ</span> là đang ghép. Bấm chọn để đổi sang <span class="badge bg-warning text-dark">Màu vàng</span> để tách.</p>
 
-            <div class="form-group mb-4">
+            <div class="form-group mb-3">
                 <div class="area-selector-interactive">
                     <?php 
                     // Logic xác định khu nào đang được ghép (có bàn là con hoặc cha của bàn ở khu khác)
@@ -487,32 +487,48 @@ function renderTableToken($t, $tableModel) {
 </div>
 
 <style>
+    /* Tối ưu hóa kích thước Modal */
+    .modal-header { padding: 1rem 1.25rem; }
+    .modal-header h3 { font-size: 1.15rem; }
+    .modal-body { padding: 1.25rem; }
+    
     .interactive-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
     }
     .interactive-area-item {
         cursor: pointer;
     }
+    .interactive-area-item input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
     .area-box {
         background: #f1f5f9;
         border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 12px 8px;
+        border-radius: 10px;
+        padding: 8px 4px;
         text-align: center;
         transition: all 0.2s ease;
     }
     .area-box-name {
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 0.8rem;
         color: var(--text);
     }
     .area-box-status {
-        font-size: 0.55rem;
-        font-weight: 700;
-        color: var(--text-muted);
-        margin-top: 4px;
+        display: none; 
+    }
+    .modal .area-group-title {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
     }
     
     /* Khu vực đang ghép hiển thị màu đỏ */
