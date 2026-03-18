@@ -14,7 +14,10 @@
         
         <div class="qr-code-wrapper">
             <div id="qrcode"></div>
-            <img src="<?= BASE_URL ?>/public/src/logo/favicon.png" class="qr-logo" alt="Logo">
+            <?php 
+                $logoPath = BASE_URL . '/public/src/logo/favicon.png'; 
+            ?>
+            <img src="<?= $logoPath ?>" class="qr-logo" alt="Logo" onerror="console.error('QR Logo failed to load from: ' + this.src)">
         </div>
         
         <div class="qr-card-footer">
@@ -89,7 +92,7 @@
         padding: 15px;
         background: #fdfdfd;
         border-radius: 12px;
-        position: relative; /* Add this */
+        position: relative;
     }
 
     .qr-logo {
@@ -97,13 +100,15 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 45px;
-        height: 45px;
+        width: 50px; /* Slightly larger */
+        height: 50px;
         background: white;
         padding: 4px;
-        border-radius: 8px;
-        border: 1px solid #eee;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        border: 2px solid #eee;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10; /* Ensure it's on top */
+        display: block !important;
     }
     
     .qr-card-footer .table-number {
