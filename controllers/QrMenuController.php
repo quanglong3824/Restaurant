@@ -130,16 +130,6 @@ class QrMenuController extends Controller
             $orderId = $openOrder ? $openOrder['id'] : 0;
             $orderItems = $orderId ? $this->orderModel->getItems($orderId) : [];
 
-            // Notify staff about QR scan (chỉ báo một lần hoặc mỗi lần quét tùy nhu cầu)
-            if ($orderId) {
-                $this->notifModel->create([
-                    'order_id' => $orderId,
-                    'table_id' => $tableId,
-                    'type' => 'call_waiter',
-                    'message' => "Khách tại {$table['name']} vừa truy cập menu qua QR."
-                ]);
-            }
-
             // Notify staff about QR scan
             $this->notifModel->create([
                 'order_id' => $orderId ?: null,
