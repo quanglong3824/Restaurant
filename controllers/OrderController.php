@@ -156,7 +156,13 @@ class OrderController extends Controller
             } else {
                 // Tự động mở bàn và tạo order mới cho nhân viên
                 $this->tableModel->open($tableId);
-                $orderId = $this->orderModel->create($tableId, null, 1);
+                $waiterId = Auth::isLoggedIn() ? Auth::user()['id'] : null;
+                $orderId = $this->orderModel->create([
+                    'table_id' => $tableId,
+                    'waiter_id' => $waiterId,
+                    'guest_count' => 1,
+                    'shift_id' => $_SESSION['user_shift_id'] ?? null
+                ]);
             }
         }
 
@@ -222,7 +228,13 @@ class OrderController extends Controller
                 $orderId = (int) $existingOrder['id'];
             } else {
                 $this->tableModel->open($tableId);
-                $orderId = $this->orderModel->create($tableId, null, 1);
+                $waiterId = Auth::isLoggedIn() ? Auth::user()['id'] : null;
+                $orderId = $this->orderModel->create([
+                    'table_id' => $tableId,
+                    'waiter_id' => $waiterId,
+                    'guest_count' => 1,
+                    'shift_id' => $_SESSION['user_shift_id'] ?? null
+                ]);
             }
         }
 

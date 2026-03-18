@@ -76,7 +76,11 @@ class MenuController extends Controller
             } else if (!Auth::isLoggedIn()) {
                 // Nếu chưa có và là khách truy cập -> Tự động mở bàn/tạo order nháp
                 $tableModel->open($tableId);
-                $orderId = $orderModel->create($tableId, null, 1);
+                 $orderId = $orderModel->create([
+                    'table_id' => $tableId,
+                    'guest_count' => 1,
+                    'order_source' => 'qr_customer'
+                ]);
             }
         }
 
