@@ -134,9 +134,12 @@ class QrOrderController extends Controller
     public function clearSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        $tableId = $_SESSION['customer_table_id'] ?? 0;
         
-        // Regenerate session ID to get a fresh start
+        // Clear customer-specific data
+        unset($_SESSION['customer_table_id']);
+        unset($_SESSION['customer_token']);
+        
+        // Regenerate session ID to get a fresh start from the server perspective
         session_regenerate_id(true);
         
         $this->json(['success' => true, 'message' => 'Đã làm mới phiên làm việc.']);
