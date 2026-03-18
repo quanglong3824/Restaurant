@@ -46,11 +46,12 @@ $auAreas = [];
 $otherModalAreas = [];
 
 foreach ($uniqueAreas as $a) {
-    if (in_array($a, ['A1', 'B1', 'C1'])) {
+    $ua = mb_strtoupper($a, 'UTF-8');
+    if (in_array($ua, ['A', 'B', 'C', 'A1', 'B1', 'C1', 'SẢNH', 'SẢNH THƯỜNG'])) {
         $abcAreas[] = $a;
-    } elseif (strpos($a, 'VIP') !== false) {
+    } elseif (strpos($ua, 'VIP') !== false) {
         $vipAreas[] = $a;
-    } elseif ($a === 'Âu') {
+    } elseif (strpos($ua, 'ÂU') !== false || strpos($ua, 'EURO') !== false) {
         $auAreas[] = $a;
     } else {
         $otherModalAreas[] = $a;
@@ -271,7 +272,7 @@ function renderTableToken($t, $tableModel) {
                     </button>
                     <button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">
                         <i class="fas fa-link me-2"></i> GHÉP BÀN
-                    </a>
+                    </button>
                 </div>
 
                 <div class="d-flex gap-2">
@@ -295,12 +296,12 @@ function renderTableToken($t, $tableModel) {
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
         <form id="targetForm" method="POST" class="modal-body">
-            <input type="hidden" name="source_table_id" id="sourceTableId">
+            <input type="hidden" name="from_table_id" id="sourceTableId">
             <p id="targetModalDesc" class="small text-muted mb-3">Chọn bàn để thực hiện thao tác này.</p>
 
             <div class="form-group mb-4">
-                <label class="form-label">Danh sách bàn</label>
-                <select name="target_id" id="targetSelect" class="form-control" required>
+                <label class="form-label">Danh sách bàn trống</label>
+                <select name="to_table_id" id="targetSelect" class="form-control" required>
                     <option value="">-- Chọn bàn --</option>
                     <?php foreach ($grouped as $area => $tables): ?>
                         <optgroup label="<?= e($area) ?>" data-area="<?= e($area) ?>">
@@ -322,9 +323,44 @@ function renderTableToken($t, $tableModel) {
     </div>
 </div>
 
+<!-- Modal: Ghép Bàn Chuyên Dụng -->
+<div class="modal-backdrop" id="modalMergeTable">
+    <div class="modal modal-premium" style="max-width: 450px;">
+        <div class="modal-header">
+            <h3 class="playfair">Ghép Bàn</h3>
+            <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
+        </div>
+        <form method="POST" action="<?= BASE_URL ?>/tables/merge" class="modal-body">
+            <input type="hidden" name="parent_id" id="mergeParentTableId">
+            <p class="small text-muted mb-3">Chọn bàn trống để ghép vào <strong id="mergeParentTableName">...</strong>.</p>
+
+            <div class="form-group mb-4">
+                <label class="form-label">Chọn bàn con</label>
+                <select name="child_id" class="form-control" required>
+                    <option value="">-- Chọn bàn trống --</option>
+                    <?php foreach ($grouped as $area => $tables): ?>
+                        <optgroup label="<?= e($area) ?>">
+                            <?php foreach ($tables as $t): ?>
+                                <?php if ($t['status'] === 'available' && empty($t['parent_id'])): ?>
+                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-gold py-3 fw-bold">XÁC NHẬN GHÉP BÀN</button>
+                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modal: Ghép Khu Vực -->
 <div class="modal-backdrop" id="modalMergeArea">
-    <div class="modal modal-premium" style="max-width: 450px;">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header">
             <h3 class="playfair">Ghép Khu Vực</h3>
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
@@ -332,68 +368,52 @@ function renderTableToken($t, $tableModel) {
         <form method="POST" action="<?= BASE_URL ?>/tables/merge_areas" class="modal-body">
             <p class="small text-muted mb-3">Chọn các khu vực muốn ghép chung (tối thiểu 2).</p>
 
-            <div class="form-group mb-5">
-                <label class="form-label text-muted d-block mb-3 border-bottom pb-2">CÁC KHU VỰC:</label>
+            <div class="form-group mb-4">
+                <div class="area-selector-interactive">
+                    <?php 
+                    $displayGroups = [
+                        ['title' => 'Sảnh Thường', 'areas' => $abcAreas],
+                        ['title' => 'Khu VIP', 'areas' => $vipAreas],
+                        ['title' => 'Khu Âu', 'areas' => $auAreas],
+                        ['title' => 'Khu vực khác', 'areas' => $otherModalAreas]
+                    ];
+                    
+                    $hasAny = false;
+                    foreach ($displayGroups as $group): if (empty($group['areas'])) continue; $hasAny = true; ?>
+                        <div class="mb-3">
+                            <div class="area-group-title small fw-bold text-muted mb-2"><?= e($group['title']) ?></div>
+                            <div class="interactive-grid">
+                                <?php foreach ($group['areas'] as $a): ?>
+                                    <label class="interactive-area-item">
+                                        <input type="checkbox" name="areas[]" value="<?= e($a) ?>" class="d-none">
+                                        <div class="area-box">
+                                            <div class="area-box-name"><?= e($a) ?></div>
+                                            <div class="area-box-status">CHỌN ĐỂ GHÉP</div>
+                                        </div>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; 
 
-                <?php if (!empty($abcAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-layer-group me-2"></i> Sảnh Thường (A, B, C)</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(3, 1fr);">
-                            <?php foreach ($abcAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
+                    if (!$hasAny && !empty($uniqueAreas)): ?>
+                        <div class="interactive-grid">
+                            <?php foreach ($uniqueAreas as $a): ?>
+                                <label class="interactive-area-item">
+                                    <input type="checkbox" name="areas[]" value="<?= e($a) ?>" class="d-none">
+                                    <div class="area-box">
+                                        <div class="area-box-name"><?= e($a) ?></div>
+                                        <div class="area-box-status">CHỌN ĐỂ GHÉP</div>
+                                    </div>
                                 </label>
                             <?php endforeach; ?>
                         </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($vipAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-crown me-2"></i> Khu VIP</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($vipAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($auAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-wine-glass me-2"></i> Khu Âu</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($auAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($otherModalAreas)): ?>
-                    <div class="mb-4">
-                        <div class="area-group-title"><i class="fas fa-ellipsis-h me-2"></i> Khác</div>
-                        <div class="guest-selector-grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <?php foreach ($otherModalAreas as $a): ?>
-                                <label class="area-option guest-option">
-                                    <input type="checkbox" name="areas[]" value="<?= e($a) ?>">
-                                    <span><?= e($a) ?></span>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-gold py-3 fw-bold">XÁC NHẬN GHÉP KHU</button>
+                <button type="submit" class="btn btn-gold py-3 fw-bold">XÁC NHẬN GHÉP CÁC KHU ĐÃ CHỌN</button>
             </div>
         </form>
     </div>
@@ -503,7 +523,7 @@ function renderTableToken($t, $tableModel) {
     .interactive-area-item.is-merged .area-box-name { color: #b91c1c; }
     .interactive-area-item.is-merged .area-box-status { color: #ef4444; }
     
-    /* Khi được chọn để tách hiển thị màu vàng */
+    /* Khi được chọn để tách/ghép hiển thị màu vàng */
     .interactive-area-item input:checked + .area-box {
         background: #fef3c7 !important;
         border-color: #f59e0b !important;
@@ -553,38 +573,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.handleMergeTableClick = function() {
         Aurora.closeModal('modalOccupied');
-        document.getElementById('targetModalTitle').textContent = 'Ghép bàn vào: ' + currentSelectedTable.name;
-        document.getElementById('targetModalDesc').textContent = 'Chọn bàn trống để ghép chung với bàn này.';
-        document.getElementById('sourceTableId').value = currentSelectedTable.id;
-        document.getElementById('targetForm').action = '<?= BASE_URL ?>/tables/merge';
-        
-        // Cần đổi tên input trong form hoặc xử lý route ghép bàn (thường là POST child_id, parent_id)
-        // Trong TableController->merge: child_id = input('child_id'), parent_id = input('parent_id')
-        const form = document.getElementById('targetForm');
-        form.innerHTML = `
-            <input type="hidden" name="parent_id" value="${currentSelectedTable.id}">
-            <p class="small text-muted mb-3">Chọn bàn trống để ghép vào <strong>${currentSelectedTable.name}</strong>.</p>
-            <div class="form-group mb-4">
-                <label class="form-label">Chọn bàn con</label>
-                <select name="child_id" class="form-control" required>
-                    <option value="">-- Chọn bàn --</option>
-                    <?php foreach ($grouped as $area => $tables): ?>
-                        <optgroup label="<?= e($area) ?>">
-                            <?php foreach ($tables as $t): ?>
-                                <?php if ($t['status'] === 'available' && empty($t['parent_id'])): ?>
-                                    <option value="<?= $t['id'] ?>"><?= e($t['name']) ?></option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </optgroup>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-gold py-3 fw-bold">GHÉP BÀN</button>
-                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
-            </div>
-        `;
-        Aurora.openModal('modalSelectTarget');
+        document.getElementById('mergeParentTableId').value = currentSelectedTable.id;
+        document.getElementById('mergeParentTableName').textContent = currentSelectedTable.name;
+        Aurora.openModal('modalMergeTable');
     };
 
     window.handleUnmergeTableClick = function() {
