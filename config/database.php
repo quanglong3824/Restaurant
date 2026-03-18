@@ -4,19 +4,42 @@
 // Aurora Restaurant — Digital Menu & Order System
 // ============================================================
 
-// Tự động chuyển đổi cấu hình Database theo môi trường
-$hostName = $_SERVER['HTTP_HOST'] ?? '';
-if ($hostName === 'localhost' || $hostName === '127.0.0.1') {
-    define('DB_HOST', 'localhost');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-} else {
-    // Thông số host người dùng cung cấp
-    define('DB_HOST', 'localhost'); // Cổng 3306 là mặc định nên không cần ghi :3306 trừ khi khác
-    define('DB_USER', 'auroraho_longdev');
-    define('DB_PASS', '@longdev3824');
+/**
+ * Load .env file from a specific path
+ */
+function loadEnv($path)
+{
+    if (!file_exists($path)) return false;
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue;
+        list($name, $value) = explode('=', $line, 2);
+        $name = trim($name);
+        $value = trim($value);
+        if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
+            putenv(sprintf('%s=%s', $name, $value));
+            $_ENV[$name] = $value;
+            $_SERVER[$name] = $value;
+        }
+    }
+    return true;
 }
-define('DB_NAME', 'auroraho_restaurant');
+
+// Đường dẫn tới file .env nằm ngoài public_html (ngang cấp public_html trong thư mục config)
+// Giả sử cấu trúc: /home/user/public_html/restaurant và /home/user/config/.env
+// Hoặc đơn giản là lùi lại 2 cấp từ project root
+$envPath = dirname(BASE_PATH, 2) . '/config/.env';
+if (!loadEnv($envPath)) {
+    // Thử thêm 1 phương án dự phòng nếu project nằm trực tiếp trong public_html
+    $envPath = dirname(BASE_PATH, 1) . '/config/.env';
+    loadEnv($envPath);
+}
+
+// Ưu tiên lấy từ biến môi trường (.env), nếu không có mới dùng mặc định
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('DB_USER') ?: (($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') ? 'root' : 'auroraho_longdev'));
+define('DB_PASS', getenv('DB_PASS') ?: (($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') ? '' : '@longdev3824'));
+define('DB_NAME', getenv('DB_NAME') ?: 'auroraho_restaurant');
 define('DB_CHARSET', 'utf8mb4');
 
 
