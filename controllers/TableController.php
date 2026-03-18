@@ -273,6 +273,7 @@ class TableController extends Controller
         $tableId = (int) $this->input('table_id');
         $orderId = (int) $this->input('order_id');
         $targetTableId = (int) $this->input('target_table_id');
+        $guestCount = (int) $this->input('guest_count');
         $itemIds = $this->input('item_ids', []);
         
         if (!is_array($itemIds) || empty($itemIds)) {
@@ -284,7 +285,7 @@ class TableController extends Controller
         $itemIds = array_map('intval', $itemIds);
 
         try {
-            $result = $this->orderModel->splitItems($orderId, $itemIds, $targetTableId);
+            $result = $this->orderModel->splitItems($orderId, $itemIds, $targetTableId, null, $guestCount);
             
             if ($result['ok']) {
                 // Đánh dấu bàn đích là bận

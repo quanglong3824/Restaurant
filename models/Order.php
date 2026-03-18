@@ -412,7 +412,7 @@ class Order extends Model
      * @param int $targetOrderId Optional target order ID (if null, create new order)
      * @return array ['ok' => bool, 'new_order_id' => int, 'message' => string]
      */
-    public function splitItems(int $sourceOrderId, array $itemIds, int $targetTableId, ?int $targetOrderId = null): array
+    public function splitItems(int $sourceOrderId, array $itemIds, int $targetTableId, ?int $targetOrderId = null, ?int $guestCount = null): array
     {
         if (empty($itemIds)) {
             return ['ok' => false, 'message' => 'Không có món nào để tách'];
@@ -442,11 +442,14 @@ class Order extends Model
             $newOrderId = $targetOrderId;
             if (!$newOrderId) {
                 $sourceTableName = $sourceOrder['table_name'] ?? ('Bàn ' . $sourceOrder['table_id']);
-                $splitNote = "Tách từ bàn " . $sourceTableName;
+                $splitNote = "Tách từ " . $sourceTableName;
                 
                 // Use current user if no waiter in source
                 $waiterId = $sourceOrder['waiter_id'] ?? (Auth::isLoggedIn() ? Auth::user()['id'] : null);
                 
+                // New Guest Count
+                $finalGuestCount = $guestCount ?: max(1, (int)($sourceOrder['guest_count'] ?? 1));
+
                 $this->execute(
                     "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, payment_status, note, order_source, opened_at, created_at) 
                      VALUES (?, ?, ?, ?, 'open', 'unpaid', ?, 'waiter', NOW(), NOW())",
@@ -454,7 +457,7 @@ class Order extends Model
                         $targetTableId, 
                         $waiterId, 
                         $sourceOrder['shift_id'] ?? ($_SESSION['user_shift_id'] ?? null),
-                        max(1, (int)($sourceOrder['guest_count'] ?? 1)),
+                        $finalGuestCount,
                         $splitNote
                     ]
                 );
