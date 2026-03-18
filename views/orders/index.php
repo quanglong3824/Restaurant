@@ -322,223 +322,104 @@ if (!empty($items)) {
                 <input type="hidden" name="order_id" id="closeOrderId">
                 <input type="hidden" id="isQuickCancel" value="0">
 
-                <div class="form-group mb-4">
-                    <label class="form-label">PHƯƠNG THỨC THANH TOÁN</label>
-                    <div class="payment-method-grid">
-                        <label class="method-card active" id="methodCash">
+                <!-- Phương thức thanh toán -->
+                <div class="compact-pay-group mb-3">
+                    <label class="form-label mb-2">PHƯƠNG THỨC</label>
+                    <div class="method-grid-mini">
+                        <label class="m-card active" id="methodCash">
                             <input type="radio" name="payment_method" value="cash" checked onchange="updatePaymentMethodUI('cash')" style="display:none">
-                            <div class="method-icon"><i class="fas fa-money-bill-wave"></i></div>
-                            <strong>TIỀN MẶT</strong>
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>TIỀN MẶT</span>
                         </label>
-                        <label class="method-card" id="methodTransfer">
+                        <label class="m-card" id="methodTransfer">
                             <input type="radio" name="payment_method" value="transfer" onchange="updatePaymentMethodUI('transfer')" style="display:none">
-                            <div class="method-icon"><i class="fas fa-university"></i></div>
-                            <strong>CHUYỂN KHOẢN</strong>
+                            <i class="fas fa-university"></i>
+                            <span>CHUYỂN KHOẢN</span>
                         </label>
                     </div>
                 </div>
 
-                <style>
-                    .payment-method-grid {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 0.75rem;
-                    }
-                    .method-card {
-                        background: #f8fafc;
-                        border: 2px solid #e2e8f0;
-                        border-radius: 14px;
-                        padding: 1rem;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 0.5rem;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                        text-align: center;
-                    }
-                    .method-icon {
-                        width: 40px;
-                        height: 40px;
-                        background: #fff;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 1.1rem;
-                        color: #94a3b8;
-                        transition: all 0.3s;
-                    }
-                    .method-card strong {
-                        font-size: 0.75rem;
-                        font-weight: 800;
-                        color: #64748b;
-                        letter-spacing: 0.5px;
-                    }
+                <!-- Tuỳ chọn kèm theo -->
+                <div class="compact-pay-group mb-4">
+                    <label class="form-label mb-2">XÁC NHẬN</label>
+                    <div class="option-stack">
+                        <div class="o-card" id="cardPaid" onclick="togglePaymentCheck('checkPaid')">
+                            <div class="o-icon"><i class="fas fa-check"></i></div>
+                            <div class="o-info">
+                                <strong>Đã nhận đủ tiền</strong>
+                                <small>Xác nhận thanh toán</small>
+                            </div>
+                            <input type="checkbox" id="checkPaid" required style="display:none">
+                        </div>
 
-                    /* Active Method State */
-                    .method-card.active {
-                        border-color: var(--gold);
-                        background: rgba(212, 175, 55, 0.08);
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+                        <div class="o-card" id="cardPrint" onclick="togglePaymentCheck('checkPrintBill')">
+                            <div class="o-icon"><i class="fas fa-print"></i></div>
+                            <div class="o-info">
+                                <strong>Xem hoá đơn</strong>
+                                <small>Sau khi hoàn tất</small>
+                            </div>
+                            <input type="checkbox" id="checkPrintBill" style="display:none">
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    /* Cấu trúc Modal thu gọn */
+                    #modalClose .modal { max-width: 380px; }
+                    #modalClose .modal-body { padding: 1.25rem; }
+                    
+                    .form-label { font-size: 0.65rem; letter-spacing: 1px; color: #94a3b8; font-weight: 800; }
+
+                    /* Grid Phương thức thanh toán mini */
+                    .method-grid-mini { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+                    .m-card {
+                        background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                        padding: 0.75rem 0.5rem; display: flex; flex-direction: column;
+                        align-items: center; gap: 4px; cursor: pointer; transition: all 0.2s;
                     }
-                    .method-card.active .method-icon {
-                        background: var(--gold);
-                        color: #fff;
-                        border-color: var(--gold);
+                    .m-card i { font-size: 1rem; color: #94a3b8; }
+                    .m-card span { font-size: 0.7rem; font-weight: 800; color: #64748b; }
+                    
+                    .m-card.active { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+                    .m-card.active i { color: var(--gold-dark); }
+                    .m-card.active span { color: var(--gold-dark); }
+
+                    /* Stack tuỳ chọn mini */
+                    .option-stack { display: flex; flex-direction: column; gap: 0.5rem; }
+                    .o-card {
+                        background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px;
+                        padding: 0.65rem 1rem; display: flex; align-items: center; gap: 0.75rem;
+                        cursor: pointer; transition: all 0.2s;
                     }
-                    .method-card.active strong {
-                        color: var(--gold-dark);
+                    .o-icon {
+                        width: 32px; height: 32px; background: #fff; border: 1px solid #e2e8f0;
+                        border-radius: 8px; display: flex; align-items: center; justify-content: center;
+                        font-size: 0.85rem; color: #94a3b8; flex-shrink: 0;
                     }
+                    .o-info { display: flex; flex-direction: column; line-height: 1.2; }
+                    .o-info strong { font-size: 0.8rem; color: #334155; }
+                    .o-info small { font-size: 0.65rem; color: #64748b; }
+
+                    /* Active States */
+                    #cardPaid.active { border-color: #22c55e; background: #f0fdf4; }
+                    #cardPaid.active .o-icon { background: #22c55e; color: #fff; border-color: #22c55e; }
+                    #cardPaid.active strong { color: #15803d; }
+
+                    #cardPrint.active { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+                    #cardPrint.active .o-icon { background: var(--gold); color: #fff; border-color: var(--gold); }
+                    #cardPrint.active strong { color: var(--gold-dark); }
                 </style>
 
                 <script>
                     function updatePaymentMethodUI(method) {
-                        const cashCard = document.getElementById('methodCash');
-                        const transferCard = document.getElementById('methodTransfer');
-                        
-                        if (method === 'cash') {
-                            cashCard.classList.add('active');
-                            transferCard.classList.remove('active');
-                        } else {
-                            transferCard.classList.add('active');
-                            cashCard.classList.remove('active');
-                        }
+                        document.getElementById('methodCash').classList.toggle('active', method === 'cash');
+                        document.getElementById('methodTransfer').classList.toggle('active', method === 'transfer');
                     }
-                </script>
-
-                <div class="payment-options-grid mb-4">
-                    <div class="payment-option-card" id="cardPaid" onclick="togglePaymentCheck('checkPaid')">
-                        <div class="option-check-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="option-text">
-                            <strong>XÁC NHẬN NHẬN TIỀN</strong>
-                            <span>Đã nhận đủ tiền từ khách</span>
-                        </div>
-                        <input type="checkbox" id="checkPaid" required style="display:none">
-                    </div>
-
-                    <div class="payment-option-card" id="cardPrint" onclick="togglePaymentCheck('checkPrintBill')">
-                        <div class="option-check-icon">
-                            <i class="fas fa-print"></i>
-                        </div>
-                        <div class="option-text">
-                            <strong>IN HOÁ ĐƠN</strong>
-                            <span>Xem hoá đơn sau thanh toán</span>
-                        </div>
-                        <input type="checkbox" id="checkPrintBill" style="display:none">
-                    </div>
-                </div>
-
-                <style>
-                    .payment-options-grid {
-                        display: grid;
-                        grid-template-columns: 1fr;
-                        gap: 0.75rem;
-                    }
-                    .payment-option-card {
-                        background: #f8fafc;
-                        border: 2px solid #e2e8f0;
-                        border-radius: 16px;
-                        padding: 1.25rem;
-                        display: flex;
-                        align-items: center;
-                        gap: 1rem;
-                        cursor: pointer;
-                        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                        position: relative;
-                        overflow: hidden;
-                    }
-                    .payment-option-card:hover {
-                        border-color: #cbd5e1;
-                        background: #f1f5f9;
-                    }
-                    .option-check-icon {
-                        width: 44px;
-                        height: 44px;
-                        background: #fff;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 12px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 1.25rem;
-                        color: #94a3b8;
-                        transition: all 0.3s;
-                        flex-shrink: 0;
-                    }
-                    .option-text {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 2px;
-                    }
-                    .option-text strong {
-                        font-size: 0.85rem;
-                        font-weight: 800;
-                        color: #334155;
-                        letter-spacing: 0.5px;
-                    }
-                    .option-text span {
-                        font-size: 0.75rem;
-                        color: #64748b;
-                    }
-
-                    /* Active States */
-                    .payment-option-card.active {
-                        border-color: var(--gold);
-                        background: rgba(212, 175, 55, 0.05);
-                    }
-                    .payment-option-card.active .option-check-icon {
-                        background: var(--gold);
-                        color: #fff;
-                        border-color: var(--gold);
-                        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-                        transform: scale(1.05);
-                    }
-                    .payment-option-card.active .option-text strong {
-                        color: var(--gold-dark);
-                    }
-
-                    /* Paid confirmation specifically */
-                    #cardPaid.active {
-                        background: #f0fdf4;
-                        border-color: #22c55e;
-                    }
-                    #cardPaid.active .option-check-icon {
-                        background: #22c55e;
-                        border-color: #22c55e;
-                        color: #fff;
-                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
-                    }
-                    #cardPaid.active .option-text strong {
-                        color: #15803d;
-                    }
-
-                    /* Print button specific active state as requested (bright) */
-                    #cardPrint.active {
-                        background: rgba(212, 175, 55, 0.1);
-                        border-color: var(--gold);
-                    }
-                </style>
-
-                <script>
                     function togglePaymentCheck(id) {
-                        const checkbox = document.getElementById(id);
+                        const cb = document.getElementById(id);
                         const card = id === 'checkPaid' ? document.getElementById('cardPaid') : document.getElementById('cardPrint');
-                        
-                        checkbox.checked = !checkbox.checked;
-                        
-                        if (checkbox.checked) {
-                            card.classList.add('active');
-                            // Add a little haptic-like scale effect
-                            card.style.transform = 'scale(0.98)';
-                            setTimeout(() => card.style.transform = 'scale(1)', 100);
-                        } else {
-                            card.classList.remove('active');
-                        }
+                        cb.checked = !cb.checked;
+                        card.classList.toggle('active', cb.checked);
                     }
                 </script>
 
