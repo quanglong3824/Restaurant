@@ -55,6 +55,8 @@ class QrMenuController extends Controller
     public function index(): void
     {
         try {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+
             $tableId = (int)($_GET['table_id'] ?? 0);
             $token = $_GET['token'] ?? '';
 
@@ -69,13 +71,50 @@ class QrMenuController extends Controller
                 return;
             }
 
+            // --- XỬ LÝ ĐỔI BÀN (TABLE SWITCHING) ---
+            $oldTableId = $_SESSION['customer_table_id'] ?? null;
+            if ($oldTableId && $oldTableId != $tableId) {
+                $oldOrder = $this->orderModel->findOpenOrderByTable($oldTableId);
+                if ($oldOrder) {
+                    $oldItems = $this->orderModel->getItems($oldOrder['id']);
+                    // Nếu bàn cũ CHƯA có món nào, tự động hủy bàn cũ để sang bàn mới
+                    if (empty($oldItems)) {
+                        $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Khách đổi sang bàn $tableId' WHERE id = ?", [$oldOrder['id']]);
+                        $this->tableModel->close($oldTableId);
+                    } else {
+                        // Nếu bàn cũ ĐÃ CÓ món, cảnh báo khách không được tự ý đổi bàn
+                        $this->view('404', [
+                            'message' => "Bạn đang có đơn hàng tại bàn " . $oldTableId . ". <br>Vui lòng thanh toán hoặc nhờ nhân viên hỗ trợ nếu muốn đổi bàn."
+                        ]);
+                        return;
+                    }
+                }
+            }
+
+            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (5 PHÚT) ---
+            $table = $this->tableModel->findById($tableId);
+            if ($table && $table['status'] === 'occupied') {
+                $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+                if ($openOrder) {
+                    $items = $this->orderModel->getItems($openOrder['id']);
+                    $minutesSinceOpen = (time() - strtotime($openOrder['opened_at'])) / 60;
+                    
+                    // Nếu bàn bận nhưng KHÔNG có món và đã quá 5 phút -> Coi như bàn trống ảo
+                    if (empty($items) && $minutesSinceOpen > 5) {
+                        $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 5 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
+                        $this->tableModel->close($tableId);
+                        $table['status'] = 'available'; // Reset trạng thái để tiếp tục xử lý bên dưới
+                    }
+                }
+            }
+
             // Increment scan count
             $this->qrModel->incrementScanCount($qrTable['id']);
 
             // Set customer session
             $this->setupCustomerSession($tableId, $token);
 
-            $table = $this->tableModel->findById($tableId);
+            $table = $this->tableModel->findById($tableId); // Reload table status
             if (!$table) {
                 $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
                 return;
@@ -88,21 +127,21 @@ class QrMenuController extends Controller
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
             
             // If the last order is closed within a reasonable time (e.g., 2 hours)
-            // or if the current session is linked to a closed order, show the bill.
             if ($lastOrder && $lastOrder['status'] === 'closed') {
                 $closedTime = strtotime($lastOrder['closed_at']);
-                // If closed less than 2 hours ago, show the bill
                 if ((time() - $closedTime) < 7200) {
                     $orderItems = $this->orderModel->getItems($lastOrder['id']);
-                    $this->view('layouts/public', [
-                        'view' => 'orders/paid_bill',
-                        'pageTitle' => 'Hóa đơn đã thanh toán',
-                        'table' => $table,
-                        'order' => $lastOrder,
-                        'items' => $orderItems,
-                        'isCustomer' => true
-                    ]);
-                    return;
+                    if (!empty($orderItems)) {
+                        $this->view('layouts/public', [
+                            'view' => 'orders/paid_bill',
+                            'pageTitle' => 'Hóa đơn đã thanh toán',
+                            'table' => $table,
+                            'order' => $lastOrder,
+                            'items' => $orderItems,
+                            'isCustomer' => true
+                        ]);
+                        return;
+                    }
                 }
             }
 
