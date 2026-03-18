@@ -84,85 +84,60 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA (Hoặc bàn vừa mới đóng) ---
-            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            
-            if ($lastOrder && $lastOrder['status'] === 'closed') {
-                $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
-                $minutesSinceClose = (time() - $closedTime) / 60;
+            // --- ĐƠN GIẢN HÓA LOGIC QR ---
+            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            $currentSessionId = session_id();
 
-                // 1. Nếu là cùng Session (khách cũ) -> Chặn trong 30 phút
-                $isSameSession = ($lastOrder['session_id'] === $currentSessionId);
-                
-                // 2. Nếu bàn vừa mới đóng tức thì bởi nhân viên (trong 10 phút) 
-                // -> Chặn mọi yêu cầu re-open tự động để tránh lỗi nhảy lại menu
-                $isRecentlyClosed = ($minutesSinceClose < 10);
-
-                if (($isSameSession && $minutesSinceClose < 30) || ($isRecentlyClosed && $table['status'] === 'available')) {
-                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
-                    $this->view('layouts/public', [
-                        'view' => 'orders/paid_bill',
-                        'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
-                        'table' => $table,
-                        'order' => $lastOrder,
-                        'items' => $orderItems,
-                        'isCustomer' => true,
-                        'token' => $token, // Chuyền token vào view
-                        'message' => $isRecentlyClosed ? 'Bàn này vừa được nhân viên đóng. Vui lòng quét lại sau ít phút hoặc liên hệ nhân viên.' : 'Phiên làm việc vừa kết thúc. Cảm ơn quý khách!'
-                    ]);
+            // 1. Nếu bàn đang bận (occupied)
+            if ($table['status'] === 'occupied') {
+                if ($openOrder) {
+                    // Nếu order đã có session_id và KHÔNG trùng với session hiện tại -> Bàn đang bận
+                    if (!empty($openOrder['session_id']) && $openOrder['session_id'] !== $currentSessionId) {
+                        $this->view('404', ['message' => 'Bàn này đang bận. Vui lòng liên hệ nhân viên hoặc chọn bàn khác.']);
+                        return;
+                    }
+                    
+                    // Nếu order chưa có session_id (nhân viên mở tay) -> Gán session hiện tại vào làm chủ bàn
+                    if (empty($openOrder['session_id'])) {
+                        $this->orderModel->updateSession($openOrder['id'], $currentSessionId);
+                    }
+                } else {
+                    // Trường hợp hiếm: Bàn ghi occupied nhưng không thấy order mở -> Reset về available
+                    $this->tableModel->update($tableId, ['status' => 'available']);
+                    $this->redirect("/qr/menu?table_id=$tableId&token=$token");
                     return;
                 }
-            }
-
-            // --- MỞ BÀN TỰ ĐỘNG (Dành cho khách mới hoặc Session mới) ---
-            if ($table['status'] === 'available') {
+            } 
+            // 2. Nếu bàn đang trống (available) -> Mở bàn mới
+            else {
                 $this->tableModel->open($tableId);
-                // Tạo order nháp gắn với Session hiện tại
-                $orderId = $this->orderModel->create([
+                $this->orderModel->create([
                     'table_id' => $tableId,
                     'waiter_id' => null,
                     'guest_count' => 1,
                     'order_source' => 'customer_qr',
                     'session_id' => $currentSessionId,
-                    'note' => 'Khách vừa quét mã'
+                    'note' => 'Khách quét QR mở bàn'
                 ]);
+                // Lấy lại order vừa tạo
+                $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             }
 
-            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (Dành cho bàn đã mở nhưng chưa đặt món) ---
-            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-            if ($openOrder) {
-                $items = $this->orderModel->getItems($openOrder['id']);
-                $minutesSinceOpen = (time() - strtotime($openOrder['opened_at'])) / 60;
-                
-                // Nếu bàn bận nhưng KHÔNG có món và đã quá 10 phút -> Giải phóng bàn
-                if (empty($items) && $minutesSinceOpen > 10) {
-                    $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 10 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
-                    $this->tableModel->close($tableId);
-                    $table['status'] = 'available';
-                    $this->redirect("/qr/menu?table_id=$tableId&token=$token");
-                    return;
-                }
-            }
-
+            // --- LẤY DỮ LIỆU HIỂN THỊ MENU ---
             $categories = $this->categoryModel->getAll();
             $menuItems = $this->menuModel->getAllActive();
-
-            // Get open order for this table if exists
-            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-            $orderItems = [];
-            $orderId = 0;
             
-            if ($openOrder) {
-                $orderId = $openOrder['id'];
-                
-                // --- BUG FIX: GẮN SESSION KHÁCH VÀO ORDER MỞ TAY ---
-                // Nếu order đang mở nhưng chưa có session_id (do nhân viên mở tay)
-                // Ta gán session_id hiện tại vào để sau này biết đường mà chặn re-scan
-                if (empty($openOrder['session_id'])) {
-                    $this->orderModel->updateSession($orderId, $currentSessionId);
-                }
-                
-                $orderItems = $this->orderModel->getItems($orderId);
+            $orderId = $openOrder ? $openOrder['id'] : 0;
+            $orderItems = $orderId ? $this->orderModel->getItems($orderId) : [];
+
+            // Notify staff about QR scan (chỉ báo một lần hoặc mỗi lần quét tùy nhu cầu)
+            if ($orderId) {
+                $this->notifModel->create([
+                    'order_id' => $orderId,
+                    'table_id' => $tableId,
+                    'type' => 'call_waiter',
+                    'message' => "Khách tại {$table['name']} vừa truy cập menu qua QR."
+                ]);
             }
 
             // Notify staff about QR scan
@@ -173,15 +148,26 @@ class QrMenuController extends Controller
                 'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
                 'message' => "Khách vừa quét mã QR tại bàn " . ($table['name'] ?? $tableId)
             ]);
+
+            // Notify staff about QR scan
+            if ($orderId) {
+                $this->notifModel->create([
+                    'order_id' => $orderId,
+                    'table_id' => $tableId,
+                    'type' => 'call_waiter',
+                    'message' => "Khách tại {$table['name']} vừa truy cập menu qua QR."
+                ]);
+            }
             
             $this->view('layouts/public', [
                 'view' => 'menu/customer',
-                'pageTitle' => 'Thực đơn bàn ' . ($table['name'] ?? $tableId),
+                'pageTitle' => 'Thực đơn ' . ($table['name'] ?? $tableId),
                 'table' => $table,
                 'categories' => $categories,
                 'menuItems' => $menuItems,
-                'openOrder' => $openOrder,
+                'orderId' => $orderId,
                 'orderItems' => $orderItems,
+                'token' => $token,
                 'isCustomer' => true
             ]);
         } catch (\Throwable $e) {
