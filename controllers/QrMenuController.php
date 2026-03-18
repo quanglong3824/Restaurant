@@ -71,41 +71,46 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- KIỂM TRA TOKEN TRONG SESSION (BẢO MẬT) ---
-            // Nếu session đã có token nhưng khác token hiện tại của bàn -> Bàn đã được reset/đổi QR mới
-            if (isset($_SESSION['customer_token']) && $_SESSION['customer_token'] !== $token) {
-                // Xóa session cũ để bắt đầu phiên mới với bàn mới/lượt mới
-                unset($_SESSION['customer_table_id']);
-                unset($_SESSION['customer_token']);
-                $this->redirect("/qr/menu?table_id=$tableId&token=$token");
+            // Increment scan count
+            $this->qrModel->incrementScanCount($qrTable['id']);
+
+            // Set customer session
+            $this->setupCustomerSession($tableId, $token);
+
+            $table = $this->tableModel->findById($tableId); // Reload table status
+            if (!$table) {
+                $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
                 return;
             }
 
-            // --- XỬ LÝ ĐỔI BÀN (TABLE SWITCHING) ---
-            $oldTableId = $_SESSION['customer_table_id'] ?? null;
-            if ($oldTableId && $oldTableId != $tableId) {
-                $oldOrder = $this->orderModel->findOpenOrderByTable($oldTableId);
-                if ($oldOrder) {
-                    $oldItems = $this->orderModel->getItems($oldOrder['id']);
-                    // Nếu bàn cũ CHƯA có món nào, tự động hủy bàn cũ để sang bàn mới
-                    if (empty($oldItems)) {
-                        $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Khách đổi sang bàn $tableId' WHERE id = ?", [$oldOrder['id']]);
-                        $this->tableModel->close($oldTableId);
-                    } else {
-                        // Nếu bàn cũ ĐÃ CÓ món, cảnh báo khách không được tự ý đổi bàn
-                        $this->view('404', [
-                            'message' => "Bạn đang có đơn hàng tại bàn " . $oldTableId . ". <br>Vui lòng thanh toán hoặc nhờ nhân viên hỗ trợ nếu muốn đổi bàn."
-                        ]);
-                        return;
-                    }
+            // --- KIỂM TRA ĐƠN HÀNG VỪA ĐÓNG (QUAN TRỌNG) ---
+            // Nếu bàn đang trống (available), nhưng vừa có đơn hàng đóng cách đây ít phút
+            // Ta không nên tự động mở lại bàn mới ngay lập tức khi khách cũ reload trang
+            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
+            if ($lastOrder && $lastOrder['status'] === 'closed') {
+                $closedTime = strtotime($lastOrder['closed_at']);
+                $secondsSinceClose = time() - $closedTime;
+                
+                // Nếu bàn vừa đóng trong vòng 15 phút, hiển thị trạng thái đã thanh toán/đóng bàn cho khách
+                if ($secondsSinceClose < 900) { // 15 phút
+                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
+                    $this->view('layouts/public', [
+                        'view' => 'orders/paid_bill',
+                        'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
+                        'table' => $table,
+                        'order' => $lastOrder,
+                        'items' => $orderItems,
+                        'isCustomer' => true,
+                        'message' => 'Bàn này đã được nhân viên đóng hoặc thanh toán. Cảm ơn quý khách!'
+                    ]);
+                    return;
                 }
             }
 
-            // --- MỞ BÀN NGAY KHI QUÉT (DÀNH CHO WAITER THẤY TRẠNG THÁI) ---
-            $table = $this->tableModel->findById($tableId);
-            if ($table && $table['status'] === 'available') {
+            // --- MỞ BÀN TỰ ĐỘNG (CHỈ KHI THỰC SỰ LÀ LƯỢT MỚI) ---
+            if ($table['status'] === 'available') {
                 $this->tableModel->open($tableId);
-                // Tạo order nháp (waiter_id = NULL là khách quét)
+                // Tạo order nháp
                 $orderId = $this->orderModel->create([
                     'table_id' => $tableId,
                     'waiter_id' => null,
@@ -125,46 +130,15 @@ class QrMenuController extends Controller
                 if (empty($items) && $minutesSinceOpen > 5) {
                     $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 5 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
                     $this->tableModel->close($tableId);
-                    $table['status'] = 'available'; // Reset trạng thái để tiếp tục xử lý bên dưới
+                    $table['status'] = 'available'; // Reset trạng thái
+                    // Reload page to start fresh
+                    $this->redirect("/qr/menu?table_id=$tableId&token=$token");
+                    return;
                 }
-            }
-
-            // Increment scan count
-            $this->qrModel->incrementScanCount($qrTable['id']);
-
-            // Set customer session
-            $this->setupCustomerSession($tableId, $token);
-
-            $table = $this->tableModel->findById($tableId); // Reload table status
-            if (!$table) {
-                $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
-                return;
             }
 
             $categories = $this->categoryModel->getAll();
             $menuItems = $this->menuModel->getAllActive();
-
-            // Get the most recent order for this table
-            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            
-            // If the last order is closed within a reasonable time (e.g., 2 hours)
-            if ($lastOrder && $lastOrder['status'] === 'closed') {
-                $closedTime = strtotime($lastOrder['closed_at']);
-                if ((time() - $closedTime) < 7200) {
-                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
-                    if (!empty($orderItems)) {
-                        $this->view('layouts/public', [
-                            'view' => 'orders/paid_bill',
-                            'pageTitle' => 'Hóa đơn đã thanh toán',
-                            'table' => $table,
-                            'order' => $lastOrder,
-                            'items' => $orderItems,
-                            'isCustomer' => true
-                        ]);
-                        return;
-                    }
-                }
-            }
 
             // Get open order for this table if exists
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);

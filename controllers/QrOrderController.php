@@ -23,28 +23,22 @@ class QrOrderController extends Controller
         $this->notifModel = new OrderNotification();
     }
 
-    private function requireCustomer(): array
+    private function requireCustomer(): int
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        if (!isset($_SESSION['customer_table_id']) || !isset($_SESSION['customer_token'])) {
+        if (!isset($_SESSION['customer_table_id'])) {
             $this->json(['error' => 'Vui lòng quét mã QR để tiếp tục'], 401);
             exit;
         }
-        return [
-            'table_id' => $_SESSION['customer_table_id'],
-            'token' => $_SESSION['customer_token']
-        ];
+        return (int)$_SESSION['customer_table_id'];
     }
 
     /** Submit customer order */
     public function submit(): void
     {
-        $customerInfo = $this->requireCustomer();
-        $tableId = $customerInfo['table_id'];
-        $sessionToken = $customerInfo['token'];
-        
+        $tableId = $this->requireCustomer();
         $currentSessionId = session_id();
         $cartData = json_decode($_POST['cart'] ?? '[]', true);
         $notes = $_POST['notes'] ?? '';
@@ -55,16 +49,6 @@ class QrOrderController extends Controller
         }
 
         try {
-            // Check table and QR token validity
-            require_once BASE_PATH . '/models/QrTable.php';
-            $qrModel = new QrTable();
-            $qrTable = $qrModel->findByToken($sessionToken);
-            
-            if (!$qrTable || $qrTable['table_id'] != $tableId) {
-                $this->json(['error' => 'Phiên làm việc hết hạn. Vui lòng quét lại mã QR tại bàn.'], 403);
-                return;
-            }
-
             // Check table status
             $table = $this->tableModel->findById($tableId);
             if (!$table) {
@@ -72,15 +56,25 @@ class QrOrderController extends Controller
                 return;
             }
 
+            // --- KIỂM TRA ĐƠN HÀNG VỪA ĐÓNG ---
+            // Ngăn chặn việc tự động mở lại bàn nếu nhân viên vừa mới đóng bàn xong
+            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
+            if ($lastOrder && $lastOrder['status'] === 'closed') {
+                $closedTime = strtotime($lastOrder['closed_at']);
+                if ((time() - $closedTime) < 900) { // 15 phút
+                    // Nếu bàn đang 'available' (vừa đóng), không cho khách cũ tự mở lại qua Ajax submit
+                    if ($table['status'] === 'available') {
+                        $this->json(['error' => 'Bàn này đã được đóng hoặc thanh toán. Vui lòng quét lại mã QR hoặc liên hệ nhân viên nếu muốn đặt lượt mới.'], 403);
+                        return;
+                    }
+                }
+            }
+
             // Check if open order exists
             $order = $this->orderModel->findOpenOrderByTable($tableId);
             $isNewOrder = false;
 
             if (!$order) {
-                // Nếu bàn trống nhưng khách vẫn còn link cũ và Token của bàn chưa được reset (vẫn dùng QR cũ)
-                // Ta vẫn có thể cho phép mở order mới, NHƯNG nếu quy trình là khi đóng bàn thì reset QR token
-                // thì khách sẽ bị chặn bởi đoạn check $qrTable ở trên.
-                
                 // If table is available, we open it
                 if ($table['status'] === 'available') {
                     $this->tableModel->open($tableId);
@@ -97,7 +91,6 @@ class QrOrderController extends Controller
                 ]);
                 $isNewOrder = true;
             } else {
-                // If the session token matches the current QR token, we allow adding to existing order
                 $orderId = $order['id'];
                 
                 // Append notes if any

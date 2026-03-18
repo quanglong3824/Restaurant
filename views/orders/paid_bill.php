@@ -1,11 +1,17 @@
 <?php // views/orders/paid_bill.php — Paid Bill View for Customers ?>
 <div class="paid-bill-wrapper">
     <div class="bill-success-header">
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
+        <div class="success-icon <?= ($order['payment_status'] ?? '') === 'canceled' ? 'text-warning' : '' ?>">
+            <i class="fas <?= ($order['payment_status'] ?? '') === 'canceled' ? 'fa-info-circle' : 'fa-check-circle' ?>"></i>
         </div>
-        <h2 class="playfair">Cảm ơn Quý khách!</h2>
-        <p>Hóa đơn của bạn đã được thanh toán hoàn tất.</p>
+        <h2 class="playfair">
+            <?= ($order['payment_status'] ?? '') === 'canceled' ? 'Bàn đã đóng' : 'Cảm ơn Quý khách!' ?>
+        </h2>
+        <p>
+            <?= ($order['payment_status'] ?? '') === 'canceled' 
+                ? 'Nhân viên đã đóng bàn này. Vui lòng quét lại mã QR nếu Quý khách muốn đặt món mới.' 
+                : 'Hóa đơn của bạn đã được thanh toán hoàn tất.' ?>
+        </p>
     </div>
 
     <div class="bill-details-card">
@@ -13,11 +19,12 @@
             <div class="bill-brand">AURORA RESTAURANT</div>
             <div class="bill-meta">
                 <span>Bàn: <strong><?= e($table['name']) ?></strong></span>
-                <span>Ngày: <?= date('d/m/Y H:i', strtotime($order['closed_at'])) ?></span>
+                <span>Ngày: <?= date('d/m/Y H:i', strtotime($order['closed_at'] ?? $order['updated_at'])) ?></span>
             </div>
             <div class="bill-id">Mã HĐ: #<?= $order['id'] ?></div>
         </div>
 
+        <?php if (!empty($items)): ?>
         <div class="bill-items">
             <?php $total = 0; ?>
             <?php foreach ($items as $item): ?>
@@ -41,11 +48,20 @@
                 <span>Tổng cộng</span>
                 <span class="total-val"><?= formatPrice($total) ?></span>
             </div>
+            <?php if (($order['payment_status'] ?? '') !== 'canceled'): ?>
             <div class="payment-method">
                 <i class="fas fa-credit-card"></i> 
-                Hình thức: <?= $order['payment_method'] === 'cash' ? 'Tiền mặt' : 'Chuyển khoản' ?>
+                Hình thức: <?= ($order['payment_method'] ?? 'cash') === 'cash' ? 'Tiền mặt' : 'Chuyển khoản' ?>
             </div>
+            <?php else: ?>
+            <div class="payment-method text-warning">
+                <i class="fas fa-times-circle"></i> Trạng thái: Đã hủy bàn
+            </div>
+            <?php endif; ?>
         </div>
+        <?php else: ?>
+            <p class="text-center text-muted my-4">Không có thông tin món ăn.</p>
+        <?php endif; ?>
     </div>
 
     <div class="bill-actions">
