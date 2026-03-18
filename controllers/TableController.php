@@ -290,6 +290,9 @@ class TableController extends Controller
                 // Đánh dấu bàn đích là bận
                 $this->tableModel->open($targetTableId);
                 
+                // Đồng bộ lại trạng thái bàn ngay lập tức
+                $this->tableModel->syncStatuses();
+                
                 // Unmerge the target table from parent if it was merged
                 if ($targetTableId > 0) {
                     $this->tableModel->unmergeTable($targetTableId);

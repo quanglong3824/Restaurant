@@ -444,13 +444,16 @@ class Order extends Model
                 $sourceTableName = $sourceOrder['table_name'] ?? ('Bàn ' . $sourceOrder['table_id']);
                 $splitNote = "Tách từ bàn " . $sourceTableName;
                 
+                // Use current user if no waiter in source
+                $waiterId = $sourceOrder['waiter_id'] ?? (Auth::isLoggedIn() ? Auth::user()['id'] : null);
+                
                 $this->execute(
-                    "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, payment_status, note, opened_at, created_at) 
-                     VALUES (?, ?, ?, ?, 'open', 'unpaid', ?, NOW(), NOW())",
+                    "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, payment_status, note, order_source, opened_at, created_at) 
+                     VALUES (?, ?, ?, ?, 'open', 'unpaid', ?, 'waiter', NOW(), NOW())",
                     [
                         $targetTableId, 
-                        $sourceOrder['waiter_id'] ?? null, 
-                        $sourceOrder['shift_id'] ?? null,
+                        $waiterId, 
+                        $sourceOrder['shift_id'] ?? ($_SESSION['user_shift_id'] ?? null),
                         max(1, (int)($sourceOrder['guest_count'] ?? 1)),
                         $splitNote
                     ]
