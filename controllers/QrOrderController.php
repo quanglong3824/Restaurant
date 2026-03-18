@@ -39,6 +39,7 @@ class QrOrderController extends Controller
     public function submit(): void
     {
         $tableId = $this->requireCustomer();
+        $currentSessionId = session_id();
         $cartData = json_decode($_POST['cart'] ?? '[]', true);
         $notes = $_POST['notes'] ?? '';
 
@@ -48,26 +49,45 @@ class QrOrderController extends Controller
         }
 
         try {
+            // Check table status
+            $table = $this->tableModel->findById($tableId);
+            if (!$table) {
+                $this->json(['error' => 'Không tìm thấy bàn'], 404);
+                return;
+            }
+
             // Check if open order exists
             $order = $this->orderModel->findOpenOrderByTable($tableId);
             $isNewOrder = false;
 
             if (!$order) {
-                // Create new order
+                // Check if table is occupied (but no order? possible if waiter manually opened it)
+                // If it is available, we open it
+                if ($table['status'] === 'available') {
+                    $this->tableModel->open($tableId);
+                }
+
+                // Create new order with session_id
                 $orderId = $this->orderModel->create([
                     'table_id' => $tableId,
                     'guest_count' => (int)($_POST['guest_count'] ?? 1),
                     'note' => $notes,
                     'order_source' => 'customer_qr',
+                    'session_id' => $currentSessionId,
                     'status' => 'open'
                 ]);
                 $isNewOrder = true;
-                
-                // Update table status to occupied
-                $this->tableModel->open($tableId);
             } else {
+                // If table is occupied, but this session is different from the one that opened the order
+                // Allow it IF it is a new scan at the table, but we should be careful.
+                // For simplicity, if they have a valid qr_token in session, we allow them to join.
                 $orderId = $order['id'];
-                // Optionally append notes if any
+                
+                // If the session_id is different, we could block it if we want strict anti-spam
+                // but that would prevent a group of friends from ordering together.
+                // So we allow it as long as they have the correct qr_token (meaning they scanned the QR).
+                
+                // Append notes if any
                 if ($notes) {
                     $this->orderModel->appendNote($orderId, $notes);
                 }
@@ -80,7 +100,7 @@ class QrOrderController extends Controller
                     'quantity' => $item['quantity'],
                     'note' => $item['note'] ?? '',
                     'status' => 'pending',
-                    'customer_id' => session_id(),
+                    'customer_id' => $currentSessionId,
                     'submitted_at' => date('Y-m-d H:i:s')
                 ]);
             }
@@ -90,7 +110,7 @@ class QrOrderController extends Controller
                 'order_id' => $orderId,
                 'table_id' => $tableId,
                 'notification_type' => $isNewOrder ? 'new_order' : 'order_item',
-                'title' => $isNewOrder ? "Bàn $tableId: Order mới" : "Bàn $tableId: Thêm món mới",
+                'title' => $isNewOrder ? "Bàn " . ($table['name'] ?? $tableId) . ": Order mới" : "Bàn " . ($table['name'] ?? $tableId) . ": Thêm món mới",
                 'message' => $isNewOrder ? "Khách đã gửi order mới qua QR." : "Khách đã gửi thêm món qua QR."
             ]);
 

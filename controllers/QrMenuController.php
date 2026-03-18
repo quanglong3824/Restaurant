@@ -106,27 +106,19 @@ class QrMenuController extends Controller
                 }
             }
 
-            // Get open order for this table if exists, or create one immediately
+            // Get open order for this table if exists
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             $orderItems = [];
+            $orderId = 0;
             
-            if (!$openOrder) {
-                // Mark table as busy immediately upon scan
-                $this->tableModel->open($tableId);
-                $orderId = $this->orderModel->create([
-                    'table_id' => $tableId,
-                    'order_source' => 'customer_qr',
-                    'status' => 'open'
-                ]);
-                $openOrder = $this->orderModel->findById($orderId);
-            } else {
+            if ($openOrder) {
                 $orderId = $openOrder['id'];
                 $orderItems = $this->orderModel->getItems($orderId);
             }
 
             // Notify staff about QR scan
             $this->notifModel->create([
-                'order_id' => $orderId,
+                'order_id' => $orderId ?: null,
                 'table_id' => $tableId,
                 'notification_type' => 'scan_qr',
                 'title' => "Bàn " . ($table['name'] ?? $tableId) . ": Khách đang xem menu",
