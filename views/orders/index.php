@@ -322,25 +322,92 @@ if (!empty($items)) {
                 <input type="hidden" name="order_id" id="closeOrderId">
                 <input type="hidden" id="isQuickCancel" value="0">
 
-                <div class="form-group">
+                <div class="form-group mb-4">
                     <label class="form-label">PHƯƠNG THỨC THANH TOÁN</label>
-                    <div class="payment-grid mb-4">
-                        <label class="pay-btn">
-                            <input type="radio" name="payment_method" value="cash" checked>
-                            <span class="pay-cell">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span class="ms-1">TIỀN MẶT</span>
-                            </span>
+                    <div class="payment-method-grid">
+                        <label class="method-card active" id="methodCash">
+                            <input type="radio" name="payment_method" value="cash" checked onchange="updatePaymentMethodUI('cash')" style="display:none">
+                            <div class="method-icon"><i class="fas fa-money-bill-wave"></i></div>
+                            <strong>TIỀN MẶT</strong>
                         </label>
-                        <label class="pay-btn">
-                            <input type="radio" name="payment_method" value="transfer">
-                            <span class="pay-cell">
-                                <i class="fas fa-university"></i>
-                                <span class="ms-1">CHUYỂN KHOẢN</span>
-                            </span>
+                        <label class="method-card" id="methodTransfer">
+                            <input type="radio" name="payment_method" value="transfer" onchange="updatePaymentMethodUI('transfer')" style="display:none">
+                            <div class="method-icon"><i class="fas fa-university"></i></div>
+                            <strong>CHUYỂN KHOẢN</strong>
                         </label>
                     </div>
                 </div>
+
+                <style>
+                    .payment-method-grid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 0.75rem;
+                    }
+                    .method-card {
+                        background: #f8fafc;
+                        border: 2px solid #e2e8f0;
+                        border-radius: 14px;
+                        padding: 1rem;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        text-align: center;
+                    }
+                    .method-icon {
+                        width: 40px;
+                        height: 40px;
+                        background: #fff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.1rem;
+                        color: #94a3b8;
+                        transition: all 0.3s;
+                    }
+                    .method-card strong {
+                        font-size: 0.75rem;
+                        font-weight: 800;
+                        color: #64748b;
+                        letter-spacing: 0.5px;
+                    }
+
+                    /* Active Method State */
+                    .method-card.active {
+                        border-color: var(--gold);
+                        background: rgba(212, 175, 55, 0.08);
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15);
+                    }
+                    .method-card.active .method-icon {
+                        background: var(--gold);
+                        color: #fff;
+                        border-color: var(--gold);
+                    }
+                    .method-card.active strong {
+                        color: var(--gold-dark);
+                    }
+                </style>
+
+                <script>
+                    function updatePaymentMethodUI(method) {
+                        const cashCard = document.getElementById('methodCash');
+                        const transferCard = document.getElementById('methodTransfer');
+                        
+                        if (method === 'cash') {
+                            cashCard.classList.add('active');
+                            transferCard.classList.remove('active');
+                        } else {
+                            transferCard.classList.add('active');
+                            cashCard.classList.remove('active');
+                        }
+                    }
+                </script>
 
                 <div class="payment-options-grid mb-4">
                     <div class="payment-option-card" id="cardPaid" onclick="togglePaymentCheck('checkPaid')">
