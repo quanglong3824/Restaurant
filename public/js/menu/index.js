@@ -31,10 +31,12 @@ function handleOpenSetModal(set) {
 }
 
 function confirmAddSetToOrder() {
-    if (!MENU_CONFIG.orderId) { alert('Vui lòng chọn bàn/order trước!'); return; }
+    const tableId = MENU_CONFIG.tableId;
+    if (!tableId) { alert('Vui lòng chọn bàn!'); return; }
 
     const f = new URLSearchParams();
-    f.append('order_id', MENU_CONFIG.orderId);
+    f.append('order_id', MENU_CONFIG.orderId || 0);
+    f.append('table_id', tableId);
     f.append('set_id', currentSet.id);
 
     // Prepare items array for the controller
@@ -190,9 +192,15 @@ function changeModalQty(delta) { if (!currentItem) return; currentItem.qty = Mat
 function updateModalUI() { document.getElementById('modalItemQty').textContent = currentItem.qty; document.getElementById('modalBtnTotal').textContent = formatMoney(currentItem.qty * currentItem.price); }
 
 function confirmAddToOrder() {
+    const tableId = MENU_CONFIG.tableId;
+    if (!tableId) { alert('Vui lòng chọn bàn!'); return; }
+
     const f = new FormData();
-    f.append('order_id', currentItem.orderId); f.append('menu_item_id', currentItem.id);
-    f.append('qty', currentItem.qty); f.append('note', document.getElementById('modalItemNote').value);
+    f.append('order_id', MENU_CONFIG.orderId || 0); 
+    f.append('table_id', tableId);
+    f.append('menu_item_id', currentItem.id);
+    f.append('qty', currentItem.qty); 
+    f.append('note', document.getElementById('modalItemNote').value);
     
     fetch(MENU_CONFIG.baseUrl + '/orders/add', { 
         method: 'POST', 
@@ -215,11 +223,17 @@ function confirmAddToOrder() {
     });
 }
 
-function quickAdd(event, itemId, orderId) {
-    event.stopPropagation();
-    if (!orderId) { alert('Vui lòng chọn bàn trước khi gọi món!'); return; }
-    const f = new FormData(); f.append('order_id', orderId); f.append('menu_item_id', itemId); f.append('qty', 1);
-    
+function quickAdd(e, itemId, orderId) {
+    e.stopPropagation();
+    const tableId = MENU_CONFIG.tableId;
+    if (!tableId) { alert('Vui lòng chọn bàn trước khi gọi món!'); return; }
+
+    const f = new FormData(); 
+    f.append('order_id', orderId || 0); 
+    f.append('table_id', tableId);
+    f.append('menu_item_id', itemId); 
+    f.append('qty', 1);
+
     fetch(MENU_CONFIG.baseUrl + '/orders/add', { 
         method: 'POST', 
         body: f 

@@ -127,7 +127,7 @@
         <div class="cart-panel">
             <div class="cart-header">
                 <h4><?= $tableId > 0 ? e($tableModel->getFullDisplayName($tableId)) : 'GIỎ HÀNG' ?></h4>
-                <small><?= $orderId > 0 ? e($order['guest_count'] ?? 1) . ' khách' : 'Chưa chọn bàn' ?></small>
+                <small><?= $orderId > 0 ? e($order['guest_count'] ?? 1) . ' khách' : ($tableId > 0 ? 'Bàn trống' : 'Chưa chọn bàn') ?></small>
                 <?php if ($orderId > 0 && count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) > 0): ?>
                 <button type="button" class="split-btn" onclick="openSplitModal()" title="Tách bàn">
                     <i class="fas fa-cut"></i>
@@ -136,7 +136,7 @@
             </div>
             
             <div class="cart-body" onclick="handleBodyClick(event)">
-                <?php if ($orderId <= 0): ?>
+                <?php if ($tableId <= 0): ?>
                     <div class="select-table-box p-4 text-center">
                         <div class="mb-3" style="font-size: 2.5rem; color: var(--gold); opacity: 0.5;">
                             <i class="fas fa-chair"></i>
@@ -153,7 +153,8 @@
                 <?php elseif (empty($orderItems)): ?>
                     <div class="empty-cart">
                         <i class="fas fa-shopping-basket"></i>
-                        <p>Chưa có món nào</p>
+                        <p>Bàn chưa có món</p>
+                        <p class="text-muted small">Chọn món để bắt đầu order</p>
                     </div>
                 <?php else: ?>
                     <?php 
@@ -231,8 +232,8 @@
                     <span class="total-amount" id="orderTotal"><?= formatPrice($orderTotal) ?></span>
                 </div>
                 <div id="cartActionBtn">
-                    <?php if ($orderId > 0): ?>
-                        <?php $draftCount = count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')); ?>
+                    <?php if ($tableId > 0): ?>
+                        <?php $draftCount = $orderId > 0 ? count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) : 0; ?>
                         <?php if ($draftCount > 0): ?>
                             <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="cart-action-btn gold">
                                 <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?>)
@@ -240,14 +241,12 @@
                             <button type="button" id="splitTableBtn" onclick="openSplitModal()" class="cart-action-btn" style="background:#dc3545; color:white; display:none;">
                                 <i class="fas fa-cut"></i> TÁCH (<span id="selectedCount">0</span>)
                             </button>
-                        <?php elseif (!empty($orderItems)): ?>
+                        <?php elseif ($orderId > 0 && !empty($orderItems)): ?>
                             <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn success">
                                 <i class="fas fa-check-circle"></i> XEM BILL
                             </a>
                         <?php else: ?>
-                            <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn ghost">
-                                <i class="fas fa-file-invoice"></i> CHI TIẾT
-                            </a>
+                            <button disabled class="cart-action-btn ghost w-100">BÀN CHƯA CÓ MÓN</button>
                         <?php endif; ?>
                     <?php else: ?>
                         <button disabled class="cart-action-btn ghost w-100">CHƯA CHỌN BÀN</button>

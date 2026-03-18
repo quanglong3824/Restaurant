@@ -143,11 +143,24 @@ class OrderController extends Controller
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
 
         $orderId = (int) $this->input('order_id');
+        $tableId = (int) $this->input('table_id');
         $menuItemId = (int) $this->input('menu_item_id');
         $qty = max(0, (int) $this->input('qty', 1));
         $note = trim((string) $this->input('note', ''));
 
-        if ($menuItemId > 0) {
+        // Nếu chưa có order_id nhưng có table_id, thử tìm hoặc tạo mới
+        if ($orderId <= 0 && $tableId > 0) {
+            $existingOrder = $this->orderModel->getOpenByTable($tableId);
+            if ($existingOrder) {
+                $orderId = (int) $existingOrder['id'];
+            } else {
+                // Tự động mở bàn và tạo order mới cho nhân viên
+                $this->tableModel->open($tableId);
+                $orderId = $this->orderModel->create($tableId, null, 1);
+            }
+        }
+
+        if ($menuItemId > 0 && $orderId > 0) {
             $item = $this->menuModel->findById($menuItemId);
             if (!$item || !$item['is_available']) {
                 $this->json(['ok' => false, 'message' => 'Món không khả dụng.'], 400);
@@ -197,8 +210,20 @@ class OrderController extends Controller
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN);
 
         $orderId = (int) $this->input('order_id');
+        $tableId = (int) $this->input('table_id');
         $setId = (int) $this->input('set_id');
         $items = $this->input('items', []);
+
+        // Nếu chưa có order_id nhưng có table_id, thử tìm hoặc tạo mới
+        if ($orderId <= 0 && $tableId > 0) {
+            $existingOrder = $this->orderModel->getOpenByTable($tableId);
+            if ($existingOrder) {
+                $orderId = (int) $existingOrder['id'];
+            } else {
+                $this->tableModel->open($tableId);
+                $orderId = $this->orderModel->create($tableId, null, 1);
+            }
+        }
 
         $order = $this->orderModel->findById($orderId);
         if (!$order || $order['status'] !== 'open') {
