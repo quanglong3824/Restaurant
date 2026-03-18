@@ -39,10 +39,11 @@ class MenuController extends Controller
         $setModel = new MenuSet();
 
         // Lấy categories theo menu type
-        $categories = $categoryModel->getActiveByType($menuType);
-        $grouped = $itemModel->getGroupedByCategory($menuType);
+        // Nếu là tab 'sets', chúng ta không cần lấy categories từ menu_items
+        $categories = ($menuType === 'sets') ? [] : $categoryModel->getActiveByType($menuType);
+        $grouped = ($menuType === 'sets') ? [] : $itemModel->getGroupedByCategory($menuType);
 
-        // Lấy sets nếu là sets
+        // Lấy sets nếu là tab sets
         $sets = [];
         if ($menuType === 'sets') {
             $sets = $setModel->getActive();
