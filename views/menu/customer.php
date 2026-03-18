@@ -4,33 +4,80 @@
 <!-- Location Check Overlay -->
 <div id="locationOverlay" class="location-check-overlay">
     <div class="location-card">
-        <i class="fas fa-map-marker-alt fa-3x mb-3 text-gold pulse"></i>
-        <h3>XÁC THỰC VỊ TRÍ</h3>
-        <p>Vui lòng cho phép ứng dụng truy cập vị trí của bạn để xem menu và đặt món tại bàn.</p>
-        <div id="locationError" class="text-danger small mt-2" style="display:none;"></div>
-        <button id="btnAllowLocation" class="btn-gold w-100 mt-4">
-            <i class="fas fa-location-arrow me-2"></i> CHO PHÉP TRUY CẬP
-        </button>
+        <div class="location-header">
+            <div class="logo-circle">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>XÁC NHẬN HIỆN DIỆN</h3>
+            <p class="subtitle">Chào mừng Quý khách đến với Aurora Restaurant</p>
+        </div>
+        
+        <div class="location-body">
+            <p>Để đảm bảo <strong>tốc độ phục vụ tối ưu</strong> và <strong>bảo mật đơn hàng</strong> tại bàn, vui lòng xác nhận vị trí của bạn.</p>
+            
+            <ul class="benefits-list">
+                <li><i class="fas fa-check-circle"></i> Đơn hàng gửi trực tiếp đến bếp ngay lập tức.</li>
+                <li><i class="fas fa-lock"></i> Bảo mật tuyệt đối: Không lưu trữ lịch sử vị trí.</li>
+                <li><i class="fas fa-history"></i> Tự động hủy dữ liệu ngay khi Quý khách rời đi.</li>
+            </ul>
+        </div>
+
+        <div id="locationError" class="location-error-msg" style="display:none;"></div>
+        
+        <div class="location-footer">
+            <button id="btnAllowLocation" class="btn-gold-premium w-100">
+                <i class="fas fa-location-arrow me-2"></i> BẮT ĐẦU TRẢI NGHIỆM
+            </button>
+            <p class="privacy-note">Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi.</p>
+        </div>
     </div>
 </div>
 
 <style>
     .location-check-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-        z-index: 10000; display: flex; align-items: center; justify-content: center;
-        padding: 20px; text-align: center; color: white;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98));
+        backdrop-filter: blur(15px); z-index: 10000;
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px; color: white;
     }
     .location-card {
-        background: #1e293b; padding: 40px 30px; border-radius: 24px;
-        border: 1px solid var(--gold); max-width: 400px; width: 100%;
+        background: #1e293b; padding: 40px 30px; border-radius: 30px;
+        border: 1px solid rgba(212, 175, 55, 0.3); max-width: 420px; width: 100%;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
-    .pulse { animation: pulse-gold-small 2s infinite; }
-    @keyframes pulse-gold-small {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.1); opacity: 0.7; }
-        100% { transform: scale(1); opacity: 1; }
+    .location-header { margin-bottom: 25px; text-align: center; }
+    .logo-circle {
+        width: 70px; height: 70px; background: rgba(212, 175, 55, 0.1);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 15px; border: 1px solid var(--gold);
+        color: var(--gold); font-size: 2rem;
     }
+    .location-card h3 { 
+        font-family: 'Playfair Display', serif; letter-spacing: 2px;
+        margin-bottom: 5px; color: #fff;
+    }
+    .subtitle { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+    .location-body { text-align: left; margin-bottom: 30px; line-height: 1.6; }
+    .benefits-list { list-style: none; padding: 0; margin: 20px 0 0; }
+    .benefits-list li { 
+        font-size: 0.85rem; margin-bottom: 12px; display: flex; align-items: center; 
+        color: #cbd5e1;
+    }
+    .benefits-list i { color: var(--gold); margin-right: 12px; font-size: 1rem; }
+    .location-error-msg {
+        background: rgba(239, 68, 68, 0.1); color: #f87171;
+        padding: 12px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);
+        margin-bottom: 20px; font-size: 0.85rem;
+    }
+    .btn-gold-premium {
+        background: linear-gradient(135deg, #d4af37, #b8860b);
+        color: white; border: none; padding: 15px; border-radius: 15px;
+        font-weight: 700; font-size: 1rem; letter-spacing: 1px;
+        transition: all 0.3s; cursor: pointer;
+    }
+    .btn-gold-premium:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
+    .privacy-note { font-size: 0.7rem; color: #64748b; margin-top: 15px; text-align: center; }
 </style>
 
 <div class="customer-menu-wrapper" id="menuWrapper" style="display:none;">
