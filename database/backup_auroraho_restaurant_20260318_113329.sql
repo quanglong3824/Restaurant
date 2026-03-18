@@ -1,5 +1,5 @@
 -- Aurora Restaurant Database Backup
--- Generated: 2026-03-17 20:20:06
+-- Generated: 2026-03-18 11:33:29
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -19,7 +19,7 @@ CREATE TABLE `customer_sessions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_session_id` (`session_id`),
   KEY `idx_table_active` (`table_id`,`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `customer_sessions` VALUES ('1', '4h9mq0ckfmghi9ni3e7hkgr27k', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:07:47', '2026-03-17 19:37:47', '2026-03-17 19:07:47');
 INSERT INTO `customer_sessions` VALUES ('2', 'u76o6dpolbpnem292njglu0n31', '2', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:08:13', '2026-03-17 19:38:13', '2026-03-17 19:08:13');
@@ -28,9 +28,22 @@ INSERT INTO `customer_sessions` VALUES ('4', 'k1vqer89fd6mcaodui959lc94u', '1', 
 INSERT INTO `customer_sessions` VALUES ('5', 'gqijh3f69va64doa2d5bu8c9tr', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:25:38', '2026-03-17 19:55:38', '2026-03-17 19:21:56');
 INSERT INTO `customer_sessions` VALUES ('6', 'rrvdnl6pgo3b3etu7gpgople8p', '12', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:27:34', '2026-03-17 19:57:34', '2026-03-17 19:25:52');
 INSERT INTO `customer_sessions` VALUES ('7', 'ro6dtb9cs0o2mpqkmtok1onbji', '6', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:33:50', '2026-03-17 20:03:50', '2026-03-17 19:33:19');
-INSERT INTO `customer_sessions` VALUES ('8', 'cu0rl0q4flcp73fpn9gns57njh', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 20:16:09', '2026-03-17 20:46:09', '2026-03-17 19:35:08');
+INSERT INTO `customer_sessions` VALUES ('8', 'cu0rl0q4flcp73fpn9gns57njh', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 21:44:19', '2026-03-18 21:44:19', '2026-03-17 19:35:08');
 INSERT INTO `customer_sessions` VALUES ('9', '8kouqchg3ep9n11mcd39q280hc', '28', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:48:54', '2026-03-17 20:18:54', '2026-03-17 19:48:54');
 INSERT INTO `customer_sessions` VALUES ('10', 'm1ill4h7m9n1m35bstbf69oggi', '28', NULL, '222.253.191.65', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36', '1', '2026-03-17 19:49:23', '2026-03-17 20:19:23', '2026-03-17 19:49:23');
+INSERT INTO `customer_sessions` VALUES ('11', 'dh3j0vh3dbh148vi2tc7gl1ek8', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-17 21:17:12', '2026-03-18 21:17:12', '2026-03-17 21:17:12');
+INSERT INTO `customer_sessions` VALUES ('13', 'r03redi7dachirj4pb0efltlto', '3', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 21:17:44', '2026-03-18 21:17:44', '2026-03-17 21:17:44');
+INSERT INTO `customer_sessions` VALUES ('17', 'ph7n9bueatdr00mt8tj7n815fm', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 21:23:53', '2026-03-18 21:23:53', '2026-03-17 21:23:53');
+INSERT INTO `customer_sessions` VALUES ('27', 'ev5d51u1jocn7admdfgmsm4ffg', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 21:44:56', '2026-03-18 21:44:56', '2026-03-17 21:44:56');
+INSERT INTO `customer_sessions` VALUES ('28', '55onaj18n2qqfl47tnp3usf6gr', '21', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 21:46:45', '2026-03-18 21:46:45', '2026-03-17 21:45:09');
+INSERT INTO `customer_sessions` VALUES ('31', 'ak6lf5e3u96gei6kdovnlblkhl', '12', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 09:52:52', '2026-03-19 09:52:52', '2026-03-18 09:50:34');
+INSERT INTO `customer_sessions` VALUES ('34', '9g9q3s2vdhjn3jccaniqccjjhp', '1', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 09:53:02', '2026-03-19 09:53:02', '2026-03-18 09:53:02');
+INSERT INTO `customer_sessions` VALUES ('35', 'fb0fflnkclmpqu92dp5hjjdmh9', '4', NULL, '118.70.230.232', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-18 10:49:49', '2026-03-19 10:49:49', '2026-03-18 10:49:49');
+INSERT INTO `customer_sessions` VALUES ('36', 'cfe628klq7cquesneid5dvekj8', '12', NULL, '118.70.230.232', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-18 10:50:33', '2026-03-19 10:50:33', '2026-03-18 10:50:33');
+INSERT INTO `customer_sessions` VALUES ('37', '578rmiqo7pv7632iu0i5nmdkb8', '10', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 11:00:45', '2026-03-19 11:00:45', '2026-03-18 11:00:45');
+INSERT INTO `customer_sessions` VALUES ('38', 'cqos6peiqauf32re8m1rhjsioi', '14', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 11:14:45', '2026-03-19 11:14:45', '2026-03-18 11:14:45');
+INSERT INTO `customer_sessions` VALUES ('39', 't9d324s0asl14s5b3efsm1a0nt', '1', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 11:26:00', '2026-03-19 11:26:00', '2026-03-18 11:17:30');
+INSERT INTO `customer_sessions` VALUES ('41', 'fb4ig0cg8j47h7nqr5nrc34tg1', '14', NULL, '118.70.230.232', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-18 11:17:47', '2026-03-19 11:17:47', '2026-03-18 11:17:47');
 
 DROP TABLE IF EXISTS `location_limits`;
 CREATE TABLE `location_limits` (
@@ -53,7 +66,7 @@ CREATE TABLE `menu_categories` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL COMMENT 'Tên danh mục: Khai vị, Chính, Tráng miệng...',
   `name_en` varchar(100) DEFAULT NULL COMMENT 'Tên tiếng Anh (tuỳ chọn)',
-  `menu_type` enum('asia','europe','alacarte','other') DEFAULT 'asia',
+  `menu_type` enum('asia','europe','alacarte','set','other') DEFAULT 'asia',
   `icon` varchar(50) DEFAULT 'fa-utensils' COMMENT 'Font Awesome icon class',
   `sort_order` smallint(5) unsigned DEFAULT 0 COMMENT 'Thứ tự hiển thị',
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
@@ -288,7 +301,7 @@ CREATE TABLE `order_items` (
   CONSTRAINT `fk_order_items_menu` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_order_items_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `order_items` VALUES ('1', '1', '6', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-07 19:22:05', '2026-03-17 12:19:12');
 INSERT INTO `order_items` VALUES ('2', '1', '6', '125', 'Salad Cá Ngừ', '125000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-07 19:23:55', '2026-03-17 12:19:12');
@@ -411,6 +424,21 @@ INSERT INTO `order_items` VALUES ('143', '57', '12', '5', 'Bò lúc lắc', '180
 INSERT INTO `order_items` VALUES ('144', '57', '12', '67', 'Lẩu bò nhúng dấm', '320000', '1', '', NULL, '0', '', 'rrvdnl6pgo3b3etu7gpgople8p', '2026-03-17 19:27:05', '2026-03-17 19:27:05', '2026-03-17 19:27:05');
 INSERT INTO `order_items` VALUES ('145', '57', '12', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'rrvdnl6pgo3b3etu7gpgople8p', '2026-03-17 19:27:39', '2026-03-17 19:27:39', '2026-03-17 19:27:39');
 INSERT INTO `order_items` VALUES ('146', '58', '1', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'cu0rl0q4flcp73fpn9gns57njh', '2026-03-17 19:38:54', '2026-03-17 19:38:54', '2026-03-17 19:38:54');
+INSERT INTO `order_items` VALUES ('147', '62', '1', '8', 'Chè bưởi', '45000', '1', '', NULL, '0', 'draft', NULL, NULL, '2026-03-17 21:24:28', '2026-03-17 21:24:28');
+INSERT INTO `order_items` VALUES ('148', '62', '1', '61', 'Gỏi ngó sen tôm thịt', '125000', '3', '', NULL, '0', '', 'cu0rl0q4flcp73fpn9gns57njh', '2026-03-17 21:24:56', '2026-03-17 21:24:56', '2026-03-17 21:24:56');
+INSERT INTO `order_items` VALUES ('149', '64', '21', '9', 'Kem dừa', '55000', '1', '', NULL, '0', 'draft', NULL, NULL, '2026-03-17 21:33:15', '2026-03-17 21:33:15');
+INSERT INTO `order_items` VALUES ('150', '64', '21', '94', 'Bánh flan', '50000', '1', '', NULL, '0', 'draft', NULL, NULL, '2026-03-17 21:33:17', '2026-03-17 21:33:17');
+INSERT INTO `order_items` VALUES ('151', '65', '12', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'ak6lf5e3u96gei6kdovnlblkhl', '2026-03-18 09:50:48', '2026-03-18 09:50:48', '2026-03-18 09:50:48');
+INSERT INTO `order_items` VALUES ('152', '69', '2', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', '152', '1', 'confirmed', NULL, NULL, '2026-03-18 10:24:10', '2026-03-18 10:25:24');
+INSERT INTO `order_items` VALUES ('153', '68', '19', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'draft', NULL, NULL, '2026-03-18 10:24:11', '2026-03-18 10:24:11');
+INSERT INTO `order_items` VALUES ('154', '71', '4', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', '154', '1', 'confirmed', NULL, NULL, '2026-03-18 10:27:16', '2026-03-18 10:30:29');
+INSERT INTO `order_items` VALUES ('155', '70', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:27:17', '2026-03-18 10:27:20');
+INSERT INTO `order_items` VALUES ('156', '70', '1', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:27:18', '2026-03-18 10:27:20');
+INSERT INTO `order_items` VALUES ('157', '70', '1', '56', 'Chả giò rế hải sản', '95000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:27:19', '2026-03-18 10:27:20');
+INSERT INTO `order_items` VALUES ('158', '72', '1', '1', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:32:57', '2026-03-18 10:33:03');
+INSERT INTO `order_items` VALUES ('159', '72', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:32:58', '2026-03-18 10:33:03');
+INSERT INTO `order_items` VALUES ('160', '72', '1', '2', 'Chả giò rế', '75000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-03-18 10:32:59', '2026-03-18 10:33:03');
+INSERT INTO `order_items` VALUES ('161', '73', '4', '56', 'Chả giò rế hải sản', '95000', '1', '', '161', '1', 'confirmed', NULL, NULL, '2026-03-18 10:33:00', '2026-03-18 10:33:26');
 
 DROP TABLE IF EXISTS `order_notifications`;
 CREATE TABLE `order_notifications` (
@@ -432,32 +460,58 @@ CREATE TABLE `order_notifications` (
   KEY `idx_notification_created` (`created_at`),
   CONSTRAINT `fk_notification_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_notification_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu trữ thông báo order cho waiter';
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu trữ thông báo order cho waiter';
 
-INSERT INTO `order_notifications` VALUES ('1', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '0', NULL, NULL, '2026-03-17 19:07:47');
-INSERT INTO `order_notifications` VALUES ('2', NULL, '2', 'scan_qr', 'Bàn A.02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.02', '0', NULL, NULL, '2026-03-17 19:08:13');
-INSERT INTO `order_notifications` VALUES ('3', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:11:24');
-INSERT INTO `order_notifications` VALUES ('4', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '0', NULL, NULL, '2026-03-17 19:21:08');
-INSERT INTO `order_notifications` VALUES ('5', NULL, '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '0', NULL, NULL, '2026-03-17 19:21:27');
-INSERT INTO `order_notifications` VALUES ('6', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '0', NULL, NULL, '2026-03-17 19:21:56');
-INSERT INTO `order_notifications` VALUES ('7', NULL, '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '0', NULL, NULL, '2026-03-17 19:23:28');
-INSERT INTO `order_notifications` VALUES ('8', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '0', NULL, NULL, '2026-03-17 19:25:38');
-INSERT INTO `order_notifications` VALUES ('9', NULL, '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '0', NULL, NULL, '2026-03-17 19:25:52');
-INSERT INTO `order_notifications` VALUES ('10', '57', '12', 'new_order', 'Bàn 12: Order mới', 'Khách đã gửi order mới qua QR.', '0', NULL, NULL, '2026-03-17 19:26:16');
-INSERT INTO `order_notifications` VALUES ('11', '57', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '0', NULL, NULL, '2026-03-17 19:26:52');
-INSERT INTO `order_notifications` VALUES ('12', '57', '12', 'order_item', 'Bàn 12: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '0', NULL, NULL, '2026-03-17 19:27:05');
-INSERT INTO `order_notifications` VALUES ('13', '57', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '0', NULL, NULL, '2026-03-17 19:27:34');
-INSERT INTO `order_notifications` VALUES ('14', '57', '12', 'order_item', 'Bàn 12: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '0', NULL, NULL, '2026-03-17 19:27:39');
-INSERT INTO `order_notifications` VALUES ('15', NULL, '6', 'scan_qr', 'Bàn A.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.06', '0', NULL, NULL, '2026-03-17 19:33:19');
-INSERT INTO `order_notifications` VALUES ('16', NULL, '6', 'scan_qr', 'Bàn A.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.06', '0', NULL, NULL, '2026-03-17 19:33:50');
-INSERT INTO `order_notifications` VALUES ('17', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '0', NULL, NULL, '2026-03-17 19:35:08');
-INSERT INTO `order_notifications` VALUES ('18', '58', '1', 'new_order', 'Bàn 1: Order mới', 'Khách đã gửi order mới qua QR.', '0', NULL, NULL, '2026-03-17 19:38:54');
-INSERT INTO `order_notifications` VALUES ('19', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:48:54');
-INSERT INTO `order_notifications` VALUES ('20', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:49:00');
-INSERT INTO `order_notifications` VALUES ('21', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:49:23');
-INSERT INTO `order_notifications` VALUES ('22', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:58:35');
-INSERT INTO `order_notifications` VALUES ('23', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 19:59:22');
-INSERT INTO `order_notifications` VALUES ('24', '59', '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '0', NULL, NULL, '2026-03-17 20:16:09');
+INSERT INTO `order_notifications` VALUES ('1', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:07:47');
+INSERT INTO `order_notifications` VALUES ('2', NULL, '2', 'scan_qr', 'Bàn A.02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:08:13');
+INSERT INTO `order_notifications` VALUES ('3', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:11:24');
+INSERT INTO `order_notifications` VALUES ('4', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:21:08');
+INSERT INTO `order_notifications` VALUES ('5', NULL, '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:21:27');
+INSERT INTO `order_notifications` VALUES ('6', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:21:56');
+INSERT INTO `order_notifications` VALUES ('7', NULL, '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:23:28');
+INSERT INTO `order_notifications` VALUES ('8', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:25:38');
+INSERT INTO `order_notifications` VALUES ('9', NULL, '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:25:52');
+INSERT INTO `order_notifications` VALUES ('10', '57', '12', 'new_order', 'Bàn 12: Order mới', 'Khách đã gửi order mới qua QR.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:26:16');
+INSERT INTO `order_notifications` VALUES ('11', '57', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:26:52');
+INSERT INTO `order_notifications` VALUES ('12', '57', '12', 'order_item', 'Bàn 12: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:27:05');
+INSERT INTO `order_notifications` VALUES ('13', '57', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:27:34');
+INSERT INTO `order_notifications` VALUES ('14', '57', '12', 'order_item', 'Bàn 12: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:27:39');
+INSERT INTO `order_notifications` VALUES ('15', NULL, '6', 'scan_qr', 'Bàn A.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.06', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:33:19');
+INSERT INTO `order_notifications` VALUES ('16', NULL, '6', 'scan_qr', 'Bàn A.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.06', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:33:50');
+INSERT INTO `order_notifications` VALUES ('17', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:35:08');
+INSERT INTO `order_notifications` VALUES ('18', '58', '1', 'new_order', 'Bàn 1: Order mới', 'Khách đã gửi order mới qua QR.', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:38:54');
+INSERT INTO `order_notifications` VALUES ('19', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:48:54');
+INSERT INTO `order_notifications` VALUES ('20', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:49:00');
+INSERT INTO `order_notifications` VALUES ('21', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:49:23');
+INSERT INTO `order_notifications` VALUES ('22', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:58:35');
+INSERT INTO `order_notifications` VALUES ('23', NULL, '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:59:22');
+INSERT INTO `order_notifications` VALUES ('24', '59', '28', 'scan_qr', 'Bàn Âu 02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn Âu 02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 20:16:09');
+INSERT INTO `order_notifications` VALUES ('25', '60', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 21:17:12');
+INSERT INTO `order_notifications` VALUES ('26', '61', '3', 'scan_qr', 'Bàn A.03: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.03', '1', '2026-03-18 09:43:59', '3', '2026-03-17 21:17:44');
+INSERT INTO `order_notifications` VALUES ('27', '61', '3', 'scan_qr', 'Bàn A.03: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.03', '1', '2026-03-18 09:43:59', '3', '2026-03-17 21:19:34');
+INSERT INTO `order_notifications` VALUES ('28', '61', '3', 'scan_qr', 'Bàn A.03: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.03', '1', '2026-03-18 09:43:59', '3', '2026-03-17 21:19:45');
+INSERT INTO `order_notifications` VALUES ('29', '62', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:58', '3', '2026-03-17 21:23:53');
+INSERT INTO `order_notifications` VALUES ('30', '62', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:58', '3', '2026-03-17 21:24:34');
+INSERT INTO `order_notifications` VALUES ('31', '62', '1', 'order_item', 'Bàn 1: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-18 09:43:58', '3', '2026-03-17 21:24:56');
+INSERT INTO `order_notifications` VALUES ('32', '62', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:37');
+INSERT INTO `order_notifications` VALUES ('33', '62', '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:42');
+INSERT INTO `order_notifications` VALUES ('34', '63', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:53');
+INSERT INTO `order_notifications` VALUES ('35', '63', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:55');
+INSERT INTO `order_notifications` VALUES ('36', '63', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:56');
+INSERT INTO `order_notifications` VALUES ('37', '63', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:57', '3', '2026-03-17 21:27:56');
+INSERT INTO `order_notifications` VALUES ('38', '63', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:56', '3', '2026-03-17 21:30:39');
+INSERT INTO `order_notifications` VALUES ('39', '64', '21', 'scan_qr', 'Bàn VIP 2.1: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn VIP 2.1', '1', '2026-03-18 09:43:56', '3', '2026-03-17 21:45:09');
+INSERT INTO `order_notifications` VALUES ('40', '64', '21', 'support_request', 'Bàn 21: Cần hỗ trợ', 'Khách tại bàn 21 đang gọi nhân viên.', '1', '2026-03-18 09:43:54', '3', '2026-03-17 21:45:17');
+INSERT INTO `order_notifications` VALUES ('41', '65', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '1', '2026-03-18 09:51:02', '3', '2026-03-18 09:50:34');
+INSERT INTO `order_notifications` VALUES ('42', '65', '12', 'order_item', 'Bàn 12: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-18 09:51:05', '3', '2026-03-18 09:50:48');
+INSERT INTO `order_notifications` VALUES ('43', '65', '12', 'scan_qr', 'Bàn B.06: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.06', '1', '2026-03-18 09:53:18', '3', '2026-03-18 09:51:15');
+INSERT INTO `order_notifications` VALUES ('44', '65', '12', 'support_request', 'Bàn 12: Cần hỗ trợ', 'Khách tại bàn 12 đang gọi nhân viên.', '1', '2026-03-18 09:53:17', '3', '2026-03-18 09:51:19');
+INSERT INTO `order_notifications` VALUES ('45', '66', '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 10:09:33', '3', '2026-03-18 09:53:02');
+INSERT INTO `order_notifications` VALUES ('46', '73', '4', 'scan_qr', 'Bàn A.04: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.04', '0', NULL, NULL, '2026-03-18 10:49:49');
+INSERT INTO `order_notifications` VALUES ('47', NULL, '10', 'scan_qr', 'Bàn B.04: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn B.04', '0', NULL, NULL, '2026-03-18 11:00:45');
+INSERT INTO `order_notifications` VALUES ('48', NULL, '10', 'support_request', 'Bàn 10: Cần hỗ trợ', 'Khách tại bàn 10 đang gọi nhân viên.', '0', NULL, NULL, '2026-03-18 11:01:19');
+INSERT INTO `order_notifications` VALUES ('49', NULL, '14', 'scan_qr', 'Bàn C.02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn C.02', '0', NULL, NULL, '2026-03-18 11:14:45');
+INSERT INTO `order_notifications` VALUES ('50', NULL, '14', 'scan_qr', 'Bàn C.02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn C.02', '0', NULL, NULL, '2026-03-18 11:17:47');
 
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
@@ -478,75 +532,91 @@ CREATE TABLE `orders` (
   `closed_at` timestamp NULL DEFAULT NULL COMMENT 'Giờ đóng bàn',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `session_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_orders_table` (`table_id`),
   KEY `idx_orders_waiter` (`waiter_id`),
   KEY `idx_orders_status` (`status`),
   KEY `idx_orders_opened` (`opened_at`),
   KEY `idx_order_source` (`order_source`),
+  KEY `idx_orders_session` (`session_id`),
   CONSTRAINT `fk_orders_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_orders_waiter` FOREIGN KEY (`waiter_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `orders` VALUES ('1', '6', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 19:21:40', '2026-03-07 19:40:08', '2026-03-07 19:21:40', '2026-03-07 19:40:08');
-INSERT INTO `orders` VALUES ('2', '4', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:44:21', '2026-03-07 19:52:34', '2026-03-07 19:44:21', '2026-03-07 19:52:34');
-INSERT INTO `orders` VALUES ('3', '1', '3', '1', '8', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:53:10', '2026-03-07 19:58:24', '2026-03-07 19:53:10', '2026-03-07 19:58:24');
-INSERT INTO `orders` VALUES ('4', '3', '3', '1', '9', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:57:02', '2026-03-07 19:58:18', '2026-03-07 19:57:02', '2026-03-07 19:58:18');
-INSERT INTO `orders` VALUES ('5', '1', '3', '1', '7', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:59:42', '2026-03-07 20:01:13', '2026-03-07 19:59:42', '2026-03-07 20:01:13');
-INSERT INTO `orders` VALUES ('6', '1', '3', '1', '9', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 20:01:17', '2026-03-07 20:03:38', '2026-03-07 20:01:17', '2026-03-07 20:03:38');
-INSERT INTO `orders` VALUES ('7', '1', '3', '1', '11', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:03:43', '2026-03-07 20:06:53', '2026-03-07 20:03:43', '2026-03-07 20:06:53');
-INSERT INTO `orders` VALUES ('8', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:06:59', '2026-03-07 20:27:55', '2026-03-07 20:06:59', '2026-03-07 20:27:55');
-INSERT INTO `orders` VALUES ('9', '4', '3', '1', '7', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:10:15', '2026-03-07 20:37:57', '2026-03-07 20:10:15', '2026-03-07 20:37:57');
-INSERT INTO `orders` VALUES ('10', '6', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:17:23', '2026-03-07 20:29:01', '2026-03-07 20:17:23', '2026-03-07 20:29:01');
-INSERT INTO `orders` VALUES ('11', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 20:39:23', '2026-03-07 20:39:28', '2026-03-07 20:39:23', '2026-03-07 20:39:28');
-INSERT INTO `orders` VALUES ('12', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:39:31', '2026-03-07 20:39:50', '2026-03-07 20:39:31', '2026-03-07 20:39:50');
-INSERT INTO `orders` VALUES ('13', '7', '3', '1', '8', NULL, NULL, '1', 'closed', 'waiter', '1', 'transfer', 'paid', '2026-03-07 21:16:12', '2026-03-07 21:17:53', '2026-03-07 21:16:12', '2026-03-07 21:43:57');
-INSERT INTO `orders` VALUES ('14', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '1', 'cash', 'paid', '2026-03-07 21:25:19', '2026-03-07 21:34:14', '2026-03-07 21:25:19', '2026-03-07 21:43:46');
-INSERT INTO `orders` VALUES ('15', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 21:57:35', '2026-03-08 09:47:58', '2026-03-07 21:57:35', '2026-03-08 09:47:58');
-INSERT INTO `orders` VALUES ('16', '1', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 09:38:02', '2026-03-08 09:49:51', '2026-03-08 09:38:02', '2026-03-08 09:49:51');
-INSERT INTO `orders` VALUES ('17', '22', '3', '1', '11', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 09:58:13', '2026-03-08 10:10:54', '2026-03-08 09:58:13', '2026-03-08 10:10:54');
-INSERT INTO `orders` VALUES ('18', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:12:36', '2026-03-08 10:21:01', '2026-03-08 10:12:36', '2026-03-08 10:21:01');
-INSERT INTO `orders` VALUES ('19', '23', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:12:51', '2026-03-08 10:20:57', '2026-03-08 10:12:51', '2026-03-08 10:20:57');
-INSERT INTO `orders` VALUES ('20', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:17:00', '2026-03-08 10:20:50', '2026-03-08 10:17:00', '2026-03-08 10:20:50');
-INSERT INTO `orders` VALUES ('21', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:24:24', '2026-03-08 10:24:32', '2026-03-08 10:24:24', '2026-03-08 10:24:32');
-INSERT INTO `orders` VALUES ('22', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 10:25:01', '2026-03-08 10:29:04', '2026-03-08 10:25:01', '2026-03-08 10:29:04');
-INSERT INTO `orders` VALUES ('23', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:26:37', '2026-03-08 10:27:45', '2026-03-08 10:26:37', '2026-03-08 10:27:45');
-INSERT INTO `orders` VALUES ('24', '23', '3', '1', '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:27:07', '2026-03-08 10:27:42', '2026-03-08 10:27:07', '2026-03-08 10:27:42');
-INSERT INTO `orders` VALUES ('25', '13', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:27:27', '2026-03-08 10:27:38', '2026-03-08 10:27:27', '2026-03-08 10:27:38');
-INSERT INTO `orders` VALUES ('26', '19', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:31:58', '2026-03-08 13:56:39', '2026-03-08 10:31:58', '2026-03-08 13:56:39');
-INSERT INTO `orders` VALUES ('27', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:50:35', '2026-03-08 13:51:54', '2026-03-08 10:50:35', '2026-03-08 13:51:54');
-INSERT INTO `orders` VALUES ('28', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 13:58:27', '2026-03-08 13:58:31', '2026-03-08 13:58:27', '2026-03-08 13:58:31');
-INSERT INTO `orders` VALUES ('29', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 14:00:28', '2026-03-08 14:00:33', '2026-03-08 14:00:28', '2026-03-08 14:00:33');
-INSERT INTO `orders` VALUES ('30', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 15:22:45', '2026-03-08 16:01:51', '2026-03-08 15:22:45', '2026-03-08 16:01:51');
-INSERT INTO `orders` VALUES ('31', '1', '1', '0', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 17:16:29', '2026-03-16 21:32:48', '2026-03-08 17:16:29', '2026-03-16 21:32:48');
-INSERT INTO `orders` VALUES ('32', '21', '3', '1', '6', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-09 22:26:30', '2026-03-16 21:32:40', '2026-03-09 22:26:30', '2026-03-16 21:32:40');
-INSERT INTO `orders` VALUES ('33', '13', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-16 09:17:22', '2026-03-16 21:32:44', '2026-03-16 09:17:22', '2026-03-16 21:32:44');
-INSERT INTO `orders` VALUES ('34', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-16 14:52:14', '2026-03-16 21:32:34', '2026-03-16 14:52:14', '2026-03-16 21:32:34');
-INSERT INTO `orders` VALUES ('35', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-16 18:13:31', '2026-03-16 21:32:27', '2026-03-16 18:13:31', '2026-03-16 21:32:27');
-INSERT INTO `orders` VALUES ('36', '22', '3', NULL, '4', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-16 20:26:07', '2026-03-16 21:32:21', '2026-03-16 20:26:07', '2026-03-16 21:32:21');
-INSERT INTO `orders` VALUES ('37', '30', '3', NULL, '3', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-16 20:31:34', '2026-03-16 21:29:54', '2026-03-16 20:31:34', '2026-03-16 21:29:54');
-INSERT INTO `orders` VALUES ('38', '24', '3', NULL, '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-16 20:55:48', '2026-03-16 21:29:32', '2026-03-16 20:55:48', '2026-03-16 21:29:32');
-INSERT INTO `orders` VALUES ('39', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-16 21:36:43', '2026-03-16 21:36:46', '2026-03-16 21:36:43', '2026-03-16 21:36:46');
-INSERT INTO `orders` VALUES ('40', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-16 21:36:52', '2026-03-16 21:37:02', '2026-03-16 21:36:52', '2026-03-16 21:37:02');
-INSERT INTO `orders` VALUES ('41', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 07:35:47', '2026-03-17 08:01:17', '2026-03-17 07:35:47', '2026-03-17 08:01:17');
-INSERT INTO `orders` VALUES ('42', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 08:01:26', '2026-03-17 11:46:34', '2026-03-17 08:01:26', '2026-03-17 11:46:34');
-INSERT INTO `orders` VALUES ('43', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 10:53:41', '2026-03-17 11:46:18', '2026-03-17 10:53:41', '2026-03-17 11:46:18');
-INSERT INTO `orders` VALUES ('44', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:49:00', '2026-03-17 11:49:11', '2026-03-17 11:49:00', '2026-03-17 11:49:11');
-INSERT INTO `orders` VALUES ('45', '23', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:49:24', '2026-03-17 11:52:02', '2026-03-17 11:49:24', '2026-03-17 11:52:02');
-INSERT INTO `orders` VALUES ('46', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:52:13', '2026-03-17 11:52:22', '2026-03-17 11:52:13', '2026-03-17 11:52:22');
-INSERT INTO `orders` VALUES ('47', '20', '3', '1', '3', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-17 11:52:40', '2026-03-17 11:59:55', '2026-03-17 11:52:40', '2026-03-17 11:59:55');
-INSERT INTO `orders` VALUES ('48', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:21:24', '2026-03-17 12:23:10', '2026-03-17 12:21:24', '2026-03-17 12:23:10');
-INSERT INTO `orders` VALUES ('49', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:21:28', '2026-03-17 12:23:27', '2026-03-17 12:21:28', '2026-03-17 12:23:27');
-INSERT INTO `orders` VALUES ('50', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:22:47', '2026-03-17 12:42:12', '2026-03-17 12:22:47', '2026-03-17 12:42:12');
-INSERT INTO `orders` VALUES ('51', '19', '3', '1', '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:42:16', '2026-03-17 17:33:58', '2026-03-17 12:42:16', '2026-03-17 17:33:58');
-INSERT INTO `orders` VALUES ('52', '21', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:27:16', '2026-03-17 13:30:17', '2026-03-17 13:27:16', '2026-03-17 13:30:17');
-INSERT INTO `orders` VALUES ('53', '21', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:42:53', '2026-03-17 14:04:33', '2026-03-17 13:42:53', '2026-03-17 14:04:33');
-INSERT INTO `orders` VALUES ('54', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-17 14:05:24', '2026-03-17 14:05:26', '2026-03-17 14:05:24', '2026-03-17 14:05:26');
-INSERT INTO `orders` VALUES ('55', '27', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 14:05:32', '2026-03-17 18:01:42', '2026-03-17 14:05:32', '2026-03-17 18:01:42');
-INSERT INTO `orders` VALUES ('56', '13', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 18:39:46', '2026-03-17 18:45:09', '2026-03-17 18:39:46', '2026-03-17 18:45:09');
-INSERT INTO `orders` VALUES ('57', '12', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'transfer', 'paid', '2026-03-17 19:26:16', '2026-03-17 19:29:06', '2026-03-17 19:26:16', '2026-03-17 19:29:06');
-INSERT INTO `orders` VALUES ('58', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-17 19:38:54', '2026-03-17 19:40:11', '2026-03-17 19:38:54', '2026-03-17 19:40:11');
-INSERT INTO `orders` VALUES ('59', '28', NULL, NULL, '1', '', NULL, '1', 'open', 'customer_qr', '0', 'cash', 'pending', '2026-03-17 20:16:09', NULL, '2026-03-17 20:16:09', '2026-03-17 20:16:09');
+INSERT INTO `orders` VALUES ('1', '6', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 19:21:40', '2026-03-07 19:40:08', '2026-03-07 19:21:40', '2026-03-07 19:40:08', NULL);
+INSERT INTO `orders` VALUES ('2', '4', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:44:21', '2026-03-07 19:52:34', '2026-03-07 19:44:21', '2026-03-07 19:52:34', NULL);
+INSERT INTO `orders` VALUES ('3', '1', '3', '1', '8', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:53:10', '2026-03-07 19:58:24', '2026-03-07 19:53:10', '2026-03-07 19:58:24', NULL);
+INSERT INTO `orders` VALUES ('4', '3', '3', '1', '9', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:57:02', '2026-03-07 19:58:18', '2026-03-07 19:57:02', '2026-03-07 19:58:18', NULL);
+INSERT INTO `orders` VALUES ('5', '1', '3', '1', '7', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 19:59:42', '2026-03-07 20:01:13', '2026-03-07 19:59:42', '2026-03-07 20:01:13', NULL);
+INSERT INTO `orders` VALUES ('6', '1', '3', '1', '9', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 20:01:17', '2026-03-07 20:03:38', '2026-03-07 20:01:17', '2026-03-07 20:03:38', NULL);
+INSERT INTO `orders` VALUES ('7', '1', '3', '1', '11', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:03:43', '2026-03-07 20:06:53', '2026-03-07 20:03:43', '2026-03-07 20:06:53', NULL);
+INSERT INTO `orders` VALUES ('8', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:06:59', '2026-03-07 20:27:55', '2026-03-07 20:06:59', '2026-03-07 20:27:55', NULL);
+INSERT INTO `orders` VALUES ('9', '4', '3', '1', '7', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:10:15', '2026-03-07 20:37:57', '2026-03-07 20:10:15', '2026-03-07 20:37:57', NULL);
+INSERT INTO `orders` VALUES ('10', '6', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:17:23', '2026-03-07 20:29:01', '2026-03-07 20:17:23', '2026-03-07 20:29:01', NULL);
+INSERT INTO `orders` VALUES ('11', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-07 20:39:23', '2026-03-07 20:39:28', '2026-03-07 20:39:23', '2026-03-07 20:39:28', NULL);
+INSERT INTO `orders` VALUES ('12', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 20:39:31', '2026-03-07 20:39:50', '2026-03-07 20:39:31', '2026-03-07 20:39:50', NULL);
+INSERT INTO `orders` VALUES ('13', '7', '3', '1', '8', NULL, NULL, '1', 'closed', 'waiter', '1', 'transfer', 'paid', '2026-03-07 21:16:12', '2026-03-07 21:17:53', '2026-03-07 21:16:12', '2026-03-07 21:43:57', NULL);
+INSERT INTO `orders` VALUES ('14', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '1', 'cash', 'paid', '2026-03-07 21:25:19', '2026-03-07 21:34:14', '2026-03-07 21:25:19', '2026-03-07 21:43:46', NULL);
+INSERT INTO `orders` VALUES ('15', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-07 21:57:35', '2026-03-08 09:47:58', '2026-03-07 21:57:35', '2026-03-08 09:47:58', NULL);
+INSERT INTO `orders` VALUES ('16', '1', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 09:38:02', '2026-03-08 09:49:51', '2026-03-08 09:38:02', '2026-03-08 09:49:51', NULL);
+INSERT INTO `orders` VALUES ('17', '22', '3', '1', '11', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 09:58:13', '2026-03-08 10:10:54', '2026-03-08 09:58:13', '2026-03-08 10:10:54', NULL);
+INSERT INTO `orders` VALUES ('18', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:12:36', '2026-03-08 10:21:01', '2026-03-08 10:12:36', '2026-03-08 10:21:01', NULL);
+INSERT INTO `orders` VALUES ('19', '23', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:12:51', '2026-03-08 10:20:57', '2026-03-08 10:12:51', '2026-03-08 10:20:57', NULL);
+INSERT INTO `orders` VALUES ('20', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:17:00', '2026-03-08 10:20:50', '2026-03-08 10:17:00', '2026-03-08 10:20:50', NULL);
+INSERT INTO `orders` VALUES ('21', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:24:24', '2026-03-08 10:24:32', '2026-03-08 10:24:24', '2026-03-08 10:24:32', NULL);
+INSERT INTO `orders` VALUES ('22', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 10:25:01', '2026-03-08 10:29:04', '2026-03-08 10:25:01', '2026-03-08 10:29:04', NULL);
+INSERT INTO `orders` VALUES ('23', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:26:37', '2026-03-08 10:27:45', '2026-03-08 10:26:37', '2026-03-08 10:27:45', NULL);
+INSERT INTO `orders` VALUES ('24', '23', '3', '1', '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:27:07', '2026-03-08 10:27:42', '2026-03-08 10:27:07', '2026-03-08 10:27:42', NULL);
+INSERT INTO `orders` VALUES ('25', '13', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:27:27', '2026-03-08 10:27:38', '2026-03-08 10:27:27', '2026-03-08 10:27:38', NULL);
+INSERT INTO `orders` VALUES ('26', '19', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:31:58', '2026-03-08 13:56:39', '2026-03-08 10:31:58', '2026-03-08 13:56:39', NULL);
+INSERT INTO `orders` VALUES ('27', '1', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 10:50:35', '2026-03-08 13:51:54', '2026-03-08 10:50:35', '2026-03-08 13:51:54', NULL);
+INSERT INTO `orders` VALUES ('28', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 13:58:27', '2026-03-08 13:58:31', '2026-03-08 13:58:27', '2026-03-08 13:58:31', NULL);
+INSERT INTO `orders` VALUES ('29', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 14:00:28', '2026-03-08 14:00:33', '2026-03-08 14:00:28', '2026-03-08 14:00:33', NULL);
+INSERT INTO `orders` VALUES ('30', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-08 15:22:45', '2026-03-08 16:01:51', '2026-03-08 15:22:45', '2026-03-08 16:01:51', NULL);
+INSERT INTO `orders` VALUES ('31', '1', '1', '0', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-08 17:16:29', '2026-03-16 21:32:48', '2026-03-08 17:16:29', '2026-03-16 21:32:48', NULL);
+INSERT INTO `orders` VALUES ('32', '21', '3', '1', '6', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-09 22:26:30', '2026-03-16 21:32:40', '2026-03-09 22:26:30', '2026-03-16 21:32:40', NULL);
+INSERT INTO `orders` VALUES ('33', '13', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-16 09:17:22', '2026-03-16 21:32:44', '2026-03-16 09:17:22', '2026-03-16 21:32:44', NULL);
+INSERT INTO `orders` VALUES ('34', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-16 14:52:14', '2026-03-16 21:32:34', '2026-03-16 14:52:14', '2026-03-16 21:32:34', NULL);
+INSERT INTO `orders` VALUES ('35', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-16 18:13:31', '2026-03-16 21:32:27', '2026-03-16 18:13:31', '2026-03-16 21:32:27', NULL);
+INSERT INTO `orders` VALUES ('36', '22', '3', NULL, '4', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-16 20:26:07', '2026-03-16 21:32:21', '2026-03-16 20:26:07', '2026-03-16 21:32:21', NULL);
+INSERT INTO `orders` VALUES ('37', '30', '3', NULL, '3', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-16 20:31:34', '2026-03-16 21:29:54', '2026-03-16 20:31:34', '2026-03-16 21:29:54', NULL);
+INSERT INTO `orders` VALUES ('38', '24', '3', NULL, '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-16 20:55:48', '2026-03-16 21:29:32', '2026-03-16 20:55:48', '2026-03-16 21:29:32', NULL);
+INSERT INTO `orders` VALUES ('39', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-16 21:36:43', '2026-03-16 21:36:46', '2026-03-16 21:36:43', '2026-03-16 21:36:46', NULL);
+INSERT INTO `orders` VALUES ('40', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-16 21:36:52', '2026-03-16 21:37:02', '2026-03-16 21:36:52', '2026-03-16 21:37:02', NULL);
+INSERT INTO `orders` VALUES ('41', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 07:35:47', '2026-03-17 08:01:17', '2026-03-17 07:35:47', '2026-03-17 08:01:17', NULL);
+INSERT INTO `orders` VALUES ('42', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 08:01:26', '2026-03-17 11:46:34', '2026-03-17 08:01:26', '2026-03-17 11:46:34', NULL);
+INSERT INTO `orders` VALUES ('43', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 10:53:41', '2026-03-17 11:46:18', '2026-03-17 10:53:41', '2026-03-17 11:46:18', NULL);
+INSERT INTO `orders` VALUES ('44', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:49:00', '2026-03-17 11:49:11', '2026-03-17 11:49:00', '2026-03-17 11:49:11', NULL);
+INSERT INTO `orders` VALUES ('45', '23', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:49:24', '2026-03-17 11:52:02', '2026-03-17 11:49:24', '2026-03-17 11:52:02', NULL);
+INSERT INTO `orders` VALUES ('46', '19', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 11:52:13', '2026-03-17 11:52:22', '2026-03-17 11:52:13', '2026-03-17 11:52:22', NULL);
+INSERT INTO `orders` VALUES ('47', '20', '3', '1', '3', NULL, NULL, '1', 'closed', 'waiter', '0', 'transfer', 'paid', '2026-03-17 11:52:40', '2026-03-17 11:59:55', '2026-03-17 11:52:40', '2026-03-17 11:59:55', NULL);
+INSERT INTO `orders` VALUES ('48', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:21:24', '2026-03-17 12:23:10', '2026-03-17 12:21:24', '2026-03-17 12:23:10', NULL);
+INSERT INTO `orders` VALUES ('49', '19', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:21:28', '2026-03-17 12:23:27', '2026-03-17 12:21:28', '2026-03-17 12:23:27', NULL);
+INSERT INTO `orders` VALUES ('50', '20', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 12:22:47', '2026-03-17 12:42:12', '2026-03-17 12:22:47', '2026-03-17 12:42:12', NULL);
+INSERT INTO `orders` VALUES ('51', '19', '3', '1', '10', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 12:42:16', '2026-03-17 17:33:58', '2026-03-17 12:42:16', '2026-03-17 17:33:58', NULL);
+INSERT INTO `orders` VALUES ('52', '21', '3', '1', '2', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:27:16', '2026-03-17 13:30:17', '2026-03-17 13:27:16', '2026-03-17 13:30:17', NULL);
+INSERT INTO `orders` VALUES ('53', '21', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 13:42:53', '2026-03-17 14:04:33', '2026-03-17 13:42:53', '2026-03-17 14:04:33', NULL);
+INSERT INTO `orders` VALUES ('54', '1', '3', '1', '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'pending', '2026-03-17 14:05:24', '2026-03-17 14:05:26', '2026-03-17 14:05:24', '2026-03-17 14:05:26', NULL);
+INSERT INTO `orders` VALUES ('55', '27', '3', '1', '12', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 14:05:32', '2026-03-17 18:01:42', '2026-03-17 14:05:32', '2026-03-17 18:01:42', NULL);
+INSERT INTO `orders` VALUES ('56', '13', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-17 18:39:46', '2026-03-17 18:45:09', '2026-03-17 18:39:46', '2026-03-17 18:45:09', NULL);
+INSERT INTO `orders` VALUES ('57', '12', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'transfer', 'paid', '2026-03-17 19:26:16', '2026-03-17 19:29:06', '2026-03-17 19:26:16', '2026-03-17 19:29:06', NULL);
+INSERT INTO `orders` VALUES ('58', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-17 19:38:54', '2026-03-17 19:40:11', '2026-03-17 19:38:54', '2026-03-17 19:40:11', NULL);
+INSERT INTO `orders` VALUES ('59', '28', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-17 20:16:09', '2026-03-17 20:21:31', '2026-03-17 20:16:09', '2026-03-17 20:21:31', NULL);
+INSERT INTO `orders` VALUES ('60', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-17 21:17:12', '2026-03-17 21:22:29', '2026-03-17 21:17:12', '2026-03-17 21:22:29', NULL);
+INSERT INTO `orders` VALUES ('61', '3', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-17 21:17:44', '2026-03-17 21:23:18', '2026-03-17 21:17:44', '2026-03-17 21:23:18', NULL);
+INSERT INTO `orders` VALUES ('62', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-17 21:23:53', '2026-03-17 21:27:50', '2026-03-17 21:23:53', '2026-03-17 21:27:50', NULL);
+INSERT INTO `orders` VALUES ('63', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'canceled', '2026-03-17 21:27:53', '2026-03-17 21:31:51', '2026-03-17 21:27:53', '2026-03-17 21:31:51', NULL);
+INSERT INTO `orders` VALUES ('64', '21', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-17 21:33:11', '2026-03-17 21:45:34', '2026-03-17 21:33:11', '2026-03-17 21:45:34', NULL);
+INSERT INTO `orders` VALUES ('65', '12', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-18 09:50:34', '2026-03-18 09:52:38', '2026-03-18 09:50:34', '2026-03-18 09:52:38', NULL);
+INSERT INTO `orders` VALUES ('66', '1', NULL, NULL, '1', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-18 09:53:02', '2026-03-18 10:09:43', '2026-03-18 09:53:02', '2026-03-18 10:09:43', NULL);
+INSERT INTO `orders` VALUES ('67', '19', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-18 10:21:12', '2026-03-18 10:21:21', '2026-03-18 10:21:12', '2026-03-18 10:21:21', NULL);
+INSERT INTO `orders` VALUES ('68', '19', '3', '1', '12', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:24:04', '2026-03-18 10:26:36', '2026-03-18 10:24:04', '2026-03-18 10:26:36', NULL);
+INSERT INTO `orders` VALUES ('69', '2', NULL, NULL, '1', NULL, NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:24:35', '2026-03-18 10:26:28', '2026-03-18 10:24:35', '2026-03-18 10:26:28', NULL);
+INSERT INTO `orders` VALUES ('70', '1', '3', '1', '12', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:26:45', '2026-03-18 10:32:39', '2026-03-18 10:26:45', '2026-03-18 10:32:39', NULL);
+INSERT INTO `orders` VALUES ('71', '4', '3', '1', '12', 'Tách từ bàn A.01', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:30:29', '2026-03-18 10:32:30', '2026-03-18 10:30:29', '2026-03-18 10:32:30', NULL);
+INSERT INTO `orders` VALUES ('72', '1', '3', '1', '12', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:32:48', '2026-03-18 10:50:57', '2026-03-18 10:32:48', '2026-03-18 10:50:57', NULL);
+INSERT INTO `orders` VALUES ('73', '4', '3', '1', '12', 'Tách từ bàn A.01', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-18 10:33:26', '2026-03-18 10:50:49', '2026-03-18 10:33:26', '2026-03-18 10:50:49', NULL);
 
 DROP TABLE IF EXISTS `qr_tables`;
 CREATE TABLE `qr_tables` (
@@ -559,6 +629,7 @@ CREATE TABLE `qr_tables` (
   `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=đ aktiv, 0=ẩn',
   `scan_count` int(10) unsigned NOT NULL DEFAULT 0 COMMENT 'Số lần quét QR code',
   `last_scanned_at` timestamp NULL DEFAULT NULL COMMENT 'Lần quét cuối cùng',
+  `is_printed` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `table_id` (`table_id`),
   UNIQUE KEY `qr_hash` (`qr_hash`),
@@ -566,37 +637,37 @@ CREATE TABLE `qr_tables` (
   CONSTRAINT `fk_qr_tables_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `qr_tables` VALUES ('2', '2', '/qr/menu?table_id=2&token=5aea0ec36591ecddd837fa739b2a5786', '5aea0ec36591ecddd837fa739b2a5786', '2026-03-08 16:50:22', '2026-03-17 19:08:13', '1', '2', '2026-03-17 19:08:13');
-INSERT INTO `qr_tables` VALUES ('3', '3', '/qr/menu?table_id=3&token=42a2c52875c7bfc390916ca1c33a7157', '42a2c52875c7bfc390916ca1c33a7157', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('4', '4', '/qr/menu?table_id=4&token=59151733a4403e2ba90a3668b91ef209', '59151733a4403e2ba90a3668b91ef209', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('5', '5', '/qr/menu?table_id=5&token=618e597619b7339cb04747a43747b086', '618e597619b7339cb04747a43747b086', '2026-03-08 16:50:22', '2026-03-17 18:30:03', '1', '2', '2026-03-17 18:30:03');
-INSERT INTO `qr_tables` VALUES ('6', '6', '/qr/menu?table_id=6&token=4d594e96b4578dd6eb6a2772eeb342d4', '4d594e96b4578dd6eb6a2772eeb342d4', '2026-03-08 16:50:22', '2026-03-17 19:33:50', '1', '2', '2026-03-17 19:33:50');
-INSERT INTO `qr_tables` VALUES ('7', '7', '/qr/menu?table_id=7&token=9debf619d8155b5e4218cdd77c9caa19', '9debf619d8155b5e4218cdd77c9caa19', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('8', '8', '/qr/menu?table_id=8&token=1a19d6276459abb3b0c92c9d7dd7dc0f', '1a19d6276459abb3b0c92c9d7dd7dc0f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('9', '9', '/qr/menu?table_id=9&token=399e1ce0c5dd5fcaeb4cc583e17b45c5', '399e1ce0c5dd5fcaeb4cc583e17b45c5', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('10', '10', '/qr/menu?table_id=10&token=fb7e119368932a90d53465b48456597e', 'fb7e119368932a90d53465b48456597e', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('11', '11', '/qr/menu?table_id=11&token=d6590664eb462875de436efba585885b', 'd6590664eb462875de436efba585885b', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('12', '12', '/qr/menu?table_id=12&token=7714f8eb8cd1d9f1f4119665b538b9ec', '7714f8eb8cd1d9f1f4119665b538b9ec', '2026-03-08 16:50:22', '2026-03-17 19:27:34', '1', '3', '2026-03-17 19:27:34');
-INSERT INTO `qr_tables` VALUES ('13', '13', '/qr/menu?table_id=13&token=77d2001b22efcd63714ee5ec39cd624f', '77d2001b22efcd63714ee5ec39cd624f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('14', '14', '/qr/menu?table_id=14&token=4f49388e51b134fabd30a789026ef9d0', '4f49388e51b134fabd30a789026ef9d0', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('15', '15', '/qr/menu?table_id=15&token=e939bdc269e7ea98da7f779691f9c63f', 'e939bdc269e7ea98da7f779691f9c63f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('16', '16', '/qr/menu?table_id=16&token=5271c6745193cbd78b6d60fff9fb2863', '5271c6745193cbd78b6d60fff9fb2863', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('17', '17', '/qr/menu?table_id=17&token=ced798a790cc9fc268d03bcb7d5ccb93', 'ced798a790cc9fc268d03bcb7d5ccb93', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('18', '18', '/qr/menu?table_id=18&token=fa8932bc456533b1d680f807d16f35e9', 'fa8932bc456533b1d680f807d16f35e9', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('19', '19', '/qr/menu?table_id=19&token=b756d7566f9984bbc5190a823b00497a', 'b756d7566f9984bbc5190a823b00497a', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('20', '20', '/qr/menu?table_id=20&token=21b46e1f5b1d62e2f92ff2f02b28cf20', '21b46e1f5b1d62e2f92ff2f02b28cf20', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('21', '21', '/qr/menu?table_id=21&token=8a76b7a961c5343e09d947e7d762e032', '8a76b7a961c5343e09d947e7d762e032', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('22', '22', '/qr/menu?table_id=22&token=bd35d8e8560defeda360b4d99677350e', 'bd35d8e8560defeda360b4d99677350e', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('23', '23', '/qr/menu?table_id=23&token=36fcd88597412647c56d588a4f136e49', '36fcd88597412647c56d588a4f136e49', '2026-03-08 16:50:22', '2026-03-17 18:37:19', '1', '1', '2026-03-17 18:37:19');
-INSERT INTO `qr_tables` VALUES ('25', '25', '/qr/menu?table_id=25&token=4feee1c893e3c3ae36a029a11fdcd143', '4feee1c893e3c3ae36a029a11fdcd143', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('26', '26', '/qr/menu?table_id=26&token=a13c5111c2fea2dbf170ad159d88b3d5', 'a13c5111c2fea2dbf170ad159d88b3d5', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('27', '27', '/qr/menu?table_id=27&token=ab4722e5df763a17d54a46afa3506d39', 'ab4722e5df763a17d54a46afa3506d39', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('28', '28', '/qr/menu?table_id=28&token=197c68ac3e576c4ca2ecc90ba0035749', '197c68ac3e576c4ca2ecc90ba0035749', '2026-03-08 16:50:22', '2026-03-17 20:16:09', '1', '7', '2026-03-17 20:16:09');
-INSERT INTO `qr_tables` VALUES ('29', '29', '/qr/menu?table_id=29&token=540c56c80e81ad174c96292e2a32e55b', '540c56c80e81ad174c96292e2a32e55b', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('30', '30', '/qr/menu?table_id=30&token=892c41525bae1635bc4dd6e00049db09', '892c41525bae1635bc4dd6e00049db09', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('31', '31', '/qr/menu?table_id=31&token=c4d60af58f19e189cfbae688a169a499', 'c4d60af58f19e189cfbae688a169a499', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL);
-INSERT INTO `qr_tables` VALUES ('32', '32', '/qr/menu?table_id=32&token=3132152b936f32b9bd4833020db70d8e', '3132152b936f32b9bd4833020db70d8e', '2026-03-08 16:50:22', '2026-03-17 18:39:17', '1', '1', '2026-03-17 18:39:17');
-INSERT INTO `qr_tables` VALUES ('64', '1', '/qr/menu?table_id=1&token=c1674174442ac69294484eb54ffe1e2b', 'c1674174442ac69294484eb54ffe1e2b', '2026-03-17 17:59:01', '2026-03-17 19:35:08', '1', '17', '2026-03-17 19:35:08');
+INSERT INTO `qr_tables` VALUES ('2', '2', '/qr/menu?table_id=2&token=5aea0ec36591ecddd837fa739b2a5786', '5aea0ec36591ecddd837fa739b2a5786', '2026-03-08 16:50:22', '2026-03-17 19:08:13', '1', '2', '2026-03-17 19:08:13', '0');
+INSERT INTO `qr_tables` VALUES ('3', '3', '/qr/menu?table_id=3&token=42a2c52875c7bfc390916ca1c33a7157', '42a2c52875c7bfc390916ca1c33a7157', '2026-03-08 16:50:22', '2026-03-17 21:19:45', '1', '4', '2026-03-17 21:19:45', '0');
+INSERT INTO `qr_tables` VALUES ('4', '4', '/qr/menu?table_id=4&token=59151733a4403e2ba90a3668b91ef209', '59151733a4403e2ba90a3668b91ef209', '2026-03-08 16:50:22', '2026-03-18 10:49:49', '1', '1', '2026-03-18 10:49:49', '0');
+INSERT INTO `qr_tables` VALUES ('5', '5', '/qr/menu?table_id=5&token=618e597619b7339cb04747a43747b086', '618e597619b7339cb04747a43747b086', '2026-03-08 16:50:22', '2026-03-17 18:30:03', '1', '2', '2026-03-17 18:30:03', '0');
+INSERT INTO `qr_tables` VALUES ('6', '6', '/qr/menu?table_id=6&token=4d594e96b4578dd6eb6a2772eeb342d4', '4d594e96b4578dd6eb6a2772eeb342d4', '2026-03-08 16:50:22', '2026-03-17 19:33:50', '1', '2', '2026-03-17 19:33:50', '0');
+INSERT INTO `qr_tables` VALUES ('7', '7', '/qr/menu?table_id=7&token=9debf619d8155b5e4218cdd77c9caa19', '9debf619d8155b5e4218cdd77c9caa19', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('8', '8', '/qr/menu?table_id=8&token=1a19d6276459abb3b0c92c9d7dd7dc0f', '1a19d6276459abb3b0c92c9d7dd7dc0f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('9', '9', '/qr/menu?table_id=9&token=399e1ce0c5dd5fcaeb4cc583e17b45c5', '399e1ce0c5dd5fcaeb4cc583e17b45c5', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('10', '10', '/qr/menu?table_id=10&token=fb7e119368932a90d53465b48456597e', 'fb7e119368932a90d53465b48456597e', '2026-03-08 16:50:22', '2026-03-18 11:00:45', '1', '1', '2026-03-18 11:00:45', '0');
+INSERT INTO `qr_tables` VALUES ('11', '11', '/qr/menu?table_id=11&token=d6590664eb462875de436efba585885b', 'd6590664eb462875de436efba585885b', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('12', '12', '/qr/menu?table_id=12&token=7714f8eb8cd1d9f1f4119665b538b9ec', '7714f8eb8cd1d9f1f4119665b538b9ec', '2026-03-08 16:50:22', '2026-03-18 10:50:33', '1', '7', '2026-03-18 10:50:33', '0');
+INSERT INTO `qr_tables` VALUES ('13', '13', '/qr/menu?table_id=13&token=77d2001b22efcd63714ee5ec39cd624f', '77d2001b22efcd63714ee5ec39cd624f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('14', '14', '/qr/menu?table_id=14&token=4f49388e51b134fabd30a789026ef9d0', '4f49388e51b134fabd30a789026ef9d0', '2026-03-08 16:50:22', '2026-03-18 11:17:47', '1', '2', '2026-03-18 11:17:47', '0');
+INSERT INTO `qr_tables` VALUES ('15', '15', '/qr/menu?table_id=15&token=e939bdc269e7ea98da7f779691f9c63f', 'e939bdc269e7ea98da7f779691f9c63f', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('16', '16', '/qr/menu?table_id=16&token=5271c6745193cbd78b6d60fff9fb2863', '5271c6745193cbd78b6d60fff9fb2863', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('17', '17', '/qr/menu?table_id=17&token=ced798a790cc9fc268d03bcb7d5ccb93', 'ced798a790cc9fc268d03bcb7d5ccb93', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('18', '18', '/qr/menu?table_id=18&token=fa8932bc456533b1d680f807d16f35e9', 'fa8932bc456533b1d680f807d16f35e9', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('19', '19', '/qr/menu?table_id=19&token=b756d7566f9984bbc5190a823b00497a', 'b756d7566f9984bbc5190a823b00497a', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('20', '20', '/qr/menu?table_id=20&token=21b46e1f5b1d62e2f92ff2f02b28cf20', '21b46e1f5b1d62e2f92ff2f02b28cf20', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('21', '21', '/qr/menu?table_id=21&token=8a76b7a961c5343e09d947e7d762e032', '8a76b7a961c5343e09d947e7d762e032', '2026-03-08 16:50:22', '2026-03-17 21:46:45', '1', '3', '2026-03-17 21:46:45', '0');
+INSERT INTO `qr_tables` VALUES ('22', '22', '/qr/menu?table_id=22&token=bd35d8e8560defeda360b4d99677350e', 'bd35d8e8560defeda360b4d99677350e', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('23', '23', '/qr/menu?table_id=23&token=36fcd88597412647c56d588a4f136e49', '36fcd88597412647c56d588a4f136e49', '2026-03-08 16:50:22', '2026-03-17 18:37:19', '1', '1', '2026-03-17 18:37:19', '0');
+INSERT INTO `qr_tables` VALUES ('25', '25', '/qr/menu?table_id=25&token=4feee1c893e3c3ae36a029a11fdcd143', '4feee1c893e3c3ae36a029a11fdcd143', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('26', '26', '/qr/menu?table_id=26&token=a13c5111c2fea2dbf170ad159d88b3d5', 'a13c5111c2fea2dbf170ad159d88b3d5', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('27', '27', '/qr/menu?table_id=27&token=ab4722e5df763a17d54a46afa3506d39', 'ab4722e5df763a17d54a46afa3506d39', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('28', '28', '/qr/menu?table_id=28&token=197c68ac3e576c4ca2ecc90ba0035749', '197c68ac3e576c4ca2ecc90ba0035749', '2026-03-08 16:50:22', '2026-03-17 21:17:31', '1', '8', '2026-03-17 21:17:31', '0');
+INSERT INTO `qr_tables` VALUES ('29', '29', '/qr/menu?table_id=29&token=540c56c80e81ad174c96292e2a32e55b', '540c56c80e81ad174c96292e2a32e55b', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('30', '30', '/qr/menu?table_id=30&token=892c41525bae1635bc4dd6e00049db09', '892c41525bae1635bc4dd6e00049db09', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('31', '31', '/qr/menu?table_id=31&token=c4d60af58f19e189cfbae688a169a499', 'c4d60af58f19e189cfbae688a169a499', '2026-03-08 16:50:22', '2026-03-17 18:29:16', '1', '0', NULL, '0');
+INSERT INTO `qr_tables` VALUES ('32', '32', '/qr/menu?table_id=32&token=3132152b936f32b9bd4833020db70d8e', '3132152b936f32b9bd4833020db70d8e', '2026-03-08 16:50:22', '2026-03-17 18:39:17', '1', '1', '2026-03-17 18:39:17', '0');
+INSERT INTO `qr_tables` VALUES ('64', '1', '/qr/menu?table_id=1&token=c1674174442ac69294484eb54ffe1e2b', 'c1674174442ac69294484eb54ffe1e2b', '2026-03-17 17:59:01', '2026-03-18 11:26:00', '1', '34', '2026-03-18 11:26:00', '0');
 
 DROP TABLE IF EXISTS `realtime_notifications`;
 CREATE TABLE `realtime_notifications` (
@@ -640,7 +711,7 @@ CREATE TABLE `support_requests` (
   PRIMARY KEY (`id`),
   KEY `fk_support_table` (`table_id`),
   CONSTRAINT `fk_support_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `support_requests` VALUES ('1', '1', '', 'pending', '2026-03-17 13:52:40', '2026-03-17 13:52:40');
 INSERT INTO `support_requests` VALUES ('2', '21', '', 'pending', '2026-03-17 14:04:55', '2026-03-17 14:04:55');
@@ -650,6 +721,9 @@ INSERT INTO `support_requests` VALUES ('5', '1', 'scan_qr', 'pending', '2026-03-
 INSERT INTO `support_requests` VALUES ('6', '1', 'scan_qr', 'pending', '2026-03-17 17:37:02', '2026-03-17 17:37:02');
 INSERT INTO `support_requests` VALUES ('7', '1', 'scan_qr', 'pending', '2026-03-17 17:45:25', '2026-03-17 17:45:25');
 INSERT INTO `support_requests` VALUES ('8', '3', 'scan_qr', 'pending', '2026-03-17 19:49:23', '2026-03-17 19:49:23');
+INSERT INTO `support_requests` VALUES ('9', '1', 'scan_qr', 'pending', '2026-03-17 21:24:23', '2026-03-17 21:24:23');
+INSERT INTO `support_requests` VALUES ('10', '21', 'scan_qr', 'pending', '2026-03-17 21:33:13', '2026-03-17 21:33:13');
+INSERT INTO `support_requests` VALUES ('11', '3', 'scan_qr', 'pending', '2026-03-18 10:08:29', '2026-03-18 10:08:29');
 
 DROP TABLE IF EXISTS `table_status_history`;
 CREATE TABLE `table_status_history` (
@@ -689,10 +763,10 @@ CREATE TABLE `tables` (
   CONSTRAINT `fk_tables_parent` FOREIGN KEY (`parent_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-17 19:40:11');
-INSERT INTO `tables` VALUES ('2', NULL, 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
-INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-17 20:00:25');
-INSERT INTO `tables` VALUES ('4', NULL, 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
+INSERT INTO `tables` VALUES ('1', NULL, 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-18 10:50:57');
+INSERT INTO `tables` VALUES ('2', NULL, 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-18 10:50:57');
+INSERT INTO `tables` VALUES ('3', NULL, 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-18 10:50:57');
+INSERT INTO `tables` VALUES ('4', NULL, 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-18 10:50:49');
 INSERT INTO `tables` VALUES ('5', NULL, 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
 INSERT INTO `tables` VALUES ('6', NULL, 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-03-17 14:05:26');
 INSERT INTO `tables` VALUES ('7', NULL, 'B.01', 'B1', '4', 'available', '0', '0', '7', '1', '2026-03-07 18:20:45', '2026-03-17 18:44:51');
@@ -700,23 +774,23 @@ INSERT INTO `tables` VALUES ('8', NULL, 'B.02', 'B1', '4', 'available', '0', '0'
 INSERT INTO `tables` VALUES ('9', NULL, 'B.03', 'B1', '4', 'available', '0', '0', '9', '1', '2026-03-07 18:20:45', '2026-03-17 18:44:51');
 INSERT INTO `tables` VALUES ('10', NULL, 'B.04', 'B1', '4', 'available', '0', '0', '10', '1', '2026-03-07 18:20:45', '2026-03-17 18:44:51');
 INSERT INTO `tables` VALUES ('11', NULL, 'B.05', 'B1', '4', 'available', '0', '0', '11', '1', '2026-03-07 18:20:45', '2026-03-17 18:44:51');
-INSERT INTO `tables` VALUES ('12', NULL, 'B.06', 'B1', '4', 'available', '0', '0', '12', '1', '2026-03-07 18:20:45', '2026-03-17 19:29:06');
+INSERT INTO `tables` VALUES ('12', NULL, 'B.06', 'B1', '4', 'available', '0', '0', '12', '1', '2026-03-07 18:20:45', '2026-03-18 09:52:38');
 INSERT INTO `tables` VALUES ('13', NULL, 'C.01', 'C1', '4', 'available', '0', '0', '13', '1', '2026-03-07 18:20:45', '2026-03-17 18:45:09');
 INSERT INTO `tables` VALUES ('14', NULL, 'C.02', 'C1', '4', 'available', '0', '0', '14', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('15', NULL, 'C.03', 'C1', '4', 'available', '0', '0', '15', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('16', NULL, 'C.04', 'C1', '4', 'available', '0', '0', '16', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('17', NULL, 'C.05', 'C1', '4', 'available', '0', '0', '17', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('18', NULL, 'C.06', 'C1', '4', 'available', '0', '0', '18', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
-INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'available', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-17 17:33:58');
-INSERT INTO `tables` VALUES ('20', NULL, 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-17 17:33:58');
-INSERT INTO `tables` VALUES ('21', NULL, 'VIP 2.1', 'VIP 2', '8', 'available', '0', '0', '21', '1', '2026-03-07 18:20:45', '2026-03-17 14:04:33');
+INSERT INTO `tables` VALUES ('19', NULL, 'VIP 1.1', 'VIP 1', '8', 'available', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-18 10:26:36');
+INSERT INTO `tables` VALUES ('20', NULL, 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-18 10:26:36');
+INSERT INTO `tables` VALUES ('21', NULL, 'VIP 2.1', 'VIP 2', '8', 'available', '0', '0', '21', '1', '2026-03-07 18:20:45', '2026-03-17 21:45:34');
 INSERT INTO `tables` VALUES ('22', NULL, 'VIP 2.2', 'VIP 2', '8', 'available', '0', '0', '22', '1', '2026-03-07 18:20:45', '2026-03-17 14:04:33');
 INSERT INTO `tables` VALUES ('23', NULL, 'VIP 3.1', 'VIP 3', '8', 'available', '0', '0', '23', '1', '2026-03-07 18:20:45', '2026-03-17 11:52:02');
 INSERT INTO `tables` VALUES ('24', NULL, 'VIP 3.2', 'VIP 3', '8', 'available', '0', '0', '24', '1', '2026-03-07 18:20:45', '2026-03-16 21:29:32');
 INSERT INTO `tables` VALUES ('25', NULL, 'VIP 4.1', 'VIP 4', '8', 'available', '0', '0', '25', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('26', NULL, 'VIP 4.2', 'VIP 4', '8', 'available', '0', '0', '26', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
 INSERT INTO `tables` VALUES ('27', NULL, 'Âu 01', 'Âu', '4', 'available', '0', '0', '27', '1', '2026-03-07 18:20:45', '2026-03-17 18:01:42');
-INSERT INTO `tables` VALUES ('28', NULL, 'Âu 02', 'Âu', '4', 'occupied', '0', '0', '28', '1', '2026-03-07 18:20:45', '2026-03-17 20:16:09');
+INSERT INTO `tables` VALUES ('28', NULL, 'Âu 02', 'Âu', '4', 'available', '0', '0', '28', '1', '2026-03-07 18:20:45', '2026-03-17 20:21:31');
 INSERT INTO `tables` VALUES ('29', NULL, 'Âu 03', 'Âu', '4', 'available', '0', '0', '29', '1', '2026-03-07 18:20:45', '2026-03-17 18:01:42');
 INSERT INTO `tables` VALUES ('30', NULL, 'Âu 04', 'Âu', '4', 'available', '0', '0', '30', '1', '2026-03-07 18:20:45', '2026-03-16 21:29:54');
 INSERT INTO `tables` VALUES ('31', NULL, 'Âu 05', 'Âu', '4', 'available', '0', '0', '31', '1', '2026-03-07 18:20:45', '2026-03-08 10:24:32');
