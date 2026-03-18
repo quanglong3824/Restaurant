@@ -30,20 +30,31 @@
     <header class="waiter-topbar" role="banner">
         <div class="topbar-left">
             <div class="topbar-brand">
-                <i class="fas fa-utensils" aria-hidden="true"></i>
-                <span>Aurora</span>
+                <div class="brand-icon">
+                    <i class="fas fa-hotel" aria-hidden="true"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-main">AURORA</span>
+                    <span class="brand-sub">HOTEL PLAZA</span>
+                    <span class="brand-tag">RESTAURANT</span>
+                </div>
             </div>
         </div>
         <div class="topbar-center">
             <span class="topbar-page"><?= e($pageTitle ?? '') ?></span>
         </div>
         <div class="topbar-right">
-            <div class="topbar-user">
-                <i class="fas fa-user-circle" aria-hidden="true"></i>
-                <span><?= e(Auth::user()['name'] ?? '') ?></span>
+            <div class="topbar-user-pill">
+                <div class="user-avatar">
+                    <i class="fas fa-user-tie" aria-hidden="true"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name"><?= e(Auth::user()['name'] ?? '') ?></span>
+                    <span class="user-role"><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></span>
+                </div>
             </div>
             <a href="<?= BASE_URL ?>/auth/logout" class="topbar-logout" aria-label="Đăng xuất">
-                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                <i class="fas fa-power-off" aria-hidden="true"></i>
             </a>
         </div>
     </header>
