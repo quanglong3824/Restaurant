@@ -15,6 +15,11 @@ class MenuController extends Controller
         $tableIdFromUrl = (int) $this->input('table_id');
         $menuType = $this->input('type', 'asia');
 
+        // Nếu URL không có table_id, xóa session cũ để nhân viên chọn lại bàn mới
+        if ($tableIdFromUrl <= 0 && Auth::isLoggedIn()) {
+            unset($_SESSION['customer_table_id']);
+        }
+
         // LOGIC BẢO MẬT & THÔNG BÁO
         if ($tableIdFromUrl > 0) {
             // Trường hợp khách quét QR

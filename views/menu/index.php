@@ -132,8 +132,8 @@
                 </div>
                 <div style="display:flex; gap:0.5rem; align-items:center;">
                     <?php if ($tableId > 0): ?>
-                        <button type="button" class="btn-ghost" style="padding:4px 8px; font-size:0.7rem;" 
-                                onclick="window.location.href='<?= BASE_URL ?>/menu?type=<?= $currentType ?>'" title="Đổi bàn">
+                        <button type="button" class="btn-ghost" style="padding:4px 8px; font-size:0.7rem; background:rgba(0,0,0,0.05); border-radius:4px;" 
+                                onclick="window.location.href='<?= BASE_URL ?>/menu?type=<?= $currentType ?>&table_id=0'" title="Đổi bàn">
                             <i class="fas fa-exchange-alt"></i> ĐỔI
                         </button>
                     <?php endif; ?>
