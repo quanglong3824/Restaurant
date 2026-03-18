@@ -37,6 +37,11 @@ if (!empty($items)) {
                 </div>
                 <div class="id-main ms-3">
                     <h2 class="mb-1"><?= e($table_display_name) ?></h2>
+                    <?php if (!empty($order['note'])): ?>
+                        <div class="badge bg-gold-light text-gold-dark mb-2 py-2 px-3 rounded-pill" style="font-size:0.75rem; border:1px solid var(--gold-light);">
+                            <i class="fas fa-info-circle me-1"></i> <?= e($order['note']) ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="d-flex gap-2 small">
                         <span>
                             <i class="fas fa-clock text-gold me-1"></i>

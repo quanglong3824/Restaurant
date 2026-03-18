@@ -287,6 +287,9 @@ class TableController extends Controller
             $result = $this->orderModel->splitItems($orderId, $itemIds, $targetTableId);
             
             if ($result['ok']) {
+                // Đánh dấu bàn đích là bận
+                $this->tableModel->open($targetTableId);
+                
                 // Unmerge the target table from parent if it was merged
                 if ($targetTableId > 0) {
                     $this->tableModel->unmergeTable($targetTableId);

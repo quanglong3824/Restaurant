@@ -441,12 +441,21 @@ class Order extends Model
             // Create new order if target not specified
             $newOrderId = $targetOrderId;
             if (!$newOrderId) {
+                $sourceTableName = $sourceOrder['table_name'] ?? ('Bàn ' . $sourceOrder['table_id']);
+                $splitNote = "Tách từ bàn " . $sourceTableName;
+                
                 $this->execute(
-                    "INSERT INTO orders (table_id, status, payment_status, opened_at, created_at) 
-                     VALUES (?, 'open', 'unpaid', NOW(), NOW())",
-                    [$targetTableId]
+                    "INSERT INTO orders (table_id, waiter_id, shift_id, guest_count, status, payment_status, note, opened_at, created_at) 
+                     VALUES (?, ?, ?, ?, 'open', 'unpaid', ?, NOW(), NOW())",
+                    [
+                        $targetTableId, 
+                        $sourceOrder['waiter_id'] ?? null, 
+                        $sourceOrder['shift_id'] ?? null,
+                        max(1, (int)($sourceOrder['guest_count'] ?? 1)),
+                        $splitNote
+                    ]
                 );
-                $newOrderId = $this->db->lastInsertId();
+                $newOrderId = (int)$this->lastInsertId();
             }
 
             // Move items to new order

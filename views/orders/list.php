@@ -47,6 +47,11 @@
                                 <?= e($o['table_name']) ?>
                                 <span class="badge-order-id">#<?= $o['id'] ?></span>
                             </h3>
+                            <?php if (!empty($o['note'])): ?>
+                                <div style="font-size: 0.7rem; color: var(--gold-dark); margin-top: -2px; margin-bottom: 4px;">
+                                    <i class="fas fa-info-circle"></i> <?= e($o['note']) ?>
+                                </div>
+                            <?php endif; ?>
                             <div class="order-table-meta">
                                 <span>
                                     <i class="fas fa-user-friends"></i>
