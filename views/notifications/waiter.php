@@ -50,8 +50,9 @@
 
 <style>
     .noti-center-container { padding: 10px; max-width: 800px; margin: 0 auto; }
-    .noti-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding: 0 5px; }
-    .noti-header h2 { margin: 0; color: var(--text-dark); font-weight: 800; }
+    .noti-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 0 5px; }
+    .header-main h2 { margin: 0 0 4px 0; color: var(--text-dark); font-weight: 800; font-size: 1.5rem; line-height: 1.2; }
+    .header-main p { margin: 0; line-height: 1.4; opacity: 0.8; }
     
     .noti-filters { display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 15px; margin-bottom: 10px; scrollbar-width: none; }
     .noti-filters::-webkit-scrollbar { display: none; }
