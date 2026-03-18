@@ -667,18 +667,21 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: grid;
-    place-items: center;
-    z-index: 2000;
+    /* Làm nền sáng hơn, chỉ mờ nhẹ để tập trung vào modal */
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px) saturate(150%);
+    -webkit-backdrop-filter: blur(15px) saturate(150%);
+    /* Căn giữa tuyệt đối bằng Flexbox */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    padding: 20px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    transition: all 0.3s ease;
+    padding: 16px;
+    /* Khóa cuộn của backdrop để không bị "lướt mãi mới tới" */
+    overflow: hidden;
 }
 
 .modal-backdrop.is-open {
@@ -689,43 +692,42 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
 .modal {
     background: var(--surface);
     width: 100%;
-    max-width: 500px;
-    max-height: 85vh;
+    max-width: 480px;
+    /* Chiều cao tự động, không bị kéo giãn */
+    height: auto;
+    max-height: 90vh;
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(20px) scale(0.95);
+    transform: scale(0.9);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-    position: relative;
-    /* Đảm bảo modal không bị kéo giãn */
-    height: fit-content;
-}
-
-.modal-premium {
-    border: 1px solid var(--border-gold);
+    box-shadow: 
+        0 30px 60px -12px rgba(0, 0, 0, 0.15),
+        0 18px 36px -18px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(184, 155, 94, 0.2);
 }
 
 .modal-backdrop.is-open .modal {
-    transform: translateY(0) scale(1);
+    transform: scale(1);
 }
 
 .modal-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    background: white;
+    background: #fff;
 }
 
 .modal-header h3 { 
     margin: 0; 
-    font-size: 1.15rem; 
+    font-size: 1.1rem; 
     color: var(--gold-dark);
     font-weight: 800;
+    font-family: 'Playfair Display', serif;
 }
 
 .modal-close {
@@ -742,7 +744,7 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     transition: all 0.2s;
 }
 
-.modal-close:hover { background: var(--border); color: var(--danger); }
+.modal-close:hover { background: #fee2e2; color: var(--danger); }
 
 .modal-body { 
     padding: 1.5rem; 
@@ -751,13 +753,23 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     -webkit-overflow-scrolling: touch;
 }
 
-/* Tối ưu cho iPad và thiết bị cảm ứng */
+/* Custom Scrollbar cho Modal Body */
+.modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+/* Tối ưu cho thiết bị di động */
 @media (max-width: 576px) {
-    .modal-backdrop {
-        padding: 12px;
-    }
     .modal {
-        max-height: 80vh;
+        max-width: 95%;
+        margin-bottom: 20px; /* Nhích lên một chút cho dễ nhìn trên mobile */
     }
 }
 
