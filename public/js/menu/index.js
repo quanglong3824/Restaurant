@@ -81,23 +81,32 @@ function handleBodyClick(e) {
 
 function updateCartUI(data) {
     if (!data.ok) return;
+    if (data.order_id) {
+        MENU_CONFIG.orderId = data.order_id;
+    }
     const body = document.querySelector('.cart-body');
     const totalEl = document.getElementById('orderTotal');
-    const fTotal = document.getElementById('fabTotal');
-    const fCount = document.getElementById('fabCount');
     const btnContainer = document.getElementById('cartActionBtn');
+    const headerSub = document.querySelector('.cart-header small');
 
     if (totalEl) totalEl.textContent = data.total_fmt;
-    if (fTotal) fTotal.textContent = data.total_fmt;
-    if (fCount) fCount.textContent = data.items.length;
+    if (headerSub && data.items && data.items.length > 0) {
+        headerSub.textContent = 'Có món đang chọn';
+    }
 
     if (body) {
-        if (data.items.length === 0) {
-            body.innerHTML = '<div style="text-align:center; padding-top:3rem; color:var(--text-dim);"><i class="fas fa-shopping-basket" style="font-size:2rem; margin-bottom:1rem; opacity:0.3;"></i><p>Chưa có món nào.</p></div>';
+        if (!data.items || data.items.length === 0) {
+            body.innerHTML = `
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-basket"></i>
+                    <p>Bàn chưa có món</p>
+                    <p class="text-muted small">Chọn món để bắt đầu order</p>
+                </div>`;
+            if (btnContainer) btnContainer.innerHTML = `<button disabled class="cart-action-btn ghost w-100">BÀN CHƯA CÓ MÓN</button>`;
         } else {
             let draftsHtml = ''; let confirmedHtml = ''; let draftCount = 0;
             data.items.forEach(it => {
-                const itemHtml = `<div class="cart-item-row" style="display:flex; justify-content:space-between; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px dashed var(--border);">
+                const itemHtml = `<div class="cart-item-row" data-item-id="${it.id}">
                     <div style="flex:1;">
                         <div style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
                         <div style="display:flex; align-items:center; gap:0.75rem;">
@@ -139,12 +148,11 @@ function updateCartUI(data) {
             body.innerHTML = finalHtml;
 
             if (btnContainer) {
+                const currentOrderId = MENU_CONFIG.orderId;
                 if (draftCount > 0) {
-                    btnContainer.innerHTML = `<button type="button" onclick="confirmOrderAjax(${MENU_CONFIG.orderId})" class="btn btn-gold btn-block" style="background:var(--danger); border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(239,68,68,0.3);"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
-                } else if (data.items.length > 0) {
-                    btnContainer.innerHTML = `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${MENU_CONFIG.orderId}" class="btn btn-gold btn-block" style="background:var(--success); color:white; border:none; height:54px; font-size:1.05rem; box-shadow:0 4px 12px rgba(16,185,129,0.3);"><i class="fas fa-check-circle"></i> ĐÃ GỬI BẾP (XEM BILL)</a>`;
+                    btnContainer.innerHTML = `<button type="button" onclick="confirmOrderAjax(${currentOrderId})" class="cart-action-btn gold"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
                 } else {
-                    btnContainer.innerHTML = `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${MENU_CONFIG.orderId}" class="btn btn-gold btn-block" style="height:54px; font-size:1rem;"><i class="fas fa-file-invoice-dollar"></i> XEM CHI TIẾT BILL</a>`;
+                    btnContainer.innerHTML = `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${currentOrderId}" class="cart-action-btn success"><i class="fas fa-check-circle"></i> XEM BILL</a>`;
                 }
             }
         }

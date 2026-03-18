@@ -197,6 +197,7 @@ class OrderController extends Controller
 
         $this->json([
             'ok' => true,
+            'order_id' => $orderId,
             'total' => $total,
             'total_fmt' => formatPrice($total),
             'items' => $items,
@@ -267,6 +268,7 @@ class OrderController extends Controller
 
         $this->json([
             'ok' => true,
+            'order_id' => $orderId,
             'total' => $total,
             'total_fmt' => formatPrice($total),
             'items' => $items,
@@ -309,6 +311,7 @@ class OrderController extends Controller
 
         $this->json([
             'ok' => true,
+            'order_id' => $orderId,
             'total' => $total,
             'total_fmt' => formatPrice($total),
             'items' => $items,
@@ -337,6 +340,7 @@ class OrderController extends Controller
 
         $this->json([
             'ok' => true,
+            'order_id' => $orderId,
             'total' => $total,
             'total_fmt' => formatPrice($total),
             'items' => $items,

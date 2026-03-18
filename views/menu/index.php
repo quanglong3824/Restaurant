@@ -126,13 +126,23 @@
     <div class="pos-cart-col">
         <div class="cart-panel">
             <div class="cart-header">
-                <h4><?= $tableId > 0 ? e($tableModel->getFullDisplayName($tableId)) : 'GIỎ HÀNG' ?></h4>
-                <small><?= $orderId > 0 ? e($order['guest_count'] ?? 1) . ' khách' : ($tableId > 0 ? 'Bàn trống' : 'Chưa chọn bàn') ?></small>
-                <?php if ($orderId > 0 && count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) > 0): ?>
-                <button type="button" class="split-btn" onclick="openSplitModal()" title="Tách bàn">
-                    <i class="fas fa-cut"></i>
-                </button>
-                <?php endif; ?>
+                <div style="flex:1;">
+                    <h4 style="margin:0; font-size:1.1rem;"><?= $tableId > 0 ? e($tableModel->getFullDisplayName($tableId)) : 'GIỎ HÀNG' ?></h4>
+                    <small><?= $orderId > 0 ? e($order['guest_count'] ?? 1) . ' khách' : ($tableId > 0 ? 'Bàn trống' : 'Chưa chọn bàn') ?></small>
+                </div>
+                <div style="display:flex; gap:0.5rem; align-items:center;">
+                    <?php if ($tableId > 0): ?>
+                        <button type="button" class="btn-ghost" style="padding:4px 8px; font-size:0.7rem;" 
+                                onclick="window.location.href='<?= BASE_URL ?>/menu?type=<?= $currentType ?>'" title="Đổi bàn">
+                            <i class="fas fa-exchange-alt"></i> ĐỔI
+                        </button>
+                    <?php endif; ?>
+                    <?php if ($orderId > 0 && count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) > 0): ?>
+                        <button type="button" class="split-btn" onclick="openSplitModal()" title="Tách bàn">
+                            <i class="fas fa-cut"></i>
+                        </button>
+                    <?php endif; ?>
+                </div>
             </div>
             
             <div class="cart-body" onclick="handleBodyClick(event)">
