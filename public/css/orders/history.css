@@ -352,21 +352,28 @@
 }
 
 /* Bottom Sheet */
+#modalOrderDetails.modal-backdrop {
+    display: block; /* Tắt flex centering của waiter.css để dùng bottom: 0 */
+    z-index: 9999;
+}
+
 .bottom-sheet {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: calc(var(--bottomnav-h) + 20px); /* Đẩy lên cao hơn navigator 20px */
+    left: 12px;
+    right: 12px;
     background: var(--surface);
-    border-radius: 24px 24px 0 0;
-    z-index: 2001;
-    max-width: 600px;
+    border-radius: 24px;
+    z-index: 10000;
+    max-width: 500px;
     margin: 0 auto;
-    transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-    max-height: 90vh;
+    transform: translateY(calc(100% + 100px));
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 75vh;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1), 0 20px 50px rgba(0,0,0,0.2);
+    border: 1px solid rgba(184, 155, 94, 0.2);
 }
 
 .modal-backdrop.is-open .bottom-sheet {
