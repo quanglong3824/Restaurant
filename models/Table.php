@@ -88,7 +88,7 @@ class Table extends Model
     public function unmergeTable(int $childId): void
     {
         $this->execute(
-            "UPDATE tables SET parent_id = NULL, status = 'available', updated_at = NOW() WHERE id = ?",
+            "UPDATE tables SET parent_id = NULL, updated_at = NOW() WHERE id = ?",
             [$childId]
         );
     }
@@ -249,19 +249,19 @@ class Table extends Model
         }
     }
 
-    /** Đếm theo trạng thái (Bàn ghép chỉ tính là 1 đơn vị bận) */
+    /** Đếm theo trạng thái (Bàn vật lý chính xác) */
     public function countByStatus(): array
     {
-        // available: Bàn active, status available, và không phải bàn con đang ghép
+        // available: Bàn active, status available
         $available = $this->findOne(
             "SELECT COUNT(*) as cnt FROM tables 
-             WHERE is_active = 1 AND status = 'available' AND parent_id IS NULL"
+             WHERE is_active = 1 AND status = 'available'"
         )['cnt'];
 
-        // occupied: Chỉ đếm các bàn chính (parent_id IS NULL) đang bận
+        // occupied: Bàn active, status occupied
         $occupied = $this->findOne(
             "SELECT COUNT(*) as cnt FROM tables 
-             WHERE is_active = 1 AND status = 'occupied' AND parent_id IS NULL"
+             WHERE is_active = 1 AND status = 'occupied'"
         )['cnt'];
 
         return [

@@ -103,6 +103,7 @@ class TableController extends Controller
         $redirectUrl = (string) $this->input('redirect', '/tables');
 
         $this->tableModel->unmergeTable($childId);
+        $this->tableModel->syncStatuses(); // Đồng bộ lại trạng thái dựa trên order
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tách bàn.'];
         $this->redirect($redirectUrl);
@@ -285,19 +286,20 @@ class TableController extends Controller
         $itemIds = array_map('intval', $itemIds);
 
         try {
+            // 1. Tách bàn đích ra khỏi bất kỳ nhóm ghép nào trước (giữ nó độc lập)
+            if ($targetTableId > 0) {
+                $this->tableModel->unmergeTable($targetTableId);
+            }
+
+            // 2. Tách món và tạo order mới cho bàn đích
             $result = $this->orderModel->splitItems($orderId, $itemIds, $targetTableId, null, $guestCount);
             
             if ($result['ok']) {
-                // Đánh dấu bàn đích là bận
+                // 3. Đánh dấu bàn đích là bận và có order riêng
                 $this->tableModel->open($targetTableId);
                 
-                // Đồng bộ lại trạng thái bàn ngay lập tức
+                // 4. Đồng bộ lại để tất cả bàn cùng cập nhật đúng trạng thái bận
                 $this->tableModel->syncStatuses();
-                
-                // Unmerge the target table from parent if it was merged
-                if ($targetTableId > 0) {
-                    $this->tableModel->unmergeTable($targetTableId);
-                }
                 
                 $this->json([
                     'ok' => true, 
