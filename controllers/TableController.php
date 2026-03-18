@@ -219,12 +219,26 @@ class TableController extends Controller
                     $this->orderModel->cancel($orderId);
                 }
                 $this->tableModel->close($tableId);
-                $message = 'Đã huỷ bàn thành công vì chưa gọi món.';
+                
+                // Reset QR token
+                require_once BASE_PATH . '/models/QrTable.php';
+                $qrModel = new QrTable();
+                $newToken = bin2hex(random_bytes(8));
+                $qrModel->generate($tableId, $newToken);
+                
+                $message = 'Đã huỷ bàn thành công vì chưa gọi món. Mã QR đã được làm mới.';
                 $type = 'info';
             } else {
                 $this->orderModel->close($orderId, $paymentMethod);
                 $this->tableModel->close($tableId);
-                $message = 'Đã đóng bàn và thanh toán thành công.';
+                
+                // Reset QR token
+                require_once BASE_PATH . '/models/QrTable.php';
+                $qrModel = new QrTable();
+                $newToken = bin2hex(random_bytes(8));
+                $qrModel->generate($tableId, $newToken);
+                
+                $message = 'Đã đóng bàn và thanh toán thành công. Mã QR đã được làm mới cho lượt khách tiếp theo.';
                 $type = 'success';
             }
 

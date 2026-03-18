@@ -71,6 +71,16 @@ class QrMenuController extends Controller
                 return;
             }
 
+            // --- KIỂM TRA TOKEN TRONG SESSION (BẢO MẬT) ---
+            // Nếu session đã có token nhưng khác token hiện tại của bàn -> Bàn đã được reset/đổi QR mới
+            if (isset($_SESSION['customer_token']) && $_SESSION['customer_token'] !== $token) {
+                // Xóa session cũ để bắt đầu phiên mới với bàn mới/lượt mới
+                unset($_SESSION['customer_table_id']);
+                unset($_SESSION['customer_token']);
+                $this->redirect("/qr/menu?table_id=$tableId&token=$token");
+                return;
+            }
+
             // --- XỬ LÝ ĐỔI BÀN (TABLE SWITCHING) ---
             $oldTableId = $_SESSION['customer_table_id'] ?? null;
             if ($oldTableId && $oldTableId != $tableId) {
