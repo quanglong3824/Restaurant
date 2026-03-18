@@ -7,11 +7,11 @@ class Support extends Model
 {
     public function createRequest(int $tableId, string $type): int
     {
-        // Chống spam: Nếu cùng một bàn gửi yêu cầu cùng loại trong 5 phút qua
+        // Chống spam: Nếu cùng một bàn gửi yêu cầu cùng loại trong 2 phút qua
         $existing = $this->findOne(
             "SELECT id FROM support_requests 
              WHERE table_id = ? AND type = ? AND status = 'pending' 
-             AND created_at >= NOW() - INTERVAL 5 MINUTE",
+             AND created_at >= NOW() - INTERVAL 2 MINUTE",
             [$tableId, $type]
         );
 
@@ -26,42 +26,36 @@ class Support extends Model
         return (int) $this->lastInsertId();
     }
 
-    public function getPendingRequests(): array
+    /** Tìm các yêu cầu đang chờ (dành cho logic nghiệp vụ khác) */
+    public function getPendingByTable(int $tableId): array
     {
-        // Lấy từ support_requests
-        $requests = $this->findAll(
-            "SELECT CONCAT('sr_', sr.id) as id, sr.table_id, sr.type, sr.status, sr.created_at, t.name as table_name, t.area 
-             FROM support_requests sr
-             JOIN tables t ON t.id = sr.table_id
-             WHERE sr.status = 'pending'
-             ORDER BY sr.created_at ASC"
+        return $this->findAll(
+            "SELECT * FROM support_requests WHERE table_id = ? AND status = 'pending'",
+            [$tableId]
         );
-
-        // Lấy từ order_notifications
-        $notifications = $this->findAll(
-            "SELECT CONCAT('on_', n.id) as id, n.table_id, n.notification_type as type, 'pending' as status, n.created_at, t.name as table_name, t.area 
-             FROM order_notifications n
-             JOIN tables t ON n.table_id = t.id
-             WHERE n.is_read = 0
-             ORDER BY n.created_at ASC"
-        );
-
-        return array_merge($requests, $notifications);
     }
 
+    /** Đánh dấu đã xử lý theo bàn và loại */
+    public function resolveByTableAndType(int $tableId, string $type): void
+    {
+        // Map notification_type to support_request type if needed
+        $internalType = $type;
+        if ($type === 'payment_request') $internalType = 'payment';
+        if ($type === 'support_request') $internalType = 'support';
+
+        $this->execute(
+            "UPDATE support_requests SET status = 'completed', updated_at = NOW() 
+             WHERE table_id = ? AND type = ? AND status = 'pending'",
+            [$tableId, $internalType]
+        );
+    }
+
+    /** Đánh dấu hoàn thành theo ID cụ thể (có tiền tố) */
     public function resolveRequest(string $prefixedId): void
     {
         if (strpos($prefixedId, 'sr_') === 0) {
             $id = (int)str_replace('sr_', '', $prefixedId);
             $this->execute("UPDATE support_requests SET status = 'completed' WHERE id = ?", [$id]);
-        } elseif (strpos($prefixedId, 'on_') === 0) {
-            $id = (int)str_replace('on_', '', $prefixedId);
-            $this->execute("UPDATE order_notifications SET is_read = 1, read_at = NOW() WHERE id = ?", [$id]);
-        } else {
-            // Fallback for old numeric IDs
-            $id = (int)$prefixedId;
-            $this->execute("UPDATE support_requests SET status = 'completed' WHERE id = ?", [$id]);
-            $this->execute("UPDATE order_notifications SET is_read = 1, read_at = NOW() WHERE id = ?", [$id]);
         }
     }
 }

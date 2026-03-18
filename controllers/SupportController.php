@@ -4,86 +4,64 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/Support.php';
+require_once BASE_PATH . '/models/OrderNotification.php';
+require_once BASE_PATH . '/models/Table.php';
 
 class SupportController extends Controller
 {
     private Support $supportModel;
+    private OrderNotification $notifModel;
+    private Table $tableModel;
 
     public function __construct()
     {
         $this->supportModel = new Support();
+        $this->notifModel = new OrderNotification();
+        $this->tableModel = new Table();
     }
 
-    /** POST /support/request */
+    /** POST /support/request — Khách gửi yêu cầu hỗ trợ/thanh toán */
     public function makeRequest(): void
     {
-        header('Content-Type: application/json');
         $tableId = (int) $this->input('table_id');
-        $type = $this->input('type'); // 'support' or 'payment'
+        $type = $this->input('type'); // 'support' hoặc 'payment'
 
         if ($tableId <= 0 || !in_array($type, ['support', 'payment'])) {
-            echo json_encode(['ok' => false, 'message' => 'Dữ liệu không hợp lệ.']);
-            return;
+            $this->json(['ok' => false, 'message' => 'Dữ liệu không hợp lệ.'], 400);
         }
 
-        $this->supportModel->createRequest($tableId, $type);
-        echo json_encode(['ok' => true, 'message' => 'Đã gửi yêu cầu thành công. Nhân viên sẽ đến ngay.']);
-    }
+        // 1. Tạo bản ghi trong support_requests
+        $requestId = $this->supportModel->createRequest($tableId, $type);
 
-    /** GET /support/pending (For Waiter API Polling) */
-    public function getPending(): void
-    {
-        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
-        header('Content-Type: application/json');
+        // 2. Tạo thông báo cho phục vụ (Unified Notification)
+        $table = $this->tableModel->findById($tableId);
+        $tableName = $table ? $table['name'] : "Bàn $tableId";
         
-        $requests = $this->supportModel->getPendingRequests();
-        echo json_encode(['ok' => true, 'data' => $requests]);
+        $notifType = ($type === 'payment') ? 'payment_request' : 'support_request';
+        $title = ($type === 'payment') ? "Yêu cầu thanh toán" : "Cần hỗ trợ";
+        $message = "Khách tại $tableName vừa yêu cầu " . ($type === 'payment' ? "tính tiền." : "hỗ trợ trực tiếp.");
+
+        $this->notifModel->create([
+            'table_id' => $tableId,
+            'notification_type' => $notifType,
+            'title' => "$tableName: $title",
+            'message' => $message
+        ]);
+
+        $this->json(['ok' => true, 'message' => 'Đã gửi yêu cầu thành công. Nhân viên sẽ đến ngay.']);
     }
 
-    /** POST /support/resolve */
+    /** POST /support/resolve — Nhân viên xác nhận hoàn thành (Old API for compatibility) */
     public function resolve(): void
     {
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
-        header('Content-Type: application/json');
-
         $id = $this->input('id');
+
         if ($id) {
-            // Lấy thông tin yêu cầu trước khi resolve để xử lý logic phụ
-            // Nếu ID có tiền tố on_ (order_notification), ta cần xử lý thêm nếu là new_order
-            if (strpos($id, 'on_') === 0) {
-                $numericId = (int)str_replace('on_', '', $id);
-                $db = getDB();
-                $stmt = $db->prepare("SELECT * FROM order_notifications WHERE id = ?");
-                $stmt->execute([$numericId]);
-                $notif = $stmt->fetch();
-
-                if ($notif && $notif['notification_type'] === 'new_order') {
-                    require_once BASE_PATH . '/models/Order.php';
-                    $orderModel = new Order();
-                    $orderModel->confirmPendingItems($notif['order_id']);
-                }
-            } elseif (strpos($id, 'sr_') === 0 || is_numeric($id)) {
-                // Logic cũ cho support_requests
-                $numericId = (int)str_replace('sr_', '', $id);
-                $db = getDB();
-                $stmt = $db->prepare("SELECT * FROM support_requests WHERE id = ?");
-                $stmt->execute([$numericId]);
-                $request = $stmt->fetch();
-
-                if ($request && $request['type'] === 'new_order') {
-                    require_once BASE_PATH . '/models/Order.php';
-                    $orderModel = new Order();
-                    $order = $orderModel->findOpenOrderByTable($request['table_id']);
-                    if ($order) {
-                        $orderModel->confirmPendingItems($order['id']);
-                    }
-                }
-            }
-
             $this->supportModel->resolveRequest($id);
-            echo json_encode(['ok' => true]);
+            $this->json(['ok' => true]);
         } else {
-            echo json_encode(['ok' => false]);
+            $this->json(['ok' => false], 400);
         }
     }
 }

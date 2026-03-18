@@ -32,7 +32,7 @@ class OrderNotification extends Model
     {
         return $this->findAll(
             "SELECT n.*, t.name as table_name, t.area as table_area,
-                    o.status as order_status, o.payment_status
+                    o.status as order_status
              FROM order_notifications n
              JOIN tables t ON n.table_id = t.id
              LEFT JOIN orders o ON n.order_id = o.id
@@ -64,7 +64,7 @@ class OrderNotification extends Model
         );
     }
 
-    /** Xóa thông báo cũ (giữ lại 100 cái gần nhất để nhẹ DB) */
+    /** Xóa thông báo cũ (giữ lại 200 cái gần nhất) */
     public function cleanup(): void
     {
         $this->execute(
@@ -72,7 +72,7 @@ class OrderNotification extends Model
              WHERE id NOT IN (
                 SELECT id FROM (
                     SELECT id FROM order_notifications 
-                    ORDER BY created_at DESC LIMIT 100
+                    ORDER BY created_at DESC LIMIT 200
                 ) tmp
              )"
         );

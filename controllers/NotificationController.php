@@ -13,77 +13,65 @@ class NotificationController extends Controller
 
     public function __construct()
     {
-        Auth::requireRole(['waiter', 'admin', 'it']);
+        // Fix: Auth::requireRole uses variadic args
+        Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
         $this->notifModel = new OrderNotification();
         $this->supportModel = new Support();
     }
 
-    /** GET /notifications — Trang trung tâm thông báo */
+    /** GET /notifications — Trang trung tâm điều hành */
     public function waiterIndex(): void
     {
-        try {
-            $this->view('layouts/waiter', [
-                'view' => 'notifications/waiter',
-                'pageTitle' => 'Trung tâm điều hành',
-            ]);
-        } catch (\Throwable $e) {
-            echo "<h1>Lỗi hệ thống (500)</h1>";
-            echo "<p>" . e($e->getMessage()) . "</p>";
-            exit;
-        }
+        $this->view('layouts/waiter', [
+            'view' => 'notifications/waiter',
+            'pageTitle' => 'Trung tâm điều hành',
+        ]);
     }
 
     /** API: Poll for notifications */
     public function poll(): void
     {
         try {
-            $recent = $this->notifModel->getRecent(30) ?: [];
-            
-            // Lấy thêm các support requests chưa xử lý để gộp vào (nếu cần)
-            $pendingSupports = $this->supportModel->getPending();
-            
-            $unreadCount = 0;
-            foreach ($recent as $n) {
-                if (!$n['is_read']) $unreadCount++;
-            }
+            // Lấy 50 thông báo gần nhất
+            $notifications = $this->notifModel->getRecent(50);
             
             $this->json([
-                'count' => $unreadCount,
-                'notifications' => $recent,
-                'pending_supports' => $pendingSupports,
+                'ok' => true,
+                'notifications' => $notifications,
                 'server_time' => date('Y-m-d H:i:s')
             ]);
         } catch (\Throwable $e) {
-            $this->json(['error' => $e->getMessage()], 500);
+            $this->json(['ok' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
     /** API: Đánh dấu đã đọc/xử lý */
     public function markRead(): void
     {
-        $id = (int)($_POST['id'] ?? 0);
+        $id = (int)($this->input('id', 0));
         $userId = Auth::user()['id'];
 
-        if ($id) {
+        if ($id > 0) {
             $this->notifModel->markAsRead($id, $userId);
         } else {
             $this->notifModel->markAllAsRead($userId);
         }
 
-        $this->json(['success' => true]);
+        $this->json(['ok' => true]);
     }
 
     /** API: Xử lý nhanh yêu cầu hỗ trợ từ thông báo */
     public function resolveSupport(): void
     {
-        $tableId = (int)($_POST['table_id'] ?? 0);
-        $type = $_POST['type'] ?? '';
+        $tableId = (int)($this->input('table_id', 0));
+        $type = $this->input('type', '');
 
-        if ($tableId) {
-            $this->supportModel->resolveRequest($tableId, $type);
-            $this->json(['success' => true]);
+        if ($tableId > 0) {
+            // Đánh dấu hoàn thành trong bảng support_requests nếu có
+            $this->supportModel->resolveByTableAndType($tableId, $type);
+            $this->json(['ok' => true]);
         } else {
-            $this->json(['error' => 'Thiếu thông tin bàn'], 400);
+            $this->json(['ok' => false, 'error' => 'Thiếu thông tin bàn'], 400);
         }
     }
 }

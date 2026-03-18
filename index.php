@@ -142,5 +142,6 @@ $router->post('/admin/qr-codes/delete', 'AdminQrController', 'delete');
 $router->get('/notifications', 'NotificationController', 'waiterIndex');
 $router->get('/api/notifications/poll', 'NotificationController', 'poll');
 $router->post('/api/notifications/mark-read', 'NotificationController', 'markRead');
+$router->post('/api/notifications/resolve-support', 'NotificationController', 'resolveSupport');
 
 $router->dispatch();
