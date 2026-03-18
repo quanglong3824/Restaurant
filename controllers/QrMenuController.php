@@ -76,6 +76,7 @@ class QrMenuController extends Controller
 
             // Set customer session
             $this->setupCustomerSession($tableId, $token);
+            $currentSessionId = session_id();
 
             $table = $this->tableModel->findById($tableId); // Reload table status
             if (!$table) {
@@ -83,55 +84,51 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- KIỂM TRA ĐƠN HÀNG VỪA ĐÓNG (QUAN TRỌNG) ---
-            // Nếu bàn đang trống (available), nhưng vừa có đơn hàng đóng cách đây ít phút
-            // Ta không nên tự động mở lại bàn mới ngay lập tức khi khách cũ reload trang
+            // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA ---
+            // Lấy đơn hàng cuối cùng của bàn này
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            if ($lastOrder && $lastOrder['status'] === 'closed') {
-                $closedTime = strtotime($lastOrder['closed_at']);
-                $secondsSinceClose = time() - $closedTime;
-                
-                // Nếu bàn vừa đóng trong vòng 15 phút, hiển thị trạng thái đã thanh toán/đóng bàn cho khách
-                if ($secondsSinceClose < 900) { // 15 phút
-                    $orderItems = $this->orderModel->getItems($lastOrder['id']);
-                    $this->view('layouts/public', [
-                        'view' => 'orders/paid_bill',
-                        'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
-                        'table' => $table,
-                        'order' => $lastOrder,
-                        'items' => $orderItems,
-                        'isCustomer' => true,
-                        'message' => 'Bàn này đã được nhân viên đóng hoặc thanh toán. Cảm ơn quý khách!'
-                    ]);
-                    return;
-                }
+            
+            // Nếu Session hiện tại trùng với Session của đơn hàng vừa đóng
+            // -> Khách cũ đã thanh toán/nhân viên đã đóng bàn của họ -> Không cho mở lại
+            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+                $orderItems = $this->orderModel->getItems($lastOrder['id']);
+                $this->view('layouts/public', [
+                    'view' => 'orders/paid_bill',
+                    'pageTitle' => 'Thông tin bàn ' . ($table['name'] ?? $tableId),
+                    'table' => $table,
+                    'order' => $lastOrder,
+                    'items' => $orderItems,
+                    'isCustomer' => true,
+                    'message' => 'Phiên làm việc của bạn tại bàn này đã kết thúc. Cảm ơn quý khách!'
+                ]);
+                return;
             }
 
-            // --- MỞ BÀN TỰ ĐỘNG (CHỈ KHI THỰC SỰ LÀ LƯỢT MỚI) ---
+            // --- MỞ BÀN TỰ ĐỘNG (Dành cho khách mới hoặc Session mới) ---
             if ($table['status'] === 'available') {
                 $this->tableModel->open($tableId);
-                // Tạo order nháp
+                // Tạo order nháp gắn với Session hiện tại
                 $orderId = $this->orderModel->create([
                     'table_id' => $tableId,
                     'waiter_id' => null,
                     'guest_count' => 1,
                     'order_source' => 'customer_qr',
+                    'session_id' => $currentSessionId,
                     'note' => 'Khách vừa quét mã'
                 ]);
             }
 
-            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (5 PHÚT) ---
+            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (Dành cho bàn đã mở nhưng chưa đặt món) ---
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             if ($openOrder) {
                 $items = $this->orderModel->getItems($openOrder['id']);
                 $minutesSinceOpen = (time() - strtotime($openOrder['opened_at'])) / 60;
                 
-                // Nếu bàn bận nhưng KHÔNG có món và đã quá 5 phút -> Coi như bàn trống ảo
-                if (empty($items) && $minutesSinceOpen > 5) {
-                    $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 5 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
+                // Nếu bàn bận nhưng KHÔNG có món và đã quá 10 phút -> Giải phóng bàn
+                if (empty($items) && $minutesSinceOpen > 10) {
+                    $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 10 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
                     $this->tableModel->close($tableId);
-                    $table['status'] = 'available'; // Reset trạng thái
-                    // Reload page to start fresh
+                    $table['status'] = 'available';
                     $this->redirect("/qr/menu?table_id=$tableId&token=$token");
                     return;
                 }

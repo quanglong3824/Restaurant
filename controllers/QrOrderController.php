@@ -56,18 +56,12 @@ class QrOrderController extends Controller
                 return;
             }
 
-            // --- KIỂM TRA ĐƠN HÀNG VỪA ĐÓNG ---
-            // Ngăn chặn việc tự động mở lại bàn nếu nhân viên vừa mới đóng bàn xong
+            // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA ---
+            // Nếu bàn đang 'available' nhưng khách cũ vẫn dùng Session cũ gửi Ajax lên
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            if ($lastOrder && $lastOrder['status'] === 'closed') {
-                $closedTime = strtotime($lastOrder['closed_at']);
-                if ((time() - $closedTime) < 900) { // 15 phút
-                    // Nếu bàn đang 'available' (vừa đóng), không cho khách cũ tự mở lại qua Ajax submit
-                    if ($table['status'] === 'available') {
-                        $this->json(['error' => 'Bàn này đã được đóng hoặc thanh toán. Vui lòng quét lại mã QR hoặc liên hệ nhân viên nếu muốn đặt lượt mới.'], 403);
-                        return;
-                    }
-                }
+            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+                $this->json(['error' => 'Phiên làm việc của bạn đã kết thúc. Vui lòng quét lại mã QR (Session mới) để đặt món tiếp.'], 403);
+                return;
             }
 
             // Check if open order exists
