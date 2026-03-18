@@ -51,11 +51,11 @@
     </div>
 
     <div class="action-buttons">
-        <a href="<?= BASE_URL ?>/qr/menu?table_id=<?= $order['table_id'] ?>&token=<?= $_SESSION['qr_token'] ?? '' ?>" class="btn-outline">
-            <i class="fas fa-plus"></i> Gọi thêm món
+        <a href="<?= BASE_URL ?>/qr/menu?table_id=<?= $order['table_id'] ?>&token=<?= $_SESSION['qr_token'] ?? '' ?>" class="btn-gold">
+            <i class="fas fa-plus me-2"></i> GỌI THÊM MÓN
         </a>
-        <button class="btn-gold" onclick="requestSupport(<?= $order['table_id'] ?>, 'payment')">
-            <i class="fas fa-file-invoice-dollar"></i> Yêu cầu thanh toán
-        </button>
+        <a href="<?= BASE_URL ?>/qr/menu?table_id=<?= $order['table_id'] ?>&token=<?= $_SESSION['qr_token'] ?? '' ?>&show_bill=1" class="btn-outline">
+            <i class="fas fa-file-invoice-dollar me-2"></i> KIỂM TRA HÓA ĐƠN
+        </a>
     </div>
 </div>

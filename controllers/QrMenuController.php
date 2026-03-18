@@ -91,20 +91,31 @@ class QrMenuController extends Controller
                 }
             }
 
-            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (5 PHÚT) ---
+            // --- MỞ BÀN NGAY KHI QUÉT (DÀNH CHO WAITER THẤY TRẠNG THÁI) ---
             $table = $this->tableModel->findById($tableId);
-            if ($table && $table['status'] === 'occupied') {
-                $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-                if ($openOrder) {
-                    $items = $this->orderModel->getItems($openOrder['id']);
-                    $minutesSinceOpen = (time() - strtotime($openOrder['opened_at'])) / 60;
-                    
-                    // Nếu bàn bận nhưng KHÔNG có món và đã quá 5 phút -> Coi như bàn trống ảo
-                    if (empty($items) && $minutesSinceOpen > 5) {
-                        $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 5 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
-                        $this->tableModel->close($tableId);
-                        $table['status'] = 'available'; // Reset trạng thái để tiếp tục xử lý bên dưới
-                    }
+            if ($table && $table['status'] === 'available') {
+                $this->tableModel->open($tableId);
+                // Tạo order nháp (waiter_id = NULL là khách quét)
+                $orderId = $this->orderModel->create([
+                    'table_id' => $tableId,
+                    'waiter_id' => null,
+                    'guest_count' => 1,
+                    'order_source' => 'customer_qr',
+                    'note' => 'Khách vừa quét mã'
+                ]);
+            }
+
+            // --- XỬ LÝ QUÉT ĐÈ / SESSION HẾT HẠN (5 PHÚT) ---
+            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            if ($openOrder) {
+                $items = $this->orderModel->getItems($openOrder['id']);
+                $minutesSinceOpen = (time() - strtotime($openOrder['opened_at'])) / 60;
+                
+                // Nếu bàn bận nhưng KHÔNG có món và đã quá 5 phút -> Coi như bàn trống ảo
+                if (empty($items) && $minutesSinceOpen > 5) {
+                    $this->orderModel->execute("UPDATE orders SET status = 'closed', note = 'Hết hạn 5 phút không đặt món' WHERE id = ?", [$openOrder['id']]);
+                    $this->tableModel->close($tableId);
+                    $table['status'] = 'available'; // Reset trạng thái để tiếp tục xử lý bên dưới
                 }
             }
 

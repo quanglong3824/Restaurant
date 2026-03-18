@@ -142,31 +142,54 @@
 .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
+    margin-top: 10px;
 }
 
 .btn-gold, .btn-outline {
     width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: 700;
+    padding: 16px;
+    border-radius: 16px;
+    font-weight: 800;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
     font-family: inherit;
     border: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-gold {
-    background: var(--gold);
+    background: linear-gradient(135deg, #d4af37, #b8860b);
     color: white;
-    box-shadow: 0 4px 12px var(--gold-glow);
-    border: 1px solid transparent;
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+.btn-gold:active {
+    transform: scale(0.98);
 }
 
 .btn-outline {
-    background: transparent;
-    border: 1px solid var(--gold);
+    background: #fff;
+    border: 2px solid var(--gold);
     color: var(--gold-dark);
+}
+
+.btn-outline:active {
+    background: #fffaf0;
+    transform: scale(0.98);
+}
+
+@media (min-width: 480px) {
+    .action-buttons {
+        flex-direction: row;
+    }
+    .btn-gold, .btn-outline {
+        flex: 1;
+    }
 }

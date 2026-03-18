@@ -229,11 +229,11 @@ class Order extends Model
         $this->execute("UPDATE orders SET is_realtime_hidden = 1 WHERE id = ?", [$orderId]);
     }
 
-    /** Xác nhận các món Draft thành Confirmed (Gửi bếp) */
+    /** Xác nhận các món Draft hoặc Pending thành Confirmed (Gửi bếp) */
     public function confirmItems(int $orderId): void
     {
         $this->execute(
-            "UPDATE order_items SET status = 'confirmed' WHERE order_id = ? AND status = 'draft'",
+            "UPDATE order_items SET status = 'confirmed' WHERE order_id = ? AND (status = 'draft' OR status = 'pending')",
             [$orderId]
         );
     }

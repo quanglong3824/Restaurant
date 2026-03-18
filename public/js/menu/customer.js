@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupCategoryNav();
     setupSearch();
     updateCartUI();
+    
+    // Automatically show bill if coming from status page's 'Check Bill' button
+    if (CUSTOMER_CONFIG.showBill && typeof showBillTam === 'function') {
+        setTimeout(() => showBillTam(), 800);
+    }
 });
 
 function checkLocation() {
@@ -18,6 +23,13 @@ function checkLocation() {
     const wrapper = document.getElementById('menuWrapper');
     const btn = document.getElementById('btnAllowLocation');
     const errorEl = document.getElementById('locationError');
+
+    // Skip if already verified in this session
+    if (sessionStorage.getItem('locationVerified') === 'true') {
+        overlay.style.display = 'none';
+        wrapper.style.display = 'block';
+        return;
+    }
 
     btn.addEventListener('click', () => {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
@@ -44,6 +56,7 @@ function checkLocation() {
                     showLocError(`Bạn đang ở quá xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn để đặt món.`);
                 } else {
                     // Success!
+                    sessionStorage.setItem('locationVerified', 'true');
                     overlay.style.transition = 'opacity 0.5s';
                     overlay.style.opacity = '0';
                     setTimeout(() => {

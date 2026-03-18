@@ -3,6 +3,11 @@
 
 <!-- Location Check Overlay -->
 <div id="locationOverlay" class="location-check-overlay">
+    <script>
+        if (sessionStorage.getItem('locationVerified') === 'true') {
+            document.getElementById('locationOverlay').style.display = 'none';
+        }
+    </script>
     <div class="location-card">
         <div class="location-header">
             <div class="logo-circle">
@@ -81,6 +86,11 @@
 </style>
 
 <div class="customer-menu-wrapper" id="menuWrapper" style="display:none;">
+    <script>
+        if (sessionStorage.getItem('locationVerified') === 'true') {
+            document.getElementById('menuWrapper').style.display = 'block';
+        }
+    </script>
     <!-- Premium Header -->
     <header class="menu-header">
         <div class="header-top">
@@ -387,7 +397,8 @@
             lat: <?= RESTAURANT_LAT ?>,
             lng: <?= RESTAURANT_LNG ?>
         },
-        maxDistance: <?= MAX_ORDER_DISTANCE ?>
+        maxDistance: <?= MAX_ORDER_DISTANCE ?>,
+        showBill: <?= isset($_GET['show_bill']) ? 'true' : 'false' ?>
     };
     
     function showBillTam() {

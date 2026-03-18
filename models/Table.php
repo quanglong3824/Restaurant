@@ -235,7 +235,7 @@ class Table extends Model
              WHERE o.status = 'open' 
              AND t.status = 'occupied'
              AND (
-                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 10 MINUTE)
+                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 5 MINUTE)
                 OR 
                 (o.opened_at < NOW() - INTERVAL 2 HOUR)
              )
