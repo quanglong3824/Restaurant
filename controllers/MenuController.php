@@ -42,9 +42,9 @@ class MenuController extends Controller
         $categories = $categoryModel->getActiveByType($menuType);
         $grouped = $itemModel->getGroupedByCategory($menuType);
 
-        // Lấy sets nếu là alacarte
+        // Lấy sets nếu là sets
         $sets = [];
-        if ($menuType === 'alacarte') {
+        if ($menuType === 'sets') {
             $sets = $setModel->getActive();
             foreach ($sets as &$set) {
                 $set['items'] = $setModel->getSetItems($set['id']);
@@ -98,7 +98,9 @@ class MenuController extends Controller
             'menuTypes' => [
                 ['key' => 'asia', 'label' => 'Món Á', 'icon' => 'fa-bowl-rice'],
                 ['key' => 'europe', 'label' => 'Món Âu', 'icon' => 'fa-bread-slice'],
-                ['key' => 'alacarte', 'label' => 'Set & Combo', 'icon' => 'fa-utensils'],
+                ['key' => 'alacarte', 'label' => 'Ala Carte', 'icon' => 'fa-utensils'],
+                ['key' => 'sets', 'label' => 'Set & Combo', 'icon' => 'fa-boxes-stacked'],
+                ['key' => 'other', 'label' => 'Đồ uống / Khác', 'icon' => 'fa-glass-water'],
             ],
             'tableId' => $tableId,
             'orderId' => $orderId,
