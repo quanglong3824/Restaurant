@@ -38,7 +38,7 @@ function checkLocation() {
                     CUSTOMER_CONFIG.restaurantCoords.lng
                 );
 
-                console.log("Distance to restaurant:", distance, "m");
+
 
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở quá xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn để đặt món.`);
