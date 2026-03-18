@@ -162,7 +162,7 @@
 
 <!-- QR Modal -->
 <div id="qrModal" class="modal">
-    <div class="modal-content" style="max-width: 400px; width: 90%; border: none; overflow: hidden; margin: 0;">
+    <div class="modal-content" style="max-width: 400px; width: 90%; border: none; overflow: hidden;">
         <div class="modal-header" style="background: #fcfaf5; border-bottom: 1px solid #f1e6d0; padding: 1rem 1.25rem;">
             <h3 id="qrModalTitle" style="font-family: 'Playfair Display', serif; color: #b8860b; font-weight: 700; font-size: 1.1rem; margin: 0;">Mã QR: Bàn A.01</h3>
             <button type="button" class="close-modal" style="background: #fff; border: 1px solid #eee; width: 30px; height: 30px; font-size: 1rem;">&times;</button>
