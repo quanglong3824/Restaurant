@@ -176,7 +176,10 @@
                 </div>
             </div>
             
-            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 1.5rem; padding:15px; background:#fff; border-radius:12px;"></div>
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 1.5rem; padding:15px; background:#fff; border-radius:12px; position: relative;">
+                <div id="qrcode-canvas"></div>
+                <img src="<?= BASE_URL ?>/public/src/logo/favicon.png" class="qr-logo-modal" alt="Logo">
+            </div>
             
             <div class="qr-print-footer" style="display:none; text-align:center; margin-top:15px;">
                 <p style="font-weight:600; margin-bottom:5px;">QUÉT MÃ ĐỂ ĐẶT MÓN</p>
@@ -249,7 +252,22 @@
 
     .close-modal:hover { background: #e5e7eb; }
 
-    #qrcode img {
+    .qr-logo-modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60px;
+        height: 60px;
+        background: white;
+        padding: 5px;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+
+    #qrcode-canvas img {
         border: 1px solid #f0f0f0;
         padding: 10px;
         border-radius: 8px;
@@ -263,15 +281,16 @@
         .no-print, .modal-header, #qrUrl { display: none !important; }
         .qr-print-header, .qr-print-footer { display: block !important; }
         #printableQrArea { padding: 40px !important; }
-        #qrcode { margin: 0 auto !important; padding: 0 !important; }
-        #qrcode img { width: 400px !important; height: 400px !important; border: none !important; }
+        #qrcode { margin: 0 auto !important; padding: 0 !important; border: none !important; }
+        .qr-logo-modal { width: 80px; height: 80px; } /* Larger logo for print */
+        #qrcode-canvas img { width: 450px !important; height: 450px !important; border: none !important; padding: 0 !important; }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('qrModal');
-        const qrContainer = document.getElementById('qrcode');
+        const qrContainer = document.getElementById('qrcode-canvas');
         const qrUrlText = document.getElementById('qrUrl');
         const qrTitle = document.getElementById('qrModalTitle');
         const qrTableDisplay = document.getElementById('qrTableDisplay');
@@ -301,8 +320,8 @@
 
                 const fullUrl = `<?= BASE_URL ?>/q?t=${token}`;
 
-                qrTitle.innerText = `Mã QR: ${tableName}`;
-                qrTableDisplay.innerText = tableName.toUpperCase();
+                qrTitle.innerText = `Mã QR: Bàn ${tableName}`;
+                qrTableDisplay.innerText = `BÀN ${tableName.toUpperCase()}`;
                 qrUrlText.innerText = fullUrl;
                 qrContainer.innerHTML = '';
 
@@ -312,7 +331,7 @@
                     height: 300,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.L,
+                    correctLevel: QRCode.CorrectLevel.H,
                     margin: 2
                 });
 
@@ -341,7 +360,7 @@
     }
 
     function downloadQR() {
-        const img = document.querySelector('#qrcode img');
+        const img = document.querySelector('#qrcode-canvas img');
         if (!img) return;
         const link = document.createElement('a');
         link.download = `QR-${document.getElementById('qrTableDisplay').innerText}.png`;
