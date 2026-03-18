@@ -36,7 +36,7 @@ class Order extends Model
     public function findLastOrderByTable(int $tableId): ?array
     {
         return $this->findOne(
-            "SELECT * FROM orders WHERE table_id = ? ORDER BY opened_at DESC LIMIT 1",
+            "SELECT * FROM orders WHERE table_id = ? ORDER BY id DESC LIMIT 1",
             [$tableId]
         );
     }

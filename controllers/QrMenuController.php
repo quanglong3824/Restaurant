@@ -84,17 +84,21 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA ---
-            // Lấy đơn hàng cuối cùng của bàn này
+            // --- KIỂM TRA SESSION ĐÃ HOÀN TẤT CHƯA (Hoặc bàn vừa mới đóng) ---
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
             
-            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+            if ($lastOrder && $lastOrder['status'] === 'closed') {
                 $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
                 $minutesSinceClose = (time() - $closedTime) / 60;
 
-                // Nếu vừa đóng trong vòng 30 phút -> Hiển thị trang thanh toán (chặn reload vô tình)
-                // Nếu đã quá 30 phút -> Cho phép mở bàn mới (khách quay lại sau vài tiếng)
-                if ($minutesSinceClose < 30) {
+                // 1. Nếu là cùng Session (khách cũ) -> Chặn trong 30 phút
+                $isSameSession = ($lastOrder['session_id'] === $currentSessionId);
+                
+                // 2. Nếu bàn vừa mới đóng tức thì bởi nhân viên (trong 10 phút) 
+                // -> Chặn mọi yêu cầu re-open tự động để tránh lỗi nhảy lại menu
+                $isRecentlyClosed = ($minutesSinceClose < 10);
+
+                if (($isSameSession && $minutesSinceClose < 30) || ($isRecentlyClosed && $table['status'] === 'available')) {
                     $orderItems = $this->orderModel->getItems($lastOrder['id']);
                     $this->view('layouts/public', [
                         'view' => 'orders/paid_bill',
@@ -103,7 +107,7 @@ class QrMenuController extends Controller
                         'order' => $lastOrder,
                         'items' => $orderItems,
                         'isCustomer' => true,
-                        'message' => 'Phiên làm việc vừa kết thúc. Cảm ơn quý khách!'
+                        'message' => $isRecentlyClosed ? 'Bàn này vừa được nhân viên đóng. Vui lòng quét lại sau ít phút hoặc liên hệ nhân viên.' : 'Phiên làm việc vừa kết thúc. Cảm ơn quý khách!'
                     ]);
                     return;
                 }
