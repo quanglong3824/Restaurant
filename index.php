@@ -26,7 +26,8 @@ $router->get('/auth/login', 'AuthController', 'showLogin');
 $router->post('/auth/login', 'AuthController', 'handleLogin');
 $router->get('/auth/logout', 'AuthController', 'logout');
 
-// ── Home: redirect by role ────────────────────────────────
+// ── Home: landing page for iOS Shortcut ──────────────────
+$router->get('/home', 'AuthController', 'landing');
 $router->get('/', 'AuthController', 'home');
 
 // ── Waiter: Tables ────────────────────────────────────────

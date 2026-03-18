@@ -8,12 +8,24 @@ require_once BASE_PATH . '/models/User.php';
 class AuthController extends Controller
 {
     /**
+     * GET /home — Landing page for iOS Home Screen
+     */
+    public function landing(): void
+    {
+        $this->view('layouts/public', [
+            'view' => 'home',
+            'pageTitle' => 'Aurora Restaurant',
+        ]);
+    }
+
+    /**
      * GET / — Redirect theo role sau khi đăng nhập
      */
     public function home(): void
     {
         if (!Auth::check()) {
-            $this->redirect('/auth/login');
+            $this->landing();
+            return;
         }
 
         // Redirect theo role

@@ -7,6 +7,13 @@
     <meta name="theme-color" content="#d4af37">
     <title><?= e($pageTitle ?? 'Admin') ?> — Aurora Restaurant</title>
 
+    <!-- App Icons & iOS Web App Meta -->
+    <link rel="icon" type="image/png" href="<?= BASE_URL ?>/public/src/logo/favicon.png">
+    <link rel="apple-touch-icon" href="<?= BASE_URL ?>/public/src/logo/favicon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Aurora Restaurant">
+
     <!-- Google Fonts: Outfit & Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
