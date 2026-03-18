@@ -487,11 +487,6 @@ function renderTableToken($t, $tableModel) {
 </div>
 
 <style>
-    /* Tối ưu hóa kích thước Modal */
-    .modal-header { padding: 1rem 1.25rem; }
-    .modal-header h3 { font-size: 1.15rem; }
-    .modal-body { padding: 1.25rem; }
-    
     .interactive-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);

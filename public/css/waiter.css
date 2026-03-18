@@ -663,19 +663,22 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
 /* ── Modals ──────────────────────────────────────────────── */
 .modal-backdrop {
     position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: grid;
+    place-items: center;
     z-index: 2000;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     padding: 20px;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-backdrop.is-open {
@@ -685,22 +688,22 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
 
 .modal {
     background: var(--surface);
-    width: 92%;
+    width: 100%;
     max-width: 500px;
-    max-height: calc(100vh - 40px);
-    margin: auto;
+    max-height: 85vh;
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(30px) scale(0.95);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
     position: relative;
+    /* Đảm bảo modal không bị kéo giãn */
+    height: fit-content;
 }
 
 .modal-premium {
-    max-width: 500px;
     border: 1px solid var(--border-gold);
 }
 
@@ -718,14 +721,19 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     background: white;
 }
 
-.modal-header h3 { margin: 0; font-size: 1.25rem; color: var(--gold-dark); }
+.modal-header h3 { 
+    margin: 0; 
+    font-size: 1.15rem; 
+    color: var(--gold-dark);
+    font-weight: 800;
+}
 
 .modal-close {
     background: var(--bg);
     border: none;
     color: var(--text-muted);
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -741,6 +749,16 @@ h1, h2, h3, .brand { font-family: 'Playfair Display', serif; }
     overflow-y: auto;
     flex: 1;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Tối ưu cho iPad và thiết bị cảm ứng */
+@media (max-width: 576px) {
+    .modal-backdrop {
+        padding: 12px;
+    }
+    .modal {
+        max-height: 80vh;
+    }
 }
 
 /* Custom Scrollbar cho Modal Body */
