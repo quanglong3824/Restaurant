@@ -342,17 +342,138 @@ if (!empty($items)) {
                     </div>
                 </div>
 
-                <div class="mb-3 p-3 rounded-pill bg-light d-flex align-items-center gap-2">
-                    <input type="checkbox" id="checkPaid" required>
-                    <label for="checkPaid" class="small fw-bold m-0">Đã nhận đủ tiền từ khách hàng</label>
+                <div class="payment-options-grid mb-4">
+                    <div class="payment-option-card" id="cardPaid" onclick="togglePaymentCheck('checkPaid')">
+                        <div class="option-check-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="option-text">
+                            <strong>XÁC NHẬN NHẬN TIỀN</strong>
+                            <span>Đã nhận đủ tiền từ khách</span>
+                        </div>
+                        <input type="checkbox" id="checkPaid" required style="display:none">
+                    </div>
+
+                    <div class="payment-option-card" id="cardPrint" onclick="togglePaymentCheck('checkPrintBill')">
+                        <div class="option-check-icon">
+                            <i class="fas fa-print"></i>
+                        </div>
+                        <div class="option-text">
+                            <strong>IN HOÁ ĐƠN</strong>
+                            <span>Xem hoá đơn sau thanh toán</span>
+                        </div>
+                        <input type="checkbox" id="checkPrintBill" style="display:none">
+                    </div>
                 </div>
 
-                <div class="mb-4 p-3 rounded bg-light d-flex align-items-center gap-2">
-                    <input type="checkbox" id="checkPrintBill">
-                    <label for="checkPrintBill" class="small fw-bold m-0">
-                        <i class="fas fa-print me-1"></i> Xem hoá đơn sau thanh toán
-                    </label>
-                </div>
+                <style>
+                    .payment-options-grid {
+                        display: grid;
+                        grid-template-columns: 1fr;
+                        gap: 0.75rem;
+                    }
+                    .payment-option-card {
+                        background: #f8fafc;
+                        border: 2px solid #e2e8f0;
+                        border-radius: 16px;
+                        padding: 1.25rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                        cursor: pointer;
+                        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    .payment-option-card:hover {
+                        border-color: #cbd5e1;
+                        background: #f1f5f9;
+                    }
+                    .option-check-icon {
+                        width: 44px;
+                        height: 44px;
+                        background: #fff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.25rem;
+                        color: #94a3b8;
+                        transition: all 0.3s;
+                        flex-shrink: 0;
+                    }
+                    .option-text {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                    }
+                    .option-text strong {
+                        font-size: 0.85rem;
+                        font-weight: 800;
+                        color: #334155;
+                        letter-spacing: 0.5px;
+                    }
+                    .option-text span {
+                        font-size: 0.75rem;
+                        color: #64748b;
+                    }
+
+                    /* Active States */
+                    .payment-option-card.active {
+                        border-color: var(--gold);
+                        background: rgba(212, 175, 55, 0.05);
+                    }
+                    .payment-option-card.active .option-check-icon {
+                        background: var(--gold);
+                        color: #fff;
+                        border-color: var(--gold);
+                        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+                        transform: scale(1.05);
+                    }
+                    .payment-option-card.active .option-text strong {
+                        color: var(--gold-dark);
+                    }
+
+                    /* Paid confirmation specifically */
+                    #cardPaid.active {
+                        background: #f0fdf4;
+                        border-color: #22c55e;
+                    }
+                    #cardPaid.active .option-check-icon {
+                        background: #22c55e;
+                        border-color: #22c55e;
+                        color: #fff;
+                        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+                    }
+                    #cardPaid.active .option-text strong {
+                        color: #15803d;
+                    }
+
+                    /* Print button specific active state as requested (bright) */
+                    #cardPrint.active {
+                        background: rgba(212, 175, 55, 0.1);
+                        border-color: var(--gold);
+                    }
+                </style>
+
+                <script>
+                    function togglePaymentCheck(id) {
+                        const checkbox = document.getElementById(id);
+                        const card = id === 'checkPaid' ? document.getElementById('cardPaid') : document.getElementById('cardPrint');
+                        
+                        checkbox.checked = !checkbox.checked;
+                        
+                        if (checkbox.checked) {
+                            card.classList.add('active');
+                            // Add a little haptic-like scale effect
+                            card.style.transform = 'scale(0.98)';
+                            setTimeout(() => card.style.transform = 'scale(1)', 100);
+                        } else {
+                            card.classList.remove('active');
+                        }
+                    }
+                </script>
 
                 <button type="button" id="btnSubmitPayment" class="btn btn-gold w-100 py-3 shadow-lg"
                     onclick="handleSubmitPayment(event)">
