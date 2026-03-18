@@ -27,6 +27,21 @@
             <p class="text-muted mt-3">Đang kết nối trung tâm...</p>
         </div>
     </div>
+
+    <!-- Pagination Controls -->
+    <div id="paginationControls" class="pagination-scroller mt-4" style="display: none; padding-bottom: 100px;">
+        <nav class="pagination-luxury">
+            <button id="btnPrevPage" class="pag-btn">
+                <i class="fas fa-chevron-left" style="font-size: 0.8rem;"></i>
+            </button>
+            <div id="pageInfo" class="pag-numbers" style="padding: 0 15px; font-weight: 700; color: var(--gold-dark); font-size: 0.9rem;">
+                Trang 1
+            </div>
+            <button id="btnNextPage" class="pag-btn">
+                <i class="fas fa-chevron-right" style="font-size: 0.8rem;"></i>
+            </button>
+        </nav>
+    </div>
 </div>
 
 <!-- Audio Alerts (Hidden) -->
@@ -49,7 +64,7 @@
     .filter-pill.active { background: var(--gold); color: white; border-color: var(--gold); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
     .filter-pill .badge { font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 10px; }
 
-    .noti-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 80px; }
+    .noti-list { display: flex; flex-direction: column; gap: 12px; padding-bottom: 20px; }
     
     .noti-card {
         background: white; border-radius: 18px; padding: 16px; 
@@ -101,31 +116,53 @@
     
     .empty-state { padding: 100px 20px; color: var(--text-dim); }
     .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.2; }
+
+    /* Pagination Styles (Shared with Orders History) */
+    .pagination-luxury { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .pag-btn { 
+        width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); 
+        background: white; color: var(--text-muted); display: flex; 
+        align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+    }
+    .pag-btn:hover:not(.disabled) { border-color: var(--gold); color: var(--gold); }
+    .pag-btn.disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const listEl = document.getElementById('notiList');
     const filterPills = document.querySelectorAll('.filter-pill');
+    const paginationControls = document.getElementById('paginationControls');
+    const btnPrevPage = document.getElementById('btnPrevPage');
+    const btnNextPage = document.getElementById('btnNextPage');
+    const pageInfo = document.getElementById('pageInfo');
+
     let currentFilter = 'all';
+    let currentPage = 1;
+    let itemsPerPage = 15;
+    let totalItems = 0;
     let lastNotiId = 0;
     let isFirstLoad = true;
 
-    async function fetchNotifications() {
+    async function fetchNotifications(silent = false) {
         try {
-            console.log("Polling notifications...");
-            const response = await fetch(`${BASE_URL}/api/notifications/poll`);
-            if (!response.ok) {
-                console.error("Poll response not OK", response.status);
-                return;
-            }
-            const data = await response.json();
-            console.log("Received data:", data);
+            if (!silent) console.log("Fetching notifications, page:", currentPage);
             
-            if (data.ok && data.notifications) {
-                updateStats(data.notifications);
+            const url = `${BASE_URL}/api/notifications/poll?page=${currentPage}&limit=${itemsPerPage}&filter=${currentFilter}`;
+            const response = await fetch(url);
+            if (!response.ok) return;
+            const data = await response.json();
+            
+            if (data.ok) {
+                totalItems = data.total_count;
+                updateStats(data.stats);
                 renderList(data.notifications);
-                checkNewNoti(data.notifications);
+                updatePagination();
+                
+                // Audio check only for page 1
+                if (currentPage === 1) {
+                    checkNewNoti(data.notifications);
+                }
             }
             
             isFirstLoad = false;
@@ -134,17 +171,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateStats(notifs) {
-        const counts = { all: notifs.length, payment_request: 0, new_order: 0, support_request: 0 };
-        notifs.forEach(n => {
-            if (!n.is_read && counts[n.notification_type] !== undefined) {
-                counts[n.notification_type]++;
-            }
-        });
-        document.getElementById('count-all').textContent = notifs.filter(n => !n.is_read).length;
-        document.getElementById('count-payment').textContent = counts.payment_request;
-        document.getElementById('count-order').textContent = counts.new_order;
-        document.getElementById('count-support').textContent = counts.support_request;
+    function updateStats(stats) {
+        document.getElementById('count-all').textContent = stats.unread;
+        document.getElementById('count-payment').textContent = stats.payment;
+        document.getElementById('count-order').textContent = stats.order;
+        document.getElementById('count-support').textContent = stats.support;
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (totalPages <= 1) {
+            paginationControls.style.display = 'none';
+        } else {
+            paginationControls.style.display = 'block';
+            pageInfo.textContent = `Trang ${currentPage} / ${totalPages}`;
+            
+            btnPrevPage.classList.toggle('disabled', currentPage === 1);
+            btnNextPage.classList.toggle('disabled', currentPage === totalPages);
+        }
     }
 
     function checkNewNoti(notifs) {
@@ -162,11 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderList(notifs) {
-        const filtered = currentFilter === 'all' 
-            ? notifs 
-            : notifs.filter(n => n.notification_type === currentFilter);
-
-        if (filtered.length === 0) {
+        if (notifs.length === 0) {
             listEl.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-bell-slash"></i>
@@ -177,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const fragment = document.createDocumentFragment();
-        filtered.forEach(n => {
+        notifs.forEach(n => {
             const isUnread = !parseInt(n.is_read);
             const card = document.createElement('div');
             card.className = `noti-card ${isUnread ? 'unread' : 'read'} type-${n.notification_type}`;
@@ -222,12 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.handleAction = async (id, tableId, type) => {
         try {
-            // 1. Mark notification as read
             const fd = new FormData();
             fd.append('id', id);
             await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST', body: fd });
 
-            // 2. Resolve support if applicable
             if (type === 'support_request' || type === 'payment_request') {
                 const fd2 = new FormData();
                 fd2.append('table_id', tableId);
@@ -235,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await fetch(`${BASE_URL}/api/notifications/resolve-support`, { method: 'POST', body: fd2 });
             }
 
-            fetchNotifications();
+            fetchNotifications(true);
             if (window.showToast) showToast('Đã xác nhận xử lý xong');
         } catch (e) {
             alert('Lỗi khi thực hiện thao tác');
@@ -248,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnMarkAllRead').onclick = async () => {
         await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST' });
-        fetchNotifications();
+        fetchNotifications(true);
     };
 
     filterPills.forEach(pill => {
@@ -256,9 +294,27 @@ document.addEventListener('DOMContentLoaded', () => {
             filterPills.forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
             currentFilter = pill.dataset.type;
+            currentPage = 1;
             fetchNotifications();
         };
     });
+
+    btnPrevPage.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            fetchNotifications();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    btnNextPage.onclick = () => {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            fetchNotifications();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
 
     function formatTimeAgo(date) {
         const seconds = Math.floor((new Date() - date) / 1000);
@@ -271,6 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     fetchNotifications();
-    setInterval(fetchNotifications, 5000); // Polling every 5s
+    // Only poll if on page 1
+    setInterval(() => {
+        if (currentPage === 1) {
+            fetchNotifications(true);
+        }
+    }, 5000); 
 });
 </script>
+

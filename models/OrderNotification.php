@@ -42,6 +42,56 @@ class OrderNotification extends Model
         );
     }
 
+    /** Lấy danh sách thông báo phân trang */
+    public function getPaged(int $page, int $limit, string $type = 'all'): array
+    {
+        $offset = ($page - 1) * $limit;
+        $sql = "SELECT n.*, t.name as table_name, t.area as table_area,
+                       o.status as order_status
+                FROM order_notifications n
+                JOIN tables t ON n.table_id = t.id
+                LEFT JOIN orders o ON n.order_id = o.id";
+        
+        $params = [];
+        if ($type !== 'all') {
+            $sql .= " WHERE n.notification_type = ?";
+            $params[] = $type;
+        }
+
+        $sql .= " ORDER BY n.created_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
+        return $this->findAll($sql, $params);
+    }
+
+    /** Đếm tổng số thông báo */
+    public function countAll(string $type = 'all'): int
+    {
+        $sql = "SELECT COUNT(*) as cnt FROM order_notifications";
+        $params = [];
+        if ($type !== 'all') {
+            $sql .= " WHERE notification_type = ?";
+            $params[] = $type;
+        }
+        $row = $this->findOne($sql, $params);
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    /** Đếm số thông báo chưa đọc */
+    public function countUnread(): int
+    {
+        $row = $this->findOne("SELECT COUNT(*) as cnt FROM order_notifications WHERE is_read = 0");
+        return (int)($row['cnt'] ?? 0);
+    }
+
+    /** Đếm số thông báo chưa đọc theo loại */
+    public function countUnreadByType(string $type): int
+    {
+        $row = $this->findOne("SELECT COUNT(*) as cnt FROM order_notifications WHERE is_read = 0 AND notification_type = ?", [$type]);
+        return (int)($row['cnt'] ?? 0);
+    }
+
     /** Đánh dấu đã đọc */
     public function markAsRead(int $id, int $userId): void
     {

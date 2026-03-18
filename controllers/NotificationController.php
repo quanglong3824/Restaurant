@@ -32,12 +32,29 @@ class NotificationController extends Controller
     public function poll(): void
     {
         try {
-            // Lấy 50 thông báo gần nhất
-            $notifications = $this->notifModel->getRecent(50);
+            $page = max(1, (int)($this->input('page', 1)));
+            $limit = max(1, (int)($this->input('limit', 15)));
+            $filter = $this->input('filter', 'all');
+
+            // Lấy danh sách thông báo phân trang
+            $notifications = $this->notifModel->getPaged($page, $limit, $filter);
+            $totalCount = $this->notifModel->countAll($filter);
             
+            // Lấy thêm stats (unread count) để cập nhật badge
+            $stats = [
+                'unread' => $this->notifModel->countUnread(),
+                'payment' => $this->notifModel->countUnreadByType('payment_request'),
+                'order' => $this->notifModel->countUnreadByType('new_order'),
+                'support' => $this->notifModel->countUnreadByType('support_request'),
+            ];
+
             $this->json([
                 'ok' => true,
                 'notifications' => $notifications,
+                'total_count' => $totalCount,
+                'page' => $page,
+                'limit' => $limit,
+                'stats' => $stats,
                 'server_time' => date('Y-m-d H:i:s')
             ]);
         } catch (\Throwable $e) {
