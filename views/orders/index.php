@@ -37,7 +37,14 @@ if (!empty($items)) {
                     <span class="id-num"><?= e(str_replace('Bàn ', '', $table['name'])) ?></span>
                 </div>
                 <div class="id-main ms-3">
-                    <h2 class="mb-1"><?= e($table_display_name) ?></h2>
+                    <h2 class="mb-1">
+                        <?= e($table_display_name) ?>
+                        <?php if (($order['order_source'] ?? '') === 'customer_qr'): ?>
+                            <span class="badge bg-info text-white ms-2" style="font-size: 0.7rem; vertical-align: middle;">
+                                <i class="fas fa-qrcode me-1"></i> KHÁCH QUÉT QR
+                            </span>
+                        <?php endif; ?>
+                    </h2>
                     <?php if (!empty($order['note'])): ?>
                         <div class="badge bg-gold-light text-gold-dark mb-2 py-2 px-3 rounded-pill" style="font-size:0.75rem; border:1px solid var(--gold-light);">
                             <i class="fas fa-info-circle me-1"></i> <?= e($order['note']) ?>
@@ -149,6 +156,11 @@ if (!empty($items)) {
                                 <div class="plate-price"><?= formatPrice($item['item_price'] * $item['quantity']) ?></div>
                                 <div class="plate-status">
                                     <i class="fas fa-check-circle" title="Đã xác nhận"></i>
+                                    <?php if (!$isSplitAction): ?>
+                                    <button class="btn btn-link text-danger p-0 ms-2" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món đã xác nhận">
+                                        <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
+                                    </button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>

@@ -158,10 +158,10 @@ class Order extends Model
         }
     }
 
-    /** Xóa một dòng order item */
+    /** Xóa một dòng order item - Cho phép xóa mọi trạng thái nếu là nhân viên/admin */
     public function removeItem(int $itemId): void
     {
-        $this->execute("DELETE FROM order_items WHERE id = ? AND (status = 'draft' OR status = 'pending')", [$itemId]);
+        $this->execute("DELETE FROM order_items WHERE id = ?", [$itemId]);
     }
 
     /** Đóng order & đóng bàn (Thanh toán) */
