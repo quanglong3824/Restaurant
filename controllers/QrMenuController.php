@@ -91,9 +91,14 @@ class QrMenuController extends Controller
             // 1. Nếu bàn đang bận (occupied)
             if ($table['status'] === 'occupied') {
                 if ($openOrder) {
-                    // Nếu order đã có session_id và KHÔNG trùng với session hiện tại -> Bàn đang bận
+                    // Nếu order đã có session_id và KHÔNG trùng với session hiện tại -> Hiển thị trang bàn bận
                     if (!empty($openOrder['session_id']) && $openOrder['session_id'] !== $currentSessionId) {
-                        $this->view('404', ['message' => 'Bàn này đang bận. Vui lòng liên hệ nhân viên hoặc chọn bàn khác.']);
+                        $this->view('layouts/public', [
+                            'view' => 'orders/table_busy',
+                            'pageTitle' => 'Bàn đang bận',
+                            'table' => $table,
+                            'isCustomer' => true
+                        ]);
                         return;
                     }
                     
