@@ -87,7 +87,7 @@ fetch('<?= BASE_URL ?>/qr/session/clear', {
 .then(r => r.json())
 .then(data => {
     if (data.success) {
-        window.location.href = '<?= BASE_URL ?>/qr/menu?table_id=<?= $table['id'] ?>&token=<?= $_GET['token'] ?? "" ?>';
+        window.location.href = '<?= BASE_URL ?>/qr/menu?table_id=<?= $table['id'] ?>&token=<?= $token ?? "" ?>';
     }
 })
 .catch(err => {

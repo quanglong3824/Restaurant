@@ -107,6 +107,7 @@ class QrMenuController extends Controller
                         'order' => $lastOrder,
                         'items' => $orderItems,
                         'isCustomer' => true,
+                        'token' => $token, // Chuyền token vào view
                         'message' => $isRecentlyClosed ? 'Bàn này vừa được nhân viên đóng. Vui lòng quét lại sau ít phút hoặc liên hệ nhân viên.' : 'Phiên làm việc vừa kết thúc. Cảm ơn quý khách!'
                     ]);
                     return;
