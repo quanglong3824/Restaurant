@@ -6,11 +6,99 @@ let cart = [];
 let currentItem = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    checkLocation();
     loadCart();
     setupCategoryNav();
     setupSearch();
     updateCartUI();
 });
+
+function checkLocation() {
+    const overlay = document.getElementById('locationOverlay');
+    const wrapper = document.getElementById('menuWrapper');
+    const btn = document.getElementById('btnAllowLocation');
+    const errorEl = document.getElementById('locationError');
+
+    // Nếu là IT/Admin dev, cho phép bỏ qua để test (có thể xóa phần này trên Prod nếu muốn gắt)
+    if (CUSTOMER_CONFIG.isIT) {
+        console.log("IT Mode: Skipping location check.");
+        overlay.style.display = 'none';
+        wrapper.style.display = 'block';
+        return;
+    }
+
+    btn.addEventListener('click', () => {
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
+        btn.disabled = true;
+
+        if (!navigator.geolocation) {
+            showLocError("Trình duyệt của bạn không hỗ trợ định vị. Vui lòng sử dụng trình duyệt khác (Chrome, Safari).");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const distance = calculateDistance(
+                    userLat, userLng, 
+                    CUSTOMER_CONFIG.restaurantCoords.lat, 
+                    CUSTOMER_CONFIG.restaurantCoords.lng
+                );
+
+                console.log("Distance to restaurant:", distance, "m");
+
+                if (distance > CUSTOMER_CONFIG.maxDistance) {
+                    showLocError(`Bạn đang ở quá xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn để đặt món.`);
+                } else {
+                    // Success!
+                    overlay.style.transition = 'opacity 0.5s';
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        wrapper.style.display = 'block';
+                    }, 500);
+                }
+            },
+            (err) => {
+                let msg = "Không thể lấy vị trí. ";
+                switch(err.code) {
+                    case err.PERMISSION_DENIED: msg += "Vui lòng cho phép truy cập vị trí trong cài đặt trình duyệt."; break;
+                    case err.POSITION_UNAVAILABLE: msg += "Thông tin vị trí không khả dụng."; break;
+                    case err.TIMEOUT: msg += "Yêu cầu lấy vị trí hết hạn."; break;
+                    default: msg += "Lỗi không xác định.";
+                }
+                showLocError(msg);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    });
+
+    function showLocError(msg) {
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-redo me-2"></i> THỬ LẠI';
+        btn.disabled = false;
+    }
+}
+
+/**
+ * Calculates distance in meters using Haversine formula
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Earth radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
 
 function setupCategoryNav() {
     const pills = document.querySelectorAll('.cat-pill');

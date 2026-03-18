@@ -1,7 +1,39 @@
 <?php // views/menu/customer.php — Customer Digital Menu (Mobile First) ?>
 <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/menu/customer.css">
 
-<div class="customer-menu-wrapper">
+<!-- Location Check Overlay -->
+<div id="locationOverlay" class="location-check-overlay">
+    <div class="location-card">
+        <i class="fas fa-map-marker-alt fa-3x mb-3 text-gold pulse"></i>
+        <h3>XÁC THỰC VỊ TRÍ</h3>
+        <p>Vui lòng cho phép ứng dụng truy cập vị trí của bạn để xem menu và đặt món tại bàn.</p>
+        <div id="locationError" class="text-danger small mt-2" style="display:none;"></div>
+        <button id="btnAllowLocation" class="btn-gold w-100 mt-4">
+            <i class="fas fa-location-arrow me-2"></i> CHO PHÉP TRUY CẬP
+        </button>
+    </div>
+</div>
+
+<style>
+    .location-check-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+        z-index: 10000; display: flex; align-items: center; justify-content: center;
+        padding: 20px; text-align: center; color: white;
+    }
+    .location-card {
+        background: #1e293b; padding: 40px 30px; border-radius: 24px;
+        border: 1px solid var(--gold); max-width: 400px; width: 100%;
+    }
+    .pulse { animation: pulse-gold-small 2s infinite; }
+    @keyframes pulse-gold-small {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+</style>
+
+<div class="customer-menu-wrapper" id="menuWrapper" style="display:none;">
     <!-- Premium Header -->
     <header class="menu-header">
         <div class="header-top">
@@ -303,7 +335,12 @@
         tableName: '<?= e($table['name']) ?>',
         baseUrl: '<?= BASE_URL ?>',
         isIT: <?= Auth::isIT() ? 'true' : 'false' ?>,
-        hasItems: <?= $hasItems ? 'true' : 'false' ?>
+        hasItems: <?= $hasItems ? 'true' : 'false' ?>,
+        restaurantCoords: {
+            lat: <?= RESTAURANT_LAT ?>,
+            lng: <?= RESTAURANT_LNG ?>
+        },
+        maxDistance: <?= MAX_ORDER_DISTANCE ?>
     };
     
     function showBillTam() {
