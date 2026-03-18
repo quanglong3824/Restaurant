@@ -15,7 +15,7 @@
             <?php endforeach; ?>
         </div>
 
-        <?php if (!empty($categories) && $currentType !== 'alacarte'): ?>
+        <?php if (!empty($categories) && $currentType !== 'sets'): ?>
             <div class="category-filter-bar">
                 <button class="filter-pill is-active" data-filter="all">Tất cả</button>
                 <?php foreach ($categories as $cat): ?>
