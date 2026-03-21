@@ -34,65 +34,94 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($tables as $t): ?>
+                    <?php 
+                    // Group tables by area for admin view
+                    $groupedAdminTables = [];
+                    foreach ($tables as $t) {
+                        $areaName = $t['area'] ?: 'Chưa phân khu';
+                        if (!isset($groupedAdminTables[$areaName])) {
+                            $groupedAdminTables[$areaName] = [];
+                        }
+                        $groupedAdminTables[$areaName][] = $t;
+                    }
+                    ?>
+                    
+                    <?php if (empty($groupedAdminTables)): ?>
                         <tr>
-                            <td><strong><?= e($t['name']) ?></strong></td>
-                            <td class="table-hide-sm"><?= e($t['area'] ?? '—') ?></td>
-                            <td class="table-hide-sm"><?= $t['capacity'] ?> người</td>
-                            <td>
-                                <?php if ($t['status'] === 'occupied'): ?>
-                                    <span class="badge badge-danger">
-                                        <i class="fas fa-circle" style="font-size:.5rem"></i> Có khách
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge badge-success">
-                                        <i class="fas fa-circle" style="font-size:.5rem"></i> <?= $type === 'room' ? 'Sẵn sàng' : 'Trống' ?>
-                                    </span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="badge <?= $t['is_active'] ? 'badge-success' : 'badge-danger' ?>">
-                                    <?= $t['is_active'] ? 'Đang dùng' : 'Tạm ẩn' ?>
-                                </span>
-                            </td>
-                            <td>
-                                <div style="display:flex;gap:.4rem;">
-                                    <!-- QR Button -->
-                                    <button type="button" class="btn btn-outline btn-sm btn-qr" data-id="<?= $t['id'] ?>"
-                                        data-name="<?= e($t['name']) ?>" data-token="<?= e($t['qr_token'] ?? '') ?>" title="Tạo QR">
-                                        <i class="fas fa-qrcode"></i>
-                                    </button>
-
-                                    <!-- Reset QR Button -->
-                                    <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR"
-                                        onclick="confirmResetQR(<?= $t['id'] ?>, '<?= e($t['name']) ?>', <?= (int)$t['is_printed'] ?>, <?= (int)$t['scan_count'] ?>, <?= (int)$t['items_count'] ?>)">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-
-                                    <a href="<?= BASE_URL ?>/admin/tables/edit?id=<?= $t['id'] ?>"
-                                        class="btn btn-outline btn-sm" title="Sửa">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                    <?php if ($t['status'] !== 'occupied'): ?>
-                                        <form method="POST" action="<?= BASE_URL ?>/admin/tables/delete"
-                                            style="display:inline;">
-                                            <input type="hidden" name="id" value="<?= $t['id'] ?>">
-                                            <button type="submit" class="btn btn-danger-outline btn-sm"
-                                                data-confirm="Xóa <?= $type === 'room' ? 'phòng' : 'bàn' ?> '<?= e($t['name']) ?>'?" title="Xóa">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    <?php endif; ?>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    <?php if (empty($tables)): ?>
-                        <tr>
-                            <td colspan="7" style="text-align:center;padding:2rem;color:#9ca3af;">
+                            <td colspan="6" style="text-align:center;padding:2rem;color:#9ca3af;">
                                 Chưa có <?= $type === 'room' ? 'phòng' : 'bàn' ?> nào.
                             </td>
                         </tr>
+                    <?php else: ?>
+                        <?php foreach ($groupedAdminTables as $area => $areaTables): ?>
+                            <!-- Group Header Row -->
+                            <tr style="background-color: #f8fafc;">
+                                <td colspan="6" style="padding: 1rem; border-left: 4px solid var(--gold);">
+                                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--gold-dark); display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-layer-group"></i> 
+                                        Khu vực: <?= e($area) ?>
+                                        <span class="badge badge-outline" style="font-size: 0.75rem; margin-left: auto;">
+                                            <?= count($areaTables) ?> <?= $type === 'room' ? 'phòng' : 'bàn' ?>
+                                        </span>
+                                    </h3>
+                                </td>
+                            </tr>
+                            
+                            <!-- Items in Group -->
+                            <?php foreach ($areaTables as $t): ?>
+                                <tr>
+                                    <td><strong><?= e($t['name']) ?></strong></td>
+                                    <td class="table-hide-sm"><?= e($t['area'] ?? '—') ?></td>
+                                    <td class="table-hide-sm"><?= $t['capacity'] ?> <?= $type === 'room' ? 'người' : 'người' ?></td>
+                                    <td>
+                                        <?php if ($t['status'] === 'occupied'): ?>
+                                            <span class="badge badge-danger">
+                                                <i class="fas fa-circle" style="font-size:.5rem"></i> Có khách
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-circle" style="font-size:.5rem"></i> <?= $type === 'room' ? 'Sẵn sàng' : 'Trống' ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge <?= $t['is_active'] ? 'badge-success' : 'badge-danger' ?>">
+                                            <?= $t['is_active'] ? 'Đang dùng' : 'Tạm ẩn' ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex;gap:.4rem;">
+                                            <!-- QR Button -->
+                                            <button type="button" class="btn btn-outline btn-sm btn-qr" data-id="<?= $t['id'] ?>"
+                                                data-name="<?= e($t['name']) ?>" data-token="<?= e($t['qr_token'] ?? '') ?>" title="Tạo QR">
+                                                <i class="fas fa-qrcode"></i>
+                                            </button>
+
+                                            <!-- Reset QR Button -->
+                                            <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR"
+                                                onclick="confirmResetQR(<?= $t['id'] ?>, '<?= e($t['name']) ?>', <?= (int)$t['is_printed'] ?>, <?= (int)$t['scan_count'] ?>, <?= (int)$t['items_count'] ?>)">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+
+                                            <a href="<?= BASE_URL ?>/admin/tables/edit?id=<?= $t['id'] ?>"
+                                                class="btn btn-outline btn-sm" title="Sửa">
+                                                <i class="fas fa-pen"></i>
+                                            </a>
+                                            <?php if ($t['status'] !== 'occupied'): ?>
+                                                <form method="POST" action="<?= BASE_URL ?>/admin/tables/delete"
+                                                    style="display:inline;">
+                                                    <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                                                    <button type="submit" class="btn btn-danger-outline btn-sm"
+                                                        data-confirm="Xóa <?= $type === 'room' ? 'phòng' : 'bàn' ?> '<?= e($t['name']) ?>'?" title="Xóa">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
             </table>

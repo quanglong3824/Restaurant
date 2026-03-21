@@ -134,49 +134,68 @@ function renderTableToken($t, $tableModel) {
         100% { transform: scale(1); }
     }
 
-    /* Tabs Styling */
+    /* Premium Segmented Control Tabs Styling */
+    .tabs-nav-container {
+        position: sticky;
+        top: calc(var(--topbar-h));
+        z-index: 90;
+        background: var(--bg); /* Matches page bg so it blends */
+        padding: 1rem 0;
+        margin-bottom: 0.5rem;
+        margin-top: -0.5rem;
+    }
     .tabs-nav {
         display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-        background: rgba(255, 255, 255, 0.5);
-        padding: 0.5rem;
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        background: #e2e8f0;
+        padding: 4px;
+        border-radius: 14px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
     }
     .tab-nav-item {
         flex: 1;
         text-align: center;
-        padding: 0.75rem 1rem;
-        border-radius: 8px;
+        padding: 0.85rem 0.5rem;
+        border-radius: 10px;
         text-decoration: none;
         color: #64748b;
         font-weight: 700;
-        font-size: 0.85rem;
-        transition: all 0.2s ease;
+        font-size: 0.9rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
     }
+    .tab-nav-item i {
+        font-size: 1.1rem;
+        opacity: 0.8;
+    }
+    .tab-nav-item:hover:not(.active) {
+        color: #475569;
+    }
     .tab-nav-item.active {
         background: white;
+        color: var(--gold-dark);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .tab-nav-item.active i {
+        opacity: 1;
         color: var(--gold);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 </style>
 
 <div class="page-content" style="padding-bottom: 2rem;">
 
     <!-- Tabs Navigation -->
-    <div class="tabs-nav">
-        <a href="<?= BASE_URL ?>/tables?type=table" class="tab-nav-item <?= $type === 'table' ? 'active' : '' ?>">
-            <i class="fas fa-utensils"></i> BÀN NHÀ HÀNG
-        </a>
-        <a href="<?= BASE_URL ?>/tables?type=room" class="tab-nav-item <?= $type === 'room' ? 'active' : '' ?>">
-            <i class="fas fa-bed"></i> KHÁCH LƯU TRÚ
-        </a>
+    <div class="tabs-nav-container">
+        <div class="tabs-nav">
+            <a href="<?= BASE_URL ?>/tables?type=table" class="tab-nav-item <?= $type === 'table' ? 'active' : '' ?>">
+                <i class="fas fa-utensils"></i> <span class="tab-label">BÀN NHÀ HÀNG</span>
+            </a>
+            <a href="<?= BASE_URL ?>/tables?type=room" class="tab-nav-item <?= $type === 'room' ? 'active' : '' ?>">
+                <i class="fas fa-bed"></i> <span class="tab-label">KHÁCH LƯU TRÚ</span>
+            </a>
+        </div>
     </div>
 
     <!-- Summary Header -->
