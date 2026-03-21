@@ -155,8 +155,10 @@ if (!function_exists('renderTableCard')) {
             <input type="hidden" name="table_id" id="openTableId">
             <div class="form-group mb-3">
                 <label class="form-label">Số lượng khách</label>
-                <div class="guest-selector-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                <div class="guest-selector-grid" id="guestSelectorGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <?php 
+                    $maxGuests = ($type === 'room') ? 3 : 12;
+                    for ($i = 1; $i <= $maxGuests; $i++): ?>
                         <label class="guest-option">
                             <input type="radio" name="guest_count" value="<?= $i ?>" <?= ($i === 2) ? 'checked' : '' ?> style="display:none;">
                             <span style="display:block; padding: 10px; background: #f1f5f9; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800;"><?= $i ?></span>
