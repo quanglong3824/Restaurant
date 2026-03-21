@@ -22,17 +22,21 @@ class TableController extends Controller
     {
         Auth::requireRole(ROLE_WAITER, ROLE_ADMIN, ROLE_IT);
 
+        $type = $this->input('type', 'table');
+        if (!in_array($type, ['table', 'room'])) $type = 'table';
+
         // Đồng bộ trạng thái bàn
         $this->tableModel->syncStatuses();
 
-        $grouped = $this->tableModel->getAllGroupedByArea();
+        $grouped = $this->tableModel->getAllGroupedByArea($type);
         $counts = $this->tableModel->countByStatus();
 
         $this->view('layouts/waiter', [
             'view' => 'tables/index',
-            'pageTitle' => 'Sơ đồ Bàn',
+            'pageTitle' => $type === 'room' ? 'Sơ đồ Phòng' : 'Sơ đồ Bàn',
             'grouped' => $grouped,
             'counts' => $counts,
+            'type' => $type,
             'tableModel' => $this->tableModel,
         ]);
     }

@@ -88,13 +88,13 @@ function renderTableToken($t, $tableModel) {
                     if (!empty($mergedChildren)): ?>
                         <span class="master-badge">MASTER</span>
                     <?php else: ?>
-                        <?= $t['capacity'] ?> GHE
+                        <?= $t['capacity'] ?> <?= $type === 'room' ? 'NGƯỜI' : 'GHẾ' ?>
                     <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>
         <div class="token-icon">
-            <i class="fas <?= $isOccupied ? 'fa-utensils' : 'fa-chair' ?>"></i>
+            <i class="fas <?= $isOccupied ? ($type === 'room' ? 'fa-door-closed' : 'fa-utensils') : ($type === 'room' ? 'fa-door-open' : 'fa-chair') ?>"></i>
         </div>
     </div>
     <?php
@@ -133,23 +133,66 @@ function renderTableToken($t, $tableModel) {
         50% { transform: scale(1.2); }
         100% { transform: scale(1); }
     }
+
+    /* Tabs Styling */
+    .tabs-nav {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.5);
+        padding: 0.5rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .tab-nav-item {
+        flex: 1;
+        text-align: center;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .tab-nav-item.active {
+        background: white;
+        color: var(--gold);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
 </style>
 
 <div class="page-content" style="padding-bottom: 2rem;">
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+        <a href="<?= BASE_URL ?>/tables?type=table" class="tab-nav-item <?= $type === 'table' ? 'active' : '' ?>">
+            <i class="fas fa-utensils"></i> BÀN NHÀ HÀNG
+        </a>
+        <a href="<?= BASE_URL ?>/tables?type=room" class="tab-nav-item <?= $type === 'room' ? 'active' : '' ?>">
+            <i class="fas fa-bed"></i> KHÁCH LƯU TRÚ
+        </a>
+    </div>
+
     <!-- Summary Header -->
     <div class="summary-shelf d-flex gap-2 mb-4">
         <div class="summary-box glass occupied flex-grow-1">
-            <div class="box-icon"><i class="fas fa-utensils"></i></div>
+            <div class="box-icon"><i class="fas <?= $type === 'room' ? 'fa-door-closed' : 'fa-utensils' ?>"></i></div>
             <div class="box-info">
                 <div class="val"><?= $occupiedCount ?></div>
-                <div class="lbl">ĐANG CÓ KHÁCH</div>
+                <div class="lbl"><?= $type === 'room' ? 'ĐANG CÓ KHÁCH' : 'ĐANG CÓ KHÁCH' ?></div>
             </div>
         </div>
         <div class="summary-box glass available flex-grow-1">
-            <div class="box-icon"><i class="fas fa-door-open"></i></div>
+            <div class="box-icon"><i class="fas <?= $type === 'room' ? 'fa-door-open' : 'fa-chair' ?>"></i></div>
             <div class="box-info">
                 <div class="val"><?= $availableCount ?></div>
-                <div class="lbl">BÀN ĐANG TRỐNG</div>
+                <div class="lbl"><?= $type === 'room' ? 'PHÒNG ĐANG TRỐNG' : 'BÀN ĐANG TRỐNG' ?></div>
             </div>
         </div>
     </div>
