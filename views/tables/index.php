@@ -147,15 +147,21 @@ if (!function_exists('renderTableCard')) {
     <?php endif; ?>
 </div>
 
+<!-- Modal: Mở bàn -->
 <div class="modal-backdrop" id="modalOpenTable">
-    <div class="modal" style="max-width: 400px;">
+    <div class="modal modal-premium" style="max-width: 400px;">
         <div class="modal-header"><h3>Phục vụ</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/open" class="modal-body py-3">
             <input type="hidden" name="table_id" id="openTableId">
             <div class="form-group mb-3">
                 <label class="form-label">Số lượng khách</label>
-                <div class="guest-selector-grid">
-                    <?php for ($i = 1; $i <= 12; $i++): ?><label class="guest-option"><input type="radio" name="guest_count" value="<?= $i ?>" <?= ($i === 2) ? 'checked' : '' ?>><span><?= $i ?></span></label><?php endfor; ?>
+                <div class="guest-selector-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <?php for ($i = 1; $i <= 12; $i++): ?>
+                        <label class="guest-option">
+                            <input type="radio" name="guest_count" value="<?= $i ?>" <?= ($i === 2) ? 'checked' : '' ?> style="display:none;">
+                            <span style="display:block; padding: 10px; background: #f1f5f9; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800;"><?= $i ?></span>
+                        </label>
+                    <?php endfor; ?>
                 </div>
             </div>
             <button type="submit" class="btn btn-gold w-100 py-3 fw-bold">BẮT ĐẦU PHỤC VỤ</button>
@@ -163,19 +169,21 @@ if (!function_exists('renderTableCard')) {
     </div>
 </div>
 
+<!-- Modal: Bàn đang bận -->
 <div class="modal-backdrop" id="modalOccupied">
-    <div class="modal" style="max-width: 450px;">
+    <div class="modal modal-premium" style="max-width: 450px;">
         <div class="modal-header"><h3>Đang phục vụ</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <div class="modal-body py-4"><div class="d-grid gap-3">
-            <a id="viewOrderBtn" href="#" class="btn btn-gold py-3"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
+            <a id="viewOrderBtn" href="#" class="btn btn-gold py-3" style="text-decoration: none;"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
             <div class="d-flex gap-2"><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">CHUYỂN</button><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">GHÉP</button></div>
             <div class="d-flex gap-2"><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleUnmergeTableClick()" id="unmergeTableBtn" style="display:none;">HỦY GHÉP</button><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">TÁCH BÀN</button></div>
         </div></div>
     </div>
 </div>
 
+<!-- Modal: Chọn bàn đích -->
 <div class="modal-backdrop" id="modalSelectTarget">
-    <div class="modal" style="max-width: 450px;">
+    <div class="modal modal-premium" style="max-width: 450px;">
         <div class="modal-header"><h3 id="targetModalTitle">Chọn đích</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form id="targetForm" method="POST" class="modal-body">
             <input type="hidden" name="from_table_id" id="sourceTableId">
@@ -191,8 +199,9 @@ if (!function_exists('renderTableCard')) {
     </div>
 </div>
 
+<!-- Modal: Ghép Khu Vực -->
 <div class="modal-backdrop" id="modalMergeArea">
-    <div class="modal" style="max-width: 500px;">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header"><h3>Ghép Khu Vực</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/merge_areas" class="modal-body">
             <div class="interactive-grid">
@@ -203,8 +212,9 @@ if (!function_exists('renderTableCard')) {
     </div>
 </div>
 
+<!-- Modal: Tách Khu Vực -->
 <div class="modal-backdrop" id="modalUnmergeArea">
-    <div class="modal" style="max-width: 500px;">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header"><h3 class="text-danger">Tách Khu Vực</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/unmerge_areas" class="modal-body">
             <div class="interactive-grid">
@@ -218,44 +228,59 @@ if (!function_exists('renderTableCard')) {
 <link rel="stylesheet" href="<?= asset('public/css/tables.css') ?>">
 
 <script>
-let currentSelectedTable = null;
+// Định nghĩa các hàm xử lý bàn bên ngoài DOMContentLoaded để đảm bảo handleTableClick được gọi từ HTML onclick
+var currentSelectedTable = null;
+
+function handleTableClick(table) {
+    currentSelectedTable = table;
+    if (table.status === 'occupied') {
+        document.getElementById('viewOrderBtn').href = BASE_URL + '/orders?table_id=' + table.id;
+        const unmergeBtn = document.getElementById('unmergeTableBtn');
+        if (unmergeBtn) unmergeBtn.style.display = table.parent_id ? 'block' : 'none';
+        Aurora.openModal('modalOccupied');
+    } else {
+        document.getElementById('modalTableName').textContent = table.name;
+        document.getElementById('openTableId').value = table.id;
+        Aurora.openModal('modalOpenTable');
+    }
+}
+
+function handleTransferClick() {
+    Aurora.closeModal('modalOccupied');
+    document.getElementById('targetModalTitle').textContent = 'Chuyển: ' + currentSelectedTable.name;
+    document.getElementById('sourceTableId').value = currentSelectedTable.id;
+    document.getElementById('targetForm').action = BASE_URL + '/tables/transfer';
+    Aurora.openModal('modalSelectTarget');
+}
+
+function handleMergeTableClick() {
+    Aurora.closeModal('modalOccupied');
+    document.getElementById('targetModalTitle').textContent = 'Ghép vào: ' + currentSelectedTable.name;
+    document.getElementById('sourceTableId').name = 'parent_id';
+    document.getElementById('sourceTableId').value = currentSelectedTable.id;
+    document.getElementById('targetSelect').name = 'child_id';
+    document.getElementById('targetForm').action = BASE_URL + '/tables/merge';
+    Aurora.openModal('modalSelectTarget');
+}
+
+function handleUnmergeTableClick() {
+    if (!confirm('Tách bàn này ra khỏi nhóm ghép?')) return;
+    const f = document.createElement('form'); f.method = 'POST'; f.action = BASE_URL + '/tables/unmerge';
+    f.innerHTML = '<input type="hidden" name="table_id" value="' + currentSelectedTable.id + '">';
+    document.body.appendChild(f); f.submit();
+}
+
+function handleSplitTableClick() { 
+    window.location.href = BASE_URL + '/orders?table_id=' + currentSelectedTable.id + '&action=split'; 
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    window.handleTableClick = function(table) {
-        currentSelectedTable = table;
-        if (table.status === 'occupied') {
-            document.getElementById('occupiedTableName').textContent = table.name;
-            document.getElementById('viewOrderBtn').href = '<?= BASE_URL ?>/orders?table_id=' + table.id;
-            const unmergeBtn = document.getElementById('unmergeTableBtn');
-            if (unmergeBtn) unmergeBtn.style.display = table.parent_id ? 'block' : 'none';
-            Aurora.openModal('modalOccupied');
-        } else {
-            document.getElementById('modalTableName').textContent = table.name;
-            document.getElementById('openTableId').value = table.id;
-            Aurora.openModal('modalOpenTable');
-        }
-    };
-    window.handleTransferClick = function() {
-        Aurora.closeModal('modalOccupied');
-        document.getElementById('targetModalTitle').textContent = 'Chuyển: ' + currentSelectedTable.name;
-        document.getElementById('sourceTableId').value = currentSelectedTable.id;
-        document.getElementById('targetForm').action = '<?= BASE_URL ?>/tables/transfer';
-        Aurora.openModal('modalSelectTarget');
-    };
-    window.handleMergeTableClick = function() {
-        Aurora.closeModal('modalOccupied');
-        document.getElementById('targetModalTitle').textContent = 'Ghép vào: ' + currentSelectedTable.name;
-        document.getElementById('sourceTableId').name = 'parent_id';
-        document.getElementById('sourceTableId').value = currentSelectedTable.id;
-        document.getElementById('targetSelect').name = 'child_id';
-        document.getElementById('targetForm').action = '<?= BASE_URL ?>/tables/merge';
-        Aurora.openModal('modalSelectTarget');
-    };
-    window.handleUnmergeTableClick = function() {
-        if (!confirm('Tách bàn này ra khỏi nhóm ghép?')) return;
-        const f = document.createElement('form'); f.method = 'POST'; f.action = '<?= BASE_URL ?>/tables/unmerge';
-        f.innerHTML = `<input type="hidden" name="table_id" value="${currentSelectedTable.id}">`;
-        document.body.appendChild(f); f.submit();
-    };
-    window.handleSplitTableClick = function() { window.location.href = '<?= BASE_URL ?>/orders?table_id=' + currentSelectedTable.id + '&action=split'; };
+    // Styling guest options
+    document.querySelectorAll('.guest-option input').forEach(input => {
+        input.addEventListener('change', function() {
+            document.querySelectorAll('.guest-option span').forEach(s => s.style.background = '#f1f5f9');
+            if (this.checked) this.nextElementSibling.style.background = '#b89B5e';
+        });
+    });
 });
 </script>
