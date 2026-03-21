@@ -6,7 +6,7 @@
 
 // App info
 define('APP_NAME', 'Aurora Restaurant');
-define('APP_VERSION', '2.0.0 (Pre-release)');
+define('APP_VERSION', '2.1.1 thêm tính năng cho lưu trú, bản thử nghiệm phối hợp');
 define('APP_LANG', 'vi');
 
 // Paths

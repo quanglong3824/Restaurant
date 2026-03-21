@@ -1,6 +1,6 @@
-# Aurora Restaurant Management System v2.0.0 (Pre-release)
+# Aurora Restaurant Management System v2.1.1 (Phối hợp Lưu trú)
 
-![Version](https://img.shields.io/badge/version-2.0.0--pre--release-gold)
+![Version](https://img.shields.io/badge/version-2.1.1--experimental-gold)
 ![License](https://img.shields.io/badge/Copyright-%C2%A9%202026%20LongDev-blue)
 ![Platform](https://img.shields.io/badge/Platform-iPad%20%7C%20Mobile%20%7C%20Web-green)
 
@@ -8,8 +8,10 @@
 
 ---
 
-## 🚀 Tính năng nổi bật (v2.0.0)
+## 🚀 Tính năng nổi bật (v2.1.1)
 
+- **Hỗ trợ Lưu trú**: Tối ưu hóa sơ đồ phòng và quản lý khách lưu trú (tối đa 3 khách/phòng).
+- **Phối hợp thử nghiệm**: Bản thử nghiệm phối hợp đa nền tảng cho Hotel & Restaurant.
 - **Real-time Ajax Polling**: Hệ thống thông báo và dashboard giám sát cập nhật tức thì (không cần tải lại trang).
 - **Geofencing Security**: Giới hạn phạm vi đặt món trong bán kính 500m quanh nhà hàng bằng tọa độ GPS thực tế.
 - **Smart QR Ordering**: Chống spam bằng Session lượt khách; tự động dọn dẹp đơn hàng ảo sau 5 phút không hoạt động.
