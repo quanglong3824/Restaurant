@@ -59,7 +59,7 @@ foreach ($uniqueAreas as $a) {
 }
 
 // Helper function to render table token
-function renderTableToken($t, $tableModel) {
+function renderTableToken($t, $tableModel, $type = 'table') {
     $isOccupied = ($t['status'] === 'occupied');
     $isChild = !empty($t['parent_id']);
     $isPaymentRequested = isset($t['order_note']) && strpos($t['order_note'], 'KHÁCH YÊU CẦU THANH TOÁN') !== false;
@@ -246,7 +246,7 @@ function renderTableToken($t, $tableModel) {
                     </h2>
                 </div>
                 <div class="table-grid">
-                    <?php foreach ($vip12_combined as $t) renderTableToken($t, $tableModel); ?>
+                    <?php foreach ($vip12_combined as $t) renderTableToken($t, $tableModel, $type); ?>
                 </div>
             </div>
         <?php endif; ?>
@@ -264,7 +264,7 @@ function renderTableToken($t, $tableModel) {
                     </h2>
                 </div>
                 <div class="table-grid">
-                    <?php foreach ($vip34_combined as $t) renderTableToken($t, $tableModel); ?>
+                    <?php foreach ($vip34_combined as $t) renderTableToken($t, $tableModel, $type); ?>
                 </div>
             </div>
         <?php endif; ?>
@@ -281,7 +281,7 @@ function renderTableToken($t, $tableModel) {
                     </h2>
                 </div>
                 <div class="table-grid">
-                    <?php foreach ($tables as $t) renderTableToken($t, $tableModel); ?>
+                    <?php foreach ($tables as $t) renderTableToken($t, $tableModel, $type); ?>
                 </div>
             </div>
         <?php endforeach; ?>
