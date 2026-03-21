@@ -235,6 +235,33 @@ var currentSelectedTable = null;
 
 function handleTableClick(table) {
     currentSelectedTable = table;
+    
+    // Cập nhật số lượng khách tối đa trong modal mở bàn
+    const guestGrid = document.getElementById('guestSelectorGrid');
+    if (guestGrid) {
+        const isRoom = table.type === 'room';
+        const maxGuests = isRoom ? 3 : 12;
+        let html = '';
+        for (let i = 1; i <= maxGuests; i++) {
+            const checked = (i === 2) ? 'checked' : '';
+            const bg = (i === 2) ? '#b89B5e' : '#f1f5f9';
+            html += `
+                <label class="guest-option">
+                    <input type="radio" name="guest_count" value="${i}" ${checked} style="display:none;">
+                    <span style="display:block; padding: 10px; background: ${bg}; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800;">${i}</span>
+                </label>`;
+        }
+        guestGrid.innerHTML = html;
+        
+        // Re-attach event listeners for the new guest options
+        guestGrid.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', function() {
+                guestGrid.querySelectorAll('span').forEach(s => s.style.background = '#f1f5f9');
+                if (this.checked) this.nextElementSibling.style.background = '#b89B5e';
+            });
+        });
+    }
+
     if (table.status === 'occupied') {
         document.getElementById('modalOccupiedTableName').textContent = table.name;
         document.getElementById('viewOrderBtn').href = BASE_URL + '/orders?table_id=' + table.id;
