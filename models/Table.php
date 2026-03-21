@@ -22,12 +22,16 @@ class Table extends Model
     /** Tất cả bàn đang active theo loại, sắp xếp theo khu vực + thứ tự */
     public function getAllByType(string $type = 'table'): array
     {
+        // Kiểm tra xem cột type có tồn tại không để tránh lỗi 500 nếu DB chưa setup
+        $check = $this->findOne("SHOW COLUMNS FROM `tables` LIKE 'type'");
+        $whereType = $check ? "AND t.type = ?" : "";
+        $params = $check ? [$type] : [];
+
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name, o.note as order_note
+            "SELECT t.*, o.note as order_note
              FROM tables t
-             LEFT JOIN tables p ON t.parent_id = p.id
              LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
-             WHERE t.is_active = 1 AND t.type = ?
+             WHERE t.is_active = 1 $whereType
              ORDER BY 
                 CASE t.area
                     WHEN 'A1' THEN 1
@@ -41,22 +45,31 @@ class Table extends Model
                     ELSE 99
                 END,
                 t.sort_order, t.name",
-            [$type]
+            $params
         );
     }
 
     /** Lấy tất cả bàn cho Admin theo loại */
     public function getAllForAdminByType(string $type = 'table'): array
     {
+        $check = $this->findOne("SHOW COLUMNS FROM `tables` LIKE 'type'");
+        $whereType = $check ? "WHERE t.type = ?" : "";
+        $params = $check ? [$type] : [];
+
+        // Kiểm tra cột parent_id
+        $checkParent = $this->findOne("SHOW COLUMNS FROM `tables` LIKE 'parent_id'");
+        $selectParent = $checkParent ? "p.name as parent_name," : "'' as parent_name,";
+        $joinParent = $checkParent ? "LEFT JOIN tables p ON t.parent_id = p.id" : "";
+
         return $this->findAll(
-            "SELECT t.*, p.name as parent_name, 
+            "SELECT t.*, $selectParent 
                     qr.qr_hash as qr_token, qr.is_printed, qr.scan_count,
                     (SELECT COUNT(*) FROM orders o WHERE o.table_id = t.id AND o.status = 'open') as has_order,
                     (SELECT COUNT(*) FROM order_items oi JOIN orders o2 ON oi.order_id = o2.id WHERE o2.table_id = t.id AND o2.status = 'open') as items_count
              FROM tables t
-             LEFT JOIN tables p ON t.parent_id = p.id
+             $joinParent
              LEFT JOIN qr_tables qr ON t.id = qr.table_id AND qr.is_active = 1
-             WHERE t.type = ?
+             $whereType
              ORDER BY 
                 CASE t.area
                     WHEN 'A1' THEN 1
@@ -70,7 +83,7 @@ class Table extends Model
                     ELSE 99
                 END,
                 t.sort_order, t.name",
-            [$type]
+            $params
         );
     }
 
