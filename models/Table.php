@@ -19,15 +19,15 @@ class Table extends Model
         );
     }
 
-    /** Tất cả bàn đang active, sắp xếp theo khu vực + thứ tự */
-    public function getAll(): array
+    /** Tất cả bàn đang active theo loại, sắp xếp theo khu vực + thứ tự */
+    public function getAllByType(string $type = 'table'): array
     {
         return $this->findAll(
             "SELECT t.*, p.name as parent_name, o.note as order_note
              FROM tables t
              LEFT JOIN tables p ON t.parent_id = p.id
              LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
-             WHERE t.is_active = 1
+             WHERE t.is_active = 1 AND t.type = ?
              ORDER BY 
                 CASE t.area
                     WHEN 'A1' THEN 1
@@ -40,7 +40,37 @@ class Table extends Model
                     WHEN 'Âu' THEN 8
                     ELSE 99
                 END,
-                t.sort_order, t.name"
+                t.sort_order, t.name",
+            [$type]
+        );
+    }
+
+    /** Lấy tất cả bàn cho Admin theo loại */
+    public function getAllForAdminByType(string $type = 'table'): array
+    {
+        return $this->findAll(
+            "SELECT t.*, p.name as parent_name, 
+                    qr.qr_hash as qr_token, qr.is_printed, qr.scan_count,
+                    (SELECT COUNT(*) FROM orders o WHERE o.table_id = t.id AND o.status = 'open') as has_order,
+                    (SELECT COUNT(*) FROM order_items oi JOIN orders o2 ON oi.order_id = o2.id WHERE o2.table_id = t.id AND o2.status = 'open') as items_count
+             FROM tables t
+             LEFT JOIN tables p ON t.parent_id = p.id
+             LEFT JOIN qr_tables qr ON t.id = qr.table_id AND qr.is_active = 1
+             WHERE t.type = ?
+             ORDER BY 
+                CASE t.area
+                    WHEN 'A1' THEN 1
+                    WHEN 'B1' THEN 2
+                    WHEN 'C1' THEN 3
+                    WHEN 'VIP 1' THEN 4
+                    WHEN 'VIP 2' THEN 5
+                    WHEN 'VIP 3' THEN 6
+                    WHEN 'VIP 4' THEN 7
+                    WHEN 'Âu' THEN 8
+                    ELSE 99
+                END,
+                t.sort_order, t.name",
+            [$type]
         );
     }
 
@@ -163,12 +193,13 @@ class Table extends Model
     public function create(array $data): int
     {
         $this->execute(
-            "INSERT INTO tables (name, area, capacity, sort_order, is_active)
-             VALUES (?, ?, ?, ?, 1)",
+            "INSERT INTO tables (name, area, capacity, type, sort_order, is_active)
+             VALUES (?, ?, ?, ?, ?, 1)",
             [
                 $data['name'],
                 $data['area'] ?? null,
                 $data['capacity'] ?? 4,
+                $data['type'] ?? 'table',
                 $data['sort_order'] ?? 0,
             ]
         );
@@ -179,12 +210,13 @@ class Table extends Model
     public function update(int $id, array $data): void
     {
         $this->execute(
-            "UPDATE tables SET name = ?, area = ?, capacity = ?, sort_order = ?, is_active = ?
+            "UPDATE tables SET name = ?, area = ?, capacity = ?, type = ?, sort_order = ?, is_active = ?
              WHERE id = ?",
             [
                 $data['name'],
                 $data['area'] ?? null,
                 $data['capacity'] ?? 4,
+                $data['type'] ?? 'table',
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,
                 $id,
