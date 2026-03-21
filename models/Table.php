@@ -98,9 +98,9 @@ class Table extends Model
     }
 
     /** Nhóm bàn theo khu vực (loại bỏ bàn đang ghép nếu cần, hoặc hiển thị lồng nhau) */
-    public function getAllGroupedByArea(): array
+    public function getAllGroupedByArea(string $type = 'table'): array
     {
-        $rows = $this->getAll();
+        $rows = $this->getAllByType($type);
         $grouped = [];
         foreach ($rows as $row) {
             $area = $row['area'] ?? 'Chung';
