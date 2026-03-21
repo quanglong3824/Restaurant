@@ -19,6 +19,18 @@ class Table extends Model
         );
     }
 
+    /** Lấy tất cả bàn và phòng đang hoạt động */
+    public function getAll(): array
+    {
+        return $this->findAll(
+            "SELECT t.*, o.note as order_note
+             FROM tables t
+             LEFT JOIN orders o ON o.table_id = t.id AND o.status = 'open'
+             WHERE t.is_active = 1
+             ORDER BY t.area, t.sort_order, t.name"
+        );
+    }
+
     /** Tất cả bàn đang active theo loại, sắp xếp theo khu vực + thứ tự */
     public function getAllByType(string $type = 'table'): array
     {

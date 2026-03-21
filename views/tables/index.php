@@ -150,7 +150,7 @@ if (!function_exists('renderTableCard')) {
 <!-- Modal: Mở bàn -->
 <div class="modal-backdrop" id="modalOpenTable">
     <div class="modal modal-premium" style="max-width: 400px;">
-        <div class="modal-header"><h3>Phục vụ</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
+        <div class="modal-header"><h3>Phục vụ <span id="modalTableName" class="text-gold"></span></h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/open" class="modal-body py-3">
             <input type="hidden" name="table_id" id="openTableId">
             <div class="form-group mb-3">
@@ -172,7 +172,7 @@ if (!function_exists('renderTableCard')) {
 <!-- Modal: Bàn đang bận -->
 <div class="modal-backdrop" id="modalOccupied">
     <div class="modal modal-premium" style="max-width: 450px;">
-        <div class="modal-header"><h3>Đang phục vụ</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
+        <div class="modal-header"><h3>Đang phục vụ <span id="modalOccupiedTableName" class="text-gold"></span></h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <div class="modal-body py-4"><div class="d-grid gap-3">
             <a id="viewOrderBtn" href="#" class="btn btn-gold py-3" style="text-decoration: none;"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
             <div class="d-flex gap-2"><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">CHUYỂN</button><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">GHÉP</button></div>
@@ -234,6 +234,7 @@ var currentSelectedTable = null;
 function handleTableClick(table) {
     currentSelectedTable = table;
     if (table.status === 'occupied') {
+        document.getElementById('modalOccupiedTableName').textContent = table.name;
         document.getElementById('viewOrderBtn').href = BASE_URL + '/orders?table_id=' + table.id;
         const unmergeBtn = document.getElementById('unmergeTableBtn');
         if (unmergeBtn) unmergeBtn.style.display = table.parent_id ? 'block' : 'none';
