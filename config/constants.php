@@ -6,7 +6,7 @@
 
 // App info
 define('APP_NAME', 'Aurora Restaurant');
-define('APP_VERSION', '2.1.4 - Nâng cấp định vị & Giao diện POS Admin (Drip Update)');
+define('APP_VERSION', '2.1.4 — Engine by LongDev (Drip Update)');
 define('APP_LANG', 'vi');
 
 // Paths

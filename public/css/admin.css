@@ -195,6 +195,21 @@ h4,
 
 .sidebar-footer {
   margin-top: auto;
+  position: relative;
+}
+
+.sidebar-footer::after {
+  content: "CORE ENGINE BY LONGDEV";
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  width: 100%;
+  font-size: 8px;
+  font-weight: 900;
+  color: rgba(0,0,0,0.03);
+  text-align: center;
+  letter-spacing: 1px;
+  pointer-events: none;
 }
 
 .sidebar-user {
