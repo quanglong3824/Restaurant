@@ -80,6 +80,9 @@
     </div>
 
     <div class="action-buttons">
+        <button class="btn-save-img" onclick="captureReceipt()">
+            <i class="fas fa-camera"></i> LƯU ẢNH HÓA ĐƠN
+        </button>
         <button class="btn-new-order" onclick="startNewOrder()">
             <i class="fas fa-plus-circle"></i> TẠO LƯỢT MỚI
         </button>
@@ -89,7 +92,46 @@
     </div>
 </div>
 
+<!-- Load html2canvas for screenshot feature -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 <script>
+async function captureReceipt() {
+    const receipt = document.querySelector('.receipt-paper');
+    const btn = document.querySelector('.btn-save-img');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG TẠO ẢNH...';
+    btn.disabled = true;
+
+    try {
+        // Create canvas from receipt element
+        const canvas = await html2canvas(receipt, {
+            scale: 3, // Higher scale for better quality/printing
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+        });
+        
+        // Convert to image and download
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement('a');
+        link.download = `HoaDon_Aurora_#${'<?= $order['id'] ?>'}.png`;
+        link.href = image;
+        link.click();
+        
+        btn.innerHTML = '<i class="fas fa-check"></i> ĐÃ LƯU ẢNH';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }, 2000);
+    } catch (err) {
+        console.error('Capture error:', err);
+        alert('Không thể tạo ảnh hóa đơn. Vui lòng thử lại.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
 function startNewOrder() {
     if (!confirm('Bạn muốn bắt đầu lượt gọi món mới cho bàn này?')) return;
     
@@ -185,6 +227,14 @@ function exitSession() {
 
     /* Action Buttons */
     .action-buttons { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+    .btn-save-img {
+        background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 16px; border-radius: 12px;
+        font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
+    .btn-save-img:active { transform: scale(0.97); }
+    
     .btn-new-order {
         background: #1e293b; color: white; border: none; padding: 16px; border-radius: 12px;
         font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s;
