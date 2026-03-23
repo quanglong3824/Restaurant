@@ -61,73 +61,42 @@ class QrMenuController extends Controller
             $token = $_GET['token'] ?? '';
 
             if (!$tableId || !$token) {
-                $this->view('404', ['message' => 'Mã QR không hợp lệ hoặc thiếu thông tin bàn.']);
+                $this->view('404', ['message' => 'Mã QR không hợp lệ.']);
                 return;
             }
 
             $qrTable = $this->qrModel->findByToken($token);
             if (!$qrTable || $qrTable['table_id'] != $tableId) {
-                $this->view('404', ['message' => 'Mã QR đã hết hạn hoặc không hợp lệ.']);
+                $this->view('404', ['message' => 'Mã QR không hợp lệ.']);
                 return;
             }
 
-            // Increment scan count
-            $this->qrModel->incrementScanCount($qrTable['id']);
-
-            // Set customer session
+            // --- CƠ CHẾ ĐỊNH DANH KHÁCH BỀN VỮNG (GOGI STYLE) ---
+            // Tạo hoặc lấy Visitor Token từ Cookie (tồn tại 24h kể cả xoá nền)
+            $visitorToken = $_COOKIE['qr_visitor_token'] ?? bin2hex(random_bytes(16));
+            setcookie('qr_visitor_token', $visitorToken, time() + (24 * 3600), "/", "", isset($_SERVER['HTTPS']), true);
+            
+            // Set session để các controller khác dùng
             $this->setupCustomerSession($tableId, $token);
             $currentSessionId = session_id();
 
-            $table = $this->tableModel->findById($tableId); // Reload table status
-            if (!$table) {
-                $this->view('404', ['message' => 'Không tìm thấy thông tin bàn.']);
-                return;
-            }
-
-            // --- ĐƠN GIẢN HÓA LOGIC QR ---
-            $currentSessionId = session_id();
-            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            $table = $this->tableModel->findById($tableId);
             
-            // 1. Kiểm tra "Cookie ghi nhớ" (Dành cho trường hợp khách xóa nền/đóng trình duyệt)
-            $cookieOrderKey = "last_paid_order_table_" . $tableId;
-            $lastPaidOrderId = (int)($_COOKIE[$cookieOrderKey] ?? 0);
+            // Tìm đơn hàng đang mở hoặc vừa đóng của bàn này dựa trên visitorToken HOẶC sessionId
+            // Ưu tiên visitorToken để nhận diện khách cũ quay lại
+            $sql = "SELECT * FROM orders WHERE table_id = ? 
+                    AND (session_id = ? OR session_id = ?) 
+                    ORDER BY id DESC LIMIT 1";
+            $lastOrder = $this->orderModel->findOne($sql, [$tableId, $visitorToken, $currentSessionId]);
 
-            if ($lastPaidOrderId > 0) {
-                $cookieOrder = $this->orderModel->findById($lastPaidOrderId);
-                if ($cookieOrder && $cookieOrder['status'] === 'closed') {
-                    $closedTime = strtotime($cookieOrder['closed_at'] ?? $cookieOrder['updated_at']);
-                    $minutesSinceClose = (time() - $closedTime) / 60;
-                    
-                    if ($minutesSinceClose < 20) { // Giữ trong 20 phút
-                        $items = $this->orderModel->getItems($cookieOrder['id']);
-                        $this->view('layouts/public', [
-                            'view' => 'orders/paid_bill',
-                            'pageTitle' => 'Hoá đơn vừa thanh toán',
-                            'table' => $table,
-                            'order' => $cookieOrder,
-                            'items' => $items,
-                            'token' => $token,
-                            'isCustomer' => true
-                        ]);
-                        return;
-                    }
-                }
-            }
-
-            // 2. Kiểm tra nếu phiên hiện tại vừa thanh toán xong (trong vòng 60 phút)
-            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+            // 1. Nếu khách quay lại và đơn hàng gần nhất đã thanh toán (trong vòng 30 phút)
+            if ($lastOrder && $lastOrder['status'] === 'closed') {
                 $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
-                $minutesSinceClose = (time() - $closedTime) / 60;
-                
-                if ($minutesSinceClose < 60) {
-                    // Thiết lập cookie để ghi nhớ đơn hàng này (cho trường hợp quét lại sau khi xóa nền)
-                    setcookie($cookieOrderKey, $lastOrder['id'], time() + (20 * 60), "/", "", isset($_SERVER['HTTPS']), true);
-                    
+                if ((time() - $closedTime) / 60 < 30) {
                     $items = $this->orderModel->getItems($lastOrder['id']);
                     $this->view('layouts/public', [
                         'view' => 'orders/paid_bill',
-                        'pageTitle' => 'Hoá đơn đã thanh toán',
+                        'pageTitle' => 'Hoá đơn thanh toán',
                         'table' => $table,
                         'order' => $lastOrder,
                         'items' => $items,
@@ -138,11 +107,21 @@ class QrMenuController extends Controller
                 }
             }
 
-            // 2. Nếu bàn đang bận (occupied)
+            // 2. Nếu có đơn hàng đang mở (Open) gắn với khách này
+            if ($lastOrder && $lastOrder['status'] === 'open') {
+                $openOrder = $lastOrder;
+            } else {
+                $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            }
+
+            // 3. Xử lý trạng thái bàn
             if ($table['status'] === 'occupied') {
                 if ($openOrder) {
-                    // Nếu order đã có session_id và KHÔNG trùng với session hiện tại -> Hiển thị trang bàn bận
-                    if (!empty($openOrder['session_id']) && $openOrder['session_id'] !== $currentSessionId) {
+                    // Nếu bàn đang bận bởi người khác
+                    if (!empty($openOrder['session_id']) && 
+                        $openOrder['session_id'] !== $visitorToken && 
+                        $openOrder['session_id'] !== $currentSessionId) {
+                        
                         $this->view('layouts/public', [
                             'view' => 'orders/table_busy',
                             'pageTitle' => 'Bàn đang bận',
@@ -151,30 +130,20 @@ class QrMenuController extends Controller
                         ]);
                         return;
                     }
-                    
-                    // Nếu order chưa có session_id (nhân viên mở tay) -> Gán session hiện tại vào làm chủ bàn
-                    if (empty($openOrder['session_id'])) {
-                        $this->orderModel->updateSession($openOrder['id'], $currentSessionId);
+                    // Nếu là khách của bàn này, cập nhật visitorToken nếu cần
+                    if (empty($openOrder['session_id']) || $openOrder['session_id'] === $currentSessionId) {
+                        $this->orderModel->updateSession($openOrder['id'], $visitorToken);
                     }
-                } else {
-                    // Trường hợp hiếm: Bàn ghi occupied nhưng không thấy order mở -> Reset về available
-                    $this->tableModel->update($tableId, ['status' => 'available']);
-                    $this->redirect("/qr/menu?table_id=$tableId&token=$token");
-                    return;
                 }
-            } 
-            // 3. Nếu bàn đang trống (available) -> Mở bàn mới
-            else {
+            } else {
+                // Mở bàn mới và gắn với visitorToken
                 $this->tableModel->open($tableId);
                 $this->orderModel->create([
                     'table_id' => $tableId,
-                    'waiter_id' => null,
-                    'guest_count' => 1,
                     'order_source' => 'customer_qr',
-                    'session_id' => $currentSessionId,
+                    'session_id' => $visitorToken,
                     'note' => 'Khách quét QR mở bàn'
                 ]);
-                // Lấy lại order vừa tạo
                 $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             }
 
