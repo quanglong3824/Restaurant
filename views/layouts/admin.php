@@ -137,13 +137,6 @@
 
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
-            <div class="sidebar-user">
-                <i class="fas fa-user-circle"></i>
-                <div>
-                    <strong><?= e(Auth::user()['name'] ?? '') ?></strong>
-                    <span><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></span>
-                </div>
-            </div>
             <div class="copyright-info">
                 <p>&copy; 2026 LongDev. v<?= APP_VERSION ?></p>
             </div>
@@ -153,11 +146,13 @@
 
     <style>
         .copyright-info {
-            padding: 10px 1.5rem;
-            font-size: 0.65rem;
-            color: rgba(255,255,255,0.3);
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            font-size: 0.6rem;
+            color: rgba(0,0,0,0.2);
             text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 
@@ -177,19 +172,33 @@
             </div>
 
             <!-- Notification Area -->
-            <div class="notification-area" id="notificationArea">
-                <button class="notification-bell" id="notificationBell">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-count" id="notificationCount"></span>
-                </button>
-                <div class="notification-panel" id="notificationPanel">
-                    <div class="notification-panel-header">
-                        <span>Thông báo</span>
-                        <button class="btn-ghost small" id="markAllAsReadBtn">Đánh dấu đã đọc</button>
+            <div class="topbar-right">
+                <div class="notification-area" id="notificationArea">
+                    <button class="notification-bell" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notificationCount"></span>
+                    </button>
+                    <div class="notification-panel" id="notificationPanel">
+                        <div class="notification-panel-header">
+                            <span>Thông báo</span>
+                            <button class="btn-ghost small" id="markAllAsReadBtn">Đánh dấu đã đọc</button>
+                        </div>
+                        <div class="notification-list" id="notificationList">
+                            <!-- Notifications will be injected here by JavaScript -->
+                            <div class="notification-item empty">Chưa có thông báo mới.</div>
+                        </div>
                     </div>
-                    <div class="notification-list" id="notificationList">
-                        <!-- Notifications will be injected here by JavaScript -->
-                        <div class="notification-item empty">Chưa có thông báo mới.</div>
+                </div>
+
+                <div class="topbar-divider"></div>
+
+                <div class="topbar-user">
+                    <div class="user-info">
+                        <strong><?= e(Auth::user()['name'] ?? '') ?></strong>
+                        <span><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></span>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="fas fa-user-shield"></i>
                     </div>
                 </div>
             </div>

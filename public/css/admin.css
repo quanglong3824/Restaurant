@@ -235,8 +235,63 @@ h4,
   border-bottom: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 2.5rem;
-  gap: 2rem;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 30px;
+  background: #f1f5f9;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.user-info strong {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.user-info span {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 1.2rem;
+  border: 1px solid #f1f5f9;
 }
 
 .sidebar-toggle {

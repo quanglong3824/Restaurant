@@ -11,7 +11,7 @@
     <div class="receipt-paper">
         <div class="receipt-header">
             <h1 class="brand-name">AURORA HOTEL PLAZA</h1>
-            <p class="brand-address">95 Cách Mạng Tháng 8, Q. Ninh Kiều, Cần Thơ</p>
+            <p class="brand-address">253 Phạm Văn Thuận, KP2, P. Tam Hiệp, Biên Hòa, Đồng Nai</p>
             <div class="receipt-divider"></div>
             <div class="receipt-meta">
                 <div class="meta-item">
