@@ -46,10 +46,10 @@
         <!-- Sidebar Header -->
         <div class="sidebar-header">
             <div class="sidebar-logo">
-                <i class="fas fa-utensils"></i>
+                <i class="fas fa-crown"></i>
                 <div>
-                    <h2>Aurora</h2>
-                    <p>Restaurant Manager</p>
+                    <h2>AURORA</h2>
+                    <p>Management System</p>
                 </div>
             </div>
         </div>
@@ -59,63 +59,58 @@
 
             <?php if (Auth::isAdmin()): ?>
                 <div class="nav-section">
-                    <div class="nav-section-title">Nhân sự & Ca trực</div>
+                    <div class="nav-section-title">VẬN HÀNH</div>
+                    <a href="<?= BASE_URL ?>/admin/realtime" class="nav-item <?= activeClass('/admin/realtime') ?>">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span>Giám sát trực tiếp</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/admin/shifts" class="nav-item <?= activeClass('/admin/shifts') ?>">
                         <i class="fas fa-user-clock"></i>
-                        <span>Phân ca & Nhân sự</span>
+                        <span>Nhân sự & Ca trực</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Hệ thống</div>
+                    <div class="nav-section-title">THỰC ĐƠN & BÀN</div>
                     <a href="<?= BASE_URL ?>/admin/menu" class="nav-item <?= activeClass('/admin/menu') ?>">
                         <i class="fas fa-utensils"></i>
-                        <span>Quản lý Món</span>
+                        <span>Danh sách món</span>
                     </a>
-                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>"
-                        style="padding-left: 2.75rem; font-size: 0.9rem;">
+                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>">
                         <i class="fas fa-layer-group"></i>
                         <span>Set & Combo</span>
                     </a>
                     <a href="<?= BASE_URL ?>/admin/categories" class="nav-item <?= activeClass('/admin/categories') ?>">
                         <i class="fas fa-tags"></i>
-                        <span>Danh Mục</span>
+                        <span>Danh mục món</span>
                     </a>
                     <a href="<?= BASE_URL ?>/admin/tables" class="nav-item <?= activeClass('/admin/tables') ?>">
                         <i class="fas fa-table-cells-large"></i>
-                        <span>Quản lý Bàn</span>
+                        <span>Sơ đồ bàn ăn</span>
                     </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">CÔNG CỤ</div>
                     <a href="<?= BASE_URL ?>/admin/qr-codes" class="nav-item <?= activeClass('/admin/qr-codes') ?>">
                         <i class="fas fa-qrcode"></i>
-                        <span>Quản lý QR</span>
+                        <span>Quản lý mã QR</span>
+                    </a>
+                    <a href="<?= BASE_URL ?>/admin/ai" class="nav-item <?= activeClass('/admin/ai') ?>">
+                        <i class="fas fa-robot"></i>
+                        <span>Trợ lý ảo AI</span>
                     </a>
                     <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
                         <i class="fas fa-database"></i>
-                        <span>Dữ liệu (Backup)</span>
+                        <span>Sao lưu dữ liệu</span>
                     </a>
                 </div>
 
                 <div class="nav-section">
-                    <div class="nav-section-title">Giám sát</div>
-                    <a href="<?= BASE_URL ?>/admin/realtime" class="nav-item <?= activeClass('/admin/realtime') ?>">
-                        <i class="fas fa-satellite-dish" style="color:#10b981"></i>
-                        <span>Thời gian thực</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">Báo cáo</div>
+                    <div class="nav-section-title">DOANH THU</div>
                     <a href="<?= BASE_URL ?>/admin/reports" class="nav-item <?= activeClass('/admin/reports') ?>">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Thống kê</span>
-                    </a>
-                </div>
-
-                <div class="nav-section">
-                    <div class="nav-section-title">AI Trợ lý</div>
-                    <a href="<?= BASE_URL ?>/admin/ai" class="nav-item <?= activeClass('/admin/ai') ?>">
-                        <i class="fas fa-robot" style="color:var(--gold)"></i>
-                        <span>AI Assistant</span>
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Báo cáo thống kê</span>
                     </a>
                 </div>
             <?php endif; ?>
