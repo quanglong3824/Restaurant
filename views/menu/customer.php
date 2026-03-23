@@ -15,6 +15,9 @@
             </div>
             <h3>XÁC NHẬN HIỆN DIỆN</h3>
             <p class="subtitle">Chào mừng Quý khách đến với Aurora Restaurant</p>
+            <div id="liveDistance" class="distance-badge" style="display:none;">
+                <i class="fas fa-map-marker-alt"></i> Khoảng cách: <span id="distVal">...</span>m
+            </div>
         </div>
         
         <div class="location-body">
@@ -74,6 +77,18 @@
         background: rgba(239, 68, 68, 0.1); color: #f87171;
         padding: 12px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);
         margin-bottom: 20px; font-size: 0.85rem;
+    }
+    .distance-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(212, 175, 55, 0.15); color: var(--gold);
+        padding: 8px 16px; border-radius: 50px; margin-top: 15px;
+        font-size: 0.9rem; font-weight: 700; border: 1px solid rgba(212, 175, 55, 0.3);
+        animation: pulseSubtle 2s infinite;
+    }
+    @keyframes pulseSubtle {
+        0% { opacity: 0.8; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+        100% { opacity: 0.8; transform: scale(1); }
     }
     .btn-gold-premium {
         background: linear-gradient(135deg, #d4af37, #b8860b);

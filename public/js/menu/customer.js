@@ -35,15 +35,18 @@ function checkLocation() {
     if (overlay) overlay.style.display = 'flex';
     if (wrapper) wrapper.style.display = 'none';
 
-    const requestLocation = () => {
-        if (btn) {
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
-            btn.disabled = true;
+    const requestLocation = (isInitial = false) => {
+        // Only update button state if not an initial silent check
+        if (!isInitial) {
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
+                btn.disabled = true;
+            }
+            if (errorEl) errorEl.style.display = 'none';
         }
-        if (errorEl) errorEl.style.display = 'none';
 
         if (!navigator.geolocation) {
-            showLocError("Trình duyệt không hỗ trợ định vị. Vui lòng dùng Chrome hoặc Safari.");
+            if (!isInitial) showLocError("Trình duyệt không hỗ trợ định vị.");
             return;
         }
 
@@ -56,6 +59,28 @@ function checkLocation() {
                     CUSTOMER_CONFIG.restaurantCoords.lat, 
                     CUSTOMER_CONFIG.restaurantCoords.lng
                 );
+
+                // Update real-time distance badge
+                const liveDist = document.getElementById('liveDistance');
+                const distVal = document.getElementById('distVal');
+                if (liveDist && distVal) {
+                    distVal.textContent = Math.round(distance);
+                    liveDist.style.display = 'inline-flex';
+                    // Color code based on distance
+                    if (distance > CUSTOMER_CONFIG.maxDistance) {
+                        liveDist.style.background = 'rgba(239, 68, 68, 0.1)';
+                        liveDist.style.color = '#f87171';
+                        liveDist.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                    } else {
+                        liveDist.style.background = 'rgba(16, 185, 129, 0.1)';
+                        liveDist.style.color = '#10b981';
+                        liveDist.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    }
+                }
+
+                // If this was an initial check, stop here. 
+                // Wait for user to click button for final gatekeep.
+                if (isInitial) return;
 
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
@@ -78,27 +103,30 @@ function checkLocation() {
                         } else {
                             wrapper.style.display = 'block';
                         }
-                    }, 500); // 500ms delay to see success state
+                    }, 500);
                 }
             },
             (err) => {
-                let msg = "Vui lòng cấp quyền định vị: ";
-                switch(err.code) {
-                    case err.PERMISSION_DENIED: 
-                        msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng vào Cài đặt trình duyệt để cho phép truy cập vị trí và Tải lại trang."; 
-                        break;
-                    case err.POSITION_UNAVAILABLE: msg += "Thông tin vị trí không khả dụng."; break;
-                    case err.TIMEOUT: msg += "Hết thời gian yêu cầu vị trí."; break;
-                    default: msg += "Lỗi định vị không xác định.";
+                if (!isInitial) {
+                    let msg = "Vui lòng cấp quyền định vị: ";
+                    switch(err.code) {
+                        case err.PERMISSION_DENIED: msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang."; break;
+                        case err.POSITION_UNAVAILABLE: msg += "Thông tin vị trí không khả dụng."; break;
+                        case err.TIMEOUT: msg += "Hết thời gian yêu cầu vị trí."; break;
+                    }
+                    showLocError(msg);
                 }
-                showLocError(msg);
             },
             { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
     };
 
-    // Auto request on load with a slight delay for better reliability on iOS
-    // REMOVED: setTimeout(() => { ... }, 800); - Customer must read and click now.
+    // Auto trigger silent check to update distance UI
+    setTimeout(() => {
+        if (sessionStorage.getItem('locationVerified') !== 'true') {
+            requestLocation(true);
+        }
+    }, 800);
 
     if (btn) {
         btn.addEventListener('click', requestLocation);
