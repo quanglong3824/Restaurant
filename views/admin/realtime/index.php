@@ -1,13 +1,13 @@
 <?php
-// views/admin/realtime/index.php — Professional POS-Style Monitoring
+// views/admin/realtime/index.php — Professional Light POS-Style Monitoring
 ?>
 
-<div class="pos-monitor">
+<div class="pos-monitor light-theme">
     <!-- Top Command Bar -->
     <div class="command-bar">
         <div class="brand-unit">
-            <span class="unit-code">UNIT-01</span>
-            <h1 class="unit-name">REAL-TIME MONITOR</h1>
+            <span class="unit-code">SYSTEM MONITOR</span>
+            <h1 class="unit-name">ĐIỀU HÀNH TRỰC TIẾP</h1>
         </div>
         
         <div class="system-stats">
@@ -41,23 +41,24 @@
     <div id="realtimeListContainer" class="pos-grid">
         <!-- Loader -->
         <div class="pos-loader">
-            <div class="spinner-border spinner-border-sm"></div>
-            <span>Đang đồng bộ trạm dữ liệu...</span>
+            <div class="spinner-border spinner-border-sm text-primary"></div>
+            <span>Đang cập nhật dữ liệu từ các bàn...</span>
         </div>
     </div>
 </div>
 
 <style>
-    /* ── Root & Variables ─────────────────────────────────────── */
+    /* ── Root & Variables (Light Mode) ────────────────────────── */
     :root {
-        --pos-bg: #0f172a;
-        --pos-card: #1e293b;
-        --pos-border: #334155;
-        --pos-accent: #d4af37;
-        --pos-text: #f1f5f9;
-        --pos-text-muted: #94a3b8;
+        --pos-bg: #f8fafc;
+        --pos-card: #ffffff;
+        --pos-border: #e2e8f0;
+        --pos-accent: #b8860b;
+        --pos-text: #1e293b;
+        --pos-text-muted: #64748b;
         --pos-success: #10b981;
         --pos-warning: #f59e0b;
+        --pos-danger: #ef4444;
     }
 
     body { background-color: var(--pos-bg); color: var(--pos-text); font-family: 'Inter', -apple-system, sans-serif; }
@@ -65,99 +66,111 @@
     /* ── Command Bar ────────────────────────────────────────── */
     .command-bar {
         display: flex; justify-content: space-between; align-items: center;
-        background: #020617; padding: 15px 30px; border-bottom: 1px solid var(--pos-border);
+        background: #ffffff; padding: 15px 30px; border-bottom: 2px solid var(--pos-border);
         position: sticky; top: 0; z-index: 100;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
     .brand-unit { display: flex; flex-direction: column; }
-    .unit-code { font-size: 0.65rem; font-weight: 800; color: var(--pos-accent); letter-spacing: 2px; }
-    .unit-name { font-size: 1.1rem; font-weight: 700; margin: 0; color: #fff; }
+    .unit-code { font-size: 0.65rem; font-weight: 800; color: var(--pos-text-muted); letter-spacing: 2px; }
+    .unit-name { font-size: 1.1rem; font-weight: 800; margin: 0; color: var(--pos-text); }
 
     .system-stats { display: flex; align-items: center; gap: 30px; }
     .stat-item { display: flex; flex-direction: column; align-items: center; }
-    .stat-item .label { font-size: 0.6rem; font-weight: 700; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 2px; }
-    .stat-item .value { font-size: 1.3rem; font-weight: 800; color: #fff; }
+    .stat-item .label { font-size: 0.6rem; font-weight: 800; color: var(--pos-text-muted); text-transform: uppercase; margin-bottom: 2px; }
+    .stat-item .value { font-size: 1.4rem; font-weight: 900; color: var(--pos-text); }
     .stat-item .value.highlight { color: var(--pos-warning); }
     .stat-item .value.gold { color: var(--pos-accent); }
-    .stat-divider { width: 1px; height: 30px; background: var(--pos-border); }
+    .stat-divider { width: 1px; height: 35px; background: var(--pos-border); }
 
     .sync-box { display: flex; align-items: center; gap: 12px; }
     .sync-timer { 
         width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--pos-border);
-        display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800;
+        display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; color: var(--pos-text-muted);
     }
     .refresh-circle-btn {
-        background: var(--pos-card); border: 1px solid var(--pos-border); color: var(--pos-text);
+        background: #f1f5f9; border: 1px solid var(--pos-border); color: var(--pos-text);
         width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: all 0.2s;
+        display: flex; align-items: center; justify-content: center;
     }
-    .refresh-circle-btn:hover { background: var(--pos-accent); color: #000; border-color: var(--pos-accent); }
+    .refresh-circle-btn:hover { background: var(--pos-text); color: #fff; border-color: var(--pos-text); }
 
     /* ── POS Grid ────────────────────────────────────────────── */
     .pos-grid {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 20px; padding: 25px;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 25px; padding: 30px;
     }
     .pos-loader { grid-column: 1/-1; text-align: center; padding: 100px; color: var(--pos-text-muted); display: flex; flex-direction: column; gap: 15px; align-items: center; }
 
     /* ── POS Card ────────────────────────────────────────────── */
     .pos-card {
         background: var(--pos-card); border: 1px solid var(--pos-border);
-        border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
-        transition: transform 0.2s, border-color 0.2s;
+        border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
-    .pos-card:hover { border-color: var(--pos-text-muted); }
+    .pos-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
     
     .card-header-pos {
-        padding: 15px 20px; background: rgba(0,0,0,0.2);
-        display: flex; justify-content: space-between; align-items: flex-start;
+        padding: 20px; background: #fdfdfd;
+        display: flex; justify-content: space-between; align-items: center;
         border-bottom: 1px solid var(--pos-border);
     }
-    .table-main-info h2 { font-size: 1.25rem; font-weight: 800; margin: 0; color: #fff; }
-    .table-sub-info { font-size: 0.75rem; color: var(--pos-text-muted); margin-top: 4px; display: flex; gap: 10px; }
+    .table-main-info h2 { font-size: 1.4rem; font-weight: 900; margin: 0; color: var(--pos-text); letter-spacing: -0.5px; }
+    .table-sub-info { font-size: 0.75rem; color: var(--pos-text-muted); margin-top: 4px; display: flex; gap: 12px; font-weight: 500; }
     
-    .status-tag { padding: 4px 10px; border-radius: 4px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
-    .status-tag.open { background: var(--pos-warning); color: #000; }
-    .status-tag.closed { background: var(--pos-success); color: #fff; }
+    .status-tag { padding: 6px 12px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-tag.open { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .status-tag.closed { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
 
-    .card-body-pos { padding: 0; flex: 1; overflow-y: auto; max-height: 300px; }
+    .card-body-pos { padding: 0; flex: 1; overflow-y: auto; max-height: 320px; }
     .pos-table { width: 100%; border-collapse: collapse; }
     .pos-table th { 
-        position: sticky; top: 0; background: #263349; 
-        padding: 8px 20px; font-size: 0.65rem; color: var(--pos-text-muted);
+        position: sticky; top: 0; background: #f8fafc; 
+        padding: 10px 20px; font-size: 0.65rem; color: var(--pos-text-muted);
         text-align: left; text-transform: uppercase; border-bottom: 1px solid var(--pos-border);
+        letter-spacing: 0.5px;
     }
-    .pos-table td { padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem; }
+    .pos-table td { padding: 12px 20px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
     
-    .item-title { font-weight: 600; color: #fff; }
-    .item-note { font-size: 0.75rem; color: var(--pos-warning); margin-top: 2px; display: block; }
-    .qty-badge { font-weight: 800; color: var(--pos-accent); }
-    .price-col { text-align: right; color: var(--pos-text-muted); font-family: 'Monaco', monospace; }
+    .item-title { font-weight: 700; color: var(--pos-text); }
+    .item-note { font-size: 0.75rem; color: var(--pos-danger); margin-top: 3px; display: flex; align-items: center; gap: 4px; font-weight: 500; }
+    .qty-badge { font-weight: 800; color: var(--pos-text); text-align: center; }
+    .price-col { text-align: right; color: var(--pos-text); font-weight: 600; font-family: 'JetBrains Mono', 'Monaco', monospace; }
 
     .card-footer-pos {
-        padding: 15px 20px; background: rgba(0,0,0,0.1);
+        padding: 20px; background: #fcfcfc;
         border-top: 1px solid var(--pos-border);
     }
-    .total-summary { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
-    .summary-left { display: flex; flex-direction: column; gap: 2px; }
-    .summary-left span:first-child { font-size: 0.6rem; color: var(--pos-text-muted); font-weight: 700; text-transform: uppercase; }
-    .summary-left span:last-child { font-size: 0.9rem; font-weight: 700; color: #fff; }
+    .total-summary { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .summary-left { display: flex; flex-direction: column; }
+    .summary-left span:first-child { font-size: 0.6rem; color: var(--pos-text-muted); font-weight: 800; text-transform: uppercase; }
+    .summary-left span:last-child { font-size: 1rem; font-weight: 800; color: var(--pos-text); }
     
     .summary-right { text-align: right; }
-    .total-label { font-size: 0.65rem; color: var(--pos-text-muted); font-weight: 700; display: block; margin-bottom: 2px; }
-    .total-value { font-size: 1.2rem; font-weight: 900; color: var(--pos-accent); }
+    .total-label { font-size: 0.65rem; color: var(--pos-text-muted); font-weight: 800; display: block; margin-bottom: 2px; }
+    .total-value { font-size: 1.4rem; font-weight: 900; color: var(--pos-accent); }
 
     .action-row { display: flex; gap: 10px; }
     .btn-pos {
-        flex: 1; padding: 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
+        flex: 1; padding: 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 800;
         cursor: pointer; transition: all 0.2s; border: none;
         display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-pos-dim { background: #334155; color: #cbd5e1; }
-    .btn-pos-dim:hover { background: #475569; color: #fff; }
+    .btn-pos-primary { background: var(--pos-text); color: #ffffff; }
+    .btn-pos-primary:hover { background: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn-pos-primary:active { transform: scale(0.98); }
     
     @media (max-width: 768px) {
         .system-stats { display: none; }
-        .pos-grid { grid-template-columns: 1fr; }
+        .pos-grid { grid-template-columns: 1fr; padding: 15px; }
+        .command-bar { padding: 10px 20px; }
     }
+
+    /* Custom Scrollbar for Light Theme */
+    .card-body-pos::-webkit-scrollbar { width: 5px; }
+    .card-body-pos::-webkit-scrollbar-track { background: transparent; }
+    .card-body-pos::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .card-body-pos::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>
 
 <script>
@@ -202,9 +215,9 @@
         if (orders.length === 0) {
             container.innerHTML = `
                 <div class="pos-loader">
-                    <i class="fas fa-coffee fa-3x mb-3 opacity-20"></i>
-                    <h3>KHÔNG CÓ DỮ LIỆU</h3>
-                    <p class="small text-muted">Hệ thống đang chờ đơn hàng mới từ khách hàng.</p>
+                    <i class="fas fa-utensils fa-3x mb-3 opacity-10"></i>
+                    <h3 style="font-weight:800; color:var(--pos-text);">KHÔNG CÓ DỮ LIỆU</h3>
+                    <p class="small text-muted">Hệ thống đang chờ đơn hàng mới từ khách hàng...</p>
                 </div>
             `;
             return;
@@ -222,7 +235,7 @@
                     <tr>
                         <td>
                             <span class="item-title">${it.item_name}</span>
-                            ${it.note ? `<span class="item-note">${it.note}</span>` : ''}
+                            ${it.note ? `<span class="item-note"><i class="fas fa-exclamation-circle"></i> ${it.note}</span>` : ''}
                         </td>
                         <td class="qty-badge">x${it.quantity}</td>
                         <td class="price-col">${it.subtotal_fmt}</td>
@@ -236,8 +249,8 @@
                         <div class="table-main-info">
                             <h2>${order.full_name}</h2>
                             <div class="table-sub-info">
-                                <span><i class="fas fa-user-friends"></i> ${order.guest_count}</span>
-                                <span><i class="fas fa-user-tie"></i> ${order.waiter_name || 'System'}</span>
+                                <span><i class="fas fa-user-friends me-1"></i> ${order.guest_count} khách</span>
+                                <span><i class="fas fa-user-tie me-1"></i> ${order.waiter_name || 'Hệ thống'}</span>
                             </div>
                         </div>
                         <div class="status-tag ${statusTag}">${statusText}</div>
@@ -247,9 +260,9 @@
                         <table class="pos-table">
                             <thead>
                                 <tr>
-                                    <th>Món</th>
+                                    <th>Món gọi</th>
                                     <th>SL</th>
-                                    <th style="text-align:right">Tiền</th>
+                                    <th style="text-align:right">Tạm tính</th>
                                 </tr>
                             </thead>
                             <tbody>${rows}</tbody>
@@ -259,7 +272,7 @@
                     <div class="card-footer-pos">
                         <div class="total-summary">
                             <div class="summary-left">
-                                <span>Bắt đầu</span>
+                                <span>GIỜ MỞ BÀN</span>
                                 <span>${order.opened_at_fmt}</span>
                             </div>
                             <div class="summary-right">
@@ -268,8 +281,8 @@
                             </div>
                         </div>
                         <div class="action-row">
-                            <button onclick="dismissOrder(${order.id})" class="btn-pos btn-pos-dim">
-                                <i class="fas fa-check"></i> XỬ LÝ XONG & ẨN
+                            <button onclick="dismissOrder(${order.id})" class="btn-pos btn-pos-primary">
+                                <i class="fas fa-check-circle"></i> HOÀN TẤT & LƯU TRỮ
                             </button>
                         </div>
                     </div>
@@ -289,8 +302,8 @@
                 const card = document.getElementById(`card-${id}`);
                 if (card) {
                     card.style.opacity = '0';
-                    card.style.transform = 'scale(0.95)';
-                    setTimeout(() => refreshData(), 200);
+                    card.style.transform = 'translateY(20px) scale(0.95)';
+                    setTimeout(() => refreshData(), 300);
                 }
             }
         } catch (err) { console.error(err); }
