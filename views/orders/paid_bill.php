@@ -79,10 +79,18 @@
         <div class="receipt-cut"></div>
     </div>
 
+    <div class="beta-notice">
+        <i class="fas fa-info-circle"></i>
+        <div class="notice-content">
+            <strong>KHUYẾN NGHỊ:</strong> Hệ thống đang trong giai đoạn nâng cấp thử nghiệm. Quý khách vui lòng <b>Lưu ảnh hóa đơn</b> để đối chiếu trong trường hợp cần thiết. Xin cảm ơn!
+        </div>
+    </div>
+
     <div class="action-buttons">
         <button class="btn-save-img" onclick="captureReceipt()">
             <i class="fas fa-camera"></i> LƯU ẢNH HÓA ĐƠN
         </button>
+        <p class="button-tip">* Ảnh hóa đơn sẽ được lưu trực tiếp vào thư viện ảnh của bạn.</p>
         <button class="btn-new-order" onclick="startNewOrder()">
             <i class="fas fa-plus-circle"></i> TẠO LƯỢT MỚI
         </button>
@@ -224,6 +232,23 @@ function exitSession() {
         background-image: radial-gradient(circle at 10px 10px, transparent 10px, white 11px);
         background-size: 20px 20px; background-position: -10px -10px;
     }
+
+    /* Beta Notice */
+    .beta-notice {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        padding: 15px;
+        border-radius: 12px;
+        margin: 25px 0 15px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        color: #856404;
+        font-size: 0.8rem;
+        line-height: 1.5;
+    }
+    .beta-notice i { color: #d4af37; font-size: 1rem; margin-top: 2px; }
+    .button-tip { font-size: 0.75rem; color: #94a3b8; text-align: center; margin-top: -5px; margin-bottom: 5px; font-style: italic; }
 
     /* Action Buttons */
     .action-buttons { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
