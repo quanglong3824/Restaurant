@@ -1,4 +1,24 @@
 <?php // views/menu/customer.php — Customer Digital Menu (Mobile First) ?>
+<!-- Out of Range / Frozen Overlay -->
+<div id="frozenOverlay" class="location-check-overlay" style="display:none; z-index: 10001;">
+    <div class="location-card" style="border-color: #ef4444;">
+        <div class="location-header">
+            <div class="logo-circle" style="color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <h3 style="color: #ef4444;">BẠN ĐÃ RỜI KHỎI NHÀ HÀNG</h3>
+            <p class="subtitle">Truy cập tạm thời bị đóng băng</p>
+        </div>
+        <div class="location-body text-center">
+            <p>Để đảm bảo an toàn đơn hàng, thực đơn chỉ khả dụng khi Quý khách có mặt tại nhà hàng.</p>
+            <div class="distance-badge" style="background: rgba(239, 68, 68, 0.1); color: #f87171; border-color: rgba(239, 68, 68, 0.3); margin: 15px auto; display: inline-flex;">
+                <i class="fas fa-walking"></i> Khoảng cách: <span id="frozenDistVal">...</span>m
+            </div>
+            <p class="small text-muted mt-3">Vui lòng quay lại khu vực nhà hàng để tiếp tục đặt món hoặc xem hóa đơn.</p>
+        </div>
+    </div>
+</div>
+
 <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/menu/customer.css">
 
 <!-- Location Check Overlay -->

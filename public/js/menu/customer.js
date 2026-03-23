@@ -7,6 +7,7 @@ let currentItem = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     checkLocation();
+    startLocationWatcher();
     loadCart();
     setupCategoryNav();
     setupSearch();
@@ -17,6 +18,47 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => showBillTam(), 800);
     }
 });
+
+let locationWatcher = null;
+function startLocationWatcher() {
+    // Only monitor if already verified and wrapper is visible
+    if (sessionStorage.getItem('locationVerified') !== 'true') return;
+    if (!navigator.geolocation) return;
+
+    // Use watchPosition for high efficiency/real-time updates
+    locationWatcher = navigator.geolocation.watchPosition(
+        (position) => {
+            const distance = calculateDistance(
+                position.coords.latitude, 
+                position.coords.longitude, 
+                CUSTOMER_CONFIG.restaurantCoords.lat, 
+                CUSTOMER_CONFIG.restaurantCoords.lng
+            );
+
+            const frozenOverlay = document.getElementById('frozenOverlay');
+            const frozenDistVal = document.getElementById('frozenDistVal');
+            
+            if (distance > CUSTOMER_CONFIG.maxDistance) {
+                // Out of range -> Freeze everything
+                if (frozenOverlay) {
+                    frozenOverlay.style.display = 'flex';
+                    if (frozenDistVal) frozenDistVal.textContent = Math.round(distance);
+                    document.body.style.overflow = 'hidden';
+                }
+            } else {
+                // Back in range -> Unfreeze
+                if (frozenOverlay) {
+                    frozenOverlay.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            }
+        },
+        (err) => {
+            console.warn("Location monitoring error:", err.message);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+    );
+}
 
 function checkLocation() {
     const overlay = document.getElementById('locationOverlay');
@@ -92,6 +134,7 @@ function checkLocation() {
                     }
                     
                     sessionStorage.setItem('locationVerified', 'true');
+                    startLocationWatcher(); // Trigger watcher
                     setTimeout(() => {
                         if (overlay) {
                             overlay.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
