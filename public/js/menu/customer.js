@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let locationWatcher = null;
 function startLocationWatcher() {
     // Only monitor if already verified and wrapper is visible
-    if (sessionStorage.getItem('locationVerified') !== 'true') return;
+    if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') return;
     if (!navigator.geolocation) return;
 
     // Use watchPosition for high efficiency/real-time updates
@@ -67,7 +67,7 @@ function checkLocation() {
     const errorEl = document.getElementById('locationError');
 
     // Skip if already verified in this session
-    if (sessionStorage.getItem('locationVerified') === 'true') {
+    if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true') {
         if (overlay) overlay.style.display = 'none';
         if (wrapper) wrapper.style.display = 'block';
         return;
@@ -133,7 +133,7 @@ function checkLocation() {
                         btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                     }
                     
-                    sessionStorage.setItem('locationVerified', 'true');
+                    localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
                     startLocationWatcher(); // Trigger watcher
                     setTimeout(() => {
                         if (overlay) {
@@ -166,7 +166,7 @@ function checkLocation() {
 
     // Auto trigger silent check to update distance UI
     setTimeout(() => {
-        if (sessionStorage.getItem('locationVerified') !== 'true') {
+        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') {
             requestLocation(true);
         }
     }, 800);

@@ -24,7 +24,7 @@
 <!-- Location Check Overlay -->
 <div id="locationOverlay" class="location-check-overlay">
     <script>
-        if (sessionStorage.getItem('locationVerified') === 'true') {
+        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true') {
             document.getElementById('locationOverlay').style.display = 'none';
         }
     </script>
@@ -122,7 +122,7 @@
 
 <div class="customer-menu-wrapper" id="menuWrapper" style="display:none;">
     <script>
-        if (sessionStorage.getItem('locationVerified') === 'true') {
+        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true') {
             document.getElementById('menuWrapper').style.display = 'block';
         }
     </script>
