@@ -130,11 +130,17 @@ class QrOrderController extends Controller
         }
     }
 
-    /** Clear customer session for this table to allow new session */
     public function clearSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         
+        $tableId = $_SESSION['customer_table_id'] ?? null;
+        if ($tableId) {
+            // Xóa cookie ghi nhớ đơn hàng vừa thanh toán để mở được bàn mới
+            $cookieOrderKey = "last_paid_order_table_" . $tableId;
+            setcookie($cookieOrderKey, "", time() - 3600, "/", "", isset($_SERVER['HTTPS']), true);
+        }
+
         // Clear customer-specific data
         unset($_SESSION['customer_table_id']);
         unset($_SESSION['customer_token']);

@@ -87,15 +87,43 @@ class QrMenuController extends Controller
             // --- ĐƠN GIẢN HÓA LOGIC QR ---
             $currentSessionId = session_id();
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+            
+            // 1. Kiểm tra "Cookie ghi nhớ" (Dành cho trường hợp khách xóa nền/đóng trình duyệt)
+            $cookieOrderKey = "last_paid_order_table_" . $tableId;
+            $lastPaidOrderId = (int)($_COOKIE[$cookieOrderKey] ?? 0);
 
-            // 1. Kiểm tra nếu phiên này vừa thanh toán xong (trong vòng 60 phút)
-            // Nếu khách refresh sau khi trả tiền, hiện hoá đơn chứ không hiện menu mới
+            if ($lastPaidOrderId > 0) {
+                $cookieOrder = $this->orderModel->findById($lastPaidOrderId);
+                if ($cookieOrder && $cookieOrder['status'] === 'closed') {
+                    $closedTime = strtotime($cookieOrder['closed_at'] ?? $cookieOrder['updated_at']);
+                    $minutesSinceClose = (time() - $closedTime) / 60;
+                    
+                    if ($minutesSinceClose < 20) { // Giữ trong 20 phút
+                        $items = $this->orderModel->getItems($cookieOrder['id']);
+                        $this->view('layouts/public', [
+                            'view' => 'orders/paid_bill',
+                            'pageTitle' => 'Hoá đơn vừa thanh toán',
+                            'table' => $table,
+                            'order' => $cookieOrder,
+                            'items' => $items,
+                            'token' => $token,
+                            'isCustomer' => true
+                        ]);
+                        return;
+                    }
+                }
+            }
+
+            // 2. Kiểm tra nếu phiên hiện tại vừa thanh toán xong (trong vòng 60 phút)
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
             if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
                 $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
                 $minutesSinceClose = (time() - $closedTime) / 60;
                 
                 if ($minutesSinceClose < 60) {
+                    // Thiết lập cookie để ghi nhớ đơn hàng này (cho trường hợp quét lại sau khi xóa nền)
+                    setcookie($cookieOrderKey, $lastOrder['id'], time() + (20 * 60), "/", "", isset($_SERVER['HTTPS']), true);
+                    
                     $items = $this->orderModel->getItems($lastOrder['id']);
                     $this->view('layouts/public', [
                         'view' => 'orders/paid_bill',
