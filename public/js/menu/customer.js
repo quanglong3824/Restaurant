@@ -37,7 +37,7 @@ function checkLocation() {
 
     const requestLocation = (isInitial = false) => {
         // Only update button state if not an initial silent check
-        if (!isInitial) {
+        if (isInitial !== true) {
             if (btn) {
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
                 btn.disabled = true;
@@ -46,7 +46,7 @@ function checkLocation() {
         }
 
         if (!navigator.geolocation) {
-            if (!isInitial) showLocError("Trình duyệt không hỗ trợ định vị.");
+            if (isInitial !== true) showLocError("Trình duyệt không hỗ trợ định vị.");
             return;
         }
 
@@ -80,7 +80,7 @@ function checkLocation() {
 
                 // If this was an initial check, stop here. 
                 // Wait for user to click button for final gatekeep.
-                if (isInitial) return;
+                if (isInitial === true) return;
 
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
@@ -107,7 +107,7 @@ function checkLocation() {
                 }
             },
             (err) => {
-                if (!isInitial) {
+                if (isInitial !== true) {
                     let msg = "Vui lòng cấp quyền định vị: ";
                     switch(err.code) {
                         case err.PERMISSION_DENIED: msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang."; break;
