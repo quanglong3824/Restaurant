@@ -135,26 +135,25 @@
 
         </nav>
 
-        <!-- Sidebar Footer -->
+        <!-- Sidebar Footer (Minimized) -->
         <div class="sidebar-footer">
-            <p>&copy; 2026 Aurora. v<?= APP_VERSION ?></p>
+            <p>AURORA v<?= APP_VERSION ?></p>
         </div>
 
     </aside>
 
     <style>
         .sidebar-footer {
-            padding: 10px;
-            border-top: 1px solid #f1f5f9;
+            padding: 5px 0;
             text-align: center;
+            opacity: 0.5;
         }
         .sidebar-footer p {
             margin: 0;
-            font-size: 0.6rem;
-            font-weight: 700;
+            font-size: 0.55rem;
+            font-weight: 800;
             color: #cbd5e1;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
     </style>
 
