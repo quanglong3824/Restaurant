@@ -60,17 +60,25 @@ function checkLocation() {
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
                 } else {
-                    sessionStorage.setItem('locationVerified', 'true');
-                    if (overlay) {
-                        overlay.style.transition = 'opacity 0.4s';
-                        overlay.style.opacity = '0';
-                        setTimeout(() => {
-                            overlay.style.display = 'none';
-                            wrapper.style.display = 'block';
-                        }, 400);
-                    } else {
-                        wrapper.style.display = 'block';
+                    // Success state visual
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> XÁC THỰC THÀNH CÔNG!';
+                        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                     }
+                    
+                    sessionStorage.setItem('locationVerified', 'true');
+                    setTimeout(() => {
+                        if (overlay) {
+                            overlay.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                            overlay.style.opacity = '0';
+                            setTimeout(() => {
+                                overlay.style.display = 'none';
+                                wrapper.style.display = 'block';
+                            }, 600);
+                        } else {
+                            wrapper.style.display = 'block';
+                        }
+                    }, 500); // 500ms delay to see success state
                 }
             },
             (err) => {
@@ -90,11 +98,7 @@ function checkLocation() {
     };
 
     // Auto request on load with a slight delay for better reliability on iOS
-    setTimeout(() => {
-        if (sessionStorage.getItem('locationVerified') !== 'true') {
-            requestLocation();
-        }
-    }, 800);
+    // REMOVED: setTimeout(() => { ... }, 800); - Customer must read and click now.
 
     if (btn) {
         btn.addEventListener('click', requestLocation);
