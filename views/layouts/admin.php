@@ -137,20 +137,22 @@
 
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
-            <div class="copyright-info">
-                <p>&copy; 2026 LongDev. v<?= APP_VERSION ?></p>
-            </div>
+            <p>&copy; 2026 Aurora. v<?= APP_VERSION ?></p>
         </div>
 
     </aside>
 
     <style>
-        .copyright-info {
-            padding: 15px;
-            font-size: 0.6rem;
-            color: rgba(0,0,0,0.2);
+        .sidebar-footer {
+            padding: 10px;
+            border-top: 1px solid #f1f5f9;
             text-align: center;
+        }
+        .sidebar-footer p {
+            margin: 0;
+            font-size: 0.6rem;
             font-weight: 700;
+            color: #cbd5e1;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
