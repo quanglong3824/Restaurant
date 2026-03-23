@@ -85,10 +85,32 @@ class QrMenuController extends Controller
             }
 
             // --- ĐƠN GIẢN HÓA LOGIC QR ---
-            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             $currentSessionId = session_id();
+            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
 
-            // 1. Nếu bàn đang bận (occupied)
+            // 1. Kiểm tra nếu phiên này vừa thanh toán xong (trong vòng 60 phút)
+            // Nếu khách refresh sau khi trả tiền, hiện hoá đơn chứ không hiện menu mới
+            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
+            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+                $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
+                $minutesSinceClose = (time() - $closedTime) / 60;
+                
+                if ($minutesSinceClose < 60) {
+                    $items = $this->orderModel->getItems($lastOrder['id']);
+                    $this->view('layouts/public', [
+                        'view' => 'orders/paid_bill',
+                        'pageTitle' => 'Hoá đơn đã thanh toán',
+                        'table' => $table,
+                        'order' => $lastOrder,
+                        'items' => $items,
+                        'token' => $token,
+                        'isCustomer' => true
+                    ]);
+                    return;
+                }
+            }
+
+            // 2. Nếu bàn đang bận (occupied)
             if ($table['status'] === 'occupied') {
                 if ($openOrder) {
                     // Nếu order đã có session_id và KHÔNG trùng với session hiện tại -> Hiển thị trang bàn bận
@@ -113,7 +135,7 @@ class QrMenuController extends Controller
                     return;
                 }
             } 
-            // 2. Nếu bàn đang trống (available) -> Mở bàn mới
+            // 3. Nếu bàn đang trống (available) -> Mở bàn mới
             else {
                 $this->tableModel->open($tableId);
                 $this->orderModel->create([
