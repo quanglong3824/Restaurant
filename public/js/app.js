@@ -1,3 +1,5 @@
+console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b;color:#d4af37;padding:5px;border-radius:5px 0 0 5px;font-weight:bold", "background:#d4af37;color:#1e293b;padding:5px;border-radius:0 5px 5px 0;font-weight:bold");
+
 /**
  * app.js — Global utilities
  * Aurora Restaurant
@@ -237,4 +239,3 @@ document.addEventListener('DOMContentLoaded', () => {
     pollNotifications();
     setInterval(pollNotifications, 4000);
 });
-console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b;color:#d4af37;padding:5px;border-radius:5px 0 0 5px;font-weight:bold", "background:#d4af37;color:#1e293b;padding:5px;border-radius:0 5px 5px 0;font-weight:bold");
