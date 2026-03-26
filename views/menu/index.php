@@ -86,12 +86,22 @@
                         </h3>
                         <div class="menu-items-grid">
                             <?php foreach ($items as $item): ?>
+                                <?php
+                                    // Tính item_options từ tags (prefix opt:)
+                                    $rawItemTags = array_map('trim', explode(',', $item['tags'] ?? ''));
+                                    $itemOptsArr = array_values(array_filter(array_map(
+                                        fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null,
+                                        $rawItemTags
+                                    )));
+                                    $itemOptsData = htmlspecialchars(json_encode($itemOptsArr, JSON_UNESCAPED_UNICODE));
+                                ?>
                                 <div class="list-item-card">
                                     <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
                                         data-id="<?= $item['id'] ?>" data-name="<?= e($item['name']) ?>"
                                         data-price="<?= $item['price'] ?>"
                                         data-img="<?= $item['image'] ? BASE_URL . '/public/uploads/' . e($item['image']) : '' ?>"
                                         data-desc="<?= e($item['description'] ?? '') ?>" data-order="<?= $orderId ?: '' ?>"
+                                        data-options="<?= $itemOptsData ?>"
                                         onclick="handleOpenItemModal(this)">
                                         <?php if ($item['image']): ?>
                                             <img src="<?= BASE_URL . '/public/uploads/' . e($item['image']) ?>" class="list-item-img" alt="<?= e($item['name']) ?>">
@@ -315,9 +325,14 @@
             <p id="modalItemDesc" class="text-muted small mb-3"></p>
 
             <div id="orderControlsSection" style="display:none;">
+                <!-- Chip options từ admin (hiện khi món có options) -->
+                <div id="modalItemOptsWrap" style="display:none; margin-bottom:0.75rem;">
+                    <label class="form-label" style="font-size:.72rem; color:var(--text-muted); letter-spacing:.5px;">TÙY CHỌN</label>
+                    <div id="modalItemOptsContainer" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.3rem;"></div>
+                </div>
                 <div class="mb-3">
-                    <label class="form-label">Ghi chú</label>
-                    <input type="text" id="modalItemNote" class="form-control" placeholder="Không hành, ít cay...">
+                    <label class="form-label" style="font-size:.72rem; color:var(--text-muted); letter-spacing:.5px;">GHI CHÚ THÊM</label>
+                    <input type="text" id="modalItemNote" class="form-control" placeholder="Không hành phi, ít cay..." style="margin-top:.3rem;">
                 </div>
                 <div class="d-flex align-items-center justify-content-between gap-3 mt-4">
                     <div class="qty-control" style="padding:4px 10px;">

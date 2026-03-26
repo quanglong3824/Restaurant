@@ -206,12 +206,18 @@ function confirmOrderAjax(orderId) {
     }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã gửi bếp thành công!'); updateCartUI(res); } });
 }
 
+let _menuSelectedOpts = [];
+
 function handleOpenItemModal(el) {
     const d = el.dataset;
     currentItem = { id: d.id, name: d.name, price: parseFloat(d.price), orderId: d.order, qty: 1 };
+    _menuSelectedOpts = [];
+
     document.getElementById('modalItemName').textContent = d.name;
     document.getElementById('modalItemPrice').textContent = formatMoney(d.price);
     document.getElementById('modalItemDesc').textContent = d.desc || '';
+    document.getElementById('modalItemNote').value = '';
+
     const imgEl = document.getElementById('modalItemImg');
     const placeholder = document.getElementById('modalItemImgPlaceholder');
     imgEl.querySelectorAll('img').forEach(i => i.remove());
@@ -221,6 +227,42 @@ function handleOpenItemModal(el) {
         i.src = d.img; i.style.cssText = 'width:100%; height:100%; object-fit:cover;';
         imgEl.appendChild(i);
     } else { placeholder.style.display = 'flex'; }
+
+    // Render chip options
+    const optsWrap = document.getElementById('modalItemOptsWrap');
+    const optsContainer = document.getElementById('modalItemOptsContainer');
+    optsContainer.innerHTML = '';
+    let opts = [];
+    try { opts = JSON.parse(d.options || '[]'); } catch(e) { opts = []; }
+    if (opts.length > 0) {
+        optsWrap.style.display = 'block';
+        opts.forEach(opt => {
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.textContent = opt;
+            chip.style.cssText = 'padding:.28rem .65rem;border-radius:20px;font-size:.8rem;border:1.5px solid #e2e8f0;background:#f8fafc;color:#64748b;cursor:pointer;transition:all .18s;font-weight:500;';
+            chip.onclick = () => {
+                const idx = _menuSelectedOpts.indexOf(opt);
+                if (idx >= 0) {
+                    _menuSelectedOpts.splice(idx, 1);
+                    chip.style.background = '#f8fafc';
+                    chip.style.borderColor = '#e2e8f0';
+                    chip.style.color = '#64748b';
+                    chip.style.fontWeight = '500';
+                } else {
+                    _menuSelectedOpts.push(opt);
+                    chip.style.background = 'rgba(212,175,55,.15)';
+                    chip.style.borderColor = 'var(--gold,#d4af37)';
+                    chip.style.color = 'var(--gold-dark,#785e0a)';
+                    chip.style.fontWeight = '700';
+                }
+            };
+            optsContainer.appendChild(chip);
+        });
+    } else {
+        optsWrap.style.display = 'none';
+    }
+
     document.getElementById('orderControlsSection').style.display = d.order ? 'block' : 'none';
     if (d.order) updateModalUI();
     Aurora.openModal('modalItemDetail');
@@ -233,12 +275,18 @@ function confirmAddToOrder() {
     const tableId = MENU_CONFIG.tableId;
     if (!tableId) { alert('Vui lòng chọn bàn!'); return; }
 
+    // Gộp chip đã chọn + free text thành note
+    const freeText = document.getElementById('modalItemNote').value.trim();
+    const parts = [..._menuSelectedOpts];
+    if (freeText) parts.push(freeText);
+    const note = parts.join(', ');
+
     const f = new FormData();
     f.append('order_id', MENU_CONFIG.orderId || 0); 
     f.append('table_id', tableId);
     f.append('menu_item_id', currentItem.id);
     f.append('qty', currentItem.qty); 
-    f.append('note', document.getElementById('modalItemNote').value);
+    f.append('note', note);
     
     fetch(MENU_CONFIG.baseUrl + '/orders/add', { 
         method: 'POST', 
