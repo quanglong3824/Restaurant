@@ -107,6 +107,15 @@ function updateCartUI(data) {
             let draftsHtml = ''; let confirmedHtml = ''; let draftCount = 0;
             data.items.forEach(it => {
                 const isDraft = it.status === 'draft';
+                // Render note chips
+                const noteParts = (it.note || '').split(',').map(s => s.trim()).filter(Boolean);
+                const noteHtml = noteParts.length
+                    ? `<div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.2rem 0;">${noteParts.map(n => `<span style="background:rgba(212,175,55,.13);color:var(--gold-dark,#785e0a);border-radius:12px;padding:.1rem .45rem;font-size:.68rem;font-weight:700;">${n}</span>`).join('')}</div>`
+                    : '';
+                // item_options để truyền vào modal
+                const opts = JSON.stringify(it.item_options || []);
+                const currentNote = (it.note || '').replace(/'/g, "\\'");
+
                 const itemHtml = `<div class="cart-item-row" data-item-id="${it.id}">
                     <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
                         <input type="checkbox" class="item-select-cb" 
@@ -115,6 +124,7 @@ function updateCartUI(data) {
                                 onclick="event.stopPropagation()">
                         <div style="flex:1;">
                             <div class="cart-item-name" style="font-weight:700; font-size:0.95rem; margin-bottom:4px;">${it.item_name}</div>
+                            ${noteHtml}
                             <div style="display:flex; align-items:center; gap:0.75rem;">
                                 <span class="cart-item-price" style="font-size:0.85rem; color:var(--gold-dark); font-weight:700;">${it.price_fmt}</span>
                                 ${isDraft ? `
@@ -133,6 +143,9 @@ function updateCartUI(data) {
                         <div style="font-weight:800; font-size:0.95rem;">${it.subtotal_fmt}</div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             ${isDraft ? `
+                                <button onclick="event.stopPropagation(); openCartNoteModal(${it.id}, ${opts}, '${currentNote}')" style="border:none;background:none;color:var(--gold,#d4af37);padding:3px;cursor:pointer;font-size:.9rem;" title="Ghi chú">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <button onclick="event.stopPropagation(); removeCartItem(${it.id})" style="border:none; background:none; color:var(--danger); padding:4px; cursor:pointer; font-size:0.9rem;" title="Xóa món">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>

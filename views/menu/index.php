@@ -178,14 +178,22 @@
                     </div>
                 <?php else: ?>
                     <?php 
-                        $draftItems = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
+                        $draftItems     = array_filter($orderItems, fn($it) => $it['status'] === 'draft');
                         $confirmedItems = array_filter($orderItems, fn($it) => $it['status'] === 'confirmed');
-                        $pendingItems = array_filter($orderItems, fn($it) => $it['status'] === 'pending');
-                        $draftCount = count($draftItems);
+                        $pendingItems   = array_filter($orderItems, fn($it) => $it['status'] === 'pending');
+                        $draftCount     = count($draftItems);
                     ?>
                     <?php if ($draftCount > 0): ?>
                         <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
-                        <?php foreach ($draftItems as $it): ?>
+                        <?php foreach ($draftItems as $it):
+                            // Parse item_options từ menu_tags
+                            $itTags = array_map('trim', explode(',', $it['menu_tags'] ?? ''));
+                            $itOpts = array_values(array_filter(array_map(
+                                fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null, $itTags
+                            )));
+                            $itOptsJson = json_encode($itOpts, JSON_UNESCAPED_UNICODE);
+                            $itNote = trim($it['note'] ?? '');
+                        ?>
                             <div class="cart-item-row" data-item-id="<?= $it['id'] ?>">
                                 <div style="display:flex; align-items:center; gap:0.5rem; flex:1;">
                                     <input type="checkbox" class="item-select-cb" 
@@ -194,6 +202,13 @@
                                             onclick="event.stopPropagation()">
                                     <div style="flex:1;">
                                         <div class="cart-item-name"><?= e($it['item_name']) ?></div>
+                                        <?php if ($itNote && !preg_match('/^Set:\s*.+$/', $itNote)): ?>
+                                        <div style="display:flex;flex-wrap:wrap;gap:.3rem;margin:.25rem 0;">
+                                            <?php foreach (explode(',', $itNote) as $n): $n = trim($n); if ($n): ?>
+                                            <span style="background:rgba(212,175,55,.13);color:var(--gold-dark,#785e0a);border-radius:12px;padding:.1rem .45rem;font-size:.68rem;font-weight:700;"><?= e($n) ?></span>
+                                            <?php endif; endforeach; ?>
+                                        </div>
+                                        <?php endif; ?>
                                         <div style="display:flex; align-items:center; gap:0.5rem;">
                                             <span class="cart-item-price"><?= formatPrice($it['item_price']) ?></span>
                                             <div class="qty-control">
@@ -204,9 +219,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="text-align:right;">
+                                <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
                                     <div class="cart-item-price" style="font-size:0.9rem;"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
-                                    <span class="cart-item-status draft">Nháp</span>
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <button onclick="event.stopPropagation(); openCartNoteModal(<?= $it['id'] ?>, <?= htmlspecialchars($itOptsJson) ?>, '<?= addslashes(htmlspecialchars($itNote, ENT_QUOTES)) ?>')"
+                                            style="border:none;background:none;color:var(--gold,#d4af37);padding:3px;cursor:pointer;font-size:.85rem;" title="Ghi chú">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <span class="cart-item-status draft">Nháp</span>
+                                    </div>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -403,4 +424,122 @@ const MENU_CONFIG = {
     </div>
 </div>
 
+<!-- Modal: Ghi chú item trong giỏ hàng -->
+<div class="modal-backdrop" id="modalCartNote" style="display:none;">
+    <div class="modal modal-premium" style="max-width:400px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit me-2"></i> Ghi chú món</h3>
+            <button class="modal-close" type="button" onclick="closeCartNoteModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="display:flex;flex-direction:column;gap:.85rem;">
+            <!-- Chip options -->
+            <div id="cartNoteOptsWrap" style="display:none;">
+                <label style="font-size:.7rem;color:var(--text-muted);letter-spacing:.5px;font-weight:700;">TÙY CHỌN</label>
+                <div id="cartNoteOptsContainer" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem;"></div>
+            </div>
+            <!-- Free text -->
+            <div>
+                <label style="font-size:.7rem;color:var(--text-muted);letter-spacing:.5px;font-weight:700;">GHI CHÚ THÊM</label>
+                <input type="text" id="cartNoteText" class="form-control" placeholder="Không hành phi, chín kỹ..." maxlength="120" style="margin-top:.3rem;">
+            </div>
+            <button type="button" class="btn-gold w-100" onclick="submitCartNote()" id="btnSaveCartNote" style="padding:.75rem;font-size:.95rem;">
+                <i class="fas fa-check me-2"></i> Lưu ghi chú
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="<?= BASE_URL ?>/public/js/menu/index.js" defer></script>
+<script>
+// ── Cart Note Modal ────────────────────────────────────────────────
+let _cartNoteItemId = 0, _cartNoteOpts = [], _cartNoteSelectedOpts = [];
+
+function openCartNoteModal(itemId, opts, currentNote) {
+    _cartNoteItemId     = itemId;
+    _cartNoteOpts       = (typeof opts === 'string') ? JSON.parse(opts || '[]') : (opts || []);
+    _cartNoteSelectedOpts = [];
+
+    // Phân tách note hiện tại
+    const currentParts = currentNote ? currentNote.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const selectedOpts = currentParts.filter(p => _cartNoteOpts.includes(p));
+    const freeText     = currentParts.filter(p => !_cartNoteOpts.includes(p)).join(', ');
+
+    _cartNoteSelectedOpts = [...selectedOpts];
+    document.getElementById('cartNoteText').value = freeText;
+
+    // Render chips
+    const wrap = document.getElementById('cartNoteOptsWrap');
+    const container = document.getElementById('cartNoteOptsContainer');
+    container.innerHTML = '';
+    if (_cartNoteOpts.length > 0) {
+        wrap.style.display = 'block';
+        _cartNoteOpts.forEach(opt => {
+            const isActive = selectedOpts.includes(opt);
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.textContent = opt;
+            chip.style.cssText = `padding:.28rem .65rem;border-radius:20px;font-size:.8rem;cursor:pointer;transition:all .18s;border:1.5px solid ${isActive ? 'var(--gold,#d4af37)' : '#e2e8f0'};background:${isActive ? 'rgba(212,175,55,.15)' : '#f8fafc'};color:${isActive ? 'var(--gold-dark,#785e0a)' : '#64748b'};font-weight:${isActive ? '700' : '500'};`;
+            chip.onclick = () => {
+                const idx = _cartNoteSelectedOpts.indexOf(opt);
+                if (idx >= 0) {
+                    _cartNoteSelectedOpts.splice(idx, 1);
+                    chip.style.background = '#f8fafc'; chip.style.borderColor = '#e2e8f0';
+                    chip.style.color = '#64748b'; chip.style.fontWeight = '500';
+                } else {
+                    _cartNoteSelectedOpts.push(opt);
+                    chip.style.background = 'rgba(212,175,55,.15)'; chip.style.borderColor = 'var(--gold,#d4af37)';
+                    chip.style.color = 'var(--gold-dark,#785e0a)'; chip.style.fontWeight = '700';
+                }
+            };
+            container.appendChild(chip);
+        });
+    } else {
+        wrap.style.display = 'none';
+    }
+
+    document.getElementById('modalCartNote').style.display = 'flex';
+    setTimeout(() => document.getElementById('cartNoteText').focus(), 150);
+}
+
+function closeCartNoteModal() {
+    document.getElementById('modalCartNote').style.display = 'none';
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('modalCartNote').addEventListener('click', function(e) {
+        if (e.target === this) closeCartNoteModal();
+    });
+});
+
+function submitCartNote() {
+    const freeText = document.getElementById('cartNoteText').value.trim();
+    const parts = [..._cartNoteSelectedOpts];
+    if (freeText) parts.push(freeText);
+    const note = parts.join(', ');
+
+    const btn = document.getElementById('btnSaveCartNote');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang lưu...';
+
+    fetch('<?= BASE_URL ?>/orders/update-note', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ item_id: _cartNoteItemId, order_id: MENU_CONFIG.orderId, note })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            closeCartNoteModal();
+            updateCartUI(data);
+        } else {
+            alert(data.message || 'Lỗi lưu ghi chú');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i> Lưu ghi chú';
+        }
+    })
+    .catch(() => {
+        alert('Lỗi kết nối!');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-2"></i> Lưu ghi chú';
+    });
+}
+</script>

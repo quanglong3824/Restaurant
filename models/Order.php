@@ -107,7 +107,7 @@ class Order extends Model
     public function getItems(int $orderId): array
     {
         return $this->findAll(
-            "SELECT oi.*, m.image
+            "SELECT oi.*, m.image, m.tags AS menu_tags
              FROM order_items oi
              JOIN menu_items m ON m.id = oi.menu_item_id
              WHERE oi.order_id = ?

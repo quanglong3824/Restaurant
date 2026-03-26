@@ -19,8 +19,23 @@ class OrderController extends Controller
     {
         $this->orderModel = new Order();
         $this->tableModel = new Table();
-        $this->menuModel = new MenuItem();
-        $this->setModel = new MenuSet();
+        $this->menuModel  = new MenuItem();
+        $this->setModel   = new MenuSet();
+    }
+
+    /** Parse menu_tags -> item_options array và format giá cho JS */
+    private function formatItemsForJs(array &$items): void
+    {
+        foreach ($items as &$it) {
+            $it['price_fmt']    = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+            // Parse opt: tags -> item_options array
+            $tags = array_map('trim', explode(',', $it['menu_tags'] ?? ''));
+            $it['item_options'] = array_values(array_filter(array_map(
+                fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null,
+                $tags
+            )));
+        }
     }
 
     /** GET /orders?table_id=&order_id= — Xem order của bàn, hoặc Danh sách tất cả bàn bận */
@@ -196,10 +211,7 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
 
         // Format items for JS
-        foreach ($items as &$it) {
-            $it['price_fmt'] = formatPrice($it['item_price']);
-            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
-        }
+        $this->formatItemsForJs($items);
 
         $this->json([
             'ok' => true,
@@ -273,10 +285,7 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
 
         // Format items for JS
-        foreach ($items as &$it) {
-            $it['price_fmt'] = formatPrice($it['item_price']);
-            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
-        }
+        $this->formatItemsForJs($items);
 
         $this->json([
             'ok' => true,
@@ -316,10 +325,7 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
 
         // Format items for JS
-        foreach ($items as &$it) {
-            $it['price_fmt'] = formatPrice($it['item_price']);
-            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
-        }
+        $this->formatItemsForJs($items);
 
         $this->json([
             'ok' => true,
@@ -345,10 +351,7 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
 
         // Format items for JS
-        foreach ($items as &$it) {
-            $it['price_fmt'] = formatPrice($it['item_price']);
-            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
-        }
+        $this->formatItemsForJs($items);
 
         $this->json([
             'ok' => true,
@@ -417,10 +420,7 @@ class OrderController extends Controller
         $items = $this->orderModel->getItems($orderId);
 
         // Format items for JS
-        foreach ($items as &$it) {
-            $it['price_fmt'] = formatPrice($it['item_price']);
-            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
-        }
+        $this->formatItemsForJs($items);
 
         $this->json([
             'ok' => true,
