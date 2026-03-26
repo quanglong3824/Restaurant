@@ -122,6 +122,11 @@ $router->get('/it/database/backup', 'SettingController', 'backup');
 $router->get('/it/database/download', 'SettingController', 'downloadBackup');
 $router->post('/it/database/delete', 'SettingController', 'deleteBackup');
 
+// ── IT: Database Cleanup ──────────────────────────────────
+$router->post('/it/database/cleanup/all', 'SettingController', 'cleanupAll');
+$router->post('/it/database/cleanup/orders', 'SettingController', 'cleanupOrders');
+$router->post('/it/database/cleanup/table', 'SettingController', 'cleanupTable');
+
 // ── QR Ordering: Customer ──────────────────────────────────
 $router->get('/q', 'QrMenuController', 'shortLink');
 $router->get('/qr/menu', 'QrMenuController', 'index');

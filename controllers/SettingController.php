@@ -238,4 +238,190 @@ class SettingController extends Controller
         }
         $this->redirect('/it/database');
     }
+
+    // ================================================================
+    // DATABASE CLEANUP
+    // ================================================================
+
+    /**
+     * POST /it/database/cleanup/all
+     * Dọn toàn bộ data giao dịch — giữ nguyên users, shifts, menu, tables, QR
+     */
+    public function cleanupAll(): void
+    {
+        Auth::requireRole(ROLE_IT);
+
+        $confirm = $this->input('confirm_text');
+        if ($confirm !== 'XAC-NHAN-XOA-TOAN-BO') {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Xác nhận không đúng. Hủy thao tác.'];
+            $this->redirect('/it/database');
+        }
+
+        try {
+            $db = getDB();
+            $db->exec('SET FOREIGN_KEY_CHECKS = 0');
+
+            // Xóa theo thứ tự FK
+            $tables = [
+                'order_notifications',
+                'realtime_notifications',
+                'order_items',
+                'orders',
+                'support_requests',
+                'customer_sessions',
+                'table_status_history',
+                'user_shifts',
+            ];
+
+            $counts = [];
+            foreach ($tables as $t) {
+                $cnt = (int) $db->query("SELECT COUNT(*) FROM `$t`")->fetchColumn();
+                $db->exec("TRUNCATE TABLE `$t`");
+                $counts[$t] = $cnt;
+            }
+
+            // Reset trạng thái bàn về available
+            $db->exec("UPDATE `tables` SET status = 'available'");
+
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+
+            $total = array_sum($counts);
+            $detail = implode(', ', array_map(fn($t, $c) => "$t ($c)", array_keys($counts), $counts));
+
+            $_SESSION['flash'] = [
+                'type'    => 'success',
+                'message' => "✅ Đã dọn dẹp toàn bộ: {$total} bản ghi. Chi tiết: {$detail}. Bàn đã reset về sẵn sàng.",
+            ];
+        } catch (\Throwable $e) {
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi dọn dẹp: ' . $e->getMessage()];
+        }
+
+        $this->redirect('/it/database');
+    }
+
+    /**
+     * POST /it/database/cleanup/orders
+     * Dọn lịch sử đặt bàn đã đóng + notifications — giữ lại bàn đang mở
+     */
+    public function cleanupOrders(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+
+        $confirm = $this->input('confirm_text');
+        if ($confirm !== 'XOA-LICH-SU') {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Xác nhận không đúng. Hủy thao tác.'];
+            $this->redirect('/it/database');
+        }
+
+        try {
+            $db = getDB();
+            $db->exec('SET FOREIGN_KEY_CHECKS = 0');
+
+            // Chỉ xóa orders đã closed
+            $closedOrders = $db->query("SELECT id FROM `orders` WHERE status = 'closed'")->fetchAll(PDO::FETCH_COLUMN);
+            $deletedOrders = count($closedOrders);
+
+            if (!empty($closedOrders)) {
+                $ids = implode(',', array_map('intval', $closedOrders));
+                $db->exec("DELETE FROM `order_items` WHERE order_id IN ($ids)");
+                $db->exec("DELETE FROM `order_notifications` WHERE order_id IN ($ids)");
+                $db->exec("DELETE FROM `orders` WHERE id IN ($ids)");
+            }
+
+            // Dọn notifications cũ (đã đọc hoặc > 24h)
+            $ntfDel = $db->exec("DELETE FROM `realtime_notifications` WHERE is_delivered = 1 OR created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+            // Dọn customer sessions hết hạn
+            $sesDel = $db->exec("DELETE FROM `customer_sessions` WHERE updated_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+
+            // Dọn table_status_history > 30 ngày
+            $histDel = $db->exec("DELETE FROM `table_status_history` WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+
+            // Dọn support_requests đã giải quyết
+            $supDel = $db->exec("DELETE FROM `support_requests` WHERE status = 'completed'");
+
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+
+            $_SESSION['flash'] = [
+                'type'    => 'success',
+                'message' => "✅ Đã dọn lịch sử: {$deletedOrders} đơn hàng đóng, {$ntfDel} thông báo, {$sesDel} phiên KH, {$histDel} lịch sử bàn, {$supDel} yêu cầu hỗ trợ đã xử lý.",
+            ];
+        } catch (\Throwable $e) {
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi dọn dẹp: ' . $e->getMessage()];
+        }
+
+        $this->redirect('/it/database');
+    }
+
+    /**
+     * POST /it/database/cleanup/table
+     * Dọn một bảng cụ thể (xóa toàn bộ hoặc theo điều kiện an toàn)
+     */
+    public function cleanupTable(): void
+    {
+        Auth::requireRole(ROLE_IT);
+
+        $tableName = $this->input('table_name');
+        $confirm   = $this->input('confirm_text');
+
+        // Whitelist các bảng cho phép dọn
+        $allowedTables = [
+            'order_items'           => ['label' => 'Chi tiết món', 'condition' => "WHERE order_id IN (SELECT id FROM orders WHERE status='closed')"],
+            'order_notifications'   => ['label' => 'Thông báo đơn hàng', 'condition' => ''],
+            'realtime_notifications'=> ['label' => 'Thông báo realtime', 'condition' => ''],
+            'orders'                => ['label' => 'Đơn hàng đã đóng', 'condition' => "WHERE status = 'closed'"],
+            'support_requests'      => ['label' => 'Yêu cầu hỗ trợ', 'condition' => "WHERE status = 'completed'"],
+            'customer_sessions'     => ['label' => 'Phiên khách (QR)', 'condition' => ''],
+            'table_status_history'  => ['label' => 'Lịch sử trạng thái bàn', 'condition' => ''],
+            'user_shifts'           => ['label' => 'Phân công ca (cũ)', 'condition' => "WHERE work_date < CURDATE()"],
+        ];
+
+        if (!isset($allowedTables[$tableName])) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bảng không hợp lệ.'];
+            $this->redirect('/it/database');
+        }
+
+        $expectedConfirm = 'XOA-' . strtoupper(str_replace(['_', '-'], '-', $tableName));
+        if ($confirm !== $expectedConfirm) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => "Xác nhận không đúng. Cần gõ: {$expectedConfirm}"];
+            $this->redirect('/it/database');
+        }
+
+        try {
+            $db  = getDB();
+            $def = $allowedTables[$tableName];
+            $db->exec('SET FOREIGN_KEY_CHECKS = 0');
+
+            if ($def['condition'] === '') {
+                $db->exec("TRUNCATE TABLE `{$tableName}`");
+                $affected = '(toàn bộ)';
+            } else {
+                // Xử lý đặc biệt cho order_items (subquery không dùng được với DELETE trực tiếp)
+                if ($tableName === 'order_items') {
+                    $ids = $db->query("SELECT id FROM orders WHERE status='closed'")->fetchAll(PDO::FETCH_COLUMN);
+                    if (!empty($ids)) {
+                        $idList = implode(',', array_map('intval', $ids));
+                        $affected = $db->exec("DELETE FROM `order_items` WHERE order_id IN ($idList)");
+                    } else {
+                        $affected = 0;
+                    }
+                } else {
+                    $affected = $db->exec("DELETE FROM `{$tableName}` {$def['condition']}");
+                }
+            }
+
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+            $_SESSION['flash'] = [
+                'type'    => 'success',
+                'message' => "✅ Đã dọn bảng «{$def['label']}»: {$affected} bản ghi đã xóa.",
+            ];
+        } catch (\Throwable $e) {
+            $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi: ' . $e->getMessage()];
+        }
+
+        $this->redirect('/it/database');
+    }
 }
