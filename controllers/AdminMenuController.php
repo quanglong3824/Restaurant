@@ -116,8 +116,46 @@ class AdminMenuController extends Controller
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
         $id = (int) $this->input('id');
-        $this->itemModel->delete($id);
-        $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa món.'];
+        if ($id <= 0) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'ID món không hợp lệ.'];
+            $this->redirect('/admin/menu');
+        }
+
+        try {
+            $db = getDB();
+
+            // Kiểm tra món có đang được tham chiếu trong lịch sử order không
+            $stmt = $db->prepare("SELECT COUNT(*) FROM order_items WHERE menu_item_id = ?");
+            $stmt->execute([$id]);
+            $inUse = (int) $stmt->fetchColumn();
+
+            if ($inUse > 0) {
+                // Có FK → soft delete: ẩn khỏi menu thay vì xóa cứng
+                $db->prepare("UPDATE menu_items SET is_active = 0, is_available = 0 WHERE id = ?")
+                   ->execute([$id]);
+                $_SESSION['flash'] = [
+                    'type'    => 'warning',
+                    'message' => "Món này đang có trong {$inUse} lịch sử đơn hàng, không thể xóa hoàn toàn. Đã ẩn khỏi menu.",
+                ];
+            } else {
+                // Không có FK → xóa cứng bình thường
+                $this->itemModel->delete($id);
+                $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa món thành công.'];
+            }
+        } catch (\Throwable $e) {
+            // Fallback: nếu vẫn lỗi FK → chỉ ẩn món
+            try {
+                getDB()->prepare("UPDATE menu_items SET is_active = 0, is_available = 0 WHERE id = ?")
+                       ->execute([$id]);
+                $_SESSION['flash'] = [
+                    'type'    => 'warning',
+                    'message' => 'Không thể xóa hoàn toàn (đang có dữ liệu liên kết). Đã ẩn khỏi menu.',
+                ];
+            } catch (\Throwable $e2) {
+                $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi xóa món: ' . $e->getMessage()];
+            }
+        }
+
         $this->redirect('/admin/menu');
     }
 
