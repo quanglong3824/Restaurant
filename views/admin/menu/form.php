@@ -65,11 +65,13 @@ $isEdit = !empty($item);
             </div>
 
             <div class="form-group col-span-2">
-                <label class="form-label">Tags</label>
+                <label class="form-label">Tags hiển thị</label>
                 <div style="display:flex;gap:.85rem;flex-wrap:wrap;padding:.5rem 0;">
                     <?php
                     $allTags = ['bestseller', 'new', 'spicy', 'vegetarian', 'recommended'];
-                    $activeTags = $isEdit ? array_map('trim', explode(',', $item['tags'] ?? '')) : [];
+                    // Tách tags thường (không phải opt:)
+                    $rawTags = $isEdit ? array_map('trim', explode(',', $item['tags'] ?? '')) : [];
+                    $activeTags = array_filter($rawTags, fn($t) => $t && strpos($t, 'opt:') !== 0);
                     foreach ($allTags as $tag):
                         ?>
                         <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer;">
@@ -79,6 +81,84 @@ $isEdit = !empty($item);
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <!-- Tùy chọn món (item_options) — khách có thể chọn khi đặt -->
+            <div class="form-group col-span-2">
+                <label class="form-label">Tùy chọn cho khách <span style="color:var(--text-muted);font-weight:400;">(khách sẽ thấy và chọn khi gọi món)</span></label>
+                <?php
+                // Các options hiện tại (lưu dạng opt:xxx trong tags)
+                $activeOpts = array_filter($rawTags, fn($t) => strpos($t, 'opt:') === 0);
+                $activeOpts = array_map(fn($t) => substr($t, 4), $activeOpts);
+
+                $presetOpts = ['Không cay', 'Ít cay', 'Cay vừa', 'Không hành', 'Không tỏi', 'Không rau mùi',
+                               'Ít đường', 'Không đường', 'Ít đá', 'Nhiều đá', 'Không đá', 'Không ngọt',
+                               'Ít muối', 'Chín kỹ', 'Tái', 'Không phô mai', 'Ít kem'];
+                ?>
+                <div id="opts-container" style="display:flex;flex-wrap:wrap;gap:.5rem;padding:.6rem 0;">
+                    <?php foreach ($presetOpts as $opt): ?>
+                    <label class="opt-chip <?= in_array($opt, $activeOpts) ? 'active' : '' ?>"
+                           style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--border-color);transition:all .2s;user-select:none;<?= in_array($opt, $activeOpts) ? 'background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold-dark);font-weight:600;' : 'background:transparent;color:var(--text-muted);' ?>">
+                        <input type="checkbox" name="item_options[]" value="<?= e($opt) ?>"
+                               <?= in_array($opt, $activeOpts) ? 'checked' : '' ?>
+                               style="display:none;" onchange="toggleOptChip(this)">
+                        <?= e($opt) ?>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+                <!-- Thêm option tùy chỉnh -->
+                <div style="display:flex;gap:.5rem;margin-top:.4rem;">
+                    <input type="text" id="custom-opt-input" class="form-control" style="max-width:220px;font-size:.85rem;"
+                           placeholder="Tùy chọn khác..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomOpt();}">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="addCustomOpt()">
+                        <i class="fas fa-plus"></i> Thêm
+                    </button>
+                </div>
+                <p class="form-hint" style="margin-top:.5rem;">Các tùy chọn được tô vàng sẽ hiển thị cho khách lựa chọn khi gọi món.</p>
+            </div>
+
+            <style>
+                .opt-chip:hover { background: rgba(212,175,55,.08); border-color: rgba(212,175,55,.5); color: var(--gold-dark); }
+                .opt-chip.active { background: rgba(212,175,55,.15); border-color: var(--gold); color: var(--gold-dark); font-weight: 600; }
+            </style>
+            <script>
+                function toggleOptChip(input) {
+                    const label = input.closest('label');
+                    label.classList.toggle('active', input.checked);
+                    if (input.checked) {
+                        label.style.background = 'rgba(212,175,55,.15)';
+                        label.style.borderColor = 'var(--gold)';
+                        label.style.color = 'var(--gold-dark)';
+                        label.style.fontWeight = '600';
+                    } else {
+                        label.style.background = 'transparent';
+                        label.style.borderColor = 'var(--border-color)';
+                        label.style.color = 'var(--text-muted)';
+                        label.style.fontWeight = '';
+                    }
+                }
+                function addCustomOpt() {
+                    const input = document.getElementById('custom-opt-input');
+                    const val = input.value.trim();
+                    if (!val) return;
+                    const container = document.getElementById('opts-container');
+                    const label = document.createElement('label');
+                    label.className = 'opt-chip active';
+                    label.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--gold);background:rgba(212,175,55,.15);color:var(--gold-dark);font-weight:600;user-select:none;';
+                    label.innerHTML = `<input type="checkbox" name="item_options[]" value="${val}" checked style="display:none;" onchange="toggleOptChip(this)">${val}`;
+                    container.appendChild(label);
+                    input.value = '';
+                }
+                // Init click on entire label
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('.opt-chip').forEach(lbl => {
+                        lbl.addEventListener('click', () => {
+                            const cb = lbl.querySelector('input[type="checkbox"]');
+                            cb.checked = !cb.checked;
+                            toggleOptChip(cb);
+                        });
+                    });
+                });
+            </script>
 
             <div class="form-group col-span-2">
                 <label class="form-label">Kho (Stock) <span class="text-danger">*</span></label>

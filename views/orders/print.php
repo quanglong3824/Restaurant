@@ -48,7 +48,18 @@
         <tbody>
             <?php foreach ($items as $item): ?>
                 <tr>
-                    <td><?= e($item['item_name']) ?></td>
+                    <td>
+                        <?= e($item['item_name']) ?>
+                        <?php
+                        $note = trim($item['note'] ?? '');
+                        // Ẩn prefix Set:
+                        if ($note && !preg_match('/^Set:\s*.+$/', $note)):
+                        ?>
+                        <div style="font-size:0.72em;color:#555;margin-top:2px;font-style:italic;">
+                            ↳ <?= e($note) ?>
+                        </div>
+                        <?php endif; ?>
+                    </td>
                     <td class="col-qty"><?= $item['quantity'] ?></td>
                     <td class="col-price"><?= number_format($item['item_price'], 0, ',', '.') ?></td>
                     <td class="col-total"><?= number_format($item['item_price'] * $item['quantity'], 0, ',', '.') ?></td>

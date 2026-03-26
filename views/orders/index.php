@@ -147,8 +147,13 @@ if (!empty($items)) {
                                         <?php endif; ?>
                                     </div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
-                                        <div class="plate-note">
-                                            <i class="fas fa-comment-dots me-1"></i> <?= e($item['note']) ?>
+                                        <div class="plate-note" style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;">
+                                            <i class="fas fa-comment-dots me-1"></i>
+                                            <?php foreach (explode(',', $item['note']) as $n): ?>
+                                                <?php $n = trim($n); if ($n): ?>
+                                                <span style="background:rgba(212,175,55,.12);color:var(--gold-dark,#785e0a);border-radius:12px;padding:.1rem .5rem;font-size:.72rem;font-weight:600;"><?= e($n) ?></span>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -157,7 +162,20 @@ if (!empty($items)) {
                                 <div class="plate-status">
                                     <i class="fas fa-check-circle" title="Đã xác nhận"></i>
                                     <?php if (!$isSplitAction): ?>
-                                    <button class="btn btn-link text-danger p-0 ms-2" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món đã xác nhận">
+                                    <?php
+                                        // Lấy item_options từ menu_items
+                                        $db = getDB();
+                                        $menuRow = $db->prepare("SELECT tags FROM menu_items WHERE id = ?");
+                                        $menuRow->execute([$item['menu_item_id']]);
+                                        $menuTags = $menuRow->fetchColumn();
+                                        $itemOpts = array_values(array_filter(array_map(fn($t) => strpos(trim($t),'opt:')===0 ? trim(substr(trim($t),4)) : null, explode(',', $menuTags ?? ''))));
+                                        $itemOptsJson = json_encode($itemOpts, JSON_UNESCAPED_UNICODE);
+                                    ?>
+                                    <button class="btn btn-link text-gold p-0" style="font-size:.8rem;"
+                                        onclick="openNoteModal(<?= $item['id'] ?>, <?= $order['id'] ?>, <?= htmlspecialchars($itemOptsJson) ?>, '<?= addslashes(e($item['item_name'])) ?>', '<?= addslashes(e($item['note'] ?? '')) ?>')" title="Ghi chú món">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-link text-danger p-0 ms-1" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món">
                                         <i class="fas fa-trash-alt" style="font-size: 0.8rem;"></i>
                                     </button>
                                     <?php endif; ?>
@@ -211,12 +229,26 @@ if (!empty($items)) {
                                         <?php endif; ?>
                                     </div>
                                     <?php if ($item['note'] && !preg_match('/^Set:\s*.+$/', $item['note'])): ?>
-                                        <div class="plate-note">
-                                            <i class="fas fa-comment-dots me-1"></i> <?= e($item['note']) ?>
+                                        <div class="plate-note" style="display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;">
+                                            <i class="fas fa-comment-dots me-1"></i>
+                                            <?php foreach (explode(',', $item['note']) as $n): ?>
+                                                <?php $n = trim($n); if ($n): ?>
+                                                <span style="background:rgba(212,175,55,.12);color:var(--gold-dark,#785e0a);border-radius:12px;padding:.1rem .5rem;font-size:.72rem;font-weight:600;"><?= e($n) ?></span>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                                 <?php if (!$isSplitAction): ?>
+                                <?php
+                                    // Lấy item_options từ menu_items
+                                    if (!isset($db)) $db = getDB();
+                                    $menuRow2 = $db->prepare("SELECT tags FROM menu_items WHERE id = ?");
+                                    $menuRow2->execute([$item['menu_item_id']]);
+                                    $menuTags2 = $menuRow2->fetchColumn();
+                                    $itemOpts2 = array_values(array_filter(array_map(fn($t) => strpos(trim($t),'opt:')===0 ? trim(substr(trim($t),4)) : null, explode(',', $menuTags2 ?? ''))));
+                                    $itemOptsJson2 = json_encode($itemOpts2, JSON_UNESCAPED_UNICODE);
+                                ?>
                                 <div class="plate-controls">
                                     <button class="q-btn" onclick="changeQty(<?= $item['id'] ?>, <?= $order['id'] ?>, -1)" title="Giảm">
                                         <i class="fas fa-minus"></i>
@@ -231,9 +263,15 @@ if (!empty($items)) {
                                 <?php endif; ?>
                                 <div class="plate-price-total"><?= formatPrice($item['item_price'] * $item['quantity']) ?></div>
                                 <?php if (!$isSplitAction): ?>
-                                <button class="plate-del" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                                <div style="display:flex;gap:.25rem;">
+                                    <button class="btn btn-link p-1" style="color:var(--gold);font-size:.82rem;"
+                                        onclick="openNoteModal(<?= $item['id'] ?>, <?= $order['id'] ?>, <?= htmlspecialchars($itemOptsJson2) ?>, '<?= addslashes(e($item['item_name'])) ?>', '<?= addslashes(e($item['note'] ?? '')) ?>')" title="Ghi chú">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="plate-del" onclick="removeItem(<?= $item['id'] ?>, <?= $order['id'] ?>)" title="Xóa món">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
@@ -550,6 +588,32 @@ if (!empty($items)) {
     .item-plate.selected-for-split { background: #fefce8 !important; border-color: #fde047 !important; }
 </style>
 
+<!-- Modal: Ghi chú từng món -->
+<div class="modal-backdrop" id="modalItemNote" style="display:none;">
+    <div class="modal" style="max-width:420px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-edit me-2"></i> Ghi chú món</h3>
+            <button class="modal-close" type="button" onclick="closeNoteModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body" style="display:flex;flex-direction:column;gap:1rem;">
+            <div id="note-item-name" style="font-weight:700;font-size:1rem;color:var(--text-primary);"></div>
+            <!-- Chip options từ admin -->
+            <div id="note-opts-container" style="display:flex;flex-wrap:wrap;gap:.45rem;"></div>
+            <!-- Text note tự do -->
+            <div class="form-group">
+                <label class="form-label" style="font-size:.75rem;">GHI CHÚ TỰ DO</label>
+                <input type="text" id="note-custom-text" class="form-control"
+                       placeholder="VD: Không hành phi, chín kỹ..." maxlength="120"
+                       style="font-size:.9rem;">
+            </div>
+            <button type="button" class="btn btn-gold btn-block py-3"
+                    onclick="submitItemNote()" id="btn-save-note">
+                <i class="fas fa-check me-2"></i> Lưu ghi chú
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal: Merge Tables -->
 <div class="modal-backdrop" id="modalMergeAreaFromOrder">
     <div class="modal">
@@ -609,6 +673,101 @@ const ORDERS_CONFIG = {
     tableId: <?= $table['id'] ?? 0 ?>,
     orderId: <?= $order['id'] ?? 0 ?>
 };
+
+// ── Modal ghi chú từng món ─────────────────────────────────────────
+let _noteItemId = 0, _noteOrderId = 0, _noteOpts = [], _noteSelectedOpts = [];
+
+function openNoteModal(itemId, orderId, opts, itemName, currentNote) {
+    _noteItemId   = itemId;
+    _noteOrderId  = orderId;
+    _noteOpts     = opts || [];
+    _noteSelectedOpts = [];
+
+    document.getElementById('note-item-name').textContent = itemName;
+
+    // Phân tách note hiện tại thành opts đã chọn + text tự do
+    const currentParts = currentNote ? currentNote.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const selectedOpts = currentParts.filter(p => _noteOpts.includes(p));
+    const freeText     = currentParts.filter(p => !_noteOpts.includes(p)).join(', ');
+
+    _noteSelectedOpts = [...selectedOpts];
+    document.getElementById('note-custom-text').value = freeText;
+
+    // Render chips
+    const container = document.getElementById('note-opts-container');
+    container.innerHTML = '';
+    if (_noteOpts.length > 0) {
+        _noteOpts.forEach(opt => {
+            const isActive = selectedOpts.includes(opt);
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.textContent = opt;
+            chip.className = 'note-opt-chip' + (isActive ? ' active' : '');
+            chip.style.cssText = `padding:.3rem .75rem;border-radius:20px;font-size:.82rem;border:1.5px solid ${isActive ? 'var(--gold)' : '#e2e8f0'};background:${isActive ? 'rgba(212,175,55,.15)' : '#f8fafc'};color:${isActive ? 'var(--gold-dark,#785e0a)' : '#64748b'};font-weight:${isActive ? '700' : '400'};cursor:pointer;transition:all .2s;`;
+            chip.onclick = () => {
+                const idx = _noteSelectedOpts.indexOf(opt);
+                if (idx >= 0) {
+                    _noteSelectedOpts.splice(idx, 1);
+                    chip.style.background = '#f8fafc';
+                    chip.style.borderColor = '#e2e8f0';
+                    chip.style.color = '#64748b';
+                    chip.style.fontWeight = '400';
+                } else {
+                    _noteSelectedOpts.push(opt);
+                    chip.style.background = 'rgba(212,175,55,.15)';
+                    chip.style.borderColor = 'var(--gold)';
+                    chip.style.color = 'var(--gold-dark,#785e0a)';
+                    chip.style.fontWeight = '700';
+                }
+            };
+            container.appendChild(chip);
+        });
+    }
+
+    const modal = document.getElementById('modalItemNote');
+    modal.style.display = 'flex';
+    setTimeout(() => document.getElementById('note-custom-text').focus(), 150);
+}
+
+function closeNoteModal() {
+    document.getElementById('modalItemNote').style.display = 'none';
+}
+document.getElementById('modalItemNote').addEventListener('click', function(e) {
+    if (e.target === this) closeNoteModal();
+});
+
+function submitItemNote() {
+    const freeText = document.getElementById('note-custom-text').value.trim();
+    const parts = [..._noteSelectedOpts];
+    if (freeText) parts.push(freeText);
+    const note = parts.join(', ');
+
+    const btn = document.getElementById('btn-save-note');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang lưu...';
+
+    fetch(ORDERS_CONFIG.baseUrl + '/orders/update-note', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ item_id: _noteItemId, order_id: _noteOrderId, note })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            closeNoteModal();
+            location.reload();
+        } else {
+            alert(data.message || 'Lỗi lưu ghi chú');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i> Lưu ghi chú';
+        }
+    })
+    .catch(() => {
+        alert('Lỗi kết nối!');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-2"></i> Lưu ghi chú';
+    });
+}
 </script>
 
 <!-- External JavaScript -->

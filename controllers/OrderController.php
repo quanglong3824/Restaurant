@@ -360,6 +360,33 @@ class OrderController extends Controller
         ]);
     }
 
+    /** POST /orders/update-note — Cập nhật ghi chú từng món */
+    public function updateItemNote(): void
+    {
+        // Cả nhân viên lẫn khách QR (unauthenticated) đều có thể ghi chú
+        $itemId  = (int) $this->input('item_id');
+        $orderId = (int) $this->input('order_id');
+        $note    = trim((string) $this->input('note', ''));
+
+        $db = getDB();
+        $db->prepare("UPDATE order_items SET note = ? WHERE id = ? AND order_id = ?")
+           ->execute([$note, $itemId, $orderId]);
+
+        $total = $this->orderModel->getTotal($orderId);
+        $items = $this->orderModel->getItems($orderId);
+        foreach ($items as &$it) {
+            $it['price_fmt']    = formatPrice($it['item_price']);
+            $it['subtotal_fmt'] = formatPrice($it['item_price'] * $it['quantity']);
+        }
+
+        $this->json([
+            'ok'        => true,
+            'total'     => $total,
+            'total_fmt' => formatPrice($total),
+            'items'     => $items,
+        ]);
+    }
+
     /** POST /orders/confirm — Xác nhận món (Gửi bếp) */
     public function confirmOrder(): void
     {

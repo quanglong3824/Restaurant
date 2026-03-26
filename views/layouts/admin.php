@@ -92,14 +92,14 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">CÔNG CỤ</div>
-                    <a href="<?= BASE_URL ?>/admin/qr-codes" class="nav-item <?= activeClass('/admin/qr-codes') ?>">
+                    <!-- <a href="<?= BASE_URL ?>/admin/qr-codes" class="nav-item <?= activeClass('/admin/qr-codes') ?>">
                         <i class="fas fa-qrcode"></i>
                         <span>Quản lý mã QR</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/ai" class="nav-item <?= activeClass('/admin/ai') ?>">
+                    </a> -->
+                    <!-- <a href="<?= BASE_URL ?>/admin/ai" class="nav-item <?= activeClass('/admin/ai') ?>">
                         <i class="fas fa-robot"></i>
                         <span>Trợ lý ảo AI</span>
-                    </a>
+                    </a> -->
                     <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
                         <i class="fas fa-database"></i>
                         <span>Sao lưu dữ liệu</span>
