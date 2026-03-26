@@ -96,8 +96,7 @@ $isEdit = !empty($item);
                 ?>
                 <div id="opts-container" style="display:flex;flex-wrap:wrap;gap:.5rem;padding:.6rem 0;">
                     <?php foreach ($presetOpts as $opt): ?>
-                    <label class="opt-chip <?= in_array($opt, $activeOpts) ? 'active' : '' ?>"
-                           style="cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--border-color);transition:all .2s;user-select:none;<?= in_array($opt, $activeOpts) ? 'background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold-dark);font-weight:600;' : 'background:transparent;color:var(--text-muted);' ?>">
+                    <label class="opt-chip <?= in_array($opt, $activeOpts) ? 'active' : '' ?>">
                         <input type="checkbox" name="item_options[]" value="<?= e($opt) ?>"
                                <?= in_array($opt, $activeOpts) ? 'checked' : '' ?>
                                style="display:none;" onchange="toggleOptChip(this)">
@@ -117,22 +116,26 @@ $isEdit = !empty($item);
             </div>
 
             <style>
-                .opt-chip:hover { background: rgba(212,175,55,.08); border-color: rgba(212,175,55,.5); color: var(--gold-dark); }
-                .opt-chip.active { background: rgba(212,175,55,.15); border-color: var(--gold); color: var(--gold-dark); font-weight: 600; }
+                .opt-chip { cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--border-color,#e5e7eb);transition:all .2s;user-select:none;background:transparent;color:var(--text-muted,#9ca3af); }
+                .opt-chip:hover { background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.5);color:var(--gold-dark,#785e0a); }
+                .opt-chip.active { background:rgba(212,175,55,.15);border-color:var(--gold,#d4af37);color:var(--gold-dark,#785e0a);font-weight:700; }
             </style>
             <script>
+                // Cách đúng: chỉ xử lý trạng thái, không toggle checkbox thủ công
                 function toggleOptChip(input) {
-                    const label = input.closest('label');
-                    label.classList.toggle('active', input.checked);
+                    const label = input.closest('label.opt-chip');
+                    if (!label) return;
                     if (input.checked) {
+                        label.classList.add('active');
                         label.style.background = 'rgba(212,175,55,.15)';
                         label.style.borderColor = 'var(--gold)';
                         label.style.color = 'var(--gold-dark)';
-                        label.style.fontWeight = '600';
+                        label.style.fontWeight = '700';
                     } else {
+                        label.classList.remove('active');
                         label.style.background = 'transparent';
-                        label.style.borderColor = 'var(--border-color)';
-                        label.style.color = 'var(--text-muted)';
+                        label.style.borderColor = 'var(--border-color,#e5e7eb)';
+                        label.style.color = 'var(--text-muted,#9ca3af)';
                         label.style.fontWeight = '';
                     }
                 }
@@ -140,24 +143,22 @@ $isEdit = !empty($item);
                     const input = document.getElementById('custom-opt-input');
                     const val = input.value.trim();
                     if (!val) return;
+                    // Kiểm tra trùng
+                    const existing = document.querySelectorAll('#opts-container input[type="checkbox"]');
+                    for (const cb of existing) { if (cb.value.toLowerCase() === val.toLowerCase()) { input.value=''; cb.checked=true; toggleOptChip(cb); return; } }
                     const container = document.getElementById('opts-container');
                     const label = document.createElement('label');
                     label.className = 'opt-chip active';
-                    label.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--gold);background:rgba(212,175,55,.15);color:var(--gold-dark);font-weight:600;user-select:none;';
-                    label.innerHTML = `<input type="checkbox" name="item_options[]" value="${val}" checked style="display:none;" onchange="toggleOptChip(this)">${val}`;
+                    label.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--gold);background:rgba(212,175,55,.15);color:var(--gold-dark);font-weight:700;user-select:none;';
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox'; cb.name = 'item_options[]'; cb.value = val; cb.checked = true;
+                    cb.style.display = 'none';
+                    cb.addEventListener('change', () => toggleOptChip(cb));
+                    label.appendChild(cb);
+                    label.appendChild(document.createTextNode(val));
                     container.appendChild(label);
                     input.value = '';
                 }
-                // Init click on entire label
-                document.addEventListener('DOMContentLoaded', () => {
-                    document.querySelectorAll('.opt-chip').forEach(lbl => {
-                        lbl.addEventListener('click', () => {
-                            const cb = lbl.querySelector('input[type="checkbox"]');
-                            cb.checked = !cb.checked;
-                            toggleOptChip(cb);
-                        });
-                    });
-                });
             </script>
 
             <div class="form-group col-span-2">

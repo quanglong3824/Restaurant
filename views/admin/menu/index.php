@@ -63,6 +63,21 @@
                                     <?= e($item['name_en']) ?>
                                 </span>
                             <?php endif; ?>
+                            <?php
+                            // Hiển thị item options (opt:) inline
+                            $inlineTags = array_map('trim', explode(',', $item['tags'] ?? ''));
+                            $inlineOpts = array_filter(array_map(
+                                fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null,
+                                $inlineTags
+                            ));
+                            if (!empty($inlineOpts)):
+                            ?>
+                            <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.3rem;">
+                                <?php foreach ($inlineOpts as $opt): ?>
+                                <span style="background:rgba(212,175,55,.1);color:var(--gold-dark,#785e0a);border:1px solid rgba(212,175,55,.4);border-radius:10px;padding:.1rem .4rem;font-size:.65rem;font-weight:600;"><?= e($opt) ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <?= e($item['category_name'] ?? '') ?>
