@@ -567,4 +567,4 @@
         document.body.style.overflow = '';
     }
 </script>
-<script src="<?= BASE_URL ?>/public/js/menu/customer.js" defer></script>
+<script src="<?= BASE_URL ?>/public/js/menu/customer.js?v=<?= time() ?>" defer></script>

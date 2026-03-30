@@ -460,7 +460,7 @@ const MENU_CONFIG = {
     </div>
 </div>
 
-<script src="<?= BASE_URL ?>/public/js/menu/index.js" defer></script>
+<script src="<?= BASE_URL ?>/public/js/menu/index.js?v=<?= time() ?>" defer></script>
 <script>
 // ── Cart Note Modal ────────────────────────────────────────────────
 let _cartNoteItemId = 0, _cartNoteOpts = [], _cartNoteSelectedOpts = [];
