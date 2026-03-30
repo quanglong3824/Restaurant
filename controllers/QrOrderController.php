@@ -151,6 +151,39 @@ class QrOrderController extends Controller
         $this->json(['success' => true, 'message' => 'Đã làm mới phiên làm việc.']);
     }
 
+    /** API Polling Real-time cho màn hình Khách */
+    public function pollStatus(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $tableId = $_SESSION['customer_table_id'] ?? null;
+        
+        if (!$tableId) {
+            $this->json(['status' => 'no_session']);
+            return;
+        }
+
+        $order = $this->orderModel->findOpenOrderByTable($tableId);
+        
+        if ($order) {
+            // Bàn đang có đơn hàng mở
+            $isPaying = (strpos((string)$order['note'], 'KHÁCH YÊU CẦU THANH TOÁN') !== false);
+            $this->json([
+                'status' => $isPaying ? 'wait_payment' : 'open',
+                'order_id' => $order['id']
+            ]);
+        } else {
+            // Bàn trống. Kiểm tra xem có phải vừa thanh toán xong không?
+            $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
+            $currentSessionId = session_id();
+            
+            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+                $this->json(['status' => 'completed']);
+            } else {
+                $this->json(['status' => 'idle']);
+            }
+        }
+    }
+
     /** View order status */
     public function status(): void
     {
@@ -188,6 +221,17 @@ class QrOrderController extends Controller
             'view' => 'orders/history',
             'pageTitle' => 'Lịch sử gọi món',
             'orders' => $orders,
+            'isCustomer' => true
+        ]);
+    }
+
+    /** View Thank You after payment */
+    public function thankYou(): void
+    {
+        // View này có thể xem cả khi không có session_id hiện hành vì vừa bị đóng
+        $this->view('layouts/public', [
+            'view' => 'orders/thank_you',
+            'pageTitle' => 'Cảm ơn quý khách',
             'isCustomer' => true
         ]);
     }

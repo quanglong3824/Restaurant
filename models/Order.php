@@ -267,6 +267,14 @@ class Order extends Model
         );
     }
 
+    public function getHistoryByTable(int $tableId, int $limit = 5): array
+    {
+        return $this->findAll(
+            "SELECT * FROM orders WHERE table_id = ? AND status = 'closed' ORDER BY created_at DESC LIMIT ?",
+            [$tableId, $limit]
+        );
+    }
+
     /** Tính tổng tiền order */
     public function getTotal(int $orderId): float
     {

@@ -622,24 +622,60 @@ async function callWaiter(type) {
     if (!confirm(type === 'payment' ? 'Bạn muốn yêu cầu thanh toán?' : 'Bạn muốn gọi nhân viên phục vụ?')) return;
 
     try {
-        const formData = new FormData();
-        formData.append('table_id', CUSTOMER_CONFIG.tableId);
-        formData.append('type', type);
-
-        const response = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/support/call-waiter`, {
-            method: 'POST',
-            body: formData
-        });
+        const url = type === 'payment' ? `${CUSTOMER_CONFIG.baseUrl}/qr/support/request-bill` : `${CUSTOMER_CONFIG.baseUrl}/qr/support/call-waiter`;
+        const response = await fetch(url, { method: 'POST' });
         
         const result = await response.json();
         if (result.success) {
-            showToast('Yêu cầu đã được gửi đến nhân viên!');
+            showToast(result.message || 'Yêu cầu đã được gửi đến nhân viên!');
+            if (type === 'payment') {
+                showPaymentOverlay();
+            }
         } else {
-            alert('Gửi yêu cầu thất bại.');
+            alert(result.error || 'Gửi yêu cầu thất bại.');
         }
     } catch (e) {
         alert('Lỗi kết nối.');
     }
+}
+
+function showPaymentOverlay() {
+    let overlay = document.getElementById('paymentLoadingOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'paymentLoadingOverlay';
+        overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); animation:fadeIn 0.3s;';
+        overlay.innerHTML = `
+            <div class="spinner" style="width:50px; height:50px; border-width:4px; border-color:#d4af37 transparent #d4af37 transparent; margin-bottom:20px;"></div>
+            <h3 style="color:#1e293b; font-weight:800; font-family:'Playfair Display', serif; text-align:center;">Đang xử lý Thanh Toán</h3>
+            <p style="color:#64748b; font-size:0.9rem; margin-top:10px; text-align:center; max-width:80%;">Vui lòng chờ nhân viên mang hóa đơn đến bàn. <br>Hệ thống tự động chuyển trang khi hoàn tất!</p>
+        `;
+        document.body.appendChild(overlay);
+    }
+}
+
+// Polling kiểm tra trạng thái bill
+function startStatusPolling() {
+    setInterval(async () => {
+        try {
+            const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status`);
+            const data = await res.json();
+            
+            if (data.status === 'completed') {
+                window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/thank-you`;
+            } else if (data.status === 'wait_payment') {
+                showPaymentOverlay();
+            } else if (data.status === 'open' || data.status === 'idle') {
+                const overlay = document.getElementById('paymentLoadingOverlay');
+                if (overlay) overlay.remove();
+            }
+        } catch(e) {}
+    }, 5000);
+}
+
+// Bắt đầu polling ngay khi khởi động trang Khách
+if (window.location.pathname.includes('/qr/')) {
+    startStatusPolling();
 }
 
 // Close modals when clicking backdrop
