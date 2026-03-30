@@ -391,9 +391,24 @@ function showToast(msg) {
 }
 
 function showItemDetail(item) {
-    const card = document.querySelector(`.menu-item-card[data-id="${item.id}"]`);
-    const optsVi = (card.dataset.options || '').split(',').map(o => o.trim()).filter(Boolean);
-    const optsEn = (card.dataset.optionsEn || '').split(',').map(o => o.trim()).filter(Boolean);
+    // Lấy options trực tiếp từ payload object item thay vì query selector (đáng tin cậy hơn)
+    const optsVi = (item.note_options || '').split(',').map(o => o.trim()).filter(Boolean);
+    const optsEn = (item.note_options_en || '').split(',').map(o => o.trim()).filter(Boolean);
+    
+    // Nếu có cả VI và EN thì mix song ngữ để người nước ngoài có thể thấy EN, người Việt thấy VI
+    // Hoặc render song ngữ giống Waiter
+    const isEn = (document.documentElement.lang === 'en');
+    let displayOpts = [];
+    
+    if (isEn && optsEn.length > 0) {
+        displayOpts = optsEn; // Nếu web đang lật sang tiếng Anh -> hiện thuần tiếng Anh
+    } else {
+        // Mặc định hiện Song ngữ cho giao diện Khách nếu có tiếng Anh
+        optsVi.forEach((val, idx) => {
+            const enVal = optsEn[idx];
+            displayOpts.push(enVal ? `${val} / ${enVal}` : val);
+        });
+    }
     
     currentItem = { ...item, quantity: 1, note: '' };
     document.getElementById('detailName').textContent = item.name;
@@ -417,10 +432,6 @@ function showItemDetail(item) {
     const optsContainer = document.getElementById('detailOptsContainer');
     optsContainer.innerHTML = '';
     
-    // Sử dụng tiếng Anh nếu là EN (giả định)
-    const isEn = (document.documentElement.lang === 'en');
-    const displayOpts = isEn ? (optsEn.length > 0 ? optsEn : optsVi) : optsVi;
-
     if (displayOpts.length > 0) {
         optsWrap.style.display = 'block';
         displayOpts.forEach((opt) => {
