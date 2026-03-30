@@ -92,19 +92,25 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">CÔNG CỤ</div>
-                    <!-- <a href="<?= BASE_URL ?>/admin/qr-codes" class="nav-item <?= activeClass('/admin/qr-codes') ?>">
-                        <i class="fas fa-qrcode"></i>
-                        <span>Quản lý mã QR</span>
-                    </a> -->
-                    <!-- <a href="<?= BASE_URL ?>/admin/ai" class="nav-item <?= activeClass('/admin/ai') ?>">
-                        <i class="fas fa-robot"></i>
-                        <span>Trợ lý ảo AI</span>
-                    </a> -->
+                    <a href="javascript:void(0)" class="nav-item" onclick="testNotifSound()">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Kiểm tra âm thanh</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
                         <i class="fas fa-database"></i>
                         <span>Sao lưu dữ liệu</span>
                     </a>
                 </div>
+
+                <script>
+                function testNotifSound() {
+                    const audio = new Audio('<?= BASE_URL ?>/public/audio/nofi.mp3');
+                    audio.play().catch(e => {
+                        alert('Không thể phát âm thanh. Vui lòng kiểm tra quyền truy cập âm thanh trên trình duyệt.');
+                        console.error(e);
+                    });
+                }
+                </script>
 
                 <div class="nav-section">
                     <div class="nav-section-title">DOANH THU</div>
