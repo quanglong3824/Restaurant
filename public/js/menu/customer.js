@@ -391,6 +391,10 @@ function showToast(msg) {
 }
 
 function showItemDetail(item) {
+    const card = document.querySelector(`.menu-item-card[data-id="${item.id}"]`);
+    const optsVi = (card.dataset.options || '').split(',').map(o => o.trim()).filter(Boolean);
+    const optsEn = (card.dataset.optionsEn || '').split(',').map(o => o.trim()).filter(Boolean);
+    
     currentItem = { ...item, quantity: 1, note: '' };
     document.getElementById('detailName').textContent = item.name;
     document.getElementById('detailPrice').textContent = formatCurrency(item.price);
@@ -406,6 +410,42 @@ function showItemDetail(item) {
         imgContainer.style.backgroundImage = 'none';
         imgContainer.style.backgroundColor = '#f1f5f9';
         imgContainer.innerHTML = '<i class="fas fa-utensils" style="font-size:3rem; color:#cbd5e1; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></i>';
+    }
+
+    // Render Options Chips
+    const optsWrap = document.getElementById('detailOptsWrap');
+    const optsContainer = document.getElementById('detailOptsContainer');
+    optsContainer.innerHTML = '';
+    
+    // Sử dụng tiếng Anh nếu là EN (giả định)
+    const isEn = (document.documentElement.lang === 'en');
+    const displayOpts = isEn ? (optsEn.length > 0 ? optsEn : optsVi) : optsVi;
+
+    if (displayOpts.length > 0) {
+        optsWrap.style.display = 'block';
+        displayOpts.forEach((opt) => {
+            const chip = document.createElement('div');
+            chip.className = 'opt-chip';
+            chip.textContent = opt;
+            chip.onclick = () => {
+                const noteInput = document.getElementById('detailNote');
+                let currentNote = noteInput.value.trim();
+                const optParts = currentNote.split(',').map(p => p.trim()).filter(Boolean);
+                
+                const optIdx = optParts.indexOf(opt);
+                if (optIdx > -1) {
+                    optParts.splice(optIdx, 1);
+                    chip.classList.remove('active');
+                } else {
+                    optParts.push(opt);
+                    chip.classList.add('active');
+                }
+                noteInput.value = optParts.join(', ');
+            };
+            optsContainer.appendChild(chip);
+        });
+    } else {
+        optsWrap.style.display = 'none';
     }
 
     updateDetailTotal();

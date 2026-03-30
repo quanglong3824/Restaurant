@@ -182,24 +182,18 @@ class AdminMenuController extends Controller
         $tags = $this->input('tags', []);
         if (!is_array($tags)) $tags = [];
 
-        // item_options: lưu vào tags với prefix 'opt:' để phân biệt
-        $itemOptions = $this->input('item_options', []);
-        if (!is_array($itemOptions)) $itemOptions = [];
-        foreach ($itemOptions as $opt) {
-            $opt = trim($opt);
-            if ($opt) $tags[] = 'opt:' . $opt;
-        }
-
         return [
-            'category_id' => (int) $this->input('category_id'),
-            'name'        => trim((string) $this->input('name', '')),
-            'name_en'     => trim((string) $this->input('name_en', '')) ?: null,
-            'description' => trim((string) $this->input('description', '')) ?: null,
-            'price'       => (float) $this->input('price', 0),
-            'stock'       => (int) $this->input('stock', -1),
-            'tags'        => !empty($tags) ? implode(',', array_unique($tags)) : null,
-            'sort_order'  => (int) $this->input('sort_order', 0),
-            'is_active'   => (int) $this->input('is_active', 1),
+            'category_id'     => (int) $this->input('category_id'),
+            'name'            => trim((string) $this->input('name', '')),
+            'name_en'         => trim((string) $this->input('name_en', '')) ?: null,
+            'description'     => trim((string) $this->input('description', '')) ?: null,
+            'price'           => (float) $this->input('price', 0),
+            'stock'           => (int) $this->input('stock', -1),
+            'tags'            => !empty($tags) ? implode(',', array_unique($tags)) : null,
+            'note_options'    => trim((string) $this->input('note_options', '')) ?: null,
+            'note_options_en' => trim((string) $this->input('note_options_en', '')) ?: null,
+            'sort_order'      => (int) $this->input('sort_order', 0),
+            'is_active'       => (int) $this->input('is_active', 1),
         ];
     }
 

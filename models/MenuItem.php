@@ -70,8 +70,8 @@ class MenuItem extends Model
     {
         $this->execute(
             "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, image, is_available, is_active, tags, sort_order)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?)",
+             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order)
+             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?)",
             [
                 $data['category_id'],
                 $data['name'],
@@ -80,6 +80,8 @@ class MenuItem extends Model
                 $data['price'],
                 $data['image'] ?? null,
                 $data['tags'] ?? null,
+                $data['note_options'] ?? null,
+                $data['note_options_en'] ?? null,
                 $data['sort_order'] ?? 0,
             ]
         );
@@ -91,7 +93,8 @@ class MenuItem extends Model
         $this->execute(
             "UPDATE menu_items
              SET category_id = ?, name = ?, name_en = ?, description = ?,
-                 price = ?, tags = ?, sort_order = ?, is_active = ?
+                 price = ?, tags = ?, note_options = ?, note_options_en = ?, 
+                 sort_order = ?, is_active = ?
              WHERE id = ?",
             [
                 $data['category_id'],
@@ -100,6 +103,8 @@ class MenuItem extends Model
                 $data['description'] ?? null,
                 $data['price'],
                 $data['tags'] ?? null,
+                $data['note_options'] ?? null,
+                $data['note_options_en'] ?? null,
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,
                 $id,

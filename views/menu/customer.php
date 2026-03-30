@@ -265,6 +265,8 @@
                                  data-name-en="<?= e($item['name_en'] ?? '') ?>"
                                  data-price="<?= $item['price'] ?>"
                                  data-type="<?= $cat['menu_type'] ?>"
+                                 data-options="<?= e($item['note_options'] ?? '') ?>"
+                                 data-options-en="<?= e($item['note_options_en'] ?? '') ?>"
                                  onclick="showItemDetail(<?= e(json_encode($item)) ?>)">
                                 
                                 <div class="item-img-box">
@@ -354,8 +356,89 @@
 
 <!-- Item Detail Modal -->
 <div id="itemDetailModal" class="modal-backdrop hidden">
-...
+    <div class="modal modal-bottom modal-premium">
+        <div class="modal-header border-0">
+            <button class="modal-close-circle" onclick="closeItemDetail()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="item-detail-img" id="detailImg"></div>
+        
+        <div class="modal-body">
+            <div class="item-detail-info">
+                <h2 id="detailName" class="playfair"></h2>
+                <div id="detailNameEn" class="item-name-en"></div>
+                <div id="detailPrice" class="item-price"></div>
+                <p id="detailDesc" class="item-desc"></p>
+            </div>
+
+            <!-- Tùy chọn ghi chú nhanh -->
+            <div id="detailOptsWrap" style="display:none; margin-bottom:1.5rem;">
+                <label class="form-label" style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:block;">
+                    Tùy chọn nhanh / Quick Options
+                </label>
+                <div id="detailOptsContainer" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </div>
+
+            <div class="order-controls">
+                <div class="qty-control-premium">
+                    <button onclick="changeDetailQty(-1)"><i class="fas fa-minus"></i></button>
+                    <span id="detailQty">1</span>
+                    <button onclick="changeDetailQty(1)"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="note-input-box">
+                    <i class="fas fa-edit"></i>
+                    <input type="text" id="detailNote" placeholder="Ghi chú thêm (No onion, less spicy...)">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-submit-order w-100" id="btnAddOrder" onclick="addFromDetail()">
+                <i class="fas fa-cart-plus me-2"></i> THÊM VÀO ĐƠN HÀNG
+            </button>
+        </div>
+    </div>
 </div>
+
+<style>
+    .opt-chip {
+        padding: 8px 16px;
+        background: #f1f5f9;
+        color: #64748b;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
+    }
+    .opt-chip.active {
+        background: var(--gold);
+        color: white;
+        border-color: var(--gold);
+    }
+    .item-detail-img {
+        width: 100%;
+        height: 250px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    .modal-close-circle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        cursor: pointer;
+    }
+</style>
 
 <!-- Bill Tam Modal -->
 <div id="billTamModal" class="modal-backdrop hidden">

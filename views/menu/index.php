@@ -87,12 +87,9 @@
                         <div class="menu-items-grid">
                             <?php foreach ($items as $item): ?>
                                 <?php
-                                    // Tính item_options từ tags (prefix opt:)
-                                    $rawItemTags = array_map('trim', explode(',', $item['tags'] ?? ''));
-                                    $itemOptsArr = array_values(array_filter(array_map(
-                                        fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null,
-                                        $rawItemTags
-                                    )));
+                                    // Tính item_options từ trường note_options mới
+                                    $optsStr = $item['note_options'] ?? '';
+                                    $itemOptsArr = array_filter(array_map('trim', explode(',', $optsStr)));
                                     $itemOptsData = htmlspecialchars(json_encode($itemOptsArr, JSON_UNESCAPED_UNICODE));
                                 ?>
                                 <div class="list-item-card">
@@ -186,11 +183,9 @@
                     <?php if ($draftCount > 0): ?>
                         <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
                         <?php foreach ($draftItems as $it):
-                            // Parse item_options từ menu_tags
-                            $itTags = array_map('trim', explode(',', $it['menu_tags'] ?? ''));
-                            $itOpts = array_values(array_filter(array_map(
-                                fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null, $itTags
-                            )));
+                            // Lấy options từ trường note_options của món ăn
+                            $itOptsStr = $it['note_options'] ?? '';
+                            $itOpts = array_filter(array_map('trim', explode(',', $itOptsStr)));
                             $itOptsJson = json_encode($itOpts, JSON_UNESCAPED_UNICODE);
                             $itNote = trim($it['note'] ?? '');
                         ?>

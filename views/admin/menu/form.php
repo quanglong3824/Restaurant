@@ -82,37 +82,19 @@ $isEdit = !empty($item);
                 </div>
             </div>
 
-            <!-- Tùy chọn món (item_options) — khách có thể chọn khi đặt -->
+            <!-- Tùy chọn món (note_options) — khách có thể chọn khi đặt -->
             <div class="form-group col-span-2">
-                <label class="form-label">Tùy chọn cho khách <span style="color:var(--text-muted);font-weight:400;">(khách sẽ thấy và chọn khi gọi món)</span></label>
-                <?php
-                // Các options hiện tại (lưu dạng opt:xxx trong tags)
-                $activeOpts = array_filter($rawTags, fn($t) => strpos($t, 'opt:') === 0);
-                $activeOpts = array_map(fn($t) => substr($t, 4), $activeOpts);
+                <label class="form-label">Tùy chọn ghi chú nhanh (Tiếng Việt)</label>
+                <input type="text" name="note_options" class="form-control" 
+                    value="<?= $isEdit ? e($item['note_options'] ?? '') : '' ?>" placeholder="VD: Ít cay, Không cay, Không hành...">
+                <p class="form-hint">Các tùy chọn cách nhau bởi dấu phẩy (,). Sẽ hiển thị thành các nút chọn nhanh cho khách.</p>
+            </div>
 
-                $presetOpts = ['Không cay', 'Ít cay', 'Cay vừa', 'Không hành', 'Không tỏi', 'Không rau mùi',
-                               'Ít đường', 'Không đường', 'Ít đá', 'Nhiều đá', 'Không đá', 'Không ngọt',
-                               'Ít muối', 'Chín kỹ', 'Tái', 'Không phô mai', 'Ít kem'];
-                ?>
-                <div id="opts-container" style="display:flex;flex-wrap:wrap;gap:.5rem;padding:.6rem 0;">
-                    <?php foreach ($presetOpts as $opt): ?>
-                    <label class="opt-chip <?= in_array($opt, $activeOpts) ? 'active' : '' ?>">
-                        <input type="checkbox" name="item_options[]" value="<?= e($opt) ?>"
-                               <?= in_array($opt, $activeOpts) ? 'checked' : '' ?>
-                               style="display:none;" onchange="toggleOptChip(this)">
-                        <?= e($opt) ?>
-                    </label>
-                    <?php endforeach; ?>
-                </div>
-                <!-- Thêm option tùy chỉnh -->
-                <div style="display:flex;gap:.5rem;margin-top:.4rem;">
-                    <input type="text" id="custom-opt-input" class="form-control" style="max-width:220px;font-size:.85rem;"
-                           placeholder="Tùy chọn khác..." onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomOpt();}">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="addCustomOpt()">
-                        <i class="fas fa-plus"></i> Thêm
-                    </button>
-                </div>
-                <p class="form-hint" style="margin-top:.5rem;">Các tùy chọn được tô vàng sẽ hiển thị cho khách lựa chọn khi gọi món.</p>
+            <div class="form-group col-span-2">
+                <label class="form-label">Tùy chọn ghi chú nhanh (Tiếng Anh)</label>
+                <input type="text" name="note_options_en" class="form-control" 
+                    value="<?= $isEdit ? e($item['note_options_en'] ?? '') : '' ?>" placeholder="VD: Less spicy, No spicy, No onion...">
+                <p class="form-hint">Dùng khi khách xem menu ở chế độ Tiếng Anh.</p>
             </div>
 
             <style>
