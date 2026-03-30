@@ -64,17 +64,15 @@
                                 </span>
                             <?php endif; ?>
                             <?php
-                            // Hiển thị item options (opt:) inline
-                            $inlineTags = array_map('trim', explode(',', $item['tags'] ?? ''));
-                            $inlineOpts = array_filter(array_map(
-                                fn($t) => strpos($t, 'opt:') === 0 ? substr($t, 4) : null,
-                                $inlineTags
-                            ));
-                            if (!empty($inlineOpts)):
+                            // Hiển thị note_options chips
+                            $noteChips = array_filter(array_map('trim', explode(',', $item['note_options'] ?? '')));
+                            if (!empty($noteChips)):
                             ?>
-                            <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.3rem;">
-                                <?php foreach ($inlineOpts as $opt): ?>
-                                <span style="background:rgba(212,175,55,.1);color:var(--gold-dark,#785e0a);border:1px solid rgba(212,175,55,.4);border-radius:10px;padding:.1rem .4rem;font-size:.65rem;font-weight:600;"><?= e($opt) ?></span>
+                            <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.35rem;" title="Tùy chọn ghi chú nhanh">
+                                <?php foreach ($noteChips as $chip): ?>
+                                <span style="background:rgba(212,175,55,.12);color:var(--gold-dark,#785e0a);border:1.5px solid rgba(212,175,55,.45);border-radius:12px;padding:.12rem .5rem;font-size:.65rem;font-weight:700;">
+                                    <i class="fas fa-tag" style="font-size:.55rem;margin-right:2px;"></i><?= e($chip) ?>
+                                </span>
                                 <?php endforeach; ?>
                             </div>
                             <?php endif; ?>

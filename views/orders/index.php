@@ -163,13 +163,9 @@ if (!empty($items)) {
                                     <i class="fas fa-check-circle" title="Đã xác nhận"></i>
                                     <?php if (!$isSplitAction): ?>
                                     <?php
-                                        // Lấy item_options từ menu_items
-                                        $db = getDB();
-                                        $menuRow = $db->prepare("SELECT tags FROM menu_items WHERE id = ?");
-                                        $menuRow->execute([$item['menu_item_id']]);
-                                        $menuTags = $menuRow->fetchColumn();
-                                        $itemOpts = array_values(array_filter(array_map(fn($t) => strpos(trim($t),'opt:')===0 ? trim(substr(trim($t),4)) : null, explode(',', $menuTags ?? ''))));
-                                        $itemOptsJson = json_encode($itemOpts, JSON_UNESCAPED_UNICODE);
+                                        // Dùng note_options đã join sẵn từ model (không cần query thêm)
+                                        $itOptsRaw = array_filter(array_map('trim', explode(',', $item['note_options'] ?? '')));
+                                        $itemOptsJson = json_encode(array_values($itOptsRaw), JSON_UNESCAPED_UNICODE);
                                     ?>
                                     <button class="btn btn-link text-gold p-0" style="font-size:.8rem;"
                                         onclick="openNoteModal(<?= $item['id'] ?>, <?= $order['id'] ?>, <?= htmlspecialchars($itemOptsJson) ?>, '<?= addslashes(e($item['item_name'])) ?>', '<?= addslashes(e($item['note'] ?? '')) ?>')" title="Ghi chú món">
@@ -241,13 +237,9 @@ if (!empty($items)) {
                                 </div>
                                 <?php if (!$isSplitAction): ?>
                                 <?php
-                                    // Lấy item_options từ menu_items
-                                    if (!isset($db)) $db = getDB();
-                                    $menuRow2 = $db->prepare("SELECT tags FROM menu_items WHERE id = ?");
-                                    $menuRow2->execute([$item['menu_item_id']]);
-                                    $menuTags2 = $menuRow2->fetchColumn();
-                                    $itemOpts2 = array_values(array_filter(array_map(fn($t) => strpos(trim($t),'opt:')===0 ? trim(substr(trim($t),4)) : null, explode(',', $menuTags2 ?? ''))));
-                                    $itemOptsJson2 = json_encode($itemOpts2, JSON_UNESCAPED_UNICODE);
+                                    // Dùng note_options đã join sẵn từ model
+                                    $itOptsRaw2 = array_filter(array_map('trim', explode(',', $item['note_options'] ?? '')));
+                                    $itemOptsJson2 = json_encode(array_values($itOptsRaw2), JSON_UNESCAPED_UNICODE);
                                 ?>
                                 <div class="plate-controls">
                                     <button class="q-btn" onclick="changeQty(<?= $item['id'] ?>, <?= $order['id'] ?>, -1)" title="Giảm">

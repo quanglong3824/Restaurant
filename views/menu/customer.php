@@ -568,4 +568,3 @@
     }
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/customer.js" defer></script>
-r></script>

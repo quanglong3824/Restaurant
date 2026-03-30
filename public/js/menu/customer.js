@@ -467,7 +467,10 @@ function changeDetailQty(delta) {
 
 function updateDetailTotal() {
     const total = currentItem.price * currentItem.quantity;
-    document.getElementById('detailBtnTotal').textContent = formatCurrency(total);
+    const btnAdd = document.getElementById('btnAddOrder');
+    if (btnAdd) {
+        btnAdd.innerHTML = `<i class="fas fa-cart-plus me-2"></i> TH\u00caM V\u00c0O \u0110\u01a0N H\u00c0NG — ${formatCurrency(total)}`;
+    }
 }
 
 function addFromDetail() {

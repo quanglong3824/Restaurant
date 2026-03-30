@@ -69,7 +69,6 @@ $isEdit = !empty($item);
                 <div style="display:flex;gap:.85rem;flex-wrap:wrap;padding:.5rem 0;">
                     <?php
                     $allTags = ['bestseller', 'new', 'spicy', 'vegetarian', 'recommended'];
-                    // Tách tags thường (không phải opt:)
                     $rawTags = $isEdit ? array_map('trim', explode(',', $item['tags'] ?? '')) : [];
                     $activeTags = array_filter($rawTags, fn($t) => $t && strpos($t, 'opt:') !== 0);
                     foreach ($allTags as $tag):
@@ -82,66 +81,45 @@ $isEdit = !empty($item);
                 </div>
             </div>
 
-            <!-- Tùy chọn món (note_options) — khách có thể chọn khi đặt -->
+            <!-- ═══════════════════════════════════════════════════
+                 CHIP BUILDER — Tùy chọn ghi chú nhanh (VI)
+            ═══════════════════════════════════════════════════ -->
             <div class="form-group col-span-2">
-                <label class="form-label">Tùy chọn ghi chú nhanh (Tiếng Việt)</label>
-                <input type="text" name="note_options" class="form-control" 
-                    value="<?= $isEdit ? e($item['note_options'] ?? '') : '' ?>" placeholder="VD: Ít cay, Không cay, Không hành...">
-                <p class="form-hint">Các tùy chọn cách nhau bởi dấu phẩy (,). Sẽ hiển thị thành các nút chọn nhanh cho khách.</p>
+                <label class="form-label">
+                    <i class="fas fa-tags me-1" style="color:var(--gold);"></i>
+                    Tùy chọn ghi chú nhanh (Tiếng Việt)
+                </label>
+                <p class="form-hint" style="margin-bottom:.6rem;">
+                    Nhập từng tùy chọn, nhấn <kbd>Enter</kbd> hoặc <kbd>,</kbd> để thêm. Click <strong>×</strong> để xóa chip.
+                </p>
+                <!-- Hidden input lưu giá trị CSV -->
+                <input type="hidden" name="note_options" id="noteOptsCsvVI" 
+                       value="<?= $isEdit ? e($item['note_options'] ?? '') : '' ?>">
+                <!-- Chip display area + input -->
+                <div id="optsBuilderVI" class="chip-builder">
+                    <div id="optsChipsVI" class="chips-row"></div>
+                    <input type="text" id="optsInputVI" class="chip-input" placeholder="Nhập gợi ý... (VD: Ít cay, Không hành...)">
+                </div>
             </div>
 
+            <!-- ═══════════════════════════════════════════════════
+                 CHIP BUILDER — Tùy chọn ghi chú nhanh (EN)
+            ═══════════════════════════════════════════════════ -->
             <div class="form-group col-span-2">
-                <label class="form-label">Tùy chọn ghi chú nhanh (Tiếng Anh)</label>
-                <input type="text" name="note_options_en" class="form-control" 
-                    value="<?= $isEdit ? e($item['note_options_en'] ?? '') : '' ?>" placeholder="VD: Less spicy, No spicy, No onion...">
-                <p class="form-hint">Dùng khi khách xem menu ở chế độ Tiếng Anh.</p>
+                <label class="form-label">
+                    <i class="fas fa-tags me-1" style="color:var(--gold);"></i>
+                    Tùy chọn ghi chú nhanh (Tiếng Anh)
+                </label>
+                <p class="form-hint" style="margin-bottom:.6rem;">
+                    Tương ứng theo thứ tự với Tiếng Việt. Dùng khi khách xem menu ở chế độ EN.
+                </p>
+                <input type="hidden" name="note_options_en" id="noteOptsCsvEN"
+                       value="<?= $isEdit ? e($item['note_options_en'] ?? '') : '' ?>">
+                <div id="optsBuilderEN" class="chip-builder">
+                    <div id="optsChipsEN" class="chips-row"></div>
+                    <input type="text" id="optsInputEN" class="chip-input" placeholder="Enter option... (e.g. Less spicy, No onion...)">
+                </div>
             </div>
-
-            <style>
-                .opt-chip { cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--border-color,#e5e7eb);transition:all .2s;user-select:none;background:transparent;color:var(--text-muted,#9ca3af); }
-                .opt-chip:hover { background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.5);color:var(--gold-dark,#785e0a); }
-                .opt-chip.active { background:rgba(212,175,55,.15);border-color:var(--gold,#d4af37);color:var(--gold-dark,#785e0a);font-weight:700; }
-            </style>
-            <script>
-                // Cách đúng: chỉ xử lý trạng thái, không toggle checkbox thủ công
-                function toggleOptChip(input) {
-                    const label = input.closest('label.opt-chip');
-                    if (!label) return;
-                    if (input.checked) {
-                        label.classList.add('active');
-                        label.style.background = 'rgba(212,175,55,.15)';
-                        label.style.borderColor = 'var(--gold)';
-                        label.style.color = 'var(--gold-dark)';
-                        label.style.fontWeight = '700';
-                    } else {
-                        label.classList.remove('active');
-                        label.style.background = 'transparent';
-                        label.style.borderColor = 'var(--border-color,#e5e7eb)';
-                        label.style.color = 'var(--text-muted,#9ca3af)';
-                        label.style.fontWeight = '';
-                    }
-                }
-                function addCustomOpt() {
-                    const input = document.getElementById('custom-opt-input');
-                    const val = input.value.trim();
-                    if (!val) return;
-                    // Kiểm tra trùng
-                    const existing = document.querySelectorAll('#opts-container input[type="checkbox"]');
-                    for (const cb of existing) { if (cb.value.toLowerCase() === val.toLowerCase()) { input.value=''; cb.checked=true; toggleOptChip(cb); return; } }
-                    const container = document.getElementById('opts-container');
-                    const label = document.createElement('label');
-                    label.className = 'opt-chip active';
-                    label.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:20px;font-size:.8rem;border:1.5px solid var(--gold);background:rgba(212,175,55,.15);color:var(--gold-dark);font-weight:700;user-select:none;';
-                    const cb = document.createElement('input');
-                    cb.type = 'checkbox'; cb.name = 'item_options[]'; cb.value = val; cb.checked = true;
-                    cb.style.display = 'none';
-                    cb.addEventListener('change', () => toggleOptChip(cb));
-                    label.appendChild(cb);
-                    label.appendChild(document.createTextNode(val));
-                    container.appendChild(label);
-                    input.value = '';
-                }
-            </script>
 
             <div class="form-group col-span-2">
                 <label class="form-label">Kho (Stock) <span class="text-danger">*</span></label>
@@ -164,8 +142,7 @@ $isEdit = !empty($item);
             <div class="form-group col-span-2">
                 <label class="form-label">Bộ sưu tập ảnh (Slide Thumbnail Chi Tiết Món)</label>
                 <input type="file" name="gallery[]" class="form-control" accept="image/*" multiple>
-                <p class="form-hint">Chọn <strong>nhiều ảnh</strong> bằng cách giữ Ctrl/Cmd khi chọn file. Các ảnh này
-                    sẽ được ghép thành Gallery trượt ngang khi người dùng xem chi tiết món ăn.</p>
+                <p class="form-hint">Chọn <strong>nhiều ảnh</strong> bằng cách giữ Ctrl/Cmd khi chọn file.</p>
             </div>
 
             <?php if ($isEdit): ?>
@@ -190,3 +167,157 @@ $isEdit = !empty($item);
 
     </form>
 </div>
+
+<style>
+/* ── Chip Builder ─────────────────────────────────────────────────── */
+.chip-builder {
+    border: 1.5px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    padding: .5rem .65rem;
+    min-height: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    align-items: center;
+    cursor: text;
+    background: var(--card-bg, #fff);
+    transition: border-color .2s;
+}
+.chip-builder:focus-within {
+    border-color: var(--gold, #d4af37);
+    box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+}
+.chips-row {
+    display: contents; /* chips sit inline with input */
+}
+.note-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    background: rgba(212,175,55,.15);
+    border: 1.5px solid var(--gold, #d4af37);
+    color: var(--gold-dark, #785e0a);
+    border-radius: 20px;
+    padding: .22rem .65rem;
+    font-size: .8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: chipIn .15s ease;
+}
+@keyframes chipIn {
+    from { transform: scale(.8); opacity: 0; }
+    to   { transform: scale(1);  opacity: 1; }
+}
+.note-chip .chip-del {
+    background: none;
+    border: none;
+    color: var(--gold-dark, #785e0a);
+    cursor: pointer;
+    padding: 0;
+    font-size: .75rem;
+    line-height: 1;
+    opacity: .7;
+    transition: opacity .15s;
+}
+.note-chip .chip-del:hover { opacity: 1; }
+.chip-input {
+    border: none !important;
+    outline: none !important;
+    flex: 1;
+    min-width: 160px;
+    font-size: .875rem;
+    background: transparent;
+    padding: .2rem 0;
+    color: var(--text-primary, #1e293b);
+}
+kbd {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .75rem;
+    font-family: monospace;
+}
+</style>
+
+<script>
+/* ── Chip Builder Logic ──────────────────────────────────────────── */
+function initChipBuilder(inputId, chipsId, csvId) {
+    const input    = document.getElementById(inputId);
+    const chipsRow = document.getElementById(chipsId);
+    const csvHidden= document.getElementById(csvId);
+
+    // Parse existing CSV and render chips
+    const initVal = csvHidden.value.trim();
+    if (initVal) {
+        initVal.split(',').map(s => s.trim()).filter(Boolean).forEach(val => addChip(val));
+    }
+
+    function syncCsv() {
+        const chips = chipsRow.querySelectorAll('.note-chip[data-val]');
+        csvHidden.value = Array.from(chips).map(c => c.dataset.val).join(', ');
+    }
+
+    function addChip(val) {
+        val = val.trim();
+        if (!val) return;
+        // Prevent duplicates (case-insensitive)
+        const existing = chipsRow.querySelectorAll('.note-chip[data-val]');
+        for (const c of existing) {
+            if (c.dataset.val.toLowerCase() === val.toLowerCase()) return;
+        }
+        const chip = document.createElement('span');
+        chip.className = 'note-chip';
+        chip.dataset.val = val;
+        chip.innerHTML = `${val} <button type="button" class="chip-del" title="Xóa">×</button>`;
+        chip.querySelector('.chip-del').addEventListener('click', () => {
+            chip.remove();
+            syncCsv();
+        });
+        chipsRow.appendChild(chip);
+        syncCsv();
+    }
+
+    function processInput() {
+        const parts = input.value.split(',');
+        parts.forEach((p, i) => {
+            // Add all except the last fragment (typing in progress)
+            if (i < parts.length - 1) {
+                addChip(p);
+            }
+        });
+        // Keep only the last fragment in the input
+        input.value = parts[parts.length - 1];
+    }
+
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const val = input.value.replace(/,$/, '').trim();
+            if (val) { addChip(val); input.value = ''; }
+        }
+        // Backspace on empty input removes last chip
+        if (e.key === 'Backspace' && !input.value) {
+            const chips = chipsRow.querySelectorAll('.note-chip');
+            if (chips.length > 0) {
+                chips[chips.length - 1].remove();
+                syncCsv();
+            }
+        }
+    });
+
+    input.addEventListener('input', processInput);
+
+    // Click on builder area focuses input
+    document.getElementById(inputId.replace('Input', 'Builder')).addEventListener('click', () => input.focus());
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initChipBuilder('optsInputVI', 'optsChipsVI', 'noteOptsCsvVI');
+    initChipBuilder('optsInputEN', 'optsChipsEN', 'noteOptsCsvEN');
+
+    // Fix builder IDs (replace 'Input' → 'Builder' in click handler)
+    document.getElementById('optsBuilderVI').addEventListener('click', () => document.getElementById('optsInputVI').focus());
+    document.getElementById('optsBuilderEN').addEventListener('click', () => document.getElementById('optsInputEN').focus());
+});
+</script>

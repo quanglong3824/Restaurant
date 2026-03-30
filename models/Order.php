@@ -103,11 +103,12 @@ class Order extends Model
         );
     }
 
-    /** Lấy các món trong order */
+    /** Lấy các món trong order (kèm note_options để hiển thị chip) */
     public function getItems(int $orderId): array
     {
         return $this->findAll(
-            "SELECT oi.*, m.image, m.tags AS menu_tags
+            "SELECT oi.*, m.image, m.tags AS menu_tags,
+                    m.note_options, m.note_options_en
              FROM order_items oi
              JOIN menu_items m ON m.id = oi.menu_item_id
              WHERE oi.order_id = ?
