@@ -537,7 +537,7 @@ async function submitOrder() {
         if (result.success) {
             cart = [];
             saveCart();
-            showToast('Gửi bếp thành công!');
+            showToast('Xác nhận đặt món thành công!');
             setTimeout(() => {
                 window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/order/status`;
             }, 1000);

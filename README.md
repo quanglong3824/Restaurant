@@ -29,7 +29,7 @@
     *   Khách chọn món, thêm ghi chú (không hành, ít cay...).
     *   Hệ thống tạo Session duy nhất cho lượt ngồi đó.
     *   Nếu khách đã quét bàn A nhưng chưa gọi món mà sang bàn B quét tiếp, hệ thống tự động chuyển vùng phục vụ.
-4.  **Gửi bếp**: Đơn hàng được gửi đi và chờ nhân viên xác nhận.
+4.  **Xác nhận đặt món**: Đơn hàng được gửi đi và chờ nhân viên xác nhận.
 5.  **Theo dõi**: Khách xem được trạng thái món ăn (Đã xác nhận/Đang chế biến) và xem hóa đơn tạm tính.
 
 ### 2. Quy trình dành cho Nhân viên (Waiter iPad)

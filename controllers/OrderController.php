@@ -390,7 +390,7 @@ class OrderController extends Controller
         ]);
     }
 
-    /** POST /orders/confirm — Xác nhận món (Gửi bếp) */
+    /** POST /orders/confirm — Xác nhận món (Xác nhận đặt món) */
     public function confirmOrder(): void
     {
         $orderId = (int) $this->input('order_id');

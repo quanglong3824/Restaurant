@@ -44,7 +44,7 @@
             <p>Để đảm bảo <strong>tốc độ phục vụ tối ưu</strong> và <strong>bảo mật đơn hàng</strong> tại bàn, vui lòng xác nhận vị trí của bạn.</p>
             
             <ul class="benefits-list">
-                <li><i class="fas fa-check-circle"></i> Đơn hàng gửi trực tiếp đến bếp ngay lập tức.</li>
+                <li><i class="fas fa-check-circle"></i> Đơn hàng được xác nhận ngay lập tức.</li>
                 <li><i class="fas fa-lock"></i> Bảo mật tuyệt đối: Không lưu trữ lịch sử vị trí.</li>
                 <li><i class="fas fa-history"></i> Tự động hủy dữ liệu ngay khi Quý khách rời đi.</li>
             </ul>
@@ -485,3 +485,4 @@
     }
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/customer.js" defer></script>
+r></script>
