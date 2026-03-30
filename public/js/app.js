@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!waiterBadge && !adminBell && !document.getElementById('waiterFullNotiList') && !document.getElementById('notiList')) return;
 
-    // Âm thanh thông báo chất lượng cao từ internet
-    const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+    // Âm thanh 'Chuông thông báo' ngân vang (Ding-Dong style)
+    const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2210/2210-preview.mp3');
     notifSound.preload = 'auto';
 
     let lastNotifId = 0;
