@@ -163,9 +163,18 @@ if (!empty($items)) {
                                     <i class="fas fa-check-circle" title="Đã xác nhận"></i>
                                     <?php if (!$isSplitAction): ?>
                                     <?php
-                                        // Dùng note_options đã join sẵn từ model (không cần query thêm)
-                                        $itOptsRaw = array_filter(array_map('trim', explode(',', $item['note_options'] ?? '')));
-                                        $itemOptsJson = json_encode(array_values($itOptsRaw), JSON_UNESCAPED_UNICODE);
+                                        // Dùng note_options đã join sẵn từ model
+                                        $optsStr1 = $item['note_options'] ?? '';
+                                        $optsEnStr1 = $item['note_options_en'] ?? '';
+                                        $itOptsArr1 = array_filter(array_map('trim', explode(',', $optsStr1)));
+                                        $itOptsEnArr1 = array_filter(array_map('trim', explode(',', $optsEnStr1)));
+                                        
+                                        $combinedOpts1 = [];
+                                        foreach ($itOptsArr1 as $idx => $optVal) {
+                                            $enVal = $itOptsEnArr1[$idx] ?? '';
+                                            $combinedOpts1[] = $enVal ? $optVal . ' / ' . $enVal : $optVal;
+                                        }
+                                        $itemOptsJson = json_encode($combinedOpts1, JSON_UNESCAPED_UNICODE);
                                     ?>
                                     <button class="btn btn-link text-gold p-0" style="font-size:.8rem;"
                                         onclick="openNoteModal(<?= $item['id'] ?>, <?= $order['id'] ?>, <?= htmlspecialchars($itemOptsJson) ?>, '<?= addslashes(e($item['item_name'])) ?>', '<?= addslashes(e($item['note'] ?? '')) ?>')" title="Ghi chú món">
@@ -238,8 +247,17 @@ if (!empty($items)) {
                                 <?php if (!$isSplitAction): ?>
                                 <?php
                                     // Dùng note_options đã join sẵn từ model
-                                    $itOptsRaw2 = array_filter(array_map('trim', explode(',', $item['note_options'] ?? '')));
-                                    $itemOptsJson2 = json_encode(array_values($itOptsRaw2), JSON_UNESCAPED_UNICODE);
+                                    $optsStr2 = $item['note_options'] ?? '';
+                                    $optsEnStr2 = $item['note_options_en'] ?? '';
+                                    $itOptsArr2 = array_filter(array_map('trim', explode(',', $optsStr2)));
+                                    $itOptsEnArr2 = array_filter(array_map('trim', explode(',', $optsEnStr2)));
+                                    
+                                    $combinedOpts2 = [];
+                                    foreach ($itOptsArr2 as $idx => $optVal) {
+                                        $enVal = $itOptsEnArr2[$idx] ?? '';
+                                        $combinedOpts2[] = $enVal ? $optVal . ' / ' . $enVal : $optVal;
+                                    }
+                                    $itemOptsJson2 = json_encode($combinedOpts2, JSON_UNESCAPED_UNICODE);
                                 ?>
                                 <div class="plate-controls">
                                     <button class="q-btn" onclick="changeQty(<?= $item['id'] ?>, <?= $order['id'] ?>, -1)" title="Giảm">

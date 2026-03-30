@@ -87,10 +87,18 @@
                         <div class="menu-items-grid">
                             <?php foreach ($items as $item): ?>
                                 <?php
-                                    // Tính item_options từ trường note_options mới
+                                    // Tính item_options kết hợp VI và EN để Waiter dễ chọn
                                     $optsStr = $item['note_options'] ?? '';
+                                    $optsEnStr = $item['note_options_en'] ?? '';
                                     $itemOptsArr = array_filter(array_map('trim', explode(',', $optsStr)));
-                                    $itemOptsData = htmlspecialchars(json_encode($itemOptsArr, JSON_UNESCAPED_UNICODE));
+                                    $itemOptsEnArr = array_filter(array_map('trim', explode(',', $optsEnStr)));
+                                    
+                                    $combinedOpts = [];
+                                    foreach ($itemOptsArr as $idx => $optVal) {
+                                        $enVal = $itemOptsEnArr[$idx] ?? '';
+                                        $combinedOpts[] = $enVal ? $optVal . ' / ' . $enVal : $optVal;
+                                    }
+                                    $itemOptsData = htmlspecialchars(json_encode($combinedOpts, JSON_UNESCAPED_UNICODE));
                                 ?>
                                 <div class="list-item-card">
                                     <div style="display:flex; flex:1; align-items:center; cursor:pointer; gap:0.65rem;"
@@ -183,10 +191,18 @@
                     <?php if ($draftCount > 0): ?>
                         <div class="section-label"><i class="fas fa-edit"></i> Món nháp</div>
                         <?php foreach ($draftItems as $it):
-                            // Lấy options từ trường note_options của món ăn
+                            // Lấy options kết hợp VI và EN cho mục món nháp
                             $itOptsStr = $it['note_options'] ?? '';
-                            $itOpts = array_filter(array_map('trim', explode(',', $itOptsStr)));
-                            $itOptsJson = json_encode($itOpts, JSON_UNESCAPED_UNICODE);
+                            $itOptsEnStr = $it['note_options_en'] ?? '';
+                            $itOptsArr = array_filter(array_map('trim', explode(',', $itOptsStr)));
+                            $itOptsEnArr = array_filter(array_map('trim', explode(',', $itOptsEnStr)));
+                            
+                            $combinedOpts = [];
+                            foreach ($itOptsArr as $idx => $optVal) {
+                                $enVal = $itOptsEnArr[$idx] ?? '';
+                                $combinedOpts[] = $enVal ? $optVal . ' / ' . $enVal : $optVal;
+                            }
+                            $itOptsJson = json_encode($combinedOpts, JSON_UNESCAPED_UNICODE);
                             $itNote = trim($it['note'] ?? '');
                         ?>
                             <div class="cart-item-row" data-item-id="<?= $it['id'] ?>">
