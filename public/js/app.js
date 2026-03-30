@@ -102,12 +102,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminCount = document.getElementById('notificationCount');
     const adminList = document.getElementById('notificationList');
     
-    if (!waiterBadge && !adminBell && !document.getElementById('waiterFullNotiList')) return;
+    if (!waiterBadge && !adminBell && !document.getElementById('waiterFullNotiList') && !document.getElementById('notiList')) return;
 
-    const notifSound = new Audio('https://raw.githubusercontent.com/shashankmehta/notification-sounds/master/notification.mp3');
+    // Âm thanh thông báo chất lượng cao từ internet
+    const notifSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
     notifSound.preload = 'auto';
 
-    let lastNotifTimestamp = 0;
+    let lastNotifId = 0;
+    let isInitialLoad = true;
+
+    // Global Toast Container
+    const toastContainer = document.createElement('div');
+    toastContainer.id = 'global-toast-container';
+    toastContainer.style.cssText = 'position:fixed; top:20px; right:20px; z-index:10001; display:flex; flex-direction:column; gap:10px; max-width:320px; width:calc(100% - 40px);';
+    document.body.appendChild(toastContainer);
+
+    function showGlobalToast(n) {
+        const toast = document.createElement('div');
+        toast.className = `global-toast-item type-${n.notification_type}`;
+        toast.style.cssText = 'background:white; border-radius:15px; padding:15px; box-shadow:0 10px 25px rgba(0,0,0,0.15); border-left:5px solid var(--gold); animation:slideInRight 0.4s ease-out; position:relative; overflow:hidden;';
+        
+        let color = '#d4af37';
+        let icon = 'fa-bell';
+        if (n.notification_type === 'payment_request') { color = '#ef4444'; icon = 'fa-hand-holding-usd'; }
+        if (n.notification_type === 'new_order') { color = '#10b981'; icon = 'fa-utensils'; }
+        if (n.notification_type === 'support_request') { color = '#f59e0b'; icon = 'fa-concierge-bell'; }
+        
+        toast.style.borderLeftColor = color;
+
+        toast.innerHTML = `
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+                <div style="width:40px; height:40px; background:${color}15; color:${color}; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <div style="flex:1;">
+                    <h5 style="margin:0 0 3px 0; font-size:0.95rem; font-weight:800; color:#1e293b;">${n.title}</h5>
+                    <p style="margin:0 0 10px 0; font-size:0.8rem; color:#64748b; line-height:1.4;">${n.message}</p>
+                    <button onclick="window.location.href='${BASE_URL}/orders?table_id=${n.table_id}'" 
+                            style="background:${color}; color:white; border:none; padding:8px 12px; border-radius:8px; font-size:0.75rem; font-weight:700; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <i class="fas fa-external-link-alt"></i> ĐI TỚI BÀN ${n.table_name}
+                    </button>
+                </div>
+                <button onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:#94a3b8; cursor:pointer; padding:0; font-size:0.9rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="toast-progress" style="position:absolute; bottom:0; left:0; height:3px; background:${color}; width:100%; animation:progress-out 5s linear forwards;"></div>
+        `;
+
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOutRight 0.4s ease-in forwards';
+                setTimeout(() => toast.remove(), 400);
+            }
+        }, 5000);
+    }
+
+    // Add Keyframe Animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(50px); } }
+        @keyframes progress-out { from { width: 100%; } to { width: 0%; } }
+    `;
+    document.head.appendChild(style);
 
     // Admin Specific Logic
     if (adminBell) {
@@ -122,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         document.addEventListener('click', (e) => {
-            if (!adminBell.parentElement.contains(e.target)) adminPanel.classList.remove('show');
+            if (adminPanel && !adminBell.parentElement.contains(e.target)) adminPanel.classList.remove('show');
         });
     }
 
@@ -136,25 +195,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const unreadCount = data.stats.unread;
             const notifications = data.notifications;
 
-            // Sound logic: Play if there's a NEW unread notification
-            if (unreadCount > 0) {
-                // Find the newest unread notification
-                const newestUnread = notifications.filter(n => !parseInt(n.is_read))[0];
-                if (newestUnread) {
-                    const newestTimestamp = new Date(newestUnread.created_at).getTime();
-                    if (newestTimestamp > lastNotifTimestamp) {
-                        // Play sound and update timestamp
-                        notifSound.play().catch(e => console.log("Audio play blocked", e));
-                        lastNotifTimestamp = newestTimestamp;
-                    }
+            // New Notification Logic
+            if (notifications.length > 0) {
+                const newestId = Math.max(...notifications.map(n => n.id));
+                
+                if (!isInitialLoad && newestId > lastNotifId) {
+                    // Play sound
+                    notifSound.play().catch(e => console.log("Audio blocked", e));
+                    
+                    // Show toasts for new unread notifications
+                    notifications.filter(n => n.id > lastNotifId && !parseInt(n.is_read)).forEach(n => {
+                        showGlobalToast(n);
+                    });
                 }
-            } else if (notifications.length > 0 && lastNotifTimestamp === 0) {
-                // Initialize timestamp if none exists
-                lastNotifTimestamp = new Date(notifications[0].created_at).getTime();
+                lastNotifId = newestId;
             }
+            
+            isInitialLoad = false;
 
             // Update UI Badges
-            const waiterBadge = document.getElementById('waiterNotiBadge');
             if (waiterBadge) {
                 waiterBadge.textContent = unreadCount;
                 waiterBadge.style.display = unreadCount > 0 ? 'block' : 'none';
@@ -166,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Render list if panel is visible or if we are on notifications page
-            if (adminPanel?.classList.contains('show') || !adminBell) {
+            if (adminPanel?.classList.contains('show')) {
                 renderAdminList(notifications);
             }
 

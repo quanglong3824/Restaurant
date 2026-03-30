@@ -46,7 +46,7 @@
 
 <!-- Audio Alerts (Hidden) -->
 <audio id="audioOrder" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-<audio id="audioAlert" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+<audio id="audioAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
 <style>
     .noti-center-container { padding: 10px; max-width: 800px; margin: 0 auto; }
