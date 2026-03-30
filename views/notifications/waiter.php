@@ -239,17 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
             fd.append('id', id);
             await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST', body: fd });
 
-            if (type === 'support_request' || type === 'payment_request') {
-                const fd2 = new FormData();
-                fd2.append('table_id', tableId);
-                fd2.append('type', type === 'payment_request' ? 'payment' : 'support');
-                await fetch(`${BASE_URL}/api/notifications/resolve-support`, { method: 'POST', body: fd2 });
-            }
-
             fetchNotifications(true);
             if (window.showToast) showToast('Đã xác nhận xử lý xong');
         } catch (e) {
-            alert('Lỗi khi thực hiện thao tác');
+            console.error(e);
+            alert('Lỗi khi thực hiện thao tác: ' + e.message);
         }
     };
 

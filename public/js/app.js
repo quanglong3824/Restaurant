@@ -199,14 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (notifications && notifications.length > 0) {
                 const newestId = Math.max(...notifications.map(n => parseInt(n.id)));
                 
-                // Hiển thị Toast: 
-                // 1. Nếu là lần đầu load trang: hiện tối đa 3 thông báo chưa đọc gần nhất
-                // 2. Nếu là các lần poll sau: hiện tất cả thông báo mới có ID > lastNotifId
-                if (isInitialLoad) {
-                    notifications.filter(n => !parseInt(n.is_read)).slice(0, 3).reverse().forEach(n => {
-                        showGlobalToast(n);
-                    });
-                } else if (newestId > lastNotifId) {
+                // Fix Spam lỗi: Xoá trắng cơ chế bung Toast liên hoàn khi reload lần đầu (isInitialLoad).
+                // Bây giờ tải trang xong sẽ câm lặng, chỉ thông báo những tin mới nổ tới.
+                if (!isInitialLoad && newestId > lastNotifId) {
                     const newUnread = notifications.filter(n => parseInt(n.id) > lastNotifId && !parseInt(n.is_read));
                     if (newUnread.length > 0) {
                         // Xác định mức độ quan trọng
@@ -214,23 +209,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         const isImportant = newUnread.some(n => importantTypes.includes(n.notification_type));
                         
                         function playSoundTimes(times) {
-                            let count = 0;
-                            notifSound.currentTime = 0;
-                            notifSound.play().catch(e => {});
-                            count++;
-                            if (times > 1) {
-                                // Sau 1 giây thì kêu lần 2 (nếu file âm thanh ngắn)
-                                setTimeout(() => {
-                                    notifSound.currentTime = 0;
-                                    notifSound.play().catch(e => {});
-                                }, 1500); 
-                            }
+                            try {
+                                const audio = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
+                                audio.play().catch(e => console.log('Audio blocked'));
+                                if (times > 1) {
+                                    setTimeout(() => {
+                                        const audio2 = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
+                                        audio2.play().catch(e => console.log('Audio blocked'));
+                                    }, 800); // Rút ngắn nhịp còn 800ms cho dồn dập
+                                }
+                            } catch(e) {}
                         }
 
                         if (isImportant) {
-                            playSoundTimes(2); // Kêu 2 lần cho khách gọi hỗ trợ/đặt món/thanh toán
+                            playSoundTimes(2); // Kêu 2 lần
                         } else {
-                            playSoundTimes(1); // Kêu 1 lần cho quét QR bth
+                            playSoundTimes(1); // Kêu 1 lần
                         }
                         
                         newUnread.reverse().forEach(n => showGlobalToast(n));
@@ -314,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const fd = new FormData();
             if (id) fd.append('id', id);
-            const response = await fetch(`${BASE_URL}/notifications/mark-read`, { method: 'POST', body: fd });
+            const response = await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST', body: fd });
             const data = await response.json();
             if (data.ok) pollNotifications();
         } catch (e) { console.error("Mark read failed", e); }
