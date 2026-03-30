@@ -59,3 +59,12 @@
         </a>
     </div>
 </div>
+
+<script>
+    // Configuration for customer.js on status page
+    const CUSTOMER_CONFIG = {
+        tableId: <?= (int)$order['table_id'] ?>,
+        baseUrl: '<?= BASE_URL ?>'
+    };
+</script>
+<script src="<?= BASE_URL ?>/public/js/menu/customer.js?v=<?= time() ?>" defer></script>

@@ -39,7 +39,8 @@ class QrOrderController extends Controller
     public function submit(): void
     {
         $tableId = $this->requireCustomer();
-        $currentSessionId = session_id();
+        // Lấy token định danh từ Cookie để đồng bộ với QrMenuController
+        $currentSessionId = $_COOKIE['qr_visitor_token'] ?? session_id(); 
         $cartData = json_decode($_POST['cart'] ?? '[]', true);
         $notes = $_POST['notes'] ?? '';
 
@@ -174,9 +175,18 @@ class QrOrderController extends Controller
         } else {
             // Bàn trống. Kiểm tra xem có phải vừa thanh toán xong không?
             $lastOrder = $this->orderModel->findLastOrderByTable($tableId);
-            $currentSessionId = session_id();
+            $currentSessionId = $_COOKIE['qr_visitor_token'] ?? session_id();
+            $waitingOrderId = $_SESSION['waiting_payment_order_id'] ?? null;
             
-            if ($lastOrder && $lastOrder['status'] === 'closed' && $lastOrder['session_id'] === $currentSessionId) {
+            // Nếu đơn cuối cùng của bàn này có session_id trùng hoặc là đơn khách đang chờ thanh toán
+            $isMatch = ($lastOrder && $lastOrder['status'] === 'closed' && (
+                $lastOrder['session_id'] === $currentSessionId || 
+                $lastOrder['session_id'] === session_id() ||
+                ($waitingOrderId && $lastOrder['id'] == $waitingOrderId)
+            ));
+
+            if ($isMatch) {
+                unset($_SESSION['waiting_payment_order_id']);
                 $this->json(['status' => 'completed']);
             } else {
                 $this->json(['status' => 'idle']);

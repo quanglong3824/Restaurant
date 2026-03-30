@@ -656,7 +656,7 @@ function showPaymentOverlay() {
 
 // Polling kiểm tra trạng thái bill
 function startStatusPolling() {
-    setInterval(async () => {
+    const checkStatus = async () => {
         try {
             const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status`);
             const data = await res.json();
@@ -670,7 +670,12 @@ function startStatusPolling() {
                 if (overlay) overlay.remove();
             }
         } catch(e) {}
-    }, 5000);
+    };
+
+    // Chạy ngay lập tức lần đầu khi load trang
+    checkStatus();
+    // Sau đó mới lặp lại mỗi 5s
+    setInterval(checkStatus, 5000);
 }
 
 // Bắt đầu polling ngay khi khởi động trang Khách

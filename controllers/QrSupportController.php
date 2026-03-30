@@ -57,6 +57,8 @@ class QrSupportController extends Controller
         }
 
         $orderId = $order['id'];
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $_SESSION['waiting_payment_order_id'] = $orderId;
 
         // Update order notes or a specific field to indicate payment request
         // Using a custom note or status for immediate visual cue in admin
