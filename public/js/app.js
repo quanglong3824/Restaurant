@@ -209,7 +209,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (newestId > lastNotifId) {
                     const newUnread = notifications.filter(n => parseInt(n.id) > lastNotifId && !parseInt(n.is_read));
                     if (newUnread.length > 0) {
-                        notifSound.play().catch(e => {});
+                        // Xác định mức độ quan trọng
+                        const importantTypes = ['support_request', 'new_order', 'payment_request'];
+                        const isImportant = newUnread.some(n => importantTypes.includes(n.notification_type));
+                        
+                        function playSoundTimes(times) {
+                            let count = 0;
+                            notifSound.currentTime = 0;
+                            notifSound.play().catch(e => {});
+                            count++;
+                            if (times > 1) {
+                                // Sau 1 giây thì kêu lần 2 (nếu file âm thanh ngắn)
+                                setTimeout(() => {
+                                    notifSound.currentTime = 0;
+                                    notifSound.play().catch(e => {});
+                                }, 1500); 
+                            }
+                        }
+
+                        if (isImportant) {
+                            playSoundTimes(2); // Kêu 2 lần cho khách gọi hỗ trợ/đặt món/thanh toán
+                        } else {
+                            playSoundTimes(1); // Kêu 1 lần cho quét QR bth
+                        }
+                        
                         newUnread.reverse().forEach(n => showGlobalToast(n));
                     }
                 }

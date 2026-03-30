@@ -44,9 +44,7 @@
     </div>
 </div>
 
-<!-- Audio Alerts (Hidden) -->
-<audio id="audioOrder" src="<?= BASE_URL ?>/public/audio/nofi.mp3" preload="auto"></audio>
-<audio id="audioAlert" src="<?= BASE_URL ?>/public/audio/nofi.mp3" preload="auto"></audio>
+<!-- Audio Alerts được gánh bởi script app.js toàn cục -->
 
 <style>
     .noti-center-container { padding: 10px; max-width: 800px; margin: 0 auto; }
@@ -178,19 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function checkNewNoti(notifs) {
-        if (notifs.length === 0) return;
-        const newest = notifs[0];
-        if (!isFirstLoad && newest.id > lastNotiId && !newest.is_read) {
-            // Play sound based on type
-            if (newest.notification_type === 'new_order' || newest.notification_type === 'payment_request') {
-                document.getElementById('audioOrder').play().catch(e => {});
-            } else {
-                document.getElementById('audioAlert').play().catch(e => {});
-            }
-        }
-        lastNotiId = Math.max(...notifs.map(n => n.id), lastNotiId);
-    }
+    // Logic cảnh báo âm thanh ở đây đã bị xoá & được quản lý bởi /public/js/app.js
 
     function renderList(notifs) {
         if (notifs.length === 0) {
