@@ -227,8 +227,19 @@
         orders.forEach(order => {
             const isClosed = (order.status === 'closed');
             const statusTag = isClosed ? 'closed' : 'open';
-            const statusText = isClosed ? 'Đã thanh toán' : 'Đang ăn';
+            const statusText = isClosed ? 'Đã thanh toán' : (order.is_idle ? 'Đang chờ gọi món' : 'Đang ăn');
             
+            let idleBadge = '';
+            if (order.is_idle && !isClosed) {
+                const remaining = Math.max(0, 300 - order.idle_seconds);
+                const min = Math.floor(remaining / 60);
+                const sec = remaining % 60;
+                const color = remaining < 60 ? 'var(--pos-danger)' : 'var(--pos-warning)';
+                idleBadge = `<div class="idle-timer" style="color:${color}; font-weight:800; font-size:0.75rem;">
+                    <i class="fas fa-clock"></i> HUỶ SAU: ${min}:${sec < 10 ? '0'+sec : sec}
+                </div>`;
+            }
+
             let rows = '';
             order.items.forEach(it => {
                 rows += `
@@ -250,8 +261,9 @@
                             <h2>${order.full_name}</h2>
                             <div class="table-sub-info">
                                 <span><i class="fas fa-user-friends me-1"></i> ${order.guest_count} khách</span>
-                                <span><i class="fas fa-user-tie me-1"></i> ${order.waiter_name || 'Hệ thống'}</span>
+                                <span><i class="fas fa-user-tie me-1"></i> ${order.waiter_name || 'Khách QR'}</span>
                             </div>
+                            ${idleBadge}
                         </div>
                         <div class="status-tag ${statusTag}">${statusText}</div>
                     </div>

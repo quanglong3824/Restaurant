@@ -68,6 +68,10 @@ class AdminRealtimeController extends Controller
             $order['closed_at_fmt'] = $order['closed_at'] ? date('H:i', strtotime($order['closed_at'])) : null;
             $order['total_fmt'] = formatPrice($order['total']);
             
+            // Tính toán thời gian Idle (nếu chưa có món nào)
+            $order['is_idle'] = empty($order['items']);
+            $order['idle_seconds'] = $order['is_idle'] ? (time() - strtotime($order['opened_at'])) : 0;
+            
             // Format items prices
             foreach ($order['items'] as &$it) {
                 $it['item_price_fmt'] = formatPrice($it['item_price']);

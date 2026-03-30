@@ -286,23 +286,25 @@ class Table extends Model
         // 3. Sửa lỗi bàn "khách ảo": Occupied nhưng không có món nào trong order và đã quá 5 phút
         // Đặc biệt ưu tiên dọn dẹp các bàn do khách quét QR (waiter_id IS NULL)
         $stuckSessions = $this->findAll(
-            "SELECT o.table_id, o.id as order_id 
+            "SELECT o.table_id, o.id as order_id, o.session_id
              FROM orders o 
              JOIN tables t ON o.table_id = t.id
              WHERE o.status = 'open' 
              AND t.status = 'occupied'
-             AND (
-                (o.waiter_id IS NULL AND o.opened_at < NOW() - INTERVAL 5 MINUTE)
-                OR 
-                (o.opened_at < NOW() - INTERVAL 2 HOUR)
-             )
+             AND o.waiter_id IS NULL
+             AND o.opened_at < NOW() - INTERVAL 5 MINUTE
              AND o.id NOT IN (SELECT DISTINCT order_id FROM order_items)"
         );
 
         foreach ($stuckSessions as $s) {
             // Đóng order trống này và trả bàn về trống
-            $this->execute("UPDATE orders SET status = 'closed', closed_at = NOW() WHERE id = ?", [$s['order_id']]);
+            $this->execute("UPDATE orders SET status = 'closed', note = 'Hệ thống tự động huỷ do không đặt món sau 5 phút', closed_at = NOW() WHERE id = ?", [$s['order_id']]);
             $this->close($s['table_id']);
+            
+            // Vô hiệu hoá session của khách này để thiết bị A bị logout
+            if (!empty($s['session_id'])) {
+                $this->execute("UPDATE customer_sessions SET is_active = 0 WHERE session_id = ? OR session_id = (SELECT session_id FROM customer_sessions WHERE session_id = ? LIMIT 1)", [$s['session_id'], $s['session_id']]);
+            }
         }
     }
 

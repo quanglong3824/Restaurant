@@ -72,53 +72,39 @@ class QrMenuController extends Controller
             }
 
             // --- CƠ CHẾ ĐỊNH DANH KHÁCH BỀN VỮNG (GOGI STYLE) ---
-            // Tạo hoặc lấy Visitor Token từ Cookie (tồn tại 24h kể cả xoá nền)
             $visitorToken = $_COOKIE['qr_visitor_token'] ?? bin2hex(random_bytes(16));
             setcookie('qr_visitor_token', $visitorToken, time() + (24 * 3600), "/", "", isset($_SERVER['HTTPS']), true);
             
-            // Set session để các controller khác dùng
             $this->setupCustomerSession($tableId, $token);
             $currentSessionId = session_id();
 
+            // Kiểm tra xem session hiện tại có bị vô hiệu hoá (Timeout) không
+            $activeSession = $this->sessionModel->findBySessionId($currentSessionId);
+            if (!$activeSession) {
+                // Nếu không tìm thấy session active, xoá cookie và bắt đầu mới
+                setcookie(session_name(), '', time() - 3600, '/');
+                session_destroy();
+                $this->redirect("/qr/menu?table_id=$tableId&token=$token");
+                return;
+            }
+
             $table = $this->tableModel->findById($tableId);
             
-            // Tìm đơn hàng đang mở hoặc vừa đóng của bàn này dựa trên visitorToken HOẶC sessionId
-            // Ưu tiên visitorToken để nhận diện khách cũ quay lại
-            $sql = "SELECT * FROM orders WHERE table_id = ? 
-                    AND (session_id = ? OR session_id = ?) 
-                    ORDER BY id DESC LIMIT 1";
-            $lastOrder = $this->orderModel->findOne($sql, [$tableId, $visitorToken, $currentSessionId]);
+            // Tìm đơn hàng đang mở
+            $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
 
-            // 1. Nếu khách quay lại và đơn hàng gần nhất đã thanh toán (trong vòng 30 phút)
-            if ($lastOrder && $lastOrder['status'] === 'closed') {
-                $closedTime = strtotime($lastOrder['closed_at'] ?? $lastOrder['updated_at']);
-                if ((time() - $closedTime) / 60 < 30) {
-                    $items = $this->orderModel->getItems($lastOrder['id']);
-                    $this->view('layouts/public', [
-                        'view' => 'orders/paid_bill',
-                        'pageTitle' => 'Hoá đơn thanh toán',
-                        'table' => $table,
-                        'order' => $lastOrder,
-                        'items' => $items,
-                        'token' => $token,
-                        'isCustomer' => true
-                    ]);
-                    return;
-                }
-            }
-
-            // 2. Nếu có đơn hàng đang mở (Open) gắn với khách này
-            if ($lastOrder && $lastOrder['status'] === 'open') {
-                $openOrder = $lastOrder;
-            } else {
-                $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
-            }
-
-            // 3. Xử lý trạng thái bàn
+            // Xử lý trạng thái bàn
             if ($table['status'] === 'occupied') {
                 if ($openOrder) {
-                    // Nếu bàn đang bận bởi người khác
-                    if (!empty($openOrder['session_id']) && 
+                    // Kiểm tra xem bàn có món chưa thanh toán (Confirmed) không
+                    $confirmedItems = $this->orderModel->findAll(
+                        "SELECT id FROM order_items WHERE order_id = ? AND status != 'cancelled' LIMIT 1", 
+                        [$openOrder['id']]
+                    );
+
+                    // Nếu bàn bận (có món) và khách quét mới không phải khách đang ngồi
+                    if ($confirmedItems && 
+                        !empty($openOrder['session_id']) && 
                         $openOrder['session_id'] !== $visitorToken && 
                         $openOrder['session_id'] !== $currentSessionId) {
                         
@@ -130,13 +116,14 @@ class QrMenuController extends Controller
                         ]);
                         return;
                     }
-                    // Nếu là khách của bàn này, cập nhật visitorToken nếu cần
+
+                    // Nếu là khách của bàn này hoặc bàn đang bận nhưng chưa có món (khách đang xem)
                     if (empty($openOrder['session_id']) || $openOrder['session_id'] === $currentSessionId) {
                         $this->orderModel->updateSession($openOrder['id'], $visitorToken);
                     }
                 }
             } else {
-                // Mở bàn mới và gắn với visitorToken
+                // Mở bàn mới
                 $this->tableModel->open($tableId);
                 $this->orderModel->create([
                     'table_id' => $tableId,
