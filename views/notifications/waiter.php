@@ -147,8 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchNotifications(silent = false) {
         try {
-            if (!silent) console.log("Fetching notifications, page:", currentPage);
-            
             const url = `${BASE_URL}/api/notifications/poll?page=${currentPage}&limit=${itemsPerPage}&filter=${currentFilter}`;
             const response = await fetch(url);
             if (!response.ok) return;
@@ -156,28 +154,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.ok) {
                 totalItems = data.total_count;
-                updateStats(data.stats);
+                // Stats được cập nhật tự động qua app.js, nhưng nếu fetch thủ công vẫn render list
                 renderList(data.notifications);
                 updatePagination();
-                
-                // Audio check only for page 1
-                if (currentPage === 1) {
-                    checkNewNoti(data.notifications);
-                }
             }
-            
-            isFirstLoad = false;
         } catch (e) {
-            console.error("Poll error", e);
+            console.error("Fetch error", e);
         }
     }
 
-    function updateStats(stats) {
-        document.getElementById('count-all').textContent = stats.unread;
-        document.getElementById('count-payment').textContent = stats.payment;
-        document.getElementById('count-order').textContent = stats.order;
-        document.getElementById('count-support').textContent = stats.support;
-    }
+    // Xoá updateStats() ở đây vì app.js sẽ lo phần này để đồng bộ toàn cục
 
     function updatePagination() {
         const totalPages = Math.ceil(totalItems / itemsPerPage);

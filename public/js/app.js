@@ -196,17 +196,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const notifications = data.notifications;
 
             // New Notification Logic
-            if (notifications.length > 0) {
-                const newestId = Math.max(...notifications.map(n => n.id));
+            if (notifications && notifications.length > 0) {
+                const newestId = Math.max(...notifications.map(n => parseInt(n.id)));
                 
-                if (!isInitialLoad && newestId > lastNotifId) {
-                    // Play sound
-                    notifSound.play().catch(e => console.log("Audio blocked", e));
-                    
-                    // Show toasts for new unread notifications
-                    notifications.filter(n => n.id > lastNotifId && !parseInt(n.is_read)).forEach(n => {
+                // Hiển thị Toast: 
+                // 1. Nếu là lần đầu load trang: hiện tối đa 3 thông báo chưa đọc gần nhất
+                // 2. Nếu là các lần poll sau: hiện tất cả thông báo mới có ID > lastNotifId
+                if (isInitialLoad) {
+                    notifications.filter(n => !parseInt(n.is_read)).slice(0, 3).reverse().forEach(n => {
                         showGlobalToast(n);
                     });
+                } else if (newestId > lastNotifId) {
+                    const newUnread = notifications.filter(n => parseInt(n.id) > lastNotifId && !parseInt(n.is_read));
+                    if (newUnread.length > 0) {
+                        notifSound.play().catch(e => {});
+                        newUnread.reverse().forEach(n => showGlobalToast(n));
+                    }
                 }
                 lastNotifId = newestId;
             }
@@ -224,12 +229,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 adminCount.classList.toggle('show', unreadCount > 0);
             }
 
-            // Render list if panel is visible or if we are on notifications page
+            // Nếu đang ở trang danh sách thông báo của Waiter, cập nhật stats (badges bộ lọc)
+            if (document.getElementById('notiList')) {
+                updateWaiterStats(data.stats);
+            }
+
+            // Render list if panel is visible
             if (adminPanel?.classList.contains('show')) {
                 renderAdminList(notifications);
             }
 
         } catch (e) { console.error("Poll failed", e); }
+    }
+
+    function updateWaiterStats(stats) {
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        };
+        setVal('count-all', stats.unread);
+        setVal('count-payment', stats.payment);
+        setVal('count-order', stats.order);
+        setVal('count-support', stats.support);
     }
 
     function renderAdminList(notifications) {
