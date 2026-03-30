@@ -7,6 +7,7 @@ $allAreas = array_keys($grouped);
 sort($allAreas);
 
 // Process areas
+$vip_areas = ['VIP 1', 'VIP 2', 'VIP 3', 'VIP 4', 'VIP 1 2', 'VIP 3 4'];
 $vip1_tables = $grouped['VIP 1'] ?? [];
 $vip2_tables = $grouped['VIP 2'] ?? [];
 $vip3_tables = $grouped['VIP 3'] ?? [];
@@ -14,9 +15,27 @@ $vip4_tables = $grouped['VIP 4'] ?? [];
 
 $other_areas = [];
 foreach ($grouped as $area => $tables) {
-    if (in_array($area, ['VIP 1', 'VIP 2', 'VIP 3', 'VIP 4', 'VIP 1 2', 'VIP 3 4'])) continue;
+    if (in_array($area, $vip_areas)) continue;
     $other_areas[$area] = $tables;
 }
+
+// Sắp xếp other_areas: A, B, C lên đầu, ÂU xuống cuối
+uksort($other_areas, function($a, $b) {
+    $priority = function($name) {
+        $name = strtoupper($name);
+        if (str_starts_with($name, 'A')) return 10;
+        if (str_starts_with($name, 'B')) return 20;
+        if (str_starts_with($name, 'C')) return 30;
+        if (str_contains($name, 'ÂU')) return 100;
+        return 50;
+    };
+    
+    $pA = $priority($a);
+    $pB = $priority($b);
+    
+    if ($pA !== $pB) return $pA - $pB;
+    return strcmp($a, $b);
+});
 
 // Phân loại khu vực cho modal
 $uniqueAreas = [];
@@ -132,6 +151,11 @@ if (!function_exists('renderTableCard')) {
     <?php if (empty($grouped)): ?>
         <div class="empty-state py-5 text-center"><i class="fas fa-table-cells-large fa-3x mb-3 opacity-20"></i><h4 class="fw-bold">Chưa có sơ đồ</h4></div>
     <?php else: ?>
+        <?php foreach ($other_areas as $area => $tables): ?>
+            <div class="area-section"><div class="area-header"><div class="area-icon"><i class="fas fa-map-marker-alt"></i></div><h2>Khu vực: <?= e($area) ?></h2></div>
+            <div class="table-grid"><?php foreach ($tables as $t) renderTableCard($t, $tableModel, $type); ?></div></div>
+        <?php endforeach; ?>
+
         <?php if (!empty($vip1_tables) || !empty($vip2_tables)): $vip12 = array_merge($vip1_tables, $vip2_tables); ?>
             <div class="area-section"><div class="area-header"><div class="area-icon"><i class="fas fa-crown"></i></div><h2>Khu vực: VIP 1 & 2</h2></div>
             <div class="table-grid"><?php foreach ($vip12 as $t) renderTableCard($t, $tableModel, $type); ?></div></div>
@@ -140,10 +164,6 @@ if (!function_exists('renderTableCard')) {
             <div class="area-section"><div class="area-header"><div class="area-icon"><i class="fas fa-crown"></i></div><h2>Khu vực: VIP 3 & 4</h2></div>
             <div class="table-grid"><?php foreach ($vip34 as $t) renderTableCard($t, $tableModel, $type); ?></div></div>
         <?php endif; ?>
-        <?php foreach ($other_areas as $area => $tables): ?>
-            <div class="area-section"><div class="area-header"><div class="area-icon"><i class="fas fa-map-marker-alt"></i></div><h2>Khu vực: <?= e($area) ?></h2></div>
-            <div class="table-grid"><?php foreach ($tables as $t) renderTableCard($t, $tableModel, $type); ?></div></div>
-        <?php endforeach; ?>
     <?php endif; ?>
 </div>
 
