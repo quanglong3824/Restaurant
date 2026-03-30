@@ -391,19 +391,26 @@ function showToast(msg) {
 }
 
 function showItemDetail(item) {
-    // Lấy options trực tiếp từ payload object item thay vì query selector (đáng tin cậy hơn)
-    const optsVi = (item.note_options || '').split(',').map(o => o.trim()).filter(Boolean);
-    const optsEn = (item.note_options_en || '').split(',').map(o => o.trim()).filter(Boolean);
+    // FALLBACK cực mạnh: Đọc từ JSON, nếu ko có thì móc từ DOM Dataset
+    let rawVi = item.note_options || '';
+    let rawEn = item.note_options_en || '';
     
-    // Nếu có cả VI và EN thì mix song ngữ để người nước ngoài có thể thấy EN, người Việt thấy VI
-    // Hoặc render song ngữ giống Waiter
+    const card = document.querySelector(`.menu-item-card[data-id="${item.id}"]`);
+    if (card) {
+        if (!rawVi) rawVi = card.dataset.options || '';
+        if (!rawEn) rawEn = card.dataset.optionsEn || '';
+    }
+
+    const optsVi = rawVi.split(',').map(o => o.trim()).filter(Boolean);
+    const optsEn = rawEn.split(',').map(o => o.trim()).filter(Boolean);
+    
+    // Mix song ngữ
     const isEn = (document.documentElement.lang === 'en');
     let displayOpts = [];
     
     if (isEn && optsEn.length > 0) {
-        displayOpts = optsEn; // Nếu web đang lật sang tiếng Anh -> hiện thuần tiếng Anh
+        displayOpts = optsEn; 
     } else {
-        // Mặc định hiện Song ngữ cho giao diện Khách nếu có tiếng Anh
         optsVi.forEach((val, idx) => {
             const enVal = optsEn[idx];
             displayOpts.push(enVal ? `${val} / ${enVal}` : val);
@@ -427,7 +434,7 @@ function showItemDetail(item) {
         imgContainer.innerHTML = '<i class="fas fa-utensils" style="font-size:3rem; color:#cbd5e1; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></i>';
     }
 
-    // Render Options Chips
+    // Render Options Chips (Trùng tu UI)
     const optsWrap = document.getElementById('detailOptsWrap');
     const optsContainer = document.getElementById('detailOptsContainer');
     optsContainer.innerHTML = '';
@@ -436,8 +443,10 @@ function showItemDetail(item) {
         optsWrap.style.display = 'block';
         displayOpts.forEach((opt) => {
             const chip = document.createElement('div');
-            chip.className = 'opt-chip';
-            chip.textContent = opt;
+            // Cập nhật class premium cho chip
+            chip.className = 'opt-chip-premium';
+            chip.innerHTML = `<span>${opt}</span><i class="fas fa-check-circle check-icon"></i>`;
+            
             chip.onclick = () => {
                 const noteInput = document.getElementById('detailNote');
                 let currentNote = noteInput.value.trim();

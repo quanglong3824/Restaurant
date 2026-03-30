@@ -399,21 +399,33 @@
 </div>
 
 <style>
-    .opt-chip {
-        padding: 8px 16px;
-        background: #f1f5f9;
-        color: #64748b;
+    .opt-chip-premium {
+        padding: 5px 14px;
+        background: #f8fafc;
+        color: #475569;
         border-radius: 50px;
         font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid #e2e8f0;
+        transition: all 0.25s ease;
+        border: 1.5px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    .opt-chip.active {
-        background: var(--gold);
-        color: white;
+    .opt-chip-premium .check-icon {
+        display: none;
+        font-size: 0.85rem;
+    }
+    .opt-chip-premium.active {
+        background: rgba(212,175,55,0.1);
+        color: var(--gold-dark, #785e0a);
         border-color: var(--gold);
+        transform: scale(1.03);
+    }
+    .opt-chip-premium.active .check-icon {
+        display: inline-block;
+        color: var(--gold);
     }
     .item-detail-img {
         width: 100%;
