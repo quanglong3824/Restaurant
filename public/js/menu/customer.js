@@ -465,7 +465,8 @@ function showItemDetail(item) {
             optsContainer.appendChild(chip);
         });
     } else {
-        optsWrap.style.display = 'none';
+        optsWrap.style.display = 'block';
+        optsContainer.innerHTML = '<span style="color:#94a3b8; font-size:0.75rem;"><i class="fas fa-info-circle me-1"></i>Chưa có Tùy chọn cấu hình sẵn cho món này (Thiết lập tại Admin).</span>';
     }
 
     updateDetailTotal();
