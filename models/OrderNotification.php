@@ -42,8 +42,8 @@ class OrderNotification extends Model
         );
     }
 
-    /** Lấy danh sách thông báo phân trang */
-    public function getPaged(int $page, int $limit, string $type = 'all'): array
+    /** Lấy danh sách thông báo phân trang (hỗ trợ lọc theo type + status) */
+    public function getPaged(int $page, int $limit, string $type = 'all', string $status = ''): array
     {
         $offset = ($page - 1) * $limit;
         $sql = "SELECT n.*, t.name as table_name, t.area as table_area,
@@ -52,28 +52,55 @@ class OrderNotification extends Model
                 JOIN tables t ON n.table_id = t.id
                 LEFT JOIN orders o ON n.order_id = o.id";
         
+        $conditions = [];
         $params = [];
+
+        // Lọc theo notification_type
         if ($type !== 'all') {
-            $sql .= " WHERE n.notification_type = ?";
+            $conditions[] = "n.notification_type = ?";
             $params[] = $type;
         }
 
-        $sql .= " ORDER BY n.created_at DESC LIMIT ? OFFSET ?";
+        // Lọc theo trạng thái đọc
+        if ($status === 'unread') {
+            $conditions[] = "n.is_read = 0";
+        } elseif ($status === 'read') {
+            $conditions[] = "n.is_read = 1";
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $sql .= " ORDER BY n.is_read ASC, n.created_at DESC LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
 
         return $this->findAll($sql, $params);
     }
 
-    /** Đếm tổng số thông báo */
-    public function countAll(string $type = 'all'): int
+    /** Đếm tổng số thông báo (hỗ trợ lọc theo type + status) */
+    public function countAll(string $type = 'all', string $status = ''): int
     {
         $sql = "SELECT COUNT(*) as cnt FROM order_notifications";
+        $conditions = [];
         $params = [];
+
         if ($type !== 'all') {
-            $sql .= " WHERE notification_type = ?";
+            $conditions[] = "notification_type = ?";
             $params[] = $type;
         }
+
+        if ($status === 'unread') {
+            $conditions[] = "is_read = 0";
+        } elseif ($status === 'read') {
+            $conditions[] = "is_read = 1";
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
         $row = $this->findOne($sql, $params);
         return (int)($row['cnt'] ?? 0);
     }

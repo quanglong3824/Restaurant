@@ -104,9 +104,65 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!waiterBadge && !adminBell && !document.getElementById('waiterFullNotiList') && !document.getElementById('notiList')) return;
 
-    // Âm thanh thông báo nội bộ (nofi.mp3)
-    const notifSound = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
-    notifSound.preload = 'auto';
+    // ── Audio System: Support cả mobile lẫn desktop ──────────
+    let audioUnlocked = false;
+    let soundEnabled = localStorage.getItem('noti_sound') !== 'off';
+    
+    // Tạo audio element cho sound notification
+    const audioPool = [];
+    function createAudioElement() {
+        const audio = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
+        audio.preload = 'auto';
+        return audio;
+    }
+    
+    // Pre-create audio pool
+    for (let i = 0; i < 3; i++) {
+        audioPool.push(createAudioElement());
+    }
+    let audioIndex = 0;
+    
+    // Unlock audio qua user interaction (bắt buộc cho mobile browsers)
+    function unlockAudio() {
+        if (audioUnlocked) return;
+        const testAudio = audioPool[0];
+        testAudio.volume = 0.01;
+        testAudio.play().then(() => {
+            testAudio.pause();
+            testAudio.currentTime = 0;
+            testAudio.volume = 1;
+            audioUnlocked = true;
+            console.log('🔔 Audio context unlocked');
+        }).catch(() => {});
+    }
+    
+    ['click', 'touchstart', 'touchend', 'keydown'].forEach(evt => {
+        document.addEventListener(evt, unlockAudio, { passive: true });
+    });
+
+    function playNotifSound(times = 1) {
+        if (!soundEnabled || !audioUnlocked) return;
+        
+        let count = 0;
+        function playOnce() {
+            if (count >= times) return;
+            try {
+                const audio = audioPool[audioIndex % audioPool.length];
+                audioIndex++;
+                audio.currentTime = 0;
+                audio.volume = 1;
+                audio.play().catch(e => console.log('Audio play blocked:', e.message));
+            } catch(e) {}
+            count++;
+            if (count < times) {
+                setTimeout(playOnce, 700);
+            }
+        }
+        playOnce();
+    }
+
+    // Expose globally
+    window.__notiPlaySound = playNotifSound;
 
     let lastNotifId = 0;
     let isInitialLoad = true;
@@ -124,9 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let color = '#d4af37';
         let icon = 'fa-bell';
-        if (n.notification_type === 'payment_request') { color = '#ef4444'; icon = 'fa-hand-holding-usd'; }
-        if (n.notification_type === 'new_order') { color = '#10b981'; icon = 'fa-utensils'; }
-        if (n.notification_type === 'support_request') { color = '#f59e0b'; icon = 'fa-concierge-bell'; }
+        let label = 'Thông báo';
+        if (n.notification_type === 'payment_request') { color = '#ef4444'; icon = 'fa-hand-holding-usd'; label = 'Thanh toán'; }
+        if (n.notification_type === 'new_order') { color = '#10b981'; icon = 'fa-utensils'; label = 'Đơn mới'; }
+        if (n.notification_type === 'order_item') { color = '#3b82f6'; icon = 'fa-plus-circle'; label = 'Thêm món'; }
+        if (n.notification_type === 'support_request') { color = '#f59e0b'; icon = 'fa-concierge-bell'; label = 'Hỗ trợ'; }
+        if (n.notification_type === 'scan_qr') { color = '#8b5cf6'; icon = 'fa-qrcode'; label = 'Quét QR'; }
         
         toast.style.borderLeftColor = color;
 
@@ -136,6 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i class="fas ${icon}"></i>
                 </div>
                 <div style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+                        <span style="font-size:0.65rem; font-weight:700; background:${color}15; color:${color}; padding:1px 6px; border-radius:4px;">${label}</span>
+                    </div>
                     <h5 style="margin:0 0 3px 0; font-size:0.95rem; font-weight:800; color:#1e293b;">${n.title}</h5>
                     <p style="margin:0 0 10px 0; font-size:0.8rem; color:#64748b; line-height:1.4;">${n.message}</p>
                     <button onclick="window.location.href='${BASE_URL}/orders?table_id=${n.table_id}'" 
@@ -199,32 +261,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (notifications && notifications.length > 0) {
                 const newestId = Math.max(...notifications.map(n => parseInt(n.id)));
                 
-                // Fix Spam lỗi: Xoá trắng cơ chế bung Toast liên hoàn khi reload lần đầu (isInitialLoad).
-                // Bây giờ tải trang xong sẽ câm lặng, chỉ thông báo những tin mới nổ tới.
+                // Chỉ thông báo khi có tin mới (không spam khi load lần đầu)
                 if (!isInitialLoad && newestId > lastNotifId) {
                     const newUnread = notifications.filter(n => parseInt(n.id) > lastNotifId && !parseInt(n.is_read));
                     if (newUnread.length > 0) {
                         // Xác định mức độ quan trọng
-                        const importantTypes = ['support_request', 'new_order', 'payment_request'];
-                        const isImportant = newUnread.some(n => importantTypes.includes(n.notification_type));
-                        
-                        function playSoundTimes(times) {
-                            try {
-                                const audio = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
-                                audio.play().catch(e => console.log('Audio blocked'));
-                                if (times > 1) {
-                                    setTimeout(() => {
-                                        const audio2 = new Audio(`${BASE_URL}/public/audio/nofi.mp3`);
-                                        audio2.play().catch(e => console.log('Audio blocked'));
-                                    }, 800); // Rút ngắn nhịp còn 800ms cho dồn dập
-                                }
-                            } catch(e) {}
-                        }
+                        const hasPayment = newUnread.some(n => n.notification_type === 'payment_request');
+                        const hasSupport = newUnread.some(n => n.notification_type === 'support_request');
+                        const hasNewOrder = newUnread.some(n => n.notification_type === 'new_order');
 
-                        if (isImportant) {
-                            playSoundTimes(2); // Kêu 2 lần
+                        // Phát âm thanh theo mức độ khẩn cấp
+                        if (hasPayment || hasSupport) {
+                            playNotifSound(3); // 3 tiếng cho thanh toán/hỗ trợ (khẩn cấp)
+                        } else if (hasNewOrder) {
+                            playNotifSound(2); // 2 tiếng cho đơn mới
                         } else {
-                            playSoundTimes(1); // Kêu 1 lần
+                            playNotifSound(1); // 1 tiếng cho thêm món/quét QR
                         }
                         
                         newUnread.reverse().forEach(n => showGlobalToast(n));
@@ -262,12 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateWaiterStats(stats) {
         const setVal = (id, val) => {
             const el = document.getElementById(id);
-            if (el) el.textContent = val;
+            if (el) el.textContent = val || 0;
         };
         setVal('count-all', stats.unread);
         setVal('count-payment', stats.payment);
         setVal('count-order', stats.order);
+        setVal('count-order-item', stats.order_item || 0);
         setVal('count-support', stats.support);
+        setVal('count-scan', stats.scan || 0);
     }
 
     function renderAdminList(notifications) {
@@ -296,9 +350,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getIcon(type) {
         switch(type) {
-            case 'new_order': return 'fa-file-invoice-dollar';
+            case 'new_order': return 'fa-utensils';
+            case 'order_item': return 'fa-plus-circle';
             case 'scan_qr': return 'fa-qrcode';
-            case 'support_request': return 'fa-life-ring';
+            case 'support_request': return 'fa-concierge-bell';
             case 'payment_request': return 'fa-hand-holding-usd';
             default: return 'fa-bell';
         }

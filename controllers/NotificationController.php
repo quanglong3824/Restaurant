@@ -35,17 +35,20 @@ class NotificationController extends Controller
             $page = max(1, (int)($this->input('page', 1)));
             $limit = max(1, (int)($this->input('limit', 15)));
             $filter = $this->input('filter', 'all');
+            $status = $this->input('status', ''); // 'unread', 'read', or ''
 
-            // Lấy danh sách thông báo phân trang
-            $notifications = $this->notifModel->getPaged($page, $limit, $filter);
-            $totalCount = $this->notifModel->countAll($filter);
+            // Lấy danh sách thông báo phân trang (hỗ trợ cả status filter)
+            $notifications = $this->notifModel->getPaged($page, $limit, $filter, $status);
+            $totalCount = $this->notifModel->countAll($filter, $status);
             
             // Lấy thêm stats (unread count) để cập nhật badge
             $stats = [
-                'unread' => $this->notifModel->countUnread(),
-                'payment' => $this->notifModel->countUnreadByType('payment_request'),
-                'order' => $this->notifModel->countUnreadByType('new_order'),
-                'support' => $this->notifModel->countUnreadByType('support_request'),
+                'unread'     => $this->notifModel->countUnread(),
+                'payment'    => $this->notifModel->countUnreadByType('payment_request'),
+                'order'      => $this->notifModel->countUnreadByType('new_order'),
+                'order_item' => $this->notifModel->countUnreadByType('order_item'),
+                'support'    => $this->notifModel->countUnreadByType('support_request'),
+                'scan'       => $this->notifModel->countUnreadByType('scan_qr'),
             ];
 
             $this->json([
