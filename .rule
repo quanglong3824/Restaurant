@@ -1,0 +1,55 @@
+# AURORA RESTAURANT — CODING & UI/UX STANDARDS
+
+## 1. UI/UX DESIGN SYSTEM (Premium & Luxury)
+- **Theme Color:** Sophisticated Gold (`#c5a059`), Deep Slate (`#1e293b`), và Trắng/Xám nhạt cho nội dung.
+- **Typography:**
+  - **Body:** "Outfit", system-ui, sans-serif.
+  - **Headers/Brand:** "Playfair Display", serif.
+- **Layout Architecture:**
+  - **Sidebar:** Cố định bên trái (`280px`), nền trắng, icon màu vàng. Trạng thái `active` có nền tối (`#1e293b`).
+  - **Topbar:** Sticky, hiệu ứng Glassmorphism (blur 10px), cao `80px`.
+  - **Main Content:** Căn lề trái `280px`, padding `2.5rem`.
+- **Global UI Tweaks:**
+  - Luôn cài đặt `zoom: 0.8` trên thẻ `html` để tối ưu hiển thị trên các thiết bị iPad/Tablet.
+  - Bo góc (Border Radius): Standard `12px`, Large `16px`.
+  - Hiệu ứng: Chuyển động mượt mà `0.3s cubic-bezier(0.4, 0, 0.2, 1)`.
+
+## 2. FRONTEND DEVELOPMENT (Vanilla JS & CSS)
+- **CSS Standards:**
+  - Sử dụng CSS Variables (`:root`) trong `admin.css` và `waiter.css`.
+  - Ưu tiên Flexbox và Grid cho bố cục.
+  - Sử dụng helper `asset()` trong PHP để gọi file CSS/JS kèm versioning (Cache Busting).
+- **JS Standards:**
+  - Sử dụng Strict Mode (`'use strict'`).
+  - Bao bọc code trong IIFE để tránh xung đột global scope.
+  - Đối tượng toàn cục: `window.Aurora` chứa các helper như `openModal`, `closeModal`.
+  - Real-time: Sử dụng polling (mỗi 4 giây) qua hàm `pollNotifications`.
+
+## 3. BACKEND DEVELOPMENT (PHP MVC)
+- **Controller:**
+  - Kế thừa từ `abstract class Controller`.
+  - Sử dụng `$this->view('layouts/admin', [...])` để render trang admin.
+  - Trả về JSON: `$this->json(['ok' => true, ...])`.
+  - Input: Luôn sử dụng `$this->input('key')` và ép kiểu (cast) dữ liệu.
+- **Model:**
+  - Kế thừa từ `abstract class Model`.
+  - Sử dụng PDO với Prepared Statements để bảo mật SQL Injection.
+  - Quy tắc đặt tên: `MenuItem`, `Order`, `Table`... (PascalCase).
+- **Authentication:**
+  - Kiểm tra quyền: `Auth::requireRole(ROLE_ADMIN, ROLE_IT)`.
+  - Helper: `e()` để escape HTML, `formatPrice()` cho tiền tệ VND.
+
+## 4. WORKFLOW & CONVENTIONS
+- **Production Safety:** Dự án chạy trực tiếp trên Prod. Chỉ hỏi ý kiến khi thực hiện lệnh xoá tệp tin (`rm`). Các thay đổi code được thực hiện tự động.
+- **Git Policy:**
+  - Commit message luôn bằng **tiếng Việt**.
+  - Tự động thực hiện `git push` ngay sau khi commit thành công.
+- **Naming:**
+  - File Views: `snake_case` (ví dụ: `paid_bill.php`).
+  - File Controllers/Models: `PascalCase`.
+  - CSS Classes: `kebab-case` (ví dụ: `admin-topbar`).
+
+## 5. REUSABLE COMPONENTS
+- **Alerts:** Sử dụng `$_SESSION['flash']` với các type: `success`, `warning`, `danger`, `info`. Tự động ẩn sau 4s.
+- **Modals:** Cấu trúc `.modal-backdrop` > `.modal-content`. Mở bằng `data-modal-open="id"`.
+- **Toasts:** Hệ thống thông báo real-time động với âm thanh `nofi.mp3`.
