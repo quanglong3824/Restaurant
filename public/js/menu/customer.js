@@ -8,6 +8,7 @@ let cart = [];
 let currentItem = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    createLocationIndicator();
     checkLocation();
     startLocationWatcher();
     loadCart();
@@ -21,11 +22,138 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ── Location Status Indicator ────────────────────────────
+function createLocationIndicator() {
+    if (document.getElementById('locStatusIndicator')) return;
+    
+    const indicator = document.createElement('div');
+    indicator.id = 'locStatusIndicator';
+    indicator.innerHTML = `
+        <div class="loc-dot"></div>
+        <span class="loc-label">Định vị</span>
+    `;
+    document.body.appendChild(indicator);
+
+    // Add styles
+    const style = document.createElement('style');
+    style.id = 'locIndicatorStyles';
+    style.textContent = `
+        #locStatusIndicator {
+            position: fixed;
+            bottom: 90px;
+            left: 12px;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px 6px 8px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        #locStatusIndicator:active { transform: scale(0.95); }
+        #locStatusIndicator .loc-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        #locStatusIndicator .loc-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        #locStatusIndicator.loc-granted .loc-dot {
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            animation: locPulse 2s infinite;
+        }
+        #locStatusIndicator.loc-granted .loc-label { color: #10b981; }
+        #locStatusIndicator.loc-denied .loc-dot {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+        #locStatusIndicator.loc-denied .loc-label { color: #ef4444; }
+        #locStatusIndicator.loc-checking .loc-dot {
+            background: #f59e0b;
+            animation: locBlink 1s infinite;
+        }
+        @keyframes locPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+        @keyframes locBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Kiểm tra trạng thái ban đầu
+    updateLocationIndicator('checking', 'Đang kiểm tra...');
+    
+    // Click vào indicator để xem chi tiết
+    indicator.addEventListener('click', () => {
+        const isVerified = localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true';
+        if (isVerified) {
+            showToast('✅ Vị trí đã xác thực. Bạn đang trong khu vực nhà hàng.');
+        } else {
+            showToast('⚠️ Chưa xác thực vị trí. Vui lòng bấm nút xác thực.');
+        }
+    });
+}
+
+function updateLocationIndicator(status, label) {
+    const el = document.getElementById('locStatusIndicator');
+    if (!el) return;
+    el.className = ''; // reset
+    el.classList.add(`loc-${status}`);
+    const labelEl = el.querySelector('.loc-label');
+    if (labelEl) labelEl.textContent = label || 'Định vị';
+}
+
 let locationWatcher = null;
-function startLocationWatcher() {
+async function startLocationWatcher() {
     // Only monitor if already verified and wrapper is visible
     if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') return;
     if (!navigator.geolocation) return;
+
+    // Kiểm tra quyền trước khi gọi watchPosition để tránh popup lặp
+    try {
+        if (navigator.permissions) {
+            const permStatus = await navigator.permissions.query({ name: 'geolocation' });
+            if (permStatus.state === 'denied') {
+                console.warn('Geolocation permission denied, skipping watcher');
+                updateLocationIndicator('denied', 'Bị từ chối');
+                return;
+            }
+            if (permStatus.state === 'granted') {
+                updateLocationIndicator('granted', 'Đã xác thực');
+            }
+            // Listen for permission changes
+            permStatus.onchange = () => {
+                if (permStatus.state === 'denied') {
+                    updateLocationIndicator('denied', 'Bị từ chối');
+                    if (locationWatcher !== null) {
+                        navigator.geolocation.clearWatch(locationWatcher);
+                        locationWatcher = null;
+                    }
+                } else if (permStatus.state === 'granted') {
+                    updateLocationIndicator('granted', 'Đã xác thực');
+                }
+            };
+        }
+    } catch(e) {
+        // permissions API not supported, proceed anyway
+    }
 
     // Use watchPosition for high efficiency/real-time updates
     locationWatcher = navigator.geolocation.watchPosition(
@@ -42,6 +170,7 @@ function startLocationWatcher() {
             
             if (distance > CUSTOMER_CONFIG.maxDistance) {
                 // Out of range -> Freeze everything
+                updateLocationIndicator('denied', `Ngoài phạm vi (${Math.round(distance)}m)`);
                 if (frozenOverlay) {
                     frozenOverlay.style.display = 'flex';
                     if (frozenDistVal) frozenDistVal.textContent = Math.round(distance);
@@ -49,6 +178,7 @@ function startLocationWatcher() {
                 }
             } else {
                 // Back in range -> Unfreeze
+                updateLocationIndicator('granted', `OK (${Math.round(distance)}m)`);
                 if (frozenOverlay) {
                     frozenOverlay.style.display = 'none';
                     document.body.style.overflow = '';
@@ -57,6 +187,9 @@ function startLocationWatcher() {
         },
         (err) => {
             console.warn("Location monitoring error:", err.message);
+            if (err.code === err.PERMISSION_DENIED) {
+                updateLocationIndicator('denied', 'Bị từ chối');
+            }
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
     );
@@ -72,14 +205,16 @@ function checkLocation() {
     if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true') {
         if (overlay) overlay.style.display = 'none';
         if (wrapper) wrapper.style.display = 'block';
+        updateLocationIndicator('granted', 'Đã xác thực');
         return;
     }
 
     // Force overlay visible if not verified
     if (overlay) overlay.style.display = 'flex';
     if (wrapper) wrapper.style.display = 'none';
+    updateLocationIndicator('checking', 'Chưa xác thực');
 
-    const requestLocation = (isInitial = false) => {
+    const requestLocation = async (isInitial = false) => {
         // Only update button state if not an initial silent check
         if (isInitial !== true) {
             if (btn) {
@@ -87,11 +222,33 @@ function checkLocation() {
                 btn.disabled = true;
             }
             if (errorEl) errorEl.style.display = 'none';
+            updateLocationIndicator('checking', 'Đang kiểm tra...');
         }
 
         if (!navigator.geolocation) {
             if (isInitial !== true) showLocError("Trình duyệt không hỗ trợ định vị.");
+            updateLocationIndicator('denied', 'Không hỗ trợ');
             return;
+        }
+
+        // Kiểm tra quyền trước bằng Permissions API (tránh popup lặp khi reload)
+        if (isInitial === true && navigator.permissions) {
+            try {
+                const perm = await navigator.permissions.query({ name: 'geolocation' });
+                if (perm.state === 'denied') {
+                    // Quyền bị từ chối → không gọi getCurrentPosition (tránh popup)
+                    updateLocationIndicator('denied', 'Bị từ chối');
+                    return;
+                }
+                if (perm.state === 'prompt') {
+                    // Quyền chưa được cấp → không gọi silent check (chờ user bấm nút)
+                    updateLocationIndicator('checking', 'Chờ xác thực');
+                    return;
+                }
+                // perm.state === 'granted' → tiếp tục kiểm tra khoảng cách
+            } catch(e) {
+                // Permissions API không hỗ trợ, tiếp tục bình thường
+            }
         }
 
         navigator.geolocation.getCurrentPosition(
@@ -128,6 +285,7 @@ function checkLocation() {
 
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
+                    updateLocationIndicator('denied', `Xa (${Math.round(distance)}m)`);
                 } else {
                     // Success state visual
                     if (btn) {
@@ -136,6 +294,7 @@ function checkLocation() {
                     }
                     
                     localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
+                    updateLocationIndicator('granted', `OK (${Math.round(distance)}m)`);
                     startLocationWatcher(); // Trigger watcher
                     setTimeout(() => {
                         if (overlay) {
@@ -155,9 +314,18 @@ function checkLocation() {
                 if (isInitial !== true) {
                     let msg = "Vui lòng cấp quyền định vị: ";
                     switch(err.code) {
-                        case err.PERMISSION_DENIED: msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang."; break;
-                        case err.POSITION_UNAVAILABLE: msg += "Thông tin vị trí không khả dụng."; break;
-                        case err.TIMEOUT: msg += "Hết thời gian yêu cầu vị trí."; break;
+                        case err.PERMISSION_DENIED: 
+                            msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang."; 
+                            updateLocationIndicator('denied', 'Bị từ chối');
+                            break;
+                        case err.POSITION_UNAVAILABLE: 
+                            msg += "Thông tin vị trí không khả dụng."; 
+                            updateLocationIndicator('denied', 'Không có tín hiệu');
+                            break;
+                        case err.TIMEOUT: 
+                            msg += "Hết thời gian yêu cầu vị trí."; 
+                            updateLocationIndicator('denied', 'Hết thời gian');
+                            break;
                     }
                     showLocError(msg);
                 }
@@ -166,7 +334,7 @@ function checkLocation() {
         );
     };
 
-    // Auto trigger silent check to update distance UI
+    // Auto trigger silent check to update distance UI (chỉ khi đã có quyền)
     setTimeout(() => {
         if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') {
             requestLocation(true);
@@ -174,7 +342,7 @@ function checkLocation() {
     }, 800);
 
     if (btn) {
-        btn.addEventListener('click', requestLocation);
+        btn.addEventListener('click', () => requestLocation(false));
     }
 
     function showLocError(msg) {
