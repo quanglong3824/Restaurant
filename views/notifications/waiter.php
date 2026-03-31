@@ -509,6 +509,26 @@ document.addEventListener('DOMContentLoaded', () => {
         listEl.appendChild(fragment);
     }
 
+    // Mini toast cho trang notification (không có showToast global)
+    function notiToast(msg, type = 'success') {
+        const t = document.createElement('div');
+        t.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;
+            background:${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#f59e0b'};
+            color:white;padding:12px 24px;border-radius:50px;font-size:0.85rem;font-weight:700;
+            box-shadow:0 10px 25px rgba(0,0,0,0.2);animation:slideDown .3s ease;white-space:nowrap;`;
+        t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" style="margin-right:8px;"></i>${msg}`;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 2500);
+    }
+
+    // Add animation keyframe
+    if (!document.getElementById('notiToastStyle')) {
+        const s = document.createElement('style');
+        s.id = 'notiToastStyle';
+        s.textContent = '@keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }';
+        document.head.appendChild(s);
+    }
+
     window.handleAction = async (id, tableId, type, orderId) => {
         try {
             const fd = new FormData();
@@ -525,28 +545,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 await fetch(`${BASE_URL}/api/notifications/resolve-support`, { method: 'POST', body: fd2 });
             }
 
-            // Tuỳ type, chuyển hướng phù hợp
+            // Tuỳ type, thực hiện action phù hợp
             if (type === 'payment_request') {
-                // Chuyển thẳng tới trang order bàn, xử lý thanh toán
-                if (window.showToast) showToast('Đang mở trang thanh toán...', 'info');
+                notiToast('Đang mở trang thanh toán...', 'info');
                 window.location.href = `${BASE_URL}/orders?table_id=${tableId}`;
                 return;
             }
 
+            // Nếu là đơn mới hoặc thêm món → gọi API xác nhận món (confirm)
+            if ((type === 'new_order' || type === 'order_item') && orderId) {
+                try {
+                    const confirmFd = new URLSearchParams();
+                    confirmFd.append('order_id', orderId);
+                    confirmFd.append('table_id', tableId);
+                    const confirmRes = await fetch(`${BASE_URL}/orders/confirm`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: confirmFd
+                    });
+                    const confirmData = await confirmRes.json();
+                    if (confirmData.ok) {
+                        notiToast(type === 'new_order' ? 'Đã xác nhận đơn hàng mới!' : 'Đã xác nhận thêm món!');
+                    } else {
+                        notiToast(confirmData.message || 'Lỗi xác nhận món', 'error');
+                    }
+                } catch (confirmErr) {
+                    console.error('Confirm error:', confirmErr);
+                    notiToast('Lỗi xác nhận món: ' + confirmErr.message, 'error');
+                }
+            } else {
+                // Toast message tuỳ loại (scan_qr, support đã xử lý ở trên)
+                const msgs = {
+                    'support_request': 'Đã đánh dấu hỗ trợ xong!',
+                    'scan_qr': 'Đã xác nhận quét QR!',
+                };
+                notiToast(msgs[type] || 'Đã xác nhận xử lý xong');
+            }
+
             fetchNotifications(true);
-            
-            // Toast message tuỳ loại
-            const msgs = {
-                'new_order': 'Đã xác nhận đơn hàng mới!',
-                'order_item': 'Đã xác nhận thêm món!',
-                'support_request': 'Đã đánh dấu hỗ trợ xong!',
-                'scan_qr': 'Đã xác nhận quét QR!',
-            };
-            if (window.showToast) showToast(msgs[type] || 'Đã xác nhận xử lý xong');
             
         } catch (e) {
             console.error(e);
-            alert('Lỗi khi thực hiện thao tác: ' + e.message);
+            notiToast('Lỗi: ' + e.message, 'error');
         }
     };
 
@@ -558,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('Xác nhận đánh dấu tất cả thông báo là đã xử lý?')) return;
         await fetch(`${BASE_URL}/api/notifications/mark-read`, { method: 'POST' });
         fetchNotifications(true);
-        if (window.showToast) showToast('Đã đánh dấu tất cả là đã xử lý');
+        notiToast('Đã đánh dấu tất cả là đã xử lý');
     };
 
     // Type filters

@@ -151,7 +151,7 @@ function updateCartUI(data) {
                                 </button>
                             ` : ''}
                             <span class="cart-item-status ${it.status}" style="font-size:0.7rem; padding:2px 6px; border-radius:4px; font-weight:700; text-transform:uppercase;">
-                                ${it.status === 'confirmed' ? '<i class="fas fa-check-circle"></i> ĐÃ GỬI' : (it.status === 'pending' ? '<i class="fas fa-clock"></i> CHỜ NV' : 'NHÁP')}
+                                ${it.status === 'confirmed' ? '<i class="fas fa-check-circle"></i> ĐÃ XÁC NHẬN' : (it.status === 'pending' ? '<i class="fas fa-clock"></i> CHỜNV' : 'NHÁP')}
                             </span>
                         </div>
                     </div>
@@ -170,7 +170,7 @@ function updateCartUI(data) {
                 finalHtml += `<div class="section-label"><i class="fas fa-edit"></i> Món đang chọn (nháp)</div>${draftsHtml}`;
             }
             if (confirmedHtml) {
-                finalHtml += `<div class="section-label"><i class="fas fa-check-circle"></i> Đã gửi bếp (Đang làm)</div><div class="confirmed-section">${confirmedHtml}</div>`;
+                finalHtml += `<div class="section-label"><i class="fas fa-check-circle"></i> Đã xác nhận (Đang làm)</div><div class="confirmed-section">${confirmedHtml}</div>`;
             }
             body.innerHTML = finalHtml;
 
@@ -179,7 +179,7 @@ function updateCartUI(data) {
                 let btnsHtml = '';
                 
                 if (draftCount > 0) {
-                    btnsHtml += `<button type="button" onclick="confirmOrderAjax(${currentOrderId})" class="cart-action-btn gold w-100 mb-2"><i class="fas fa-concierge-bell"></i> GỬI BẾP (${draftCount} món)</button>`;
+                    btnsHtml += `<button type="button" onclick="confirmOrderAjax(${currentOrderId})" class="cart-action-btn gold w-100 mb-2"><i class="fas fa-check-circle"></i> XÁC NHẬN MÓN (${draftCount} món)</button>`;
                 } else if (data.items.length > 0) {
                     btnsHtml += `<a href="${MENU_CONFIG.baseUrl}/orders?table_id=${MENU_CONFIG.tableId}&order_id=${currentOrderId}" class="cart-action-btn success w-100 mb-2"><i class="fas fa-check-circle"></i> XEM BILL</a>`;
                 }
@@ -211,12 +211,12 @@ function removeCartItem(itemId) {
 }
 
 function confirmOrderAjax(orderId) {
-    if (!confirm('Xác nhận gửi các món nháp này xuống bếp?')) return;
+    if (!confirm('Xác nhận các món nháp này?')) return;
     fetch(MENU_CONFIG.baseUrl + '/orders/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ order_id: orderId, table_id: MENU_CONFIG.tableId })
-    }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã gửi bếp thành công!'); updateCartUI(res); } });
+    }).then(r => r.json()).then(res => { if (res.ok) { showToast('Đã xác nhận món thành công!'); updateCartUI(res); } });
 }
 
 let _menuSelectedOpts = [];

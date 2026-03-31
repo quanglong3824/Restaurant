@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.ok) {
-                        showAlert(data.message || 'Đã gửi bếp thành công!', 'success');
+                        showAlert(data.message || 'Đã xác nhận món thành công!', 'success');
                         setTimeout(() => location.reload(), 1000);
                     } else {
                         showAlert(data.message || 'Có lỗi xảy ra!', 'danger');
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showAlert('Có lỗi xảy ra khi gửi bếp!', 'danger');
+                    showAlert('Có lỗi xảy ra khi xác nhận món!', 'danger');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                 });

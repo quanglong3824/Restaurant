@@ -23,9 +23,9 @@ if (!empty($items)) {
         <div class="empty-state py-5 text-center">
             <i class="fas fa-receipt fa-4x mb-3 opacity-40"></i>
             <h4 class="fw-bold mt-3">Bàn chưa có order</h4>
-            <p class="text-muted small mt-2">Quay lại sơ đồ bàn để bắt đầu phục vụ.</p>
-            <a href="<?= BASE_URL ?>/tables" class="btn btn-gold px-5 py-3 mt-4 shadow-lg">
-                <i class="fas fa-arrow-left me-2"></i>VỀ SƠ ĐỒ BÀN
+            <p class="text-muted small mt-2">Quay lại danh sách order để bắt đầu phục vụ.</p>
+            <a href="<?= BASE_URL ?>/orders" class="btn btn-gold px-5 py-3 mt-4 shadow-lg">
+                <i class="fas fa-arrow-left me-2"></i>XEM DANH SÁCH ORDER
             </a>
         </div>
     <?php else: ?>
@@ -194,7 +194,7 @@ if (!empty($items)) {
             <!-- Draft Items Section -->
             <?php if (!empty($draftItems)): ?>
                 <div class="section-label text-warning mt-4">
-                    <i class="fas fa-clock me-1"></i> CHỜ GỬI BẾP
+                    <i class="fas fa-clock me-1"></i> CHỜ XÁC NHẬN
                 </div>
                 <div class="items-grid-draft">
                     <?php
@@ -332,7 +332,7 @@ if (!empty($items)) {
                                 <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                 <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
-                                    <i class="fas fa-concierge-bell me-2"></i> XÁC NHẬN MÓN MỚI (GỬI BẾP)
+                                    <i class="fas fa-check-circle me-2"></i> XÁC NHẬN MÓN
                                 </button>
                             </form>
                         <?php endif; ?>

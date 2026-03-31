@@ -294,7 +294,7 @@
                         <?php $draftCount = $orderId > 0 ? count(array_filter($orderItems, fn($it) => $it['status'] === 'draft')) : 0; ?>
                         <?php if ($draftCount > 0): ?>
                             <button type="button" onclick="confirmOrderAjax(<?= $orderId ?>)" class="cart-action-btn gold">
-                                <i class="fas fa-concierge-bell"></i> GỬI BẾP (<?= $draftCount ?>)
+                                <i class="fas fa-check-circle"></i> XÁC NHẬN MÓN (<?= $draftCount ?>)
                             </button>
                         <?php elseif ($orderId > 0 && !empty($orderItems)): ?>
                             <a href="<?= BASE_URL ?>/orders?table_id=<?= $tableId ?>&order_id=<?= $orderId ?>" class="cart-action-btn success">
