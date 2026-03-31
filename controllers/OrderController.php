@@ -402,7 +402,7 @@ class OrderController extends Controller
 
         if (Auth::isLoggedIn()) {
             // Nhân viên xác nhận: Chuyển thẳng sang confirmed
-            $this->orderModel->confirmItems($orderId);
+            $this->orderModel->confirmDraftItems($orderId);
             $message = 'Đã xác nhận món thành công!';
         } else {
             // Khách hàng gửi: Chuyển sang pending và tạo yêu cầu support
