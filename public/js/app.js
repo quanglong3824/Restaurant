@@ -164,8 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose globally
     window.__notiPlaySound = playNotifSound;
 
-    let lastNotifId = 0;
+    // Persist lastNotifId qua reload để tránh spam toast khi tải lại trang
+    let lastNotifId = parseInt(sessionStorage.getItem('aurora_lastNotifId') || '0', 10);
     let isInitialLoad = true;
+    let pollLock = false; // Guard chống race condition giữa các poll
 
     // Global Toast Container
     const toastContainer = document.createElement('div');
@@ -248,11 +250,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function pollNotifications() {
+        // Guard chống race condition: nếu đang poll thì bỏ qua
+        if (pollLock) return;
+        pollLock = true;
+
         try {
             const response = await fetch(`${BASE_URL}/api/notifications/poll`);
             const data = await response.json();
             
-            if (!data.ok) return;
+            if (!data.ok) { pollLock = false; return; }
 
             const unreadCount = data.stats.unread;
             const notifications = data.notifications;
@@ -261,8 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (notifications && notifications.length > 0) {
                 const newestId = Math.max(...notifications.map(n => parseInt(n.id)));
                 
-                // Chỉ thông báo khi có tin mới (không spam khi load lần đầu)
-                if (!isInitialLoad && newestId > lastNotifId) {
+                // Chỉ bung toast + phát âm thanh khi:
+                // 1. KHÔNG phải lần load đầu tiên (isInitialLoad === false)
+                // 2. Có notification ID mới hơn lastNotifId đã lưu
+                if (!isInitialLoad && lastNotifId > 0 && newestId > lastNotifId) {
                     const newUnread = notifications.filter(n => parseInt(n.id) > lastNotifId && !parseInt(n.is_read));
                     if (newUnread.length > 0) {
                         // Xác định mức độ quan trọng
@@ -282,7 +290,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         newUnread.reverse().forEach(n => showGlobalToast(n));
                     }
                 }
+
+                // Cập nhật lastNotifId và lưu vào sessionStorage
                 lastNotifId = newestId;
+                sessionStorage.setItem('aurora_lastNotifId', String(newestId));
             }
             
             isInitialLoad = false;
@@ -309,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (e) { console.error("Poll failed", e); }
+        finally { pollLock = false; }
     }
 
     function updateWaiterStats(stats) {
