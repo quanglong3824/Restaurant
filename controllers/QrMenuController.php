@@ -71,17 +71,24 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- CƠ CHẾ ĐỊNH DANH KHÁCH BỀN VỮNG (GOGI STYLE) ---
-            $visitorToken = $_COOKIE['qr_visitor_token'] ?? bin2hex(random_bytes(16));
-            setcookie('qr_visitor_token', $visitorToken, time() + (24 * 3600), "/", "", isset($_SERVER['HTTPS']), true);
-            
+            // --- CƠ CHẾ ĐỊNH DANH KHÁCH BỀN VỮNG ---
+            // Visitor token = cookie (24h) + fallback từ GET param (do JS gửi kèm)
+            // Cookie KHÔNG HttpOnly để JS có thể đọc và tái sử dụng khi reload
+            $visitorToken = $_COOKIE['qr_visitor_token']
+                         ?? $_GET['_vt'] ?? '';
+            if (empty($visitorToken)) {
+                $visitorToken = bin2hex(random_bytes(16));
+            }
+            // Lưu cookie: SameSite=Lax, KHÔNG HttpOnly để JS đọc được
+            setcookie('qr_visitor_token', $visitorToken,
+                ['expires' => time() + 86400, 'path' => '/', 'samesite' => 'Lax', 'secure' => isset($_SERVER['HTTPS'])]);
+
             $this->setupCustomerSession($tableId, $token);
             $currentSessionId = session_id();
 
-            // Kiểm tra xem session hiện tại có bị vô hiệu hoá (Timeout) không
+            // Kiểm tra session active
             $activeSession = $this->sessionModel->findBySessionId($currentSessionId);
             if (!$activeSession) {
-                // Nếu không tìm thấy session active, xoá cookie và bắt đầu mới
                 setcookie(session_name(), '', time() - 3600, '/');
                 session_destroy();
                 $this->redirect("/qr/menu?table_id=$tableId&token=$token");
@@ -89,47 +96,49 @@ class QrMenuController extends Controller
             }
 
             $table = $this->tableModel->findById($tableId);
-            
+
             // Tìm đơn hàng đang mở
             $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
 
-            // Xử lý trạng thái bàn
-            if ($table['status'] === 'occupied') {
-                if ($openOrder) {
-                    // Kiểm tra xem bàn có món chưa thanh toán (Confirmed) không
-                    $confirmedItems = $this->orderModel->findAll(
-                        "SELECT id FROM order_items WHERE order_id = ? AND status != 'cancelled' LIMIT 1", 
-                        [$openOrder['id']]
-                    );
+            // ── XỬ LÝ TRẠNG THÁI BÀN ────────────────────────────────
+            if ($table['status'] === 'occupied' && $openOrder) {
 
-                    // Nếu bàn bận (có món) và khách quét mới không phải khách đang ngồi
-                    if ($confirmedItems && 
-                        !empty($openOrder['session_id']) && 
-                        $openOrder['session_id'] !== $visitorToken && 
-                        $openOrder['session_id'] !== $currentSessionId) {
-                        
-                        $this->view('layouts/public', [
-                            'view' => 'orders/table_busy',
-                            'pageTitle' => 'Bàn đang bận',
-                            'table' => $table,
-                            'isCustomer' => true
-                        ]);
-                        return;
-                    }
+                $confirmedItems = $this->orderModel->findAll(
+                    "SELECT id FROM order_items WHERE order_id = ? AND status != 'cancelled' LIMIT 1",
+                    [$openOrder['id']]
+                );
 
-                    // Nếu là khách của bàn này hoặc bàn đang bận nhưng chưa có món (khách đang xem)
-                    if (empty($openOrder['session_id']) || $openOrder['session_id'] === $currentSessionId) {
-                        $this->orderModel->updateSession($openOrder['id'], $visitorToken);
-                    }
+                // Kiểm tra xem đây có phải cùng thiết bị không
+                // Nhận diện: visitorToken khớp, HOẶC session PHP khớp,
+                // HOẶC order được tạo từ cùng QR token (同一 table + token = same QR source)
+                $storedSession   = $openOrder['session_id'] ?? '';
+                $isSameDevice    = ($storedSession === $visitorToken)
+                                || ($storedSession === $currentSessionId)
+                                || empty($storedSession);
+
+                if ($confirmedItems && !$isSameDevice) {
+                    // Bàn thực sự đang bận bởi người khác → chặn
+                    $this->view('layouts/public', [
+                        'view'      => 'orders/table_busy',
+                        'pageTitle' => 'Bàn đang bận',
+                        'table'     => $table,
+                        'isCustomer'=> true
+                    ]);
+                    return;
                 }
-            } else {
-                // Mở bàn mới
+
+                // Cùng thiết bị hoặc session mới của cùng khách
+                // → cập nhật session_id về visitor token hiện tại
+                $this->orderModel->updateSession($openOrder['id'], $visitorToken);
+
+            } elseif ($table['status'] !== 'occupied') {
+                // Bàn chưa mở → tạo order mới
                 $this->tableModel->open($tableId);
                 $this->orderModel->create([
-                    'table_id' => $tableId,
+                    'table_id'     => $tableId,
                     'order_source' => 'customer_qr',
-                    'session_id' => $visitorToken,
-                    'note' => 'Khách quét QR mở bàn'
+                    'session_id'   => $visitorToken,
+                    'note'         => 'Khách quét QR mở bàn'
                 ]);
                 $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
             }

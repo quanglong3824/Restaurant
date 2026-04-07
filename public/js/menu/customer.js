@@ -7,6 +7,12 @@ console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b
 let cart = [];
 let currentItem = null;
 
+/** Đọc giá trị cookie theo tên */
+function _getCookie(name) {
+    const m = document.cookie.match('(?:^|; )' + name.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1') + '=([^;]*)');
+    return m ? decodeURIComponent(m[1]) : null;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     createLocationIndicator();
     checkLocation();
@@ -283,19 +289,22 @@ function checkLocation() {
                 // Wait for user to click button for final gatekeep.
                 if (isInitial === true) return;
 
+
                 if (distance > CUSTOMER_CONFIG.maxDistance) {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
                     updateLocationIndicator('denied', `Xa (${Math.round(distance)}m)`);
                 } else {
-                    // Success state visual
+                    // Xác thực thành công
+                    localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
+                    // Lưu visitor token vào localStorage để phục hồi cookie nếu bị trình duyệt xóa
+                    const _vt = _getCookie('qr_visitor_token');
+                    if (_vt) localStorage.setItem(`qr_vt_${CUSTOMER_CONFIG.tableId}`, _vt);
                     if (btn) {
                         btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> XÁC THỰC THÀNH CÔNG!';
                         btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                     }
-                    
-                    localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
                     updateLocationIndicator('granted', `OK (${Math.round(distance)}m)`);
-                    startLocationWatcher(); // Trigger watcher
+                    startLocationWatcher();
                     setTimeout(() => {
                         if (overlay) {
                             overlay.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
@@ -309,6 +318,7 @@ function checkLocation() {
                         }
                     }, 500);
                 }
+
             },
             (err) => {
                 if (isInitial !== true) {

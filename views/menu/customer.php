@@ -49,9 +49,14 @@ if ($hasItems) {
 
 <div id="locationOverlay" class="loc-overlay">
     <script>
-        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG?.tableId}`) === 'true') {
-            document.getElementById('locationOverlay').style.display = 'none';
-        }
+        // Dùng PHP render trực tiếp table ID — CUSTOMER_CONFIG chưa khai báo ở đây
+        (function(){
+            var _tid = <?= (int)$table['id'] ?>;
+            var _key = 'locationVerified_table_' + _tid;
+            if (localStorage.getItem(_key) === 'true') {
+                document.getElementById('locationOverlay').style.display = 'none';
+            }
+        })();
     </script>
     <div class="loc-card">
         <div class="loc-icon-ring"><i class="fas fa-shield-alt"></i></div>
@@ -247,9 +252,23 @@ if ($hasItems) {
 ═══════════════════════════════════════════════════════ -->
 <div class="customer-menu-wrapper" id="menuWrapper" style="display:none;">
     <script>
-        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG?.tableId}`) === 'true') {
-            document.getElementById('menuWrapper').style.display = 'block';
-        }
+        // Dùng PHP render trực tiếp — CUSTOMER_CONFIG chưa khai báo ở đây
+        (function(){
+            var _tid = <?= (int)$table['id'] ?>;
+            var _key = 'locationVerified_table_' + _tid;
+            if (localStorage.getItem(_key) === 'true') {
+                document.getElementById('menuWrapper').style.display = 'block';
+            }
+
+            // Phục hồi visitor token từ localStorage nếu cookie bị xóa
+            // Điều này giúp QrMenuController nhận diện đúng khi scan lại
+            var _vt = localStorage.getItem('qr_vt_' + _tid);
+            if (_vt && !document.cookie.includes('qr_visitor_token')) {
+                // Gửi lại visitor token qua redirect nếu cần
+                // (chỉ đầy đủ khi page được tải từ QR scan mới)
+                document.cookie = 'qr_visitor_token=' + _vt + '; path=/; max-age=86400; SameSite=Lax';
+            }
+        })();
     </script>
 
     <!-- Header -->
