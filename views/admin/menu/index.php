@@ -10,6 +10,13 @@ $countBoth       = count(array_filter($items, fn($i) => ($i['service_type'] ?? '
 
 <div class="card">
     <div class="card-header" style="flex-direction:column;align-items:flex-start;gap:1rem;">
+        <!-- Pagination Top -->
+        <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+        <div style="width:100%;">
+            <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/menu', array_filter(['type' => $_GET['type'] ?? ''])) ?>
+        </div>
+        <?php endif; ?>
+        
         <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:.75rem;">
             <h2 style="margin:0;"><i class="fas fa-utensils"></i> Danh sách Món ăn
                 <span id="countBadge" style="font-size:.75rem;font-weight:600;background:var(--gold);color:#fff;padding:.15rem .65rem;border-radius:20px;margin-left:.5rem;vertical-align:middle;"><?= $countAll ?> món</span>

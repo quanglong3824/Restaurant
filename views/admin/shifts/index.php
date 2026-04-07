@@ -116,6 +116,14 @@ if ($flash) unset($_SESSION['flash']);
                 <h2><i class="fas fa-cog"></i> Cấu hình Ca trực</h2>
                 <span style="font-size:.8rem;color:var(--text-muted);"><?= count($shifts) ?> ca đang hoạt động</span>
             </div>
+            
+            <!-- Pagination for shifts -->
+            <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+            <div style="padding: 0 1.2rem;">
+                <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/shifts', []) ?>
+            </div>
+            <?php endif; ?>
+            
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -174,6 +182,13 @@ if ($flash) unset($_SESSION['flash']);
                 </table>
             </div>
         </div>
+
+        <!-- Assignment Pagination Bottom -->
+        <?php if (isset($assignmentPagination) && $assignmentPagination['totalPages'] > 1): ?>
+        <div style="margin-top: -1rem;">
+            <?= renderPagination($assignmentPagination['page'], $assignmentPagination['totalPages'], BASE_URL . '/admin/shifts', ['assign_page' => '']) ?>
+        </div>
+        <?php endif; ?>
 
         <!-- ── Lịch sử phân công 7 ngày ─────────────────── -->
         <?php if (!empty($recentHistory)): ?>

@@ -573,36 +573,14 @@ $actionIcons = [
 
     <!-- Pagination -->
     <?php if ($pagination['totalPages'] > 1): ?>
-    <div class="activity-pagination">
-        <div class="pagination-info">
-            Hiển thị <?= ($pagination['page'] - 1) * $pagination['limit'] + 1 ?> - <?= min($pagination['page'] * $pagination['limit'], $pagination['total']) ?> / <?= $pagination['total'] ?> bản ghi
-        </div>
-        <div class="pagination-buttons">
-            <button onclick="goToPage(1)" <?= $pagination['page'] === 1 ? 'disabled' : '' ?>>
-                <i class="fas fa-angle-double-left"></i>
-            </button>
-            <button onclick="goToPage(<?= $pagination['page'] - 1 ?>)" <?= $pagination['page'] === 1 ? 'disabled' : '' ?>>
-                <i class="fas fa-angle-left"></i>
-            </button>
-            
-            <?php 
-            $startPage = max(1, $pagination['page'] - 2);
-            $endPage = min($pagination['totalPages'], $pagination['page'] + 2);
-            for ($i = $startPage; $i <= $endPage; $i++): 
-            ?>
-                <button onclick="goToPage(<?= $i ?>)" class="<?= $i === $pagination['page'] ? 'active' : '' ?>">
-                    <?= $i ?>
-                </button>
-            <?php endfor; ?>
-            
-            <button onclick="goToPage(<?= $pagination['page'] + 1 ?>)" <?= $pagination['page'] === $pagination['totalPages'] ? 'disabled' : '' ?>>
-                <i class="fas fa-angle-right"></i>
-            </button>
-            <button onclick="goToPage(<?= $pagination['totalPages'] ?>)" <?= $pagination['page'] === $pagination['totalPages'] ? 'disabled' : '' ?>>
-                <i class="fas fa-angle-double-right"></i>
-            </button>
-        </div>
-    </div>
+    <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/activity', array_filter([
+        'action' => $filters['action'] ?? '',
+        'entity' => $filters['entity'] ?? '',
+        'user_id' => $filters['user_id'] ?? '',
+        'level' => $filters['level'] ?? '',
+        'from' => $filters['from'] ?? '',
+        'to' => $filters['to'] ?? '',
+    ])) ?>
     <?php endif; ?>
 </div>
 

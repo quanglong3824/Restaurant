@@ -32,14 +32,28 @@ class AdminTableController extends Controller
         $qrModel = new QrTable();
         $qrModel->cleanupInvalidTokens();
 
-        $tables = $this->model->getAllForAdminByType($type);
+        $page = max(1, (int) $this->input('page', 1));
+        $limit = 15;
+        
+        $allTables = $this->model->getAllForAdminByType($type);
+        $total = count($allTables);
+        $offset = ($page - 1) * $limit;
+        
+        $tables = array_slice($allTables, $offset, $limit);
+        
         $this->view('layouts/admin', [
             'view' => 'admin/tables/index',
             'pageTitle' => $type === 'room' ? 'Quản lý Phòng Lưu Trú' : 'Quản lý Bàn',
-            'pageSubtitle' => count($tables) . ($type === 'room' ? ' phòng' : ' bàn'),
+            'pageSubtitle' => $total . ($type === 'room' ? ' phòng' : ' bàn'),
             'tables' => $tables,
             'type' => $type,
             'editItem' => null,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'totalPages' => ceil($total / $limit),
+            ],
         ]);
     }
 

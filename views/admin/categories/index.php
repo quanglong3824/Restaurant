@@ -7,6 +7,13 @@
             <h2><i class="fas fa-tags"></i> Danh Mục Món</h2>
             <span class="badge badge-gold"><?= count($categories) ?> danh mục</span>
         </div>
+        
+        <!-- Pagination Top -->
+        <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+        <div style="margin-bottom: 1rem;">
+            <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/categories', array_filter(['search' => $_GET['search'] ?? '', 'type' => $_GET['type'] ?? ''])) ?>
+        </div>
+        <?php endif; ?>
         <div class="table-wrap">
             <table>
                 <thead>

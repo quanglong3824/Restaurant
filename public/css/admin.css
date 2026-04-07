@@ -600,7 +600,43 @@ tbody tr:hover {
     box-shadow: 0 0 0 3px var(--gold-glow);
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* ── Mobile & Tablet Responsive ───────────────────────────── */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .admin-main {
+    padding: 1.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .content-with-aside,
+  .content-with-aside--sm {
+    grid-template-columns: 1fr;
+  }
+  
+  .sticky-aside {
+    position: static;
+    margin-top: 1rem;
+  }
+  
+  /* Table responsive improvements */
+  .table-wrap {
+    border-radius: 8px;
+  }
+  
+  table {
+    font-size: 0.85rem;
+  }
+  
+  th, td {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Mobile Landscape & Tablet Small */
 @media (max-width: 768px) {
   .admin-sidebar {
     transform: translateX(-100%);
@@ -616,9 +652,321 @@ tbody tr:hover {
     display: block;
   }
   .admin-main {
-    padding: 1.5rem;
+    padding: 1rem;
   }
   .modal { width: 95%; margin: 10px; }
+  
+  /* Topbar adjustments */
+  .admin-topbar {
+    padding: 0 1rem;
+    height: 70px;
+  }
+  
+  .admin-topbar-title h1 {
+    font-size: 1.2rem;
+  }
+  
+  .admin-topbar-title p {
+    font-size: 0.7rem;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .system-stats {
+    display: none;
+  }
+  
+  /* Card adjustments */
+  .card {
+    padding: 1rem;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .card-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  /* Stats grid */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  /* Table adjustments - horizontal scroll */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    min-width: 700px;
+    font-size: 0.8rem;
+  }
+  
+  th, td {
+    padding: 0.6rem 0.8rem;
+    white-space: nowrap;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-sm {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Forms */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.75rem;
+  }
+  
+  .form-control {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Badges */
+  .badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7em;
+  }
+  
+  /* Filter bar responsive */
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+  
+  .filter-input-wrap,
+  .filter-select-wrap {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+  
+  .filter-input {
+    min-width: 100%;
+  }
+  
+  /* Pagination responsive */
+  .activity-pagination {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  
+  .pagination-info {
+    text-align: center;
+    font-size: 0.75rem;
+  }
+  
+  .pagination-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  
+  .pagination-buttons button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Activity logs table */
+  .activity-logs-table {
+    font-size: 0.65rem;
+  }
+  
+  .activity-logs-table th,
+  .activity-logs-table td {
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .activity-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-card-value {
+    font-size: 1.4rem;
+  }
+  
+  /* Modal adjustments */
+  .modal-content {
+    margin: 5% auto;
+    width: 95%;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+  .admin-main {
+    padding: 0.75rem;
+  }
+  
+  .admin-topbar {
+    padding: 0 0.75rem;
+  }
+  
+  .card {
+    padding: 0.75rem;
+  }
+  
+  .card-header {
+    padding-bottom: 0.75rem;
+  }
+  
+  .card-header h2 {
+    font-size: 1rem;
+  }
+  
+  /* Table further adjustments */
+  table {
+    min-width: 600px;
+    font-size: 0.75rem;
+  }
+  
+  th, td {
+    padding: 0.5rem 0.6rem;
+  }
+  
+  /* Hide less important columns on small screens */
+  .table-hide-sm,
+  .table-hide-xs {
+    display: none;
+  }
+  
+  /* Action buttons stack */
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .action-buttons .btn {
+    width: 100%;
+  }
+  
+  /* Stats cards */
+  .activity-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    padding: 0.875rem;
+  }
+  
+  .stat-card-label {
+    font-size: 0.65rem;
+  }
+  
+  .stat-card-value {
+    font-size: 1.25rem;
+  }
+  
+  /* POS Grid for realtime */
+  .pos-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .command-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    align-items: stretch;
+  }
+  
+  .brand-unit {
+    text-align: center;
+  }
+  
+  .sync-box {
+    justify-content: center;
+  }
+  
+  /* Filter bar */
+  .filter-bar {
+    padding: 0.5rem;
+  }
+  
+  .filter-input-wrap,
+  .filter-select-wrap {
+    min-width: 100%;
+  }
+  
+  .filter-input {
+    min-width: 100%;
+  }
+  
+  /* Tabs */
+  .tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .admin-sidebar,
+  .admin-topbar,
+  .sidebar-toggle,
+  .btn,
+  .notification-area {
+    display: none !important;
+  }
+  
+  .admin-body {
+    margin-left: 0;
+  }
+  
+  .admin-main {
+    padding: 0;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
 }
 
 /* ── Notification Area ────────────────────────────────── */

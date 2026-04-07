@@ -14,8 +14,14 @@ class AdminShiftController extends Controller
 
         $db = getDB();
 
-        // FIX: Dùng prepare/execute thay vì query() với params
-        $shifts = $db->query("SELECT * FROM shifts ORDER BY start_time ASC")->fetchAll(PDO::FETCH_ASSOC);
+        // Pagination for shifts
+        $page = max(1, (int) $this->input('page', 1));
+        $limit = 10;
+        
+        $allShifts = $db->query("SELECT * FROM shifts ORDER BY start_time ASC")->fetchAll(PDO::FETCH_ASSOC);
+        $total = count($allShifts);
+        $offset = ($page - 1) * $limit;
+        $shifts = array_slice($allShifts, $offset, $limit);
 
         $userModel = new User();
         $users = $userModel->getAll();
@@ -25,24 +31,31 @@ class AdminShiftController extends Controller
         $stmt = $db->prepare(
             "SELECT us.*, u.name as user_name, u.role as user_role, s.name as shift_name,
                     s.start_time, s.end_time
-             FROM user_shifts us
-             JOIN users u ON u.id = us.user_id
-             JOIN shifts s ON s.id = us.shift_id
-             WHERE us.work_date = ?
-             ORDER BY s.start_time ASC, u.name ASC"
+              FROM user_shifts us
+              JOIN users u ON u.id = us.user_id
+              JOIN shifts s ON s.id = us.shift_id
+              WHERE us.work_date = ?
+              ORDER BY s.start_time ASC, u.name ASC"
         );
         $stmt->execute([$today]);
-        $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $allAssignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Pagination for assignments
+        $assignPage = max(1, (int) $this->input('assign_page', 1));
+        $assignLimit = 15;
+        $assignTotal = count($allAssignments);
+        $assignOffset = ($assignPage - 1) * $assignLimit;
+        $assignments = array_slice($allAssignments, $assignOffset, $assignLimit);
 
         // Lịch sử phân công 7 ngày gần nhất (thống kê)
         $stmtHistory = $db->prepare(
             "SELECT us.work_date, COUNT(*) as total_assignments,
                     GROUP_CONCAT(DISTINCT u.name ORDER BY u.name SEPARATOR ', ') as staff_names
-             FROM user_shifts us
-             JOIN users u ON u.id = us.user_id
-             WHERE us.work_date >= DATE_SUB(?, INTERVAL 7 DAY) AND us.work_date <= ?
-             GROUP BY us.work_date
-             ORDER BY us.work_date DESC"
+              FROM user_shifts us
+              JOIN users u ON u.id = us.user_id
+              WHERE us.work_date >= DATE_SUB(?, INTERVAL 7 DAY) AND us.work_date <= ?
+              GROUP BY us.work_date
+              ORDER BY us.work_date DESC"
         );
         $stmtHistory->execute([$today, $today]);
         $recentHistory = $stmtHistory->fetchAll(PDO::FETCH_ASSOC);
@@ -55,6 +68,18 @@ class AdminShiftController extends Controller
             'assignments'   => $assignments,
             'recentHistory' => $recentHistory,
             'today'         => $today,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'totalPages' => ceil($total / $limit),
+            ],
+            'assignmentPagination' => [
+                'page' => $assignPage,
+                'limit' => $assignLimit,
+                'total' => $assignTotal,
+                'totalPages' => ceil($assignTotal / $assignLimit),
+            ],
         ]);
     }
 

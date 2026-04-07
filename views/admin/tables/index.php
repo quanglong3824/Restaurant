@@ -21,6 +21,13 @@
             <h2><i class="fas <?= $type === 'room' ? 'fa-bed' : 'fa-chair' ?>"></i> Danh sách <?= $type === 'room' ? 'Phòng' : 'Bàn' ?></h2>
             <span class="badge badge-gold"><?= count($tables) ?> <?= $type === 'room' ? 'phòng' : 'bàn' ?></span>
         </div>
+        
+        <!-- Pagination Top -->
+        <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+        <div style="width:100%;">
+            <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/tables', array_filter(['type' => $type])) ?>
+        </div>
+        <?php endif; ?>
         <div class="table-wrap">
             <table>
                 <thead>

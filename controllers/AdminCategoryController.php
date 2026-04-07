@@ -21,13 +21,29 @@ class AdminCategoryController extends Controller
     public function index(): void
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
-        $categories = $this->model->getAll();
+        
+        $page = max(1, (int) $this->input('page', 1));
+        $limit = 10;
+        
+        $allCategories = $this->model->getAll();
+        $total = count($allCategories);
+        $offset = ($page - 1) * $limit;
+        
+        $categories = array_slice($allCategories, $offset, $limit);
+        $totalPages = ceil($total / $limit);
+        
         $this->view('layouts/admin', [
             'view' => 'admin/categories/index',
             'pageTitle' => 'Danh Mục Món',
-            'pageSubtitle' => count($categories) . ' danh mục',
+            'pageSubtitle' => $total . ' danh mục',
             'categories' => $categories,
             'editItem' => null,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'totalPages' => $totalPages,
+            ],
         ]);
     }
 

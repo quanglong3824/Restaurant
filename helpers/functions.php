@@ -112,3 +112,88 @@ function timeAgo(string $datetime): string
         return floor($diff / 3600) . ' giờ trước';
     return date('d/m/Y H:i', strtotime($datetime));
 }
+
+/**
+ * Pagination helper - Generate pagination HTML
+ */
+function renderPagination(int $page, int $totalPages, string $baseUrl, array $params = []): string
+{
+    if ($totalPages <= 1) return '';
+    
+    $html = '<div class="activity-pagination">';
+    $html .= '<div class="pagination-info">';
+    $html .= 'Trang ' . $page . ' / ' . $totalPages;
+    $html .= '</div>';
+    $html .= '<div class="pagination-buttons">';
+    
+    // First page
+    $firstUrl = buildPaginationUrl($baseUrl, $params, 1);
+    $html .= '<button onclick="window.location.href=\'' . $firstUrl . '\'"' . ($page === 1 ? ' disabled' : '') . '>';
+    $html .= '<i class="fas fa-angle-double-left"></i>';
+    $html .= '</button>';
+    
+    // Previous page
+    $prevPage = max(1, $page - 1);
+    $prevUrl = buildPaginationUrl($baseUrl, $params, $prevPage);
+    $html .= '<button onclick="window.location.href=\'' . $prevUrl . '\'"' . ($page === 1 ? ' disabled' : '') . '>';
+    $html .= '<i class="fas fa-angle-left"></i>';
+    $html .= '</button>';
+    
+    // Page numbers
+    $startPage = max(1, $page - 2);
+    $endPage = min($totalPages, $page + 2);
+    
+    for ($i = $startPage; $i <= $endPage; $i++) {
+        $pageUrl = buildPaginationUrl($baseUrl, $params, $i);
+        $activeClass = ($i === $page) ? ' active' : '';
+        $html .= '<button onclick="window.location.href=\'' . $pageUrl . '\'" class="' . $activeClass . '">';
+        $html .= $i;
+        $html .= '</button>';
+    }
+    
+    // Next page
+    $nextPage = min($totalPages, $page + 1);
+    $nextUrl = buildPaginationUrl($baseUrl, $params, $nextPage);
+    $html .= '<button onclick="window.location.href=\'' . $nextUrl . '\'"' . ($page === $totalPages ? ' disabled' : '') . '>';
+    $html .= '<i class="fas fa-angle-right"></i>';
+    $html .= '</button>';
+    
+    // Last page
+    $lastUrl = buildPaginationUrl($baseUrl, $params, $totalPages);
+    $html .= '<button onclick="window.location.href=\'' . $lastUrl . '\'"' . ($page === $totalPages ? ' disabled' : '') . '>';
+    $html .= '<i class="fas fa-angle-double-right"></i>';
+    $html .= '</button>';
+    
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    return $html;
+}
+
+/**
+ * Build pagination URL with query parameters
+ */
+function buildPaginationUrl(string $baseUrl, array $params, int $page): string
+{
+    $params['page'] = $page;
+    return $baseUrl . '?' . http_build_query($params);
+}
+
+/**
+ * Get pagination data
+ */
+function getPaginationData(int $total, int $page, int $limit): array
+{
+    $totalPages = ceil($total / $limit);
+    $offset = ($page - 1) * $limit;
+    
+    return [
+        'page' => $page,
+        'limit' => $limit,
+        'total' => $total,
+        'totalPages' => $totalPages,
+        'offset' => $offset,
+        'hasPrev' => $page > 1,
+        'hasNext' => $page < $totalPages,
+    ];
+}

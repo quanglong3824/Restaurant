@@ -25,15 +25,28 @@ class AdminMenuController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
-        $items = $this->itemModel->getAll();
+        $page = max(1, (int) $this->input('page', 1));
+        $limit = 20;
+        
+        $allItems = $this->itemModel->getAll();
+        $total = count($allItems);
+        $offset = ($page - 1) * $limit;
+        
+        $items = array_slice($allItems, $offset, $limit);
         $categories = $this->categoryModel->getAll();
 
         $this->view('layouts/admin', [
             'view' => 'admin/menu/index',
             'pageTitle' => 'Quản lý Món ăn',
-            'pageSubtitle' => count($items) . ' món',
+            'pageSubtitle' => $total . ' món',
             'items' => $items,
             'categories' => $categories,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'totalPages' => ceil($total / $limit),
+            ],
         ]);
     }
 
