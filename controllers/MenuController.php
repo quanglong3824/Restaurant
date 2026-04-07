@@ -43,10 +43,24 @@ class MenuController extends Controller
         $categoryModel = new MenuCategory();
         $setModel = new MenuSet();
 
+        require_once BASE_PATH . '/models/Order.php';
+        require_once BASE_PATH . '/models/Table.php';
+        $tableModel = new Table();
+        $orderModel = new Order();
+        $allTables = $tableModel->getAll();
+
+        // Ưu tiên lấy table_id từ session khách nếu có
+        $tableId = $tableIdFromUrl ?: ($_SESSION['customer_table_id'] ?? 0);
+        $orderId = (int) ($this->input('order_id') ?? 0);
+
+        // Lấy thông tin bàn để lọc theo service_type
+        $tableInfo = $tableId ? $tableModel->findById($tableId) : null;
+        $serviceType = ($tableInfo && $tableInfo['type'] === 'room') ? 'room_service' : 'restaurant';
+
         // Lấy categories theo menu type
         // Nếu là tab 'sets', chúng ta không cần lấy categories từ menu_items
         $categories = ($menuType === 'sets') ? [] : $categoryModel->getActiveByType($menuType);
-        $grouped = ($menuType === 'sets') ? [] : $itemModel->getGroupedByCategory($menuType);
+        $grouped = ($menuType === 'sets') ? [] : $itemModel->getGroupedByCategory($menuType, $serviceType);
 
         // Lấy sets nếu là tab sets
         $sets = [];
@@ -56,16 +70,6 @@ class MenuController extends Controller
                 $set['items'] = $setModel->getSetItems($set['id']);
             }
         }
-
-        // Ưu tiên lấy table_id từ session khách nếu có
-        $tableId = $tableIdFromUrl ?: ($_SESSION['customer_table_id'] ?? 0);
-        $orderId = (int) ($this->input('order_id') ?? 0);
-
-        require_once BASE_PATH . '/models/Order.php';
-        require_once BASE_PATH . '/models/Table.php';
-        $tableModel = new Table();
-        $orderModel = new Order();
-        $allTables = $tableModel->getAll();
 
         // LOGIC TỰ ĐỘNG CHO KHÁCH: Nếu là khách (không có orderId nhưng có tableId)
         if ($tableId > 0 && $orderId === 0) {

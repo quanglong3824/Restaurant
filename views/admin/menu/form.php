@@ -22,7 +22,7 @@ $isEdit = !empty($item);
         <!-- 2-column responsive grid -->
         <div class="form-grid-2">
 
-            <div class="form-group col-span-2">
+            <div class="form-group">
                 <label class="form-label">Danh mục <span style="color:var(--danger)">*</span></label>
                 <select name="category_id" class="form-control" required>
                     <option value="">-- Chọn danh mục --</option>
@@ -31,6 +31,15 @@ $isEdit = !empty($item);
                             <?= e($cat['name']) ?>
                         </option>
                     <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Phục vụ cho</label>
+                <select name="service_type" class="form-control">
+                    <option value="both" <?= ($isEdit && isset($item['service_type']) && $item['service_type'] === 'both') ? 'selected' : '' ?>>Cả hai (Nhà hàng & Lưu trú)</option>
+                    <option value="restaurant" <?= ($isEdit && isset($item['service_type']) && $item['service_type'] === 'restaurant') ? 'selected' : '' ?>>Chỉ Nhà hàng</option>
+                    <option value="room_service" <?= ($isEdit && isset($item['service_type']) && $item['service_type'] === 'room_service') ? 'selected' : '' ?>>Chỉ Phòng lưu trú (Room Service)</option>
                 </select>
             </div>
 

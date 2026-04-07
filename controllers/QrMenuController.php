@@ -135,8 +135,9 @@ class QrMenuController extends Controller
             }
 
             // --- LẤY DỮ LIỆU HIỂN THỊ MENU ---
+            $serviceType = ($table['type'] === 'room') ? 'room_service' : 'restaurant';
             $categories = $this->categoryModel->getAll();
-            $menuItems = $this->menuModel->getAllActive();
+            $menuItems = $this->menuModel->getAllActive($serviceType);
             
             $orderId = $openOrder ? $openOrder['id'] : 0;
             $orderItems = $orderId ? $this->orderModel->getItems($orderId) : [];

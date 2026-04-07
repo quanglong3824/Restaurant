@@ -194,6 +194,7 @@ class AdminMenuController extends Controller
             'note_options_en' => trim((string) $this->input('note_options_en', '')) ?: null,
             'sort_order'      => (int) $this->input('sort_order', 0),
             'is_active'       => (int) $this->input('is_active', 1),
+            'service_type'    => trim((string) $this->input('service_type', 'both')),
         ];
     }
 

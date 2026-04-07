@@ -17,36 +17,53 @@ class MenuItem extends Model
     }
 
     /** Tất cả món đang active (không phân biệt type) */
-    public function getAllActive(): array
+    public function getAllActive(string $serviceType = ''): array
     {
+        $where = "WHERE i.is_active = 1";
+        $params = [];
+        if ($serviceType) {
+            $where .= " AND i.service_type IN (?, 'both')";
+            $params[] = $serviceType;
+        }
+
         return $this->findAll(
             "SELECT i.*, c.name AS category_name, c.menu_type
              FROM menu_items i
              LEFT JOIN menu_categories c ON c.id = i.category_id
-             WHERE i.is_active = 1
-             ORDER BY c.sort_order, i.sort_order, i.name"
+             $where
+             ORDER BY c.sort_order, i.sort_order, i.name",
+             $params
         );
     }
 
     /** Món đang hiển thị, kèm category (waiter), lọc theo menu_type */
-    public function getActiveByType(string $type = ''): array
+    public function getActiveByType(string $type = '', string $serviceType = ''): array
     {
-        $where = $type ? "AND c.menu_type = ?" : "";
-        $params = $type ? [$type] : [];
+        $where = "WHERE i.is_active = 1";
+        $params = [];
+        if ($type) {
+            $where .= " AND c.menu_type = ?";
+            $params[] = $type;
+        }
+        if ($serviceType) {
+            $where .= " AND i.service_type IN (?, 'both')";
+            $params[] = $serviceType;
+        }
+
         return $this->findAll(
             "SELECT i.*, c.name AS category_name, c.menu_type
              FROM menu_items i
              LEFT JOIN menu_categories c ON c.id = i.category_id
-             WHERE i.is_active = 1 {$where}
+             $where
              ORDER BY c.sort_order, i.sort_order, i.name",
             $params
         );
     }
 
     /** Nhóm theo category cho waiter menu, có lọc type */
-    public function getGroupedByCategory(string $type = ''): array
+    public function getGroupedByCategory(string $type = '', string $serviceType = ''): array
     {
-        $rows = $this->getActiveByType($type);
+        $rows = $this->getActiveByType($type, $serviceType);
         $grouped = [];
         foreach ($rows as $row) {
             $cat = $row['category_name'] ?? 'Khác';
@@ -70,8 +87,8 @@ class MenuItem extends Model
     {
         $this->execute(
             "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?)",
+             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type)
+             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?)",
             [
                 $data['category_id'],
                 $data['name'],
@@ -83,6 +100,7 @@ class MenuItem extends Model
                 $data['note_options'] ?? null,
                 $data['note_options_en'] ?? null,
                 $data['sort_order'] ?? 0,
+                $data['service_type'] ?? 'both',
             ]
         );
         return (int) $this->lastInsertId();
@@ -94,7 +112,7 @@ class MenuItem extends Model
             "UPDATE menu_items
              SET category_id = ?, name = ?, name_en = ?, description = ?,
                  price = ?, tags = ?, note_options = ?, note_options_en = ?, 
-                 sort_order = ?, is_active = ?
+                 sort_order = ?, is_active = ?, service_type = ?
              WHERE id = ?",
             [
                 $data['category_id'],
@@ -107,6 +125,7 @@ class MenuItem extends Model
                 $data['note_options_en'] ?? null,
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,
+                $data['service_type'] ?? 'both',
                 $id,
             ]
         );
