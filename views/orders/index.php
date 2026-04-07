@@ -311,8 +311,8 @@ if (!empty($items)) {
                             <div class="dock-label">ĐÃ CHỌN ĐỂ TÁCH</div>
                             <div class="dock-amount" id="splitCount">0 món</div>
                         </div>
-                        <button type="button" class="btn btn-gold w-100 py-3 shadow-lg" onclick="openConfirmSplitModal()">
-                            <i class="fas fa-cut me-2"></i> XÁC NHẬN TÁCH MÓN
+                        <button type="button" class="btn btn-gold w-100 py-2 shadow-lg" onclick="openConfirmSplitModal()">
+                            <i class="fas fa-cut me-1"></i> XÁC NHẬN TÁCH MÓN
                         </button>
                     </div>
                 <?php else: ?>
@@ -331,26 +331,26 @@ if (!empty($items)) {
                             <form method="POST" action="<?= BASE_URL ?>/orders/confirm">
                                 <input type="hidden" name="table_id" value="<?= $table['id'] ?>">
                                 <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                <button type="submit" class="btn btn-gold w-100 py-3 shadow-lg pulse-animation">
-                                    <i class="fas fa-check-circle me-2"></i> XÁC NHẬN MÓN
-                                </button>
+                            <button type="submit" class="btn btn-gold w-100 py-2 shadow-lg pulse-animation">
+                                <i class="fas fa-check-circle me-1"></i> XÁC NHẬN MÓN
+                            </button>
                             </form>
                         <?php endif; ?>
 
                         <div class="d-flex gap-2">
                             <?php if ($total > 0): ?>
-                                <button class="btn btn-success-luxury w-100 py-3"
+                                <button class="btn btn-success-luxury w-100 py-2"
                                     onclick="confirmPayment(<?= $table['id'] ?>, <?= $order['id'] ?>, <?= $total ?>)">
-                                    <i class="fas fa-credit-card me-2"></i> THANH TOÁN
+                                    <i class="fas fa-credit-card me-1"></i> THANH TOÁN
                                 </button>
                                 <a href="<?= BASE_URL ?>/orders/print?order_id=<?= $order['id'] ?>" target="_blank"
-                                    class="btn btn-ghost py-3" style="min-width: 120px;">
-                                    <i class="fas fa-print me-1"></i> IN BILL
+                                    class="btn btn-ghost py-2" style="min-width: 100px;">
+                                    <i class="fas fa-print"></i>
                                 </a>
                             <?php else: ?>
-                                <button class="btn btn-outline-danger w-100 py-3"
+                                <button class="btn btn-outline-danger w-100 py-2"
                                     onclick="confirmClose(<?= $table['id'] ?>, <?= $order['id'] ?>)">
-                                    <i class="fas fa-door-closed me-2"></i> ĐÓNG BÀN
+                                    <i class="fas fa-door-closed me-1"></i> ĐÓNG BÀN
                                 </button>
                             <?php endif; ?>
                         </div>
@@ -493,9 +493,9 @@ if (!empty($items)) {
                     }
                 </script>
 
-                <button type="button" id="btnSubmitPayment" class="btn btn-gold w-100 py-3 shadow-lg"
+                <button type="button" id="btnSubmitPayment" class="btn btn-gold w-100 py-2 shadow-lg"
                     onclick="handleSubmitPayment(event)">
-                    <i class="fas fa-check-circle me-2"></i> HOÀN TẤT THANH TOÁN
+                    <i class="fas fa-check-circle me-1"></i> HOÀN TẤT THANH TOÁN
                 </button>
             </form>
         </div>
@@ -533,8 +533,8 @@ if (!empty($items)) {
                 </div>
             </div>
             
-            <button type="button" onclick="submitGuestCountUpdate()" class="btn btn-gold w-100 py-3 fw-bold">
-                <i class="fas fa-save me-2"></i> LƯU THAY ĐỔI
+            <button type="button" onclick="submitGuestCountUpdate()" class="btn btn-gold w-100 py-2 fw-bold">
+                <i class="fas fa-save me-1"></i> LƯU THAY ĐỔI
             </button>
         </form>
     </div>
@@ -583,8 +583,8 @@ if (!empty($items)) {
             </div>
 
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-gold py-3 fw-bold" onclick="submitSplitOrder()">XÁC NHẬN TÁCH BÀN</button>
-                <button type="button" class="btn btn-ghost" data-modal-close>HỦY</button>
+                <button type="button" class="btn btn-gold py-2 fw-bold" onclick="submitSplitOrder()">XÁC NHẬN TÁCH BÀN</button>
+                <button type="button" class="btn btn-ghost py-2" data-modal-close>HỦY</button>
             </div>
         </div>
     </div>
@@ -666,8 +666,8 @@ if (!empty($items)) {
                 </select>
             </div>
             
-            <button type="submit" class="btn btn-gold w-100 py-3 fw-bold">
-                <i class="fas fa-link me-2"></i> GHÉP BÀN NGAY
+            <button type="submit" class="btn btn-gold w-100 py-2 fw-bold">
+                <i class="fas fa-link me-1"></i> GHÉP BÀN NGAY
             </button>
         </form>
     </div>

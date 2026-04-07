@@ -3,8 +3,25 @@
 $availableCount = $counts['available'] ?? 0;
 $occupiedCount = $counts['occupied'] ?? 0;
 
+// Separate counts for tables and rooms
+$tableAvailable = 0;
+$tableOccupied = 0;
+$roomAvailable = 0;
+$roomOccupied = 0;
+
+foreach ($grouped as $area => $tables) {
+    foreach ($tables as $t) {
+        if ($t['type'] === 'room') {
+            if ($t['status'] === 'occupied') $roomOccupied++;
+            else $roomAvailable++;
+        } else {
+            if ($t['status'] === 'occupied') $tableOccupied++;
+            else $tableAvailable++;
+        }
+    }
+}
+
 $allAreas = array_keys($grouped);
-sort($allAreas);
 
 // Process areas
 $vip_areas = ['VIP 1', 'VIP 2', 'VIP 3', 'VIP 4', 'VIP 1 2', 'VIP 3 4'];
@@ -14,28 +31,48 @@ $vip3_tables = $grouped['VIP 3'] ?? [];
 $vip4_tables = $grouped['VIP 4'] ?? [];
 
 $other_areas = [];
+$room_areas = [];
+
 foreach ($grouped as $area => $tables) {
     if (in_array($area, $vip_areas)) continue;
-    $other_areas[$area] = $tables;
+    
+    // Check if this is a room floor (numeric area name like "7", "8", etc.)
+    $isRoomFloor = is_numeric($area) || preg_match('/^(Tầng\s*)?\d+$/', $area);
+    
+    if ($type === 'room' && $isRoomFloor) {
+        $room_areas[$area] = $tables;
+    } else {
+        $other_areas[$area] = $tables;
+    }
 }
 
-// Sắp xếp other_areas: A, B, C lên đầu, ÂU xuống cuối
-uksort($other_areas, function($a, $b) {
-    $priority = function($name) {
-        $name = strtoupper($name);
-        if (str_starts_with($name, 'A')) return 10;
-        if (str_starts_with($name, 'B')) return 20;
-        if (str_starts_with($name, 'C')) return 30;
-        if (str_contains($name, 'ÂU')) return 100;
-        return 50;
-    };
-    
-    $pA = $priority($a);
-    $pB = $priority($b);
-    
-    if ($pA !== $pB) return $pA - $pB;
-    return strcmp($a, $b);
-});
+// Natural sorting for room floors (7, 8, 9, 10, 11, 12 instead of 10, 11, 12, 7, 8, 9)
+if ($type === 'room') {
+    uksort($room_areas, function($a, $b) {
+        // Extract number from area name
+        $numA = (int) preg_replace('/[^0-9]/', '', $a);
+        $numB = (int) preg_replace('/[^0-9]/', '', $b);
+        return $numA - $numB;
+    });
+} else {
+    // Sắp xếp other_areas: A, B, C lên đầu, ÂU xuống cuối
+    uksort($other_areas, function($a, $b) {
+        $priority = function($name) {
+            $name = strtoupper($name);
+            if (str_starts_with($name, 'A')) return 10;
+            if (str_starts_with($name, 'B')) return 20;
+            if (str_starts_with($name, 'C')) return 30;
+            if (str_contains($name, 'ÂU')) return 100;
+            return 50;
+        };
+        
+        $pA = $priority($a);
+        $pB = $priority($b);
+        
+        if ($pA !== $pB) return $pA - $pB;
+        return strcmp($a, $b);
+    });
+}
 
 // Phân loại khu vực cho modal
 $uniqueAreas = [];
@@ -120,6 +157,18 @@ if (!function_exists('renderTableCard')) {
     .is-payment-requested { border: 2px solid #f59e0b !important; animation: premium-border-pulse 2s infinite; }
     @keyframes premium-border-pulse { 0% { border-color: #f59e0b; } 50% { border-color: #fbbf24; } 100% { border-color: #f59e0b; } }
     .payment-pulse-badge { position: absolute; top: 12px; right: 12px; background: #f59e0b; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 5; font-size: 0.8rem; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3); }
+    
+    /* Floor Filter Tabs */
+    .floor-filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 4px; scrollbar-width: none; }
+    .floor-filter-tabs::-webkit-scrollbar { display: none; }
+    .floor-tab {
+        white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+        background: white; border: 1px solid #e2e8f0; font-size: 0.8rem;
+        font-weight: 700; color: #64748b; text-decoration: none;
+        transition: all 0.2s; flex-shrink: 0;
+    }
+    .floor-tab:hover { border-color: var(--gold); color: var(--gold); }
+    .floor-tab.active { background: var(--gold); color: white; border-color: var(--gold); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
 </style>
 
 <div class="page-content animate-fade-in">
@@ -132,27 +181,56 @@ if (!function_exists('renderTableCard')) {
         </a>
     </nav>
 
-    <div class="summary-shelf d-flex gap-3 mb-5">
+    <!-- Separate summary boxes for each tab -->
+    <?php if ($type === 'table'): ?>
+    <div class="summary-shelf d-flex gap-3 mb-4">
         <div class="summary-box flex-grow-1 occupied">
-            <div class="box-icon"><i class="fas <?= ($type === 'room') ? 'fa-door-closed' : 'fa-utensils' ?>"></i></div>
-            <div class="box-info"><div class="val"><?= $occupiedCount ?></div><div class="lbl">ĐANG CÓ KHÁCH</div></div>
+            <div class="box-icon"><i class="fas fa-utensils"></i></div>
+            <div class="box-info"><div class="val"><?= $tableOccupied ?></div><div class="lbl">BÀN ĐANG ĂN</div></div>
         </div>
         <div class="summary-box flex-grow-1 available">
-            <div class="box-icon"><i class="fas <?= ($type === 'room') ? 'fa-door-open' : 'fa-chair' ?>"></i></div>
-            <div class="box-info"><div class="val"><?= $availableCount ?></div><div class="lbl">BÀN/PHÒNG TRỐNG</div></div>
+            <div class="box-icon"><i class="fas fa-chair"></i></div>
+            <div class="box-info"><div class="val"><?= $tableAvailable ?></div><div class="lbl">BÀN TRỐNG</div></div>
         </div>
     </div>
+    <?php else: ?>
+    <div class="summary-shelf d-flex gap-3 mb-4">
+        <div class="summary-box flex-grow-1 occupied">
+            <div class="box-icon"><i class="fas fa-bed"></i></div>
+            <div class="box-info"><div class="val"><?= $roomOccupied ?></div><div class="lbl">PHÒNG ĐANG Ở</div></div>
+        </div>
+        <div class="summary-box flex-grow-1 available">
+            <div class="box-icon"><i class="fas fa-door-open"></i></div>
+            <div class="box-info"><div class="val"><?= $roomAvailable ?></div><div class="lbl">PHÒNG TRỐNG</div></div>
+        </div>
+    </div>
+    <?php endif; ?>
 
-    <div class="d-flex justify-content-end gap-2 mb-4">
-        <button type="button" class="btn btn-ghost btn-sm px-3" onclick="Aurora.openModal('modalUnmergeArea')"><i class="fas fa-object-ungroup me-2"></i> TÁCH KHU</button>
-        <button type="button" class="btn btn-gold btn-sm px-4" onclick="Aurora.openModal('modalMergeArea')"><i class="fas fa-object-group me-2"></i> GHÉP KHU</button>
+    <!-- Horizontal Floor Filter Tabs for Room -->
+    <?php if ($type === 'room' && !empty($room_areas)): ?>
+    <div class="floor-filter-tabs mb-4">
+        <a href="#" class="floor-tab active" data-floor="all">Tất cả</a>
+        <?php foreach ($room_areas as $area => $tables): ?>
+            <a href="#" class="floor-tab" data-floor="<?= e($area) ?>"><?= e($area) ?></a>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- Action Buttons - Compact -->
+    <div class="d-flex justify-content-end gap-2 mb-3">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="Aurora.openModal('modalUnmergeArea')"><i class="fas fa-object-ungroup me-1"></i> TÁCH KHU</button>
+        <button type="button" class="btn btn-gold btn-sm" onclick="Aurora.openModal('modalMergeArea')"><i class="fas fa-object-group me-1"></i> GHÉP KHU</button>
     </div>
 
     <?php if (empty($grouped)): ?>
         <div class="empty-state py-5 text-center"><i class="fas fa-table-cells-large fa-3x mb-3 opacity-20"></i><h4 class="fw-bold">Chưa có sơ đồ</h4></div>
     <?php else: ?>
-        <?php foreach ($other_areas as $area => $tables): ?>
-            <div class="area-section"><div class="area-header"><div class="area-icon"><i class="fas fa-map-marker-alt"></i></div><h2>Khu vực: <?= e($area) ?></h2></div>
+        <?php 
+        // Use room_areas for room type, other_areas for table type
+        $areasToRender = ($type === 'room') ? $room_areas : $other_areas;
+        foreach ($areasToRender as $area => $tables): 
+        ?>
+            <div class="area-section" data-floor="<?= e($area) ?>"><div class="area-header"><div class="area-icon"><i class="fas fa-map-marker-alt"></i></div><h2><?= ($type === 'room') ? 'Tầng' : 'Khu vực' ?>: <?= e($area) ?></h2></div>
             <div class="table-grid"><?php foreach ($tables as $t) renderTableCard($t, $tableModel, $type); ?></div></div>
         <?php endforeach; ?>
 
@@ -330,6 +408,28 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', function() {
             document.querySelectorAll('.guest-option span').forEach(s => s.style.background = '#f1f5f9');
             if (this.checked) this.nextElementSibling.style.background = '#b89B5e';
+        });
+    });
+    
+    // Floor filter tabs functionality
+    const floorTabs = document.querySelectorAll('.floor-tab');
+    const areaSections = document.querySelectorAll('.area-section[data-floor]');
+    
+    floorTabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            const floor = this.dataset.floor;
+            
+            floorTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            areaSections.forEach(section => {
+                if (floor === 'all' || section.dataset.floor === floor) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
         });
     });
 });

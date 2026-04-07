@@ -42,8 +42,9 @@
 ## 4. WORKFLOW & CONVENTIONS
 - **Production Safety:** Dự án chạy trực tiếp trên Prod. Chỉ hỏi ý kiến khi thực hiện lệnh xoá tệp tin (`rm`). Các thay đổi code được thực hiện tự động.
 - **Git Policy:**
-  - Commit message luôn bằng **tiếng Việt**.
+  - Commit message luôn bằng **tiếng Việt** (có dấu, rõ ràng, mô tả ngắn gọn nội dung thay đổi).
   - Tự động thực hiện `git push` ngay sau khi commit thành công.
+  - Format commit message: `[Component] Mô tả thay đổi` (ví dụ: `[UI] Giảm kích thước nút trang Order`, `[Tables] Thêm filter tầng ngang`).
 - **Naming:**
   - File Views: `snake_case` (ví dụ: `paid_bill.php`).
   - File Controllers/Models: `PascalCase`.
@@ -53,3 +54,5 @@
 - **Alerts:** Sử dụng `$_SESSION['flash']` với các type: `success`, `warning`, `danger`, `info`. Tự động ẩn sau 4s.
 - **Modals:** Cấu trúc `.modal-backdrop` > `.modal-content`. Mở bằng `data-modal-open="id"`.
 - **Toasts:** Hệ thống thông báo real-time động với âm thanh `nofi.mp3`.
+
+## 6
