@@ -7,6 +7,7 @@ require_once BASE_PATH . '/models/Order.php';
 require_once BASE_PATH . '/models/Table.php';
 require_once BASE_PATH . '/models/MenuItem.php';
 require_once BASE_PATH . '/models/MenuSet.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class OrderController extends Controller
 {
@@ -15,12 +16,15 @@ class OrderController extends Controller
     private MenuItem $menuModel;
     private MenuSet $setModel;
 
+    private ActivityLog $activityLog;
+
     public function __construct()
     {
         $this->orderModel = new Order();
         $this->tableModel = new Table();
         $this->menuModel  = new MenuItem();
         $this->setModel   = new MenuSet();
+        $this->activityLog = new ActivityLog();
     }
 
     /** Parse menu_tags -> item_options array và format giá cho JS */
@@ -149,6 +153,16 @@ class OrderController extends Controller
         }
 
         $this->orderModel->updateGuestCount($orderId, $guestCount);
+        
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_UPDATE,
+            'order',
+            $orderId,
+            ['guest_count' => $guestCount],
+            ActivityLog::LEVEL_NOTICE
+        );
+        
         $this->json(['ok' => true, 'message' => 'Đã cập nhật số khách.']);
     }
 
@@ -203,6 +217,21 @@ class OrderController extends Controller
                         'note' => $note,
                         'status' => 'draft'
                     ]
+                );
+                
+                // Log activity
+                $this->activityLog->log(
+                    ActivityLog::ACTION_CREATE,
+                    'order_item',
+                    null,
+                    [
+                        'order_id' => $orderId,
+                        'menu_item_id' => $menuItemId,
+                        'item_name' => $item['name'],
+                        'quantity' => $qty,
+                        'note' => $note
+                    ],
+                    ActivityLog::LEVEL_INFO
                 );
             }
         }

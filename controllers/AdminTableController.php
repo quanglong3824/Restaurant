@@ -4,14 +4,17 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/Table.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class AdminTableController extends Controller
 {
     private Table $model;
+    private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->model = new Table();
+        $this->activityLog = new ActivityLog();
     }
 
     /** GET /admin/tables */
@@ -54,19 +57,30 @@ class AdminTableController extends Controller
             $this->redirect('/admin/tables?type=' . $type);
         }
 
-        $tableId = $this->model->create([
+        $data = [
             'name' => $name,
             'area' => trim((string) $this->input('area', '')) ?: null,
             'capacity' => max(1, (int) $this->input('capacity', 4)),
             'type' => $type,
             'sort_order' => (int) $this->input('sort_order', 0),
-        ]);
+        ];
+        
+        $tableId = $this->model->create($data);
 
         // Auto-generate QR code for the new table
         require_once BASE_PATH . '/models/QrTable.php';
         $qrModel = new QrTable();
         $token = bin2hex(random_bytes(8));
         $qrModel->generate($tableId, $token);
+
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_CREATE,
+            'table',
+            $tableId,
+            $data,
+            ActivityLog::LEVEL_INFO
+        );
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã thêm ' . ($type === 'room' ? 'phòng' : 'bàn') . ' và tạo mã QR!'];
         $this->redirect('/admin/tables?type=' . $type);
@@ -111,14 +125,26 @@ class AdminTableController extends Controller
             $this->redirect('/admin/tables?type=' . $type);
         }
 
-        $this->model->update($id, [
+        $data = [
             'name' => $name,
             'area' => trim((string) $this->input('area', '')) ?: null,
             'capacity' => max(1, (int) $this->input('capacity', 4)),
             'type' => $type,
             'sort_order' => (int) $this->input('sort_order', 0),
             'is_active' => (int) $this->input('is_active', 1),
-        ]);
+        ];
+        
+        $this->model->update($id, $data);
+        
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_UPDATE,
+            'table',
+            $id,
+            $data,
+            ActivityLog::LEVEL_INFO
+        );
+        
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật!'];
         $this->redirect('/admin/tables?type=' . $type);
     }
@@ -136,8 +162,26 @@ class AdminTableController extends Controller
 
         if (!$ok) {
             $_SESSION['flash'] = ['type' => 'warning', 'message' => 'Đang có khách, không thể xóa.'];
+            
+            // Log failed delete
+            $this->activityLog->log(
+                ActivityLog::ACTION_DELETE,
+                'table',
+                $id,
+                ['reason' => 'has_order', 'name' => $item['name'] ?? 'unknown'],
+                ActivityLog::LEVEL_WARNING
+            );
         } else {
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa.'];
+            
+            // Log successful delete
+            $this->activityLog->log(
+                ActivityLog::ACTION_DELETE,
+                'table',
+                $id,
+                ['name' => $item['name'] ?? 'unknown', 'type' => $type],
+                ActivityLog::LEVEL_INFO
+            );
         }
         $this->redirect('/admin/tables?type=' . $type);
     }

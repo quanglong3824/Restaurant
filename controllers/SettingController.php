@@ -4,14 +4,17 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/User.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class SettingController extends Controller
 {
     private User $userModel;
+    private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->userModel = new User();
+        $this->activityLog = new ActivityLog();
     }
 
     /** GET /it/users */
@@ -69,12 +72,24 @@ class SettingController extends Controller
             $this->redirect('/it/users');
         }
 
-        $this->userModel->create([
+        $data = [
             'name' => $name,
             'username' => $username,
             'pin' => $pin,
             'role' => $this->input('role', ROLE_WAITER),
-        ]);
+        ];
+        
+        $userId = $this->userModel->create($data);
+        
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_CREATE,
+            'user',
+            $userId,
+            ['username' => $username, 'name' => $name, 'role' => $data['role']],
+            ActivityLog::LEVEL_INFO
+        );
+        
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã thêm nhân viên!'];
         $this->redirect('/it/users');
     }
@@ -100,13 +115,25 @@ class SettingController extends Controller
 
         // Nếu không nhập PIN mới → giữ nguyên PIN cũ
         $current = $this->userModel->findById($id);
-        $this->userModel->update($id, [
+        $data = [
             'name' => $name,
             'username' => $username,
             'pin' => $pin !== '' ? $pin : $current['pin'],
             'role' => $this->input('role', ROLE_WAITER),
             'is_active' => (int) $this->input('is_active', 1),
-        ]);
+        ];
+        
+        $this->userModel->update($id, $data);
+        
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_UPDATE,
+            'user',
+            $id,
+            ['username' => $username, 'name' => $name, 'role' => $data['role']],
+            ActivityLog::LEVEL_INFO
+        );
+        
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật nhân viên!'];
         $this->redirect('/it/users');
     }
@@ -117,11 +144,31 @@ class SettingController extends Controller
         Auth::requireRole(ROLE_IT);
 
         $id = (int) $this->input('id');
+        $user = $this->userModel->findById($id);
+        
         if ($id === Auth::user()['id']) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Không thể xóa tài khoản đang đăng nhập.'];
+            
+            // Log attempt
+            $this->activityLog->log(
+                ActivityLog::ACTION_DELETE,
+                'user',
+                $id,
+                ['reason' => 'self_delete_attempt'],
+                ActivityLog::LEVEL_WARNING
+            );
         } else {
             $this->userModel->delete($id);
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa nhân viên.'];
+            
+            // Log activity
+            $this->activityLog->log(
+                ActivityLog::ACTION_DELETE,
+                'user',
+                $id,
+                ['username' => $user['username'] ?? 'unknown', 'name' => $user['name'] ?? 'unknown'],
+                ActivityLog::LEVEL_INFO
+            );
         }
         $this->redirect('/it/users');
     }

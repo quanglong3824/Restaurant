@@ -5,16 +5,19 @@
 
 require_once BASE_PATH . '/models/Table.php';
 require_once BASE_PATH . '/models/Order.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class TableController extends Controller
 {
     private Table $tableModel;
     private Order $orderModel;
+    private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->tableModel = new Table();
         $this->orderModel = new Order();
+        $this->activityLog = new ActivityLog();
     }
 
     /** GET /tables — Sơ đồ bàn */
@@ -66,6 +69,20 @@ class TableController extends Controller
                 'shift_id' => $shiftId
             ]);
 
+            // Log activity
+            $this->activityLog->log(
+                ActivityLog::ACTION_CREATE,
+                'order',
+                $orderId,
+                [
+                    'table_id' => $tableId,
+                    'waiter_id' => $waiterId,
+                    'guest_count' => $guestCount,
+                    'shift_id' => $shiftId
+                ],
+                ActivityLog::LEVEL_INFO
+            );
+
             // Redirect to orders page
             $this->redirect('/orders?table_id=' . $tableId . '&order_id=' . $orderId);
         } catch (\Exception $e) {
@@ -91,6 +108,15 @@ class TableController extends Controller
         $ok = $this->tableModel->mergeTable($childId, $parentId);
         if ($ok) {
             $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã ghép bàn thành công.'];
+            
+            // Log activity
+            $this->activityLog->log(
+                ActivityLog::ACTION_UPDATE,
+                'table',
+                $childId,
+                ['action' => 'merge', 'parent_id' => $parentId],
+                ActivityLog::LEVEL_NOTICE
+            );
         } else {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Bàn đang có khách, không thể ghép.'];
         }
@@ -106,10 +132,23 @@ class TableController extends Controller
         $childId = (int) $this->input('table_id');
         $redirectUrl = (string) $this->input('redirect', '/tables');
 
+        $childTable = $this->tableModel->findById($childId);
+        $parentId = $childTable['parent_id'] ?? null;
+        
         $this->tableModel->unmergeTable($childId);
         $this->tableModel->syncStatuses(); // Đồng bộ lại trạng thái dựa trên order
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã tách bàn.'];
+        
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_UPDATE,
+            'table',
+            $childId,
+            ['action' => 'unmerge', 'previous_parent_id' => $parentId],
+            ActivityLog::LEVEL_NOTICE
+        );
+        
         $this->redirect($redirectUrl);
     }
 

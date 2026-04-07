@@ -4,6 +4,7 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/User.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class AuthController extends Controller
 {
@@ -83,8 +84,10 @@ class AuthController extends Controller
         $username = trim($this->input('username', ''));
         $pin = trim($this->input('pin', ''));
         $shiftId = (int) $this->input('shift_id', 0);
+        $activityLog = new ActivityLog();
 
         if (empty($username) || empty($pin)) {
+            $activityLog->logLogin(0, false, 'Missing credentials');
             $_SESSION['login_error'] = 'Vui lòng nhập tên đăng nhập và mã PIN.';
             $this->redirect('/auth/login');
         }
@@ -93,12 +96,14 @@ class AuthController extends Controller
         $user = $userModel->findByCredentials($username, $pin);
 
         if (!$user) {
+            $activityLog->logLogin(0, false, 'Invalid PIN for user: ' . $username);
             $_SESSION['login_error'] = 'PIN không đúng. Vui lòng thử lại.';
             $this->redirect('/auth/login');
         }
 
         // Kiểm tra ca trực (Chỉ bắt buộc với Waiter)
         if ($user['role'] === ROLE_WAITER && $shiftId <= 0) {
+            $activityLog->logLogin($user['id'], false, 'No shift selected');
             $_SESSION['login_error'] = 'Vui lòng chọn ca trực của bạn.';
             $this->redirect('/auth/login');
         }
@@ -106,6 +111,9 @@ class AuthController extends Controller
         // Lưu thông tin ca trực vào session
         Auth::login($user);
         $_SESSION['user_shift_id'] = $shiftId;
+
+        // Log successful login
+        $activityLog->logLogin($user['id'], true);
 
         $this->home();
     }
@@ -115,6 +123,12 @@ class AuthController extends Controller
      */
     public function logout(): void
     {
+        // Log logout before destroying session
+        if (Auth::isLoggedIn()) {
+            $activityLog = new ActivityLog();
+            $activityLog->logLogout(Auth::user()['id']);
+        }
+        
         Auth::logout();
         $this->redirect('/auth/login');
     }

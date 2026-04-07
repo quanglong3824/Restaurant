@@ -5,16 +5,19 @@
 
 require_once BASE_PATH . '/models/MenuItem.php';
 require_once BASE_PATH . '/models/MenuCategory.php';
+require_once BASE_PATH . '/models/ActivityLog.php';
 
 class AdminMenuController extends Controller
 {
     private MenuItem $itemModel;
     private MenuCategory $categoryModel;
+    private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->itemModel = new MenuItem();
         $this->categoryModel = new MenuCategory();
+        $this->activityLog = new ActivityLog();
     }
 
     /** GET /admin/menu */
@@ -64,6 +67,15 @@ class AdminMenuController extends Controller
         $id = $this->itemModel->create($data);
         $this->handleGalleryUpload($id);
 
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_CREATE,
+            'menu_item',
+            $id,
+            $data,
+            ActivityLog::LEVEL_INFO
+        );
+
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã thêm món thành công!'];
         $this->redirect('/admin/menu');
     }
@@ -106,6 +118,15 @@ class AdminMenuController extends Controller
         $this->itemModel->update($id, $data);
         $this->handleGalleryUpload($id);
 
+        // Log activity
+        $this->activityLog->log(
+            ActivityLog::ACTION_UPDATE,
+            'menu_item',
+            $id,
+            $data,
+            ActivityLog::LEVEL_INFO
+        );
+
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật món!'];
         $this->redirect('/admin/menu');
     }
@@ -133,13 +154,33 @@ class AdminMenuController extends Controller
                 // Có FK → soft delete: ẩn khỏi menu thay vì xóa cứng
                 $db->prepare("UPDATE menu_items SET is_active = 0, is_available = 0 WHERE id = ?")
                    ->execute([$id]);
+                
+                // Log activity
+                $this->activityLog->log(
+                    ActivityLog::ACTION_DELETE,
+                    'menu_item',
+                    $id,
+                    ['reason' => 'in_use', 'order_count' => $inUse],
+                    ActivityLog::LEVEL_WARNING
+                );
+                
                 $_SESSION['flash'] = [
-                    'type'    => 'warning',
+                    'type' => 'warning',
                     'message' => "Món này đang có trong {$inUse} lịch sử đơn hàng, không thể xóa hoàn toàn. Đã ẩn khỏi menu.",
                 ];
             } else {
                 // Không có FK → xóa cứng bình thường
                 $this->itemModel->delete($id);
+                
+                // Log activity
+                $this->activityLog->log(
+                    ActivityLog::ACTION_DELETE,
+                    'menu_item',
+                    $id,
+                    ['reason' => 'not_in_use'],
+                    ActivityLog::LEVEL_INFO
+                );
+                
                 $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã xóa món thành công.'];
             }
         } catch (\Throwable $e) {

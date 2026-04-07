@@ -129,6 +129,13 @@ $router->post('/it/database/cleanup/all', 'SettingController', 'cleanupAll');
 $router->post('/it/database/cleanup/orders', 'SettingController', 'cleanupOrders');
 $router->post('/it/database/cleanup/table', 'SettingController', 'cleanupTable');
 
+// ── Admin: Activity Logs ─────────────────────────────────
+$router->get('/admin/activity', 'AdminActivityController', 'index');
+$router->get('/admin/activity/data', 'AdminActivityController', 'data');
+$router->get('/admin/activity/entityLogs', 'AdminActivityController', 'entityLogs');
+$router->post('/admin/activity/cleanup', 'AdminActivityController', 'cleanup');
+$router->get('/admin/activity/export', 'AdminActivityController', 'export');
+
 // ── QR Ordering: Customer ──────────────────────────────────
 $router->get('/q', 'QrMenuController', 'shortLink');
 $router->get('/qr/menu', 'QrMenuController', 'index');
