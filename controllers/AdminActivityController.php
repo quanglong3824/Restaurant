@@ -21,6 +21,27 @@ class AdminActivityController extends Controller
      */
     public function index(): void
     {
+        // Kiểm tra bảng activity_logs có tồn tại không
+        try {
+            $db = getDB();
+            $stmt = $db->query("SHOW TABLES LIKE 'activity_logs'");
+            if ($stmt->rowCount() === 0) {
+                $_SESSION['flash'] = [
+                    'type' => 'warning',
+                    'message' => 'Bảng activity_logs chưa tồn tại. Vui lòng chạy migration trong database/migration_activity_logs.sql trước.',
+                ];
+                $this->redirect('/admin/menu');
+                return;
+            }
+        } catch (\Throwable $e) {
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => 'Lỗi kết nối database: ' . $e->getMessage(),
+            ];
+            $this->redirect('/admin/menu');
+            return;
+        }
+
         $filters = [
             'action' => $this->input('action', ''),
             'entity' => $this->input('entity', ''),
