@@ -5,15 +5,18 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/ActivityLog.php';
+require_once BASE_PATH . '/models/User.php';
 
 class AdminActivityController extends Controller
 {
     private ActivityLog $activityLog;
+    private User $userModel;
 
     public function __construct()
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
         $this->activityLog = new ActivityLog();
+        $this->userModel = new User();
     }
 
     /**
@@ -61,8 +64,7 @@ class AdminActivityController extends Controller
         $totalPages = ceil($total / $limit);
 
         // Lấy danh sách users để filter
-        $userModel = new User();
-        $users = $userModel->getAll();
+        $users = $this->userModel->getAll();
 
         // Lấy danh sách actions đã có
         $actions = $this->activityLog->getActionTypes();
