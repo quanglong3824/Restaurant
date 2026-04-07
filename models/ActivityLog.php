@@ -65,6 +65,19 @@ class ActivityLog extends Model
         string $level = self::LEVEL_INFO,
         ?int $userId = null
     ): int {
+        // Kiểm tra bảng tồn tại trước khi log
+        try {
+            $db = getDB();
+            $stmt = $db->query("SHOW TABLES LIKE 'activity_logs'");
+            if ($stmt->rowCount() === 0) {
+                // Bảng chưa tồn tại, không log nữa
+                return 0;
+            }
+        } catch (\Throwable $e) {
+            // Lỗi khi kiểm tra bảng, không log nữa
+            return 0;
+        }
+
         // Tự động lấy user_id từ session nếu không truyền vào
         if ($userId === null && Auth::isLoggedIn()) {
             $userId = Auth::user()['id'];
@@ -78,25 +91,30 @@ class ActivityLog extends Model
         $requestUri = $_SERVER['REQUEST_URI'] ?? 'unknown';
         $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'unknown';
 
-        $this->execute(
-            "INSERT INTO activity_logs 
-            (action, entity, entity_id, user_id, ip_address, user_agent, request_uri, request_method, metadata, level, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
-            [
-                $action,
-                $entity,
-                $entityId,
-                $userId,
-                $ipAddress,
-                $userAgent,
-                $requestUri,
-                $requestMethod,
-                json_encode($metadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                $level
-            ]
-        );
+        try {
+            $this->execute(
+                "INSERT INTO activity_logs 
+                (action, entity, entity_id, user_id, ip_address, user_agent, request_uri, request_method, metadata, level, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+                [
+                    $action,
+                    $entity,
+                    $entityId,
+                    $userId,
+                    $ipAddress,
+                    $userAgent,
+                    $requestUri,
+                    $requestMethod,
+                    json_encode($metadata, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    $level
+                ]
+            );
 
-        return (int) $this->lastInsertId();
+            return (int) $this->lastInsertId();
+        } catch (\Throwable $e) {
+            // Lỗi khi insert log, bỏ qua để không làm gián đoạn luồng chính
+            return 0;
+        }
     }
 
     /**

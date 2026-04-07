@@ -123,6 +123,14 @@
                         <span>Báo cáo thống kê</span>
                     </a>
                 </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">HỆ THỐNG</div>
+                    <a href="<?= BASE_URL ?>/admin/activity" class="nav-item <?= activeClass('/admin/activity') ?>">
+                        <i class="fas fa-history"></i>
+                        <span>Nhật ký hoạt động</span>
+                    </a>
+                </div>
             <?php endif; ?>
 
             <?php if (Auth::isIT()): ?>
