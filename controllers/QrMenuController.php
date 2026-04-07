@@ -147,15 +147,19 @@ class QrMenuController extends Controller
                 );
 
                 // Kiểm tra xem đây có phải cùng thiết bị không
-                // Nhận diện: visitorToken khớp, HOẶC session PHP khớp,
-                // HOẶC order được tạo từ cùng QR token (同一 table + token = same QR source)
+                // ── GIẢI PHÁP ĐỒNG NHẤT PHIÊN (COLLABORATIVE ORDERING) ──
+                // Nếu khách quét đúng mã QR (khớp token bí mật trên bàn), 
+                // ta cho phép khách vào bàn kể cả khi ID thiết bị thay đổi.
                 $storedSession   = $openOrder['session_id'] ?? '';
                 $isSameDevice    = ($storedSession === $visitorToken)
                                 || ($storedSession === $currentSessionId)
                                 || empty($storedSession);
+                
+                // Cờ hỗ trợ: Nếu quét đúng token QR của bàn này -> Coi như hợp lệ (vì token đã verify ở dòng 68)
+                $isValidQrSource = true; 
 
-                if ($confirmedItems && !$isSameDevice) {
-                    // Bàn thực sự đang bận bởi người khác → chặn
+                if ($confirmedItems && !$isSameDevice && !$isValidQrSource) {
+                    // Bàn bận bởi người khác từ nguồn khác (không phải QR này) -> chặn
                     $this->view('layouts/public', [
                         'view'      => 'orders/table_busy',
                         'pageTitle' => 'Bàn đang bận',
@@ -165,8 +169,7 @@ class QrMenuController extends Controller
                     return;
                 }
 
-                // Cùng thiết bị hoặc session mới của cùng khách
-                // → cập nhật session_id về visitor token hiện tại
+                // Cùng thiết bị hoặc được xác thực qua QR -> Ghi đè session_id để nhận diện ở lần sau
                 $this->orderModel->updateSession($openOrder['id'], $visitorToken);
 
             } elseif ($table['status'] !== 'occupied') {
@@ -207,6 +210,7 @@ class QrMenuController extends Controller
                 'orderId' => $orderId,
                 'orderItems' => $orderItems,
                 'token' => $token,
+                'visitorToken' => $visitorToken,
                 'isCustomer' => true
             ]);
         } catch (\Throwable $e) {

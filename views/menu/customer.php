@@ -260,13 +260,17 @@ if ($hasItems) {
                 document.getElementById('menuWrapper').style.display = 'block';
             }
 
-            // Phục hồi visitor token từ localStorage if cookie bị xoá
-            var _vt = localStorage.getItem('qr_global_device_id') || localStorage.getItem('qr_vt_' + _tid);
-            if (_vt && !document.cookie.includes('qr_visitor_token')) {
-                document.cookie = 'qr_visitor_token=' + _vt + '; path=/; max-age=31104000; SameSite=Lax';
-            }
-            if (_vt) {
-                localStorage.setItem('qr_global_device_id', _vt);
+            // --- persistence Siêu bền vững ---
+            var _serverVt = '<?= $visitorToken ?>';
+            var _localVt = localStorage.getItem('qr_global_device_id') || localStorage.getItem('qr_vt_' + _tid);
+
+            // Ưu tiên token mà Server trả về (vì Server có logic khôi phục hoặc sinh mới)
+            if (_serverVt) {
+                localStorage.setItem('qr_global_device_id', _serverVt);
+                localStorage.setItem('qr_vt_' + _tid, _serverVt);
+            } else if (_localVt) {
+                // Nếu server k trả về (hiếm), khôi phục từ local
+                document.cookie = 'qr_visitor_token=' + _localVt + '; path=/; max-age=31104000; SameSite=Lax';
             }
         })();
     </script>
