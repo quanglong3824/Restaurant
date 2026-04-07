@@ -30,7 +30,7 @@ class AdminActivityController extends Controller
                     'type' => 'warning',
                     'message' => 'Bảng activity_logs chưa tồn tại. Vui lòng chạy migration trong database/migration_activity_logs.sql trước.',
                 ];
-                $this->redirect('/admin/menu');
+                $this->redirect('/admin/realtime');
                 return;
             }
         } catch (\Throwable $e) {
@@ -38,7 +38,7 @@ class AdminActivityController extends Controller
                 'type' => 'danger',
                 'message' => 'Lỗi kết nối database: ' . $e->getMessage(),
             ];
-            $this->redirect('/admin/menu');
+            $this->redirect('/admin/realtime');
             return;
         }
 
@@ -84,8 +84,6 @@ class AdminActivityController extends Controller
             'users' => $users,
             'actions' => $actions,
             'stats' => $stats,
-            'pageCSS' => 'admin/activity',
-            'pageJS' => 'admin/activity',
         ]);
     }
 
