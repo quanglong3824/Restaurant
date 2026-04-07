@@ -75,7 +75,38 @@ class Order extends Model
         );
     }
 
-    /** Nối thêm ghi chú vào order */
+    /** Lấy toàn bộ các thiết bị (session) đang quét QR và các bàn tương ứng */
+    public function getGroupedQrSessions(): array
+    {
+        $rows = $this->findAll(
+            "SELECT o.session_id, o.id as order_id, o.opened_at, t.name as table_name, t.type as table_type,
+                    (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id AND oi.status != 'cancelled') as total
+             FROM orders o
+             JOIN tables t ON t.id = o.table_id
+             WHERE o.session_id IS NOT NULL AND o.status = 'open'
+             ORDER BY o.session_id, o.opened_at DESC"
+        );
+
+        $sessions = [];
+        foreach ($rows as $r) {
+            $sid = $r['session_id'];
+            if (!isset($sessions[$sid])) {
+                $sessions[$sid] = [
+                    'session_id' => $sid,
+                    'tables' => [],
+                    'total_all' => 0,
+                    'since' => $r['opened_at']
+                ];
+            }
+            $sessions[$sid]['tables'][] = $r;
+            $sessions[$sid]['total_all'] += ($r['total'] ?? 0);
+            // 'since' is the earliest opened_at
+            if (strtotime($r['opened_at']) < strtotime($sessions[$sid]['since'])) {
+                $sessions[$sid]['since'] = $r['opened_at'];
+            }
+        }
+        return array_values($sessions);
+    }
     public function appendNote(int $orderId, string $newNote): void
     {
         $order = $this->findById($orderId);

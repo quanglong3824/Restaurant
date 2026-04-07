@@ -100,6 +100,23 @@ class AdminRealtimeController extends Controller
         $this->json(['ok' => true]);
     }
 
+    /**
+     * GET /admin/realtime/qr-sessions — Monitor all QR devices
+     */
+    public function qrSessions(): void
+    {
+        Auth::requireRole(ROLE_ADMIN, ROLE_IT);
+        
+        $sessions = $this->orderModel->getGroupedQrSessions();
+        
+        $this->view('layouts/admin', [
+            'view' => 'admin/realtime/qr_sessions',
+            'pageTitle' => 'Giám sát Phiên QR',
+            'pageSubtitle' => 'Danh sách thiết bị khách đang quét nhiều bàn',
+            'sessions' => $sessions
+        ]);
+    }
+
     private function calculateOrderRounds(array $items): int
     {
         if (empty($items))

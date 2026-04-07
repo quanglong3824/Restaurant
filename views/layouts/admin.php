@@ -64,6 +64,10 @@
                         <i class="fas fa-satellite-dish"></i>
                         <span>Giám sát trực tiếp</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/admin/realtime/qr-sessions" class="nav-item <?= activeClass('/admin/realtime/qr-sessions') ?>">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Giám sát phiên QR</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/admin/shifts" class="nav-item <?= activeClass('/admin/shifts') ?>">
                         <i class="fas fa-user-clock"></i>
                         <span>Nhân sự & Ca trực</span>
