@@ -52,7 +52,21 @@ class AuthController extends Controller
 
         // Lấy danh sách ca trực
         $db = getDB();
-        $shifts = $db->query("SELECT * FROM shifts")->fetchAll();
+        $shifts = $db->query("SELECT * FROM shifts ORDER BY start_time ASC")->fetchAll();
+
+        // Nếu chưa có ca trực nào, tự động tạo ca mặc định
+        if (empty($shifts)) {
+            $defaultShifts = [
+                ['Ca Sáng',  '06:00:00', '14:00:00'],
+                ['Ca Chiều', '14:00:00', '22:00:00'],
+                ['Ca Tối',   '22:00:00', '06:00:00'],
+            ];
+            $stmt = $db->prepare("INSERT INTO shifts (name, start_time, end_time) VALUES (?, ?, ?)");
+            foreach ($defaultShifts as $s) {
+                $stmt->execute($s);
+            }
+            $shifts = $db->query("SELECT * FROM shifts ORDER BY start_time ASC")->fetchAll();
+        }
 
         $this->view('auth/login', [
             'pageTitle' => 'Đăng nhập',
