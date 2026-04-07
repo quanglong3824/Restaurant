@@ -252,9 +252,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let isFirstLoad = true;
 
     // ── Hệ thống âm thanh cải tiến ──────────────────────────
+    // Fix: Độ trễ và âm thanh bị dồn
     let soundEnabled = localStorage.getItem('noti_sound') !== 'off';
     let audioUnlocked = false;
     const audioEl = document.getElementById('notiSoundDefault');
+    
+    // Quan trọng: Lưu trữ ID của thông báo đã phát âm để tránh phát lại
+    let lastPlayedNotificationId = null;
+    let lastPlayedTime = 0;
+    const SOUND_COOLDOWN_MS = 2000; // Thời gian tối thiểu giữa 2 lần phát âm (ms)
+    let soundQueue = []; // Hàng đợi âm thanh
+    let isPlayingSound = false; // Cờ đang phát âm
 
     function updateSoundUI() {
         const btn = document.getElementById('btnToggleSound');
@@ -309,29 +317,78 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener(evt, unlockAudio, { once: false, passive: true });
     });
 
-    // Phát âm thanh thông báo
-    function playNotifSound(times = 1) {
+    // Xử lý hàng đợi âm thanh - Phát lần lượt thay vì dồn
+    function processSoundQueue() {
+        if (isPlayingSound || soundQueue.length === 0) return;
+        
+        isPlayingSound = true;
+        const soundTask = soundQueue.shift();
+        
+        const audio = audioEl.cloneNode();
+        audio.volume = 1;
+        audio.currentTime = 0;
+        
+        audio.play()
+            .then(() => {
+                console.log('🔊 Playing sound for notification:', soundTask.id);
+            })
+            .catch((err) => {
+                console.error('❌ Sound play error:', err);
+            });
+        
+        audio.onended = () => {
+            isPlayingSound = false;
+            // Tiếp tục phát cái tiếp theo trong hàng đợi sau khi xong
+            setTimeout(() => processSoundQueue(), 300);
+        };
+        
+        // Timeout an toàn nếu audio không kết thúc
+        setTimeout(() => {
+            if (isPlayingSound) {
+                isPlayingSound = false;
+                processSoundQueue();
+            }
+        }, 3000);
+    }
+
+    // Phát âm thanh thông báo - Có chống dồn và debounce
+    function playNotifSound(notificationId = null) {
         if (!soundEnabled || !audioUnlocked) return;
         
-        let count = 0;
-        function playOnce() {
-            if (count >= times) return;
-            const audio = audioEl.cloneNode();
-            audio.volume = 1;
-            audio.currentTime = 0;
-            audio.play().catch(() => {});
-            count++;
-            if (count < times) {
-                setTimeout(playOnce, 700);
+        const now = Date.now();
+        
+        // Nếu có notificationId, kiểm tra xem đã phát chưa
+        if (notificationId !== null) {
+            // Bỏ qua nếu đã phát cho notification này
+            if (lastPlayedNotificationId === notificationId) {
+                console.log('⏭️ Skip duplicate notification:', notificationId);
+                return;
             }
+            
+            // Kiểm tra cooldown - tránh phát quá nhanh
+            if (now - lastPlayedTime < SOUND_COOLDOWN_MS) {
+                console.log('⏳ Cooldown, skipping sound');
+                return;
+            }
+            
+            lastPlayedNotificationId = notificationId;
+            lastPlayedTime = now;
         }
-        playOnce();
+        
+        // Thêm vào hàng đợi thay vì phát ngay
+        soundQueue.push({ id: notificationId, time: now });
+        
+        // Xử lý hàng đợi
+        processSoundQueue();
     }
 
     // Expose cho app.js toàn cục nếu cần
     window.__notiPlaySound = playNotifSound;
 
     // ── Fetch & Render ──────────────────────────────────────
+    // Lưu trữ danh sách ID thông báo đã biết để so sánh
+    let knownNotificationIds = new Set();
+    
     async function fetchNotifications(silent = false) {
         try {
             let url = `${BASE_URL}/api/notifications/poll?page=${currentPage}&limit=${itemsPerPage}&filter=${currentFilter}`;
@@ -344,6 +401,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.ok) {
                 totalItems = data.total_count;
+                
+                // Phát hiện thông báo mới và phát âm thanh
+                if (!silent && data.notifications && data.notifications.length > 0) {
+                    detectAndPlayNewNotifications(data.notifications);
+                }
+                
                 renderList(data.notifications);
                 updatePagination();
 
@@ -351,9 +414,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.stats) {
                     updateFilterCounts(data.stats);
                 }
+                
+                // Cập nhật danh sách ID đã biết
+                data.notifications.forEach(n => {
+                    if (!n.is_read || parseInt(n.is_read) === 0) {
+                        knownNotificationIds.add(n.id);
+                    }
+                });
             }
         } catch (e) {
             console.error("Fetch error", e);
+        }
+    }
+    
+    // Phát hiện thông báo mới và phát âm thanh
+    function detectAndPlayNewNotifications(notifications) {
+        const now = Date.now();
+        
+        // Chỉ xử lý thông báo unread
+        const unreadNotifs = notifications.filter(n => !n.is_read || parseInt(n.is_read) === 0);
+        
+        // Tìm thông báo mới nhất chưa có trong knownNotificationIds
+        for (const notif of unreadNotifs) {
+            if (!knownNotificationIds.has(notif.id)) {
+                // Đây là thông báo mới, phát âm thanh
+                // Chỉ phát cho thông báo gần đây (trong vòng 10 giây)
+                const notifTime = new Date(notif.created_at).getTime();
+                if (now - notifTime < 10000) {
+                    console.log('🔔 New notification detected:', notif.id, notif.title);
+                    playNotifSound(notif.id);
+                    // Chỉ phát cho 1 thông báo mới nhất mỗi lần poll
+                    break;
+                }
+            }
         }
     }
 
