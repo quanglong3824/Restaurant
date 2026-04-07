@@ -33,6 +33,21 @@ class Order extends Model
         );
     }
 
+    /** Lấy tất cả order đang mở của một session (thiết bị khách) */
+    public function findBySessionId(string $sessionId): array
+    {
+        return $this->findAll(
+            "SELECT o.*, t.name AS table_name, t.type AS table_type, t.status AS table_status, qt.qr_hash,
+                    (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id AND oi.status != 'cancelled') AS total
+             FROM orders o
+             JOIN tables t ON t.id = o.table_id
+             JOIN qr_tables qt ON qt.table_id = t.id
+             WHERE o.session_id = ? AND o.status = 'open' AND qt.is_active = 1
+             ORDER BY o.opened_at DESC",
+            [$sessionId]
+        );
+    }
+
     /** Lấy order gần nhất của một bàn (kể cả đã đóng) */
     public function findLastOrderByTable(int $tableId): ?array
     {

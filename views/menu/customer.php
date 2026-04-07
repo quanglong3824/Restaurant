@@ -296,6 +296,10 @@ if ($hasItems) {
 
         <!-- Action bar -->
         <div class="action-bar">
+            <button class="action-btn" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'">
+                <i class="fas fa-th-list"></i>
+                <span>Bàn của tôi</span>
+            </button>
             <button class="action-btn" onclick="callWaiter('support')">
                 <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
                 <span><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>

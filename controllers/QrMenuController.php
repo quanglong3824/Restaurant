@@ -179,6 +179,31 @@ class QrMenuController extends Controller
         }
     }
 
+    /** View all active sessions (tables) for this device */
+    public function sessions(): void
+    {
+        $visitorToken = $_COOKIE['qr_visitor_token'] ?? '';
+        
+        if (empty($visitorToken)) {
+            $this->view('layouts/public', [
+                'view' => 'menu/no_session',
+                'pageTitle' => 'Không tìm thấy phiên làm việc',
+                'isCustomer' => true
+            ]);
+            return;
+        }
+
+        $activeOrders = $this->orderModel->findBySessionId($visitorToken);
+        
+        $this->view('layouts/public', [
+            'view' => 'menu/sessions',
+            'pageTitle' => 'Quản lý phiên đặt món',
+            'orders' => $activeOrders,
+            'visitorToken' => $visitorToken,
+            'isCustomer' => true
+        ]);
+    }
+
     private function setupCustomerSession(int $tableId, string $token): void
     {
         // Set session cookie lifetime to 24 hours
