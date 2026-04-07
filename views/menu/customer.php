@@ -260,13 +260,13 @@ if ($hasItems) {
                 document.getElementById('menuWrapper').style.display = 'block';
             }
 
-            // Phục hồi visitor token từ localStorage nếu cookie bị xóa
-            // Điều này giúp QrMenuController nhận diện đúng khi scan lại
-            var _vt = localStorage.getItem('qr_vt_' + _tid);
+            // Phục hồi visitor token từ localStorage if cookie bị xoá
+            var _vt = localStorage.getItem('qr_global_device_id') || localStorage.getItem('qr_vt_' + _tid);
             if (_vt && !document.cookie.includes('qr_visitor_token')) {
-                // Gửi lại visitor token qua redirect nếu cần
-                // (chỉ đầy đủ khi page được tải từ QR scan mới)
-                document.cookie = 'qr_visitor_token=' + _vt + '; path=/; max-age=86400; SameSite=Lax';
+                document.cookie = 'qr_visitor_token=' + _vt + '; path=/; max-age=31104000; SameSite=Lax';
+            }
+            if (_vt) {
+                localStorage.setItem('qr_global_device_id', _vt);
             }
         })();
     </script>

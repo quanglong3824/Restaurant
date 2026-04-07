@@ -71,17 +71,55 @@ class QrMenuController extends Controller
                 return;
             }
 
-            // --- CƠ CHẾ ĐỊNH DANH KHÁCH BỀN VỮNG ---
-            // Visitor token = cookie (24h) + fallback từ GET param (do JS gửi kèm)
-            // Cookie KHÔNG HttpOnly để JS có thể đọc và tái sử dụng khi reload
-            $visitorToken = $_COOKIE['qr_visitor_token']
-                         ?? $_GET['_vt'] ?? '';
+            // --- CƠ CHẾ ĐỊNH DANH KHÁCH SIÊU BỀN VỮNG (COOKIE + LOCALSTORAGE FALLBACK) ---
+            $visitorToken = $_COOKIE['qr_visitor_token'] ?? $_GET['_vt'] ?? '';
+
+            // Nếu hoàn toàn không có token, thử dùng JS để khôi phục từ localStorage của thiết bị
+            if (empty($visitorToken) && !isset($_GET['_no_js'])) {
+                echo "
+                <script>
+                    (function(){
+                        // Tìm bất kỳ token nào đã lưu trên thiết bị này (qua các bàn khác)
+                        var _v = localStorage.getItem('qr_global_device_id');
+                        if (!_v) {
+                             // Fallback: tìm trong các key cũ theo table
+                             for (var i = 0; i < localStorage.length; i++) {
+                                 var k = localStorage.key(i);
+                                 if (k && k.indexOf('qr_vt_') === 0) {
+                                     _v = localStorage.getItem(k);
+                                     break;
+                                 }
+                             }
+                        }
+                        
+                        var url = new URL(window.location.href);
+                        if (_v) {
+                            url.searchParams.set('_vt', _v);
+                            window.location.replace(url.toString());
+                        } else {
+                            // Không tìm thấy -> đi tiếp để server sinh token mới
+                            url.searchParams.set('_no_js', '1');
+                            window.location.replace(url.toString());
+                        }
+                    })();
+                </script>
+                <div style='text-align:center; padding:50px; font-family:sans-serif; color:#666;'>
+                    Đang kết nối hệ thống...
+                </div>";
+                exit;
+            }
+
             if (empty($visitorToken)) {
                 $visitorToken = bin2hex(random_bytes(16));
             }
-            // Lưu cookie: SameSite=Lax, KHÔNG HttpOnly để JS đọc được
-            setcookie('qr_visitor_token', $visitorToken,
-                ['expires' => time() + 86400, 'path' => '/', 'samesite' => 'Lax', 'secure' => isset($_SERVER['HTTPS'])]);
+
+            // Đồng bộ Token vào cookie (cho các request sau) và JS (cho localStorage sau)
+            setcookie('qr_visitor_token', $visitorToken, [
+                'expires' => time() + (365 * 86400), // 1 năm
+                'path' => '/',
+                'samesite' => 'Lax',
+                'secure' => isset($_SERVER['HTTPS'])
+            ]);
 
             $this->setupCustomerSession($tableId, $token);
             $currentSessionId = session_id();

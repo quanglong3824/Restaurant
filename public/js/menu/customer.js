@@ -294,11 +294,15 @@ function checkLocation() {
                     showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
                     updateLocationIndicator('denied', `Xa (${Math.round(distance)}m)`);
                 } else {
-                    // Xác thực thành công
+                    // Xác thực thành công — lưu trạng thái + visitor token vào localStorage
                     localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
-                    // Lưu visitor token vào localStorage để phục hồi cookie nếu bị trình duyệt xóa
+
+                    // Lưu visitor token vào localStorage ĐỊNH DANH TOÀN CỤC THIẾT BỊ
                     const _vt = _getCookie('qr_visitor_token');
-                    if (_vt) localStorage.setItem(`qr_vt_${CUSTOMER_CONFIG.tableId}`, _vt);
+                    if (_vt) {
+                        localStorage.setItem('qr_global_device_id', _vt);
+                        localStorage.setItem(`qr_vt_${CUSTOMER_CONFIG.tableId}`, _vt);
+                    }
                     if (btn) {
                         btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> XÁC THỰC THÀNH CÔNG!';
                         btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
