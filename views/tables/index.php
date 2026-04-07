@@ -181,27 +181,27 @@ if (!function_exists('renderTableCard')) {
         </a>
     </nav>
 
-    <!-- Separate summary boxes for each tab -->
+    <!-- Separate summary boxes for each tab - Compact Squares -->
     <?php if ($type === 'table'): ?>
-    <div class="summary-shelf d-flex gap-3 mb-4">
-        <div class="summary-box flex-grow-1 occupied">
-            <div class="box-icon"><i class="fas fa-utensils"></i></div>
-            <div class="box-info"><div class="val"><?= $tableOccupied ?></div><div class="lbl">BÀN ĐANG ĂN</div></div>
+    <div class="compact-summary-row mb-3">
+        <div class="compact-stat-box occupied">
+            <div class="stat-val"><?= $tableOccupied ?></div>
+            <div class="stat-lbl">BÀN ĂN</div>
         </div>
-        <div class="summary-box flex-grow-1 available">
-            <div class="box-icon"><i class="fas fa-chair"></i></div>
-            <div class="box-info"><div class="val"><?= $tableAvailable ?></div><div class="lbl">BÀN TRỐNG</div></div>
+        <div class="compact-stat-box available">
+            <div class="stat-val"><?= $tableAvailable ?></div>
+            <div class="stat-lbl">BÀN TRỐNG</div>
         </div>
     </div>
     <?php else: ?>
-    <div class="summary-shelf d-flex gap-3 mb-4">
-        <div class="summary-box flex-grow-1 occupied">
-            <div class="box-icon"><i class="fas fa-bed"></i></div>
-            <div class="box-info"><div class="val"><?= $roomOccupied ?></div><div class="lbl">PHÒNG ĐANG Ở</div></div>
+    <div class="compact-summary-row mb-3">
+        <div class="compact-stat-box occupied">
+            <div class="stat-val"><?= $roomOccupied ?></div>
+            <div class="stat-lbl">PHÒNG Ở</div>
         </div>
-        <div class="summary-box flex-grow-1 available">
-            <div class="box-icon"><i class="fas fa-door-open"></i></div>
-            <div class="box-info"><div class="val"><?= $roomAvailable ?></div><div class="lbl">PHÒNG TRỐNG</div></div>
+        <div class="compact-stat-box available">
+            <div class="stat-val"><?= $roomAvailable ?></div>
+            <div class="stat-lbl">PHÒNG TRỐNG</div>
         </div>
     </div>
     <?php endif; ?>

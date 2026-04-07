@@ -16,6 +16,54 @@
     padding-bottom: 0.5rem;
 }
 
+/* Compact Summary Row - Small Square Boxes */
+.compact-summary-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.compact-stat-box {
+    width: 100px;
+    height: 80px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.compact-stat-box.occupied {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    border-color: #fecaca;
+}
+
+.compact-stat-box.available {
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-color: #a7f3d0;
+}
+
+.compact-stat-box .stat-val {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.compact-stat-box.occupied .stat-val { color: #dc2626; }
+.compact-stat-box.available .stat-val { color: #059669; }
+
+.compact-stat-box .stat-lbl {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Legacy Summary Shelf */
 .summary-shelf { margin-inline: -0.25rem; }
 
 .summary-box {
