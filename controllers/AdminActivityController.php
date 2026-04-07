@@ -70,7 +70,8 @@ class AdminActivityController extends Controller
         // Thống kê nhanh
         $stats = $this->getQuickStats();
 
-        $this->view('admin/activity/index', [
+        $this->view('layouts/admin', [
+            'view' => 'admin/activity/index',
             'pageTitle' => 'Nhật Ký Hoạt Động',
             'pageSubtitle' => 'Theo dõi toàn bộ hoạt động trong hệ thống',
             'logs' => $logs,
