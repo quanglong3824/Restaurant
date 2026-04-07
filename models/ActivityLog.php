@@ -201,38 +201,42 @@ class ActivityLog extends Model
      */
     public function countLogs(array $filters = []): int
     {
-        $where = ['1=1'];
-        $params = [];
+        try {
+            $where = ['1=1'];
+            $params = [];
 
-        if (!empty($filters['from'])) {
-            $where[] = "DATE(created_at) >= ?";
-            $params[] = $filters['from'];
-        }
-        if (!empty($filters['to'])) {
-            $where[] = "DATE(created_at) <= ?";
-            $params[] = $filters['to'];
-        }
-        if (!empty($filters['action'])) {
-            $where[] = "action = ?";
-            $params[] = $filters['action'];
-        }
-        if (!empty($filters['entity'])) {
-            $where[] = "entity = ?";
-            $params[] = $filters['entity'];
-        }
-        if (isset($filters['user_id']) && $filters['user_id'] !== '') {
-            $where[] = "user_id = ?";
-            $params[] = $filters['user_id'];
-        }
-        if (!empty($filters['level'])) {
-            $where[] = "level = ?";
-            $params[] = $filters['level'];
-        }
+            if (!empty($filters['from'])) {
+                $where[] = "DATE(created_at) >= ?";
+                $params[] = $filters['from'];
+            }
+            if (!empty($filters['to'])) {
+                $where[] = "DATE(created_at) <= ?";
+                $params[] = $filters['to'];
+            }
+            if (!empty($filters['action'])) {
+                $where[] = "action = ?";
+                $params[] = $filters['action'];
+            }
+            if (!empty($filters['entity'])) {
+                $where[] = "entity = ?";
+                $params[] = $filters['entity'];
+            }
+            if (isset($filters['user_id']) && $filters['user_id'] !== '') {
+                $where[] = "user_id = ?";
+                $params[] = $filters['user_id'];
+            }
+            if (!empty($filters['level'])) {
+                $where[] = "level = ?";
+                $params[] = $filters['level'];
+            }
 
-        $whereClause = implode(' AND ', $where);
+            $whereClause = implode(' AND ', $where);
 
-        $result = $this->findOne("SELECT COUNT(*) as count FROM activity_logs WHERE {$whereClause}", $params);
-        return (int) ($result['count'] ?? 0);
+            $result = $this->findOne("SELECT COUNT(*) as count FROM activity_logs WHERE {$whereClause}", $params);
+            return (int) ($result['count'] ?? 0);
+        } catch (\Throwable $e) {
+            return 0;
+        }
     }
 
     /**
@@ -240,8 +244,12 @@ class ActivityLog extends Model
      */
     public function getActionTypes(): array
     {
-        $result = $this->findAll("SELECT DISTINCT action FROM activity_logs ORDER BY action");
-        return array_column($result, 'action');
+        try {
+            $result = $this->findAll("SELECT DISTINCT action FROM activity_logs ORDER BY action");
+            return array_column($result, 'action');
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 
     /**
