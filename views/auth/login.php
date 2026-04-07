@@ -77,8 +77,7 @@
                 </p>
                 <div class="shift-grid">
                     <?php foreach ($shifts as $s): ?>
-                        <button type="button" class="shift-chip" data-id="<?= $s['id'] ?>"
-                            
+                        <button type="button" class="shift-chip" data-id="<?= $s['id'] ?>">
                             <?= e($s['name']) ?><br>
                             <small><?= date('H:i', strtotime($s['start_time'])) ?>
                                 - <?= date('H:i', strtotime($s['end_time'])) ?></small>
