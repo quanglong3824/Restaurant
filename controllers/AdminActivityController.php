@@ -59,18 +59,39 @@ class AdminActivityController extends Controller
         $page = max(1, (int) $this->input('page', 1));
         $limit = min(100, max(10, (int) $this->input('limit', 50)));
 
-        $logs = $this->activityLog->getLogs($filters, $page, $limit);
-        $total = $this->activityLog->countLogs($filters);
-        $totalPages = ceil($total / $limit);
+        try {
+            $logs = $this->activityLog->getLogs($filters, $page, $limit);
+            $total = $this->activityLog->countLogs($filters);
+            $totalPages = ceil($total / $limit);
+        } catch (\Throwable $e) {
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'message' => 'Lỗi khi tải logs: ' . $e->getMessage(),
+            ];
+            $this->redirect('/admin/realtime');
+            return;
+        }
 
         // Lấy danh sách users để filter
         $users = $this->userModel->getAll();
 
         // Lấy danh sách actions đã có
-        $actions = $this->activityLog->getActionTypes();
+        try {
+            $actions = $this->activityLog->getActionTypes();
+        } catch (\Throwable $e) {
+            $actions = [];
+        }
 
         // Thống kê nhanh
-        $stats = $this->getQuickStats();
+        try {
+            $stats = $this->getQuickStats();
+        } catch (\Throwable $e) {
+            $stats = [
+                'today' => ['total' => 0, 'errors' => 0, 'warnings' => 0],
+                'yesterday' => ['total' => 0],
+                'week' => ['total' => 0, 'unique_users' => 0],
+            ];
+        }
 
         $this->view('layouts/admin', [
             'view' => 'admin/activity/index',
