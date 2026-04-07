@@ -2,7 +2,7 @@
 <div class="card">
     <div class="card-header">
         <h2><i class="fas fa-utensils"></i> Danh sách Món ăn</h2>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
             <!-- Menu Type Tabs -->
             <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline <?= !isset($_GET['type']) || $_GET['type'] === '' ? 'active' : '' ?>">
                 <i class="fas fa-utensils"></i> Món Lẻ
@@ -10,7 +10,7 @@
             <a href="<?= BASE_URL ?>/admin/menu/sets" class="btn btn-outline <?= isset($_GET['type']) && $_GET['type'] === 'sets' ? 'active' : '' ?>">
                 <i class="fas fa-layer-group"></i> Set & Combo
             </a>
-            
+
             <!-- Category filter -->
             <select id="catFilter" class="form-control" style="width:auto;min-width:160px;">
                 <option value="">Tất cả danh mục</option>
@@ -20,6 +20,15 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+
+            <!-- Service type filter -->
+            <select id="serviceFilter" class="form-control" style="width:auto;min-width:170px;">
+                <option value="">Tất cả loại phục vụ</option>
+                <option value="restaurant">Chỉ Nhà hàng</option>
+                <option value="room_service">Chỉ Room Service</option>
+                <option value="both">Cả hai</option>
+            </select>
+
             <a href="<?= BASE_URL ?>/admin/menu/create" class="btn btn-gold">
                 <i class="fas fa-plus"></i> Thêm món
             </a>
@@ -33,6 +42,7 @@
                     <th>Ảnh</th>
                     <th>Tên món</th>
                     <th>Danh mục</th>
+                    <th>Phục vụ</th>
                     <th>Giá</th>
                     <th>Tồn kho</th>
                     <th>Hiển thị</th>
@@ -77,8 +87,20 @@
                             </div>
                             <?php endif; ?>
                         </td>
+                        <td><?= e($item['category_name'] ?? '') ?></td>
                         <td>
-                            <?= e($item['category_name'] ?? '') ?>
+                            <?php
+                            $st = $item['service_type'] ?? 'both';
+                            $stMap = [
+                                'restaurant'  => ['label' => 'Nhà hàng', 'icon' => 'fa-utensils',   'color' => '#0ea5e9'],
+                                'room_service'=> ['label' => 'Room Service','icon'=> 'fa-bed',       'color' => '#8b5cf6'],
+                                'both'        => ['label' => 'Cả hai',    'icon' => 'fa-arrows-left-right', 'color' => '#16a34a'],
+                            ];
+                            $s = $stMap[$st] ?? $stMap['both'];
+                            ?>
+                            <span style="display:inline-flex;align-items:center;gap:.3rem;background:<?= $s['color'] ?>18;color:<?= $s['color'] ?>;border:1.5px solid <?= $s['color'] ?>44;border-radius:20px;padding:.2rem .65rem;font-size:.72rem;font-weight:700;white-space:nowrap;" data-service="<?= $st ?>">
+                                <i class="fas <?= $s['icon'] ?>"></i> <?= $s['label'] ?>
+                            </span>
                         </td>
                         <td><strong style="color:var(--gold)">
                                 <?= formatPrice($item['price']) ?>
@@ -133,13 +155,17 @@
 </div>
 
 <script>
-    // Category filter
-    document.getElementById('catFilter').addEventListener('change', function () {
-        const val = this.value;
+    function applyFilters() {
+        const catVal     = document.getElementById('catFilter').value;
+        const serviceVal = document.getElementById('serviceFilter').value;
         document.querySelectorAll('#menuTable tbody tr[data-cat]').forEach(row => {
-            row.style.display = (!val || row.dataset.cat === val) ? '' : 'none';
+            const catMatch     = !catVal     || row.dataset.cat === catVal;
+            const serviceMatch = !serviceVal || (row.querySelector('[data-service]')?.dataset.service === serviceVal);
+            row.style.display  = (catMatch && serviceMatch) ? '' : 'none';
         });
-    });
+    }
+    document.getElementById('catFilter').addEventListener('change', applyFilters);
+    document.getElementById('serviceFilter').addEventListener('change', applyFilters);
 
     function toggleItem(id, type, btn) {
         fetch('<?= BASE_URL ?>/admin/menu/toggle', {

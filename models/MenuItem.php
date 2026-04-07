@@ -87,8 +87,8 @@ class MenuItem extends Model
     {
         $this->execute(
             "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?)",
+             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock)
+             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?)",
             [
                 $data['category_id'],
                 $data['name'],
@@ -101,6 +101,7 @@ class MenuItem extends Model
                 $data['note_options_en'] ?? null,
                 $data['sort_order'] ?? 0,
                 $data['service_type'] ?? 'both',
+                $data['stock'] ?? -1,
             ]
         );
         return (int) $this->lastInsertId();
@@ -111,8 +112,8 @@ class MenuItem extends Model
         $this->execute(
             "UPDATE menu_items
              SET category_id = ?, name = ?, name_en = ?, description = ?,
-                 price = ?, tags = ?, note_options = ?, note_options_en = ?, 
-                 sort_order = ?, is_active = ?, service_type = ?
+                 price = ?, tags = ?, note_options = ?, note_options_en = ?,
+                 sort_order = ?, is_active = ?, service_type = ?, stock = ?
              WHERE id = ?",
             [
                 $data['category_id'],
@@ -126,6 +127,7 @@ class MenuItem extends Model
                 $data['sort_order'] ?? 0,
                 $data['is_active'] ?? 1,
                 $data['service_type'] ?? 'both',
+                $data['stock'] ?? -1,
                 $id,
             ]
         );

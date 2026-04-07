@@ -1,5 +1,5 @@
 -- Aurora Restaurant Database Backup
--- Generated: 2026-03-30 19:57:20
+-- Generated: 2026-04-07 16:18:26
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -19,7 +19,7 @@ CREATE TABLE `customer_sessions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_session_id` (`session_id`),
   KEY `idx_table_active` (`table_id`,`is_active`)
-) ENGINE=InnoDB AUTO_INCREMENT=250 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `customer_sessions` VALUES ('1', '4h9mq0ckfmghi9ni3e7hkgr27k', '1', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:07:47', '2026-03-17 19:37:47', '2026-03-17 19:07:47');
 INSERT INTO `customer_sessions` VALUES ('2', 'u76o6dpolbpnem292njglu0n31', '2', NULL, '222.253.191.65', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-03-17 19:08:13', '2026-03-17 19:38:13', '2026-03-17 19:08:13');
@@ -137,7 +137,24 @@ INSERT INTO `customer_sessions` VALUES ('230', 'th36anls77180dcni8ciab65si', '1'
 INSERT INTO `customer_sessions` VALUES ('231', 'p8rvltqv37ij3f6krj7n1i37v9', '2', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 17:26:43', '2026-03-31 17:26:43', '2026-03-30 17:21:58');
 INSERT INTO `customer_sessions` VALUES ('233', '1dhrbqt7ubpn9gdjmuapu6vldm', '1', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 18:19:06', '2026-03-31 18:19:06', '2026-03-30 18:09:47');
 INSERT INTO `customer_sessions` VALUES ('238', 'ucvdm93rv24mnfs7me6dllqm8r', '15', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 19:32:02', '2026-03-31 19:32:02', '2026-03-30 18:57:11');
-INSERT INTO `customer_sessions` VALUES ('241', '0nndmj2il1b7ic0b2hacsfthae', '19', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 19:50:48', '2026-03-31 19:50:48', '2026-03-30 19:34:10');
+INSERT INTO `customer_sessions` VALUES ('241', '0nndmj2il1b7ic0b2hacsfthae', '19', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 20:29:38', '2026-03-31 20:29:38', '2026-03-30 19:34:10');
+INSERT INTO `customer_sessions` VALUES ('254', '3h9h1qumnde3nrqt6sm2aqlmh0', '3', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 20:44:42', '2026-03-31 20:44:42', '2026-03-30 20:42:37');
+INSERT INTO `customer_sessions` VALUES ('262', 'f3tiks2su7nl7c7p08rsh6pof0', '7', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 21:24:41', '2026-03-31 21:24:41', '2026-03-30 20:50:09');
+INSERT INTO `customer_sessions` VALUES ('265', '1d47jdrpht5ichfhihup6a6cun', '9', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 21:29:53', '2026-03-31 21:29:53', '2026-03-30 21:16:51');
+INSERT INTO `customer_sessions` VALUES ('270', '7t1ufl33qouo68c72n4jv3jh6d', '3', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 21:34:26', '2026-03-31 21:34:26', '2026-03-30 21:26:26');
+INSERT INTO `customer_sessions` VALUES ('271', 'ek8o8a1pso9cng6u285p2440lj', '3', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-30 21:27:40', '2026-03-31 21:27:40', '2026-03-30 21:27:40');
+INSERT INTO `customer_sessions` VALUES ('274', 'og29kc9sgiucvhma8hgf2beubb', '3', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 21:39:55', '2026-03-31 21:39:55', '2026-03-30 21:39:55');
+INSERT INTO `customer_sessions` VALUES ('275', 'lcm3q1difvo62hnji73ps39o8p', '4', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 21:47:35', '2026-03-31 21:47:35', '2026-03-30 21:40:04');
+INSERT INTO `customer_sessions` VALUES ('280', '38rn71eunmof59d44kf8ejacbr', '10', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 21:55:39', '2026-03-31 21:55:39', '2026-03-30 21:47:59');
+INSERT INTO `customer_sessions` VALUES ('285', 'h06l9ddhd4fcviclcomel9c8nm', '20', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-30 22:01:20', '2026-03-31 22:01:20', '2026-03-30 22:00:42');
+INSERT INTO `customer_sessions` VALUES ('287', 'tqo2ps0k8fdrg7nak5078p7bhq', '2', NULL, '113.170.69.214', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36', '1', '2026-03-31 13:32:46', '2026-04-01 13:32:46', '2026-03-31 13:31:48');
+INSERT INTO `customer_sessions` VALUES ('289', '0o0111pvp6psa0uc7rutlo2n2q', '4', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-31 13:55:50', '2026-04-01 13:55:50', '2026-03-31 13:55:26');
+INSERT INTO `customer_sessions` VALUES ('291', 'rv9ge8s8hlr4ff2rj98pht8bt1', '5', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-31 14:01:47', '2026-04-01 14:01:47', '2026-03-31 14:01:27');
+INSERT INTO `customer_sessions` VALUES ('293', 'kpfbkf89q24cl3h0fobdh27ir5', '2', NULL, '113.170.69.214', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-03-31 14:12:25', '2026-04-01 14:12:25', '2026-03-31 14:02:16');
+INSERT INTO `customer_sessions` VALUES ('303', 'q5e08ksvddah3kk8932nbe6l7m', '3', NULL, '113.170.69.214', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15', '1', '2026-03-31 14:47:21', '2026-04-01 14:47:21', '2026-03-31 14:40:13');
+INSERT INTO `customer_sessions` VALUES ('305', '88gqksjmuir75p44obcav50vus', '1', NULL, '103.249.23.54', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.2 Mobile/15E148 Safari/604.1', '1', '2026-04-01 19:15:30', '2026-04-02 19:15:30', '2026-04-01 14:15:10');
+INSERT INTO `customer_sessions` VALUES ('307', '6ks70tar3o69b349t33tlehqp9', '3', NULL, '113.22.145.255', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-04-07 09:10:12', '2026-04-08 09:10:12', '2026-04-07 09:10:12');
+INSERT INTO `customer_sessions` VALUES ('308', '9qd1if2e7t0irrcavgc3a209or', '34', NULL, '118.69.64.122', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Mobile/15E148 Safari/604.1', '1', '2026-04-07 16:17:52', '2026-04-08 16:17:52', '2026-04-07 16:17:52');
 
 DROP TABLE IF EXISTS `location_limits`;
 CREATE TABLE `location_limits` (
@@ -170,27 +187,10 @@ CREATE TABLE `menu_categories` (
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `menu_categories` VALUES ('1', 'Khai Vị', 'Appetizers', 'asia', 'fa-leaf', '1', '1', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_categories` VALUES ('2', 'Món Chính', 'Main Course', 'alacarte', 'fa-drumstick-bite', '2', '1', '2026-03-07 18:08:27', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('3', 'Tráng Miệng', 'Desserts', 'asia', 'fa-ice-cream', '3', '1', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_categories` VALUES ('4', 'Đồ Uống', 'Beverages', 'alacarte', 'fa-glass-martini-alt', '4', '1', '2026-03-07 18:08:27', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('5', 'Đặc Sản', 'Specialties', 'asia', 'fa-star', '5', '1', '2026-03-07 18:08:27', '2026-03-17 08:55:26');
 INSERT INTO `menu_categories` VALUES ('6', 'Gỏi - Nộm', 'Salads', 'alacarte', 'fa-leaf', '1', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('7', 'Lẩu', 'Hot Pot', 'europe', 'fa-bowl-hot', '2', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('8', 'Đồ Nướng', 'Grilled', 'alacarte', 'fa-fire', '3', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('9', 'Cơm', 'Rice Dishes', 'alacarte', 'fa-bowl-rice', '4', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('10', 'Mì - Bún - Phở', 'Noodles', 'alacarte', 'fa-bowl-food', '5', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
 INSERT INTO `menu_categories` VALUES ('11', 'Hải Sản', 'Seafood', 'asia', 'fa-fish', '6', '1', '2026-03-07 18:45:33', '2026-03-07 18:45:33');
-INSERT INTO `menu_categories` VALUES ('12', 'Salad Âu', 'European Salad', 'europe', 'fa-leaf', '1', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('13', 'Súp Âu', 'European Soup', 'europe', 'fa-bowl-hot', '2', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('14', 'Món Chính Âu', 'European Main', 'europe', 'fa-utensils', '3', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('15', 'Mì Ý', 'Pasta', 'alacarte', 'fa-bowl-food', '4', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('16', 'Bít Tết', 'Steak', 'alacarte', 'fa-drumstick-bite', '5', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
 INSERT INTO `menu_categories` VALUES ('17', 'Cá & Hải Sản Âu', 'Fish & Seafood', 'europe', 'fa-fish', '6', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
-INSERT INTO `menu_categories` VALUES ('18', 'Pizza', 'Pizza', 'asia', 'fa-pizza-slice', '7', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
 INSERT INTO `menu_categories` VALUES ('20', 'Set 4 Người', 'Set for 4', 'alacarte', 'fa-users', '2', '1', '2026-03-07 18:45:33', '2026-03-07 18:45:33');
-INSERT INTO `menu_categories` VALUES ('21', 'Set 6 Người', 'Set for 6', 'alacarte', 'fa-users', '3', '1', '2026-03-07 18:45:33', '2026-03-07 18:45:33');
-INSERT INTO `menu_categories` VALUES ('22', 'Set BBQ', 'BBQ Set', 'alacarte', 'fa-fire', '4', '1', '2026-03-07 18:45:33', '2026-03-07 18:45:33');
-INSERT INTO `menu_categories` VALUES ('23', 'Set Hải Sản', 'Seafood Set', 'asia', 'fa-fish', '5', '1', '2026-03-07 18:45:33', '2026-03-17 08:55:26');
 
 DROP TABLE IF EXISTS `menu_items`;
 CREATE TABLE `menu_items` (
@@ -203,6 +203,7 @@ CREATE TABLE `menu_items` (
   `image` varchar(255) DEFAULT NULL COMMENT 'Đường dẫn ảnh món',
   `is_available` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=còn hàng, 0=hết hàng',
   `is_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1=hiển thị, 0=ẩn',
+  `service_type` enum('restaurant','room_service','both') NOT NULL DEFAULT 'both',
   `tags` set('bestseller','new','spicy','vegetarian','recommended') DEFAULT NULL,
   `note_options` text DEFAULT NULL,
   `note_options_en` text DEFAULT NULL,
@@ -215,87 +216,14 @@ CREATE TABLE `menu_items` (
   CONSTRAINT `fk_items_category` FOREIGN KEY (`category_id`) REFERENCES `menu_categories` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=155 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `menu_items` VALUES ('2', '1', 'Chả giò rế', 'Crispy Rolls', NULL, '75000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('3', '1', 'Súp bào ngư vi cá', 'Abalone Soup', NULL, '150000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('4', '2', 'Cơm chiên hải sản', 'Seafood Fried Rice', NULL, '120000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('5', '2', 'Bò lúc lắc', 'Shaken Beef', NULL, '180000', NULL, '1', '1', 'recommended', NULL, NULL, '2', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('6', '2', 'Cá chẽm hấp gừng', 'Steamed Seabass', NULL, '250000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('7', '2', 'Tôm sú nướng muối ớt', 'Grilled Tiger Prawn', NULL, '220000', NULL, '1', '1', 'spicy', NULL, NULL, '4', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('8', '3', 'Chè bưởi', 'Pomelo Dessert', NULL, '45000', NULL, '1', '1', NULL, NULL, NULL, '1', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('9', '3', 'Kem dừa', 'Coconut Ice Cream', NULL, '55000', NULL, '1', '1', 'bestseller', NULL, NULL, '2', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('10', '4', 'Nước ép cam', 'Fresh Orange Juice', NULL, '65000', NULL, '1', '1', NULL, NULL, NULL, '1', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('11', '4', 'Sinh tố bơ', 'Avocado Smoothie', NULL, '75000', NULL, '1', '1', 'bestseller', NULL, NULL, '2', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('12', '4', 'Trà đào cam sả', 'Peach Tea', NULL, '55000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('13', '4', 'Bia Tiger lon', 'Tiger Beer Can', NULL, '35000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('14', '4', 'Nước suối', 'Water', NULL, '15000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:08:27', '2026-03-07 18:08:27');
-INSERT INTO `menu_items` VALUES ('55', '1', 'Gỏi cuốn tôm thịt', 'Fresh Spring Rolls', 'Cuốn tươi với tôm, thịt, rau sống, ăn kèm nước chấm', '85000', NULL, '1', '1', 'bestseller', 'Không rau thơm, Ít  cay', NULL, '1', '2026-03-07 18:46:29', '2026-03-30 18:09:11');
-INSERT INTO `menu_items` VALUES ('56', '1', 'Chả giò rế hải sản', 'Crispy Seafood Rolls', 'Chả giò giòn với nhân hải sản', '95000', NULL, '1', '1', 'new', NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('57', '1', 'Nem nướng Nha Trang', 'Grilled Pork Spring Rolls', 'Nem nướng than hoa, bánh tráng, rau sống', '110000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('58', '1', 'Bò lúc lắc', 'Shaken Beef', 'Bò mềm lắc với tiêu đen, ăn kèm bánh mì', '145000', NULL, '1', '1', 'bestseller', NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('59', '1', 'Súp cua vi cá', 'Crab & Shark Fin Soup', 'Súp cua với vi cá, trứng cút', '180000', NULL, '1', '1', 'recommended', NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('60', '1', 'Súp bào ngư', 'Abalone Soup', 'Súp bào ngư nguyên con', '220000', NULL, '1', '1', NULL, NULL, NULL, '6', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('61', '6', 'Gỏi ngó sen tôm thịt', 'Lotus Root Salad', 'Ngó sen giòn, tôm thịt, rau thơm, nước mắm chua ngọt', '125000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('62', '6', 'Gỏi đu đủ bò khô', 'Papaya Salad with Dried Beef', 'Đu đủ giòn, bò khô, đậu phộng', '95000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('63', '6', 'Gỏi hải sản Thái', 'Thai Seafood Salad', 'Hải sản trộn chua cay kiểu Thái', '165000', NULL, '1', '1', 'spicy', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('64', '6', 'Nộm hoa chuối tai heo', 'Banana Flower Salad', 'Hoa chuối, tai heo, rau thơm', '85000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('65', '7', 'Lẩu thái hải sản', 'Thai Seafood Hot Pot', 'Lẩu chua cay với tôm, mực, cá, rau', '350000', NULL, '1', '1', 'bestseller,spicy', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('66', '7', 'Lẩu nấm thập cẩm', 'Mixed Mushroom Hot Pot', 'Lẩu nấm các loại, rau, đậu hũ', '280000', NULL, '1', '1', 'vegetarian', NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('67', '7', 'Lẩu bò nhúng dấm', 'Vinegar Beef Hot Pot', 'Bò nhúng dấm, rau sống, bún', '320000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('68', '7', 'Lẩu gà lá é', 'Chicken Hot Pot with Herbs', 'Gà ta nấu lá é, nấm', '290000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('69', '7', 'Lẩu cá kèo', 'Mudfish Hot Pot', 'Cá kèo tươi, rau đắng, bún', '260000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('70', '8', 'Tôm sú nướng muối ớt', 'Grilled Tiger Prawn', 'Tôm sú tươi nướng muối ớt', '280000', NULL, '1', '1', 'bestseller,spicy', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('71', '8', 'Mực nướng sa tế', 'Grilled Squid with Satay', 'Mực trứng nướng sa tế', '165000', NULL, '1', '1', 'spicy', NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('72', '8', 'Sườn nướng BBQ', 'BBQ Pork Ribs', 'Sườn heo nướng sốt BBQ', '195000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('73', '8', 'Gà nướng mật ong', 'Honey Grilled Chicken', 'Gà ta nướng mật ong', '175000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('74', '8', 'Ba chỉ bò Mỹ nướng', 'Grilled Beef Belly', 'Ba chỉ bò Mỹ nướng than hoa', '220000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('75', '9', 'Cơm chiên hải sản', 'Seafood Fried Rice', 'Cơm chiên với tôm, mực, trứng', '120000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('76', '9', 'Cơm chiên dương châu', 'Yangzhou Fried Rice', 'Cơm chiên với thịt xá xíu, tôm, trứng', '110000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('77', '9', 'Cơm gà xối mỡ', 'Crispy Skin Chicken Rice', 'Gà da giòn, cơm mỡ hành', '95000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('78', '9', 'Cơm sườn nướng', 'Grilled Pork Chop Rice', 'Sườn nướng, bì, chả, đồ chua', '85000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('79', '9', 'Cơm bò kho', 'Braised Beef Rice', 'Bò kho đậm đà, bánh mì', '95000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('80', '10', 'Phở bò đặc biệt', 'Special Beef Pho', 'Phở bò với gầu, nạm, gân, bánh phở tươi', '95000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('81', '10', 'Phở gà', 'Chicken Pho', 'Phở gà ta, bánh phở tươi', '85000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('82', '10', 'Bún bò Huế', 'Hue Beef Noodle Soup', 'Bún bò cay nồng, giò heo, chả cua', '95000', NULL, '1', '1', 'spicy', NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('83', '10', 'Bún chả cá', 'Fish Cake Noodle Soup', 'Bún với chả cá, nước dùng ngọt', '85000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('84', '10', 'Mì xào giòn', 'Crispy Noodles', 'Mì giòn với hải sản, rau cải', '110000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('85', '10', 'Hủ tiếu Nam Vang', 'Phnom Penh Noodles', 'Hủ tiếu với tôm, thịt, gan', '85000', NULL, '1', '1', NULL, NULL, NULL, '6', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('86', '11', 'Cá chẽm hấp hồng hạnh', 'Steamed Seabass with Mushrooms', 'Cá chẽm tươi hấp với nấm hồng hạnh', '320000', NULL, '1', '1', 'recommended', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('87', '11', 'Tôm càng nướng mọi', 'Grilled River Prawn', 'Tôm càng sông nướng mọi', '380000', NULL, '1', '1', 'bestseller', NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('88', '11', 'Mực hấp gừng sả', 'Steamed Squid with Ginger', 'Mực tươi hấp gừng sả', '185000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('89', '11', 'Sò huyết nướng mỡ hành', 'Grilled Clams with Scallion', 'Sò huyết tươi nướng mỡ hành', '165000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('90', '11', 'Cua rang me', 'Tamarind Crab', 'Cua biển rang me', '450000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('91', '3', 'Chè bưởi', 'Pomelo Dessert', 'Chè bưởi hạt lựu, nước cốt dừa', '45000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('92', '3', 'Kem dừa', 'Coconut Ice Cream', 'Kem dừa tươi, đậu phộng', '55000', NULL, '1', '1', 'bestseller', NULL, NULL, '2', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('93', '3', 'Sương sa hạt lựu', 'Jelly Dessert', 'Sương sa, hạt lựu, nước đường', '40000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('94', '3', 'Bánh flan', 'Crème Caramel', 'Bánh flan trứng, caramel', '50000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
-INSERT INTO `menu_items` VALUES ('125', '12', 'Salad Cá Ngừ', 'Tuna Salad', 'Xà lách, cà chua, dưa leo, cá ngừ, trứng cút', '125000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('126', '12', 'Salad Bò Nướng', 'Grilled Beef Salad', 'Thịt bò nướng, rau mixed, sốt vinaigrette', '145000', NULL, '1', '1', 'recommended', NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('127', '12', 'Salad Caesar', 'Caesar Salad', 'Xà lách romaine, sốt caesar, bánh mì giòn, phô mai parmesan', '115000', NULL, '1', '1', 'bestseller', NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('128', '12', 'Salad Hải Sản', 'Seafood Salad', 'Tôm, mực, bạch tuộc trộn với rau', '185000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('129', '13', 'Súp Hành Tây', 'French Onion Soup', 'Hành tây caramen, phô mai nướng', '95000', NULL, '1', '1', NULL, NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('130', '13', 'Súp Nấm Kem Tươi', 'Cream of Mushroom Soup', 'Nấm các loại, kem tươi, ăn kèm bánh mì', '85000', NULL, '1', '1', 'vegetarian', NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('131', '13', 'Súp Hải Sản', 'Seafood Chowder', 'Súp kem với tôm, mực, nghêu', '135000', NULL, '1', '1', 'recommended', NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('132', '13', 'Súp Bí Đỏ', 'Pumpkin Soup', 'Bí đỏ, kem tươi, hạt bí', '75000', NULL, '1', '1', 'vegetarian', NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('133', '14', 'Gà Áp Chảo Sốt Vang Đỏ', 'Pan-Seared Chicken with Red Wine', 'Ức gà áp chảo, sốt vang đỏ, khoai tây nghiền', '185000', NULL, '1', '1', 'recommended', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('134', '14', 'Sườn Heo Nướng Mật Ong', 'Honey Glazed Pork Ribs', 'Sườn heo nướng mật ong, rau củ', '195000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('135', '14', 'Cá Hồi Áp Chảo', 'Pan-Seared Salmon', 'Cá hồi Na Uy, sốt chanh dây, khoai lang', '245000', NULL, '1', '1', 'bestseller', NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('136', '14', 'Cừu Nướng Kiểu Úc', 'Australian Lamb Rack', 'Sườn cừu nướng, xốt bạc hà, khoai tây', '385000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('137', '15', 'Spaghetti Carbonara', 'Spaghetti Carbonara', 'Mì Ý với thịt xông khói, trứng, phô mai', '145000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('138', '15', 'Spaghetti Bolognese', 'Spaghetti Bolognese', 'Mì Ý với sốt bò băm cà chua', '135000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('139', '15', 'Fettuccine Alfredo', 'Fettuccine Alfredo', 'Mì fettuccine với sốt kem phô mai', '140000', NULL, '1', '1', 'vegetarian', NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('140', '15', 'Penne Hải Sản', 'Seafood Penne', 'Mì penne với tôm, mực, nghêu, sốt cà chua', '175000', NULL, '1', '1', 'recommended', NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('141', '15', 'Lasagna Thịt Bò', 'Beef Lasagna', 'Mì lớp với thịt bò, phô mai, sốt cà chua', '165000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('142', '16', 'Bò Úc Úc Úc Úc Úc Úc Úc', 'Australian Beef Steak', 'Thăn bò Úc 200g, sốt tiêu đen, khoai tây', '385000', NULL, '1', '1', 'bestseller', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('143', '16', 'Bò Mỹ Ribeye', 'American Ribeye', 'Ribeye bò Mỹ 300g, sốt nấm, rau củ', '520000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('144', '16', 'Bò Nhật Wagyu A5', 'Japanese Wagyu A5', 'Wagyu A5 Nhật 150g, sốt rượu vang', '1250000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('145', '16', 'Bò Canada Tenderloin', 'Canadian Tenderloin', 'Thăn mềm Canada 250g, sốt bơ chanh', '420000', NULL, '1', '1', 'recommended', NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('146', '16', 'Bò Ba Chỉ Nướng', 'Grilled Beef Belly', 'Ba chỉ bò Mỹ 200g, sốt BBQ, khoai lang', '280000', NULL, '1', '1', NULL, NULL, NULL, '5', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('147', '17', 'Cá Chẽm Sốt Chanh Bơ', 'Seabass with Lemon Butter', 'Phi lê cá chẽm, sốt chanh bơ, măng tây', '265000', NULL, '1', '1', 'recommended', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('148', '17', 'Cá Hồi Nướng Muối Ớt', 'Grilled Salmon', 'Cá hồi nướng muối ớt, rau củ', '245000', NULL, '1', '1', NULL, NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('149', '17', 'Tôm Hùm Nướng Bơ Tỏi', 'Grilled Lobster', 'Tôm hùm Canada nướng bơ tỏi', '850000', NULL, '1', '1', NULL, NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('150', '17', 'Nghêu Hấp Rượu Vang', 'Steamed Clams in Wine', 'Nghêu tươi hấp rượu vang trắng, tỏi', '185000', NULL, '1', '1', NULL, NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('151', '18', 'Pizza Margherita', 'Pizza Margherita', 'Cà chua, phô mai mozzarella, húng quế', '165000', NULL, '1', '1', 'bestseller,vegetarian', NULL, NULL, '1', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
-INSERT INTO `menu_items` VALUES ('152', '18', 'Pizza Pepperoni', 'Pizza Pepperoni', 'Xúc xích pepperoni, phô mai, sốt cà chua', '185000', NULL, '1', '1', 'bestseller', NULL, NULL, '2', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
+INSERT INTO `menu_items` VALUES ('2', '1', 'Chả giò rế', 'Crispy Rolls', NULL, '75000', NULL, '0', '0', 'both', NULL, NULL, NULL, '2', '2026-03-07 18:08:27', '2026-04-01 13:53:41');
+INSERT INTO `menu_items` VALUES ('55', '1', 'Gỏi cuốn tôm thịt', 'Fresh Spring Rolls', 'Cuốn tươi với tôm, thịt, rau sống, ăn kèm nước chấm', '85000', NULL, '0', '1', 'both', 'bestseller', 'Không rau thơm, Ít  cay, không tỏi', 'No herbs, mildly spicy, no garlic', '1', '2026-03-07 18:46:29', '2026-04-01 14:24:30');
+INSERT INTO `menu_items` VALUES ('62', '6', 'Gỏi đu đủ bò khô', 'Papaya Salad with Dried Beef', 'Đu đủ giòn, bò khô, đậu phộng', '95000', NULL, '0', '0', 'both', NULL, NULL, NULL, '2', '2026-03-07 18:46:29', '2026-04-01 13:53:47');
+INSERT INTO `menu_items` VALUES ('88', '11', 'Mực hấp gừng sả', 'Steamed Squid with Ginger', 'Mực tươi hấp gừng sả', '185000', NULL, '0', '0', 'both', NULL, NULL, NULL, '3', '2026-03-07 18:46:29', '2026-04-01 14:04:30');
+INSERT INTO `menu_items` VALUES ('89', '11', 'Sò huyết nướng mỡ hành', 'Grilled Clams with Scallion', 'Sò huyết tươi nướng mỡ hành', '165000', NULL, '1', '1', 'both', NULL, NULL, NULL, '4', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
+INSERT INTO `menu_items` VALUES ('90', '11', 'Cua rang me', 'Tamarind Crab', 'Cua biển rang me', '450000', NULL, '1', '1', 'both', NULL, NULL, NULL, '5', '2026-03-07 18:46:29', '2026-03-07 18:46:29');
+INSERT INTO `menu_items` VALUES ('149', '17', 'Tôm Hùm Nướng Bơ Tỏi', 'Grilled Lobster', 'Tôm hùm Canada nướng bơ tỏi', '850000', NULL, '1', '1', 'both', NULL, NULL, NULL, '3', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
+INSERT INTO `menu_items` VALUES ('150', '17', 'Nghêu Hấp Rượu Vang', 'Steamed Clams in Wine', 'Nghêu tươi hấp rượu vang trắng, tỏi', '185000', NULL, '1', '1', 'both', NULL, NULL, NULL, '4', '2026-03-07 18:47:06', '2026-03-07 18:47:06');
 
 DROP TABLE IF EXISTS `menu_set_items`;
 CREATE TABLE `menu_set_items` (
@@ -313,22 +241,6 @@ CREATE TABLE `menu_set_items` (
   CONSTRAINT `fk_set_items_set` FOREIGN KEY (`set_id`) REFERENCES `menu_sets` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `menu_set_items` VALUES ('9', '7', '80', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('10', '7', '10', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('11', '8', '4', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('12', '8', '10', '1', '0', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('13', '9', '4', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('15', '9', '14', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('16', '10', '80', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('17', '10', '56', '2', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('18', '10', '10', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('19', '11', '137', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('20', '11', '127', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('21', '11', '14', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('27', '13', '61', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('28', '13', '65', '1', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('29', '13', '4', '2', '1', '0', '2026-03-07 18:47:50');
-INSERT INTO `menu_set_items` VALUES ('30', '13', '9', '2', '1', '0', '2026-03-07 18:47:50');
 
 DROP TABLE IF EXISTS `menu_sets`;
 CREATE TABLE `menu_sets` (
@@ -345,13 +257,6 @@ CREATE TABLE `menu_sets` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `menu_sets` VALUES ('7', 'Set Ăn Sáng Á Cơ Bản', 'Basic Asian Breakfast Set', 'Lựa chọn: Phở bò HOẶC Cơm chiên + Nước ép', '95000', NULL, '1', '1', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('8', 'Set Ăn Sáng Âu Cơ Bản', 'Basic European Breakfast Set', 'Lựa chọn: Eggs Benedict HOẶC Pancake + Cà phê', '110000', NULL, '1', '2', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('9', 'Set Trưa Văn Phòng 1', 'Office Lunch Set 1', 'Cơm chiên hải sản + Gỏi cuốn + Nước suối', '120000', NULL, '1', '3', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('10', 'Set Trưa Văn Phòng 2', 'Office Lunch Set 2', 'Phở bò + Chả giò + Nước ép cam', '115000', NULL, '1', '4', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('11', 'Set Trưa Nhanh', 'Quick Lunch Set', 'Mì Ý + Salad + Nước uống', '135000', NULL, '1', '5', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('13', 'Set Tối Á 2 Người', 'Asian Dinner for 2', 'Gỏi + Lẩu Thái + 2 Cơm + Tráng miệng + 2 Nước', '580000', NULL, '1', '7', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
-INSERT INTO `menu_sets` VALUES ('14', 'Set Gia Đình 4 Người', 'Family Set for 4', 'Gỏi + 2 Món chính + Cơm + Tráng miệng + Nước', '1250000', NULL, '1', '8', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
 INSERT INTO `menu_sets` VALUES ('15', 'Set Gia Đình 6 Người', 'Family Set for 6', 'Gỏi + 3 Món chính + Lẩu + Cơm + Tráng miệng + Nước', '1850000', NULL, '1', '9', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
 INSERT INTO `menu_sets` VALUES ('16', 'Set BBQ 2 Người', 'BBQ Set for 2', 'Ba chỉ bò + Sườn + Gà + Rau + Sốt + Cơm', '550000', NULL, '1', '10', '2026-03-07 18:47:15', '2026-03-07 18:47:15');
 
@@ -383,24 +288,15 @@ CREATE TABLE `order_items` (
   CONSTRAINT `fk_order_items_menu` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_order_items_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=252 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=287 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `order_items` VALUES ('231', '145', '1', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'dcgj3bk549dq963q8k8o0617ng', '2026-03-26 10:16:05', '2026-03-26 10:16:05', '2026-03-26 10:16:05');
-INSERT INTO `order_items` VALUES ('232', '145', '1', '62', 'Gỏi đu đủ bò khô', '95000', '1', '', NULL, '0', '', 'dcgj3bk549dq963q8k8o0617ng', '2026-03-26 10:16:05', '2026-03-26 10:16:05', '2026-03-26 10:16:05');
-INSERT INTO `order_items` VALUES ('236', '147', '3', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'pgm9j1fqvimati2hcq67c8gsb7', '2026-03-26 11:59:45', '2026-03-26 11:59:45', '2026-03-26 11:59:45');
-INSERT INTO `order_items` VALUES ('237', '149', '4', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'v25dbr5g8mdv5vesspegdcqbrt', '2026-03-26 12:06:25', '2026-03-26 12:06:25', '2026-03-26 12:06:25');
-INSERT INTO `order_items` VALUES ('238', '150', '1', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', '0n6db5nub9v02s52ap6bg7anan', '2026-03-30 16:57:29', '2026-03-30 16:57:29', '2026-03-30 16:57:29');
-INSERT INTO `order_items` VALUES ('239', '151', '2', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', 'p8rvltqv37ij3f6krj7n1i37v9', '2026-03-30 17:22:31', '2026-03-30 17:22:31', '2026-03-30 17:22:31');
-INSERT INTO `order_items` VALUES ('241', '150', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', '', NULL, '0', 'draft', NULL, NULL, '2026-03-30 18:02:15', '2026-03-30 18:02:15');
-INSERT INTO `order_items` VALUES ('242', '152', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '6', '', NULL, '0', '', '1dhrbqt7ubpn9gdjmuapu6vldm', '2026-03-30 18:18:13', '2026-03-30 18:18:13', '2026-03-30 18:18:13');
-INSERT INTO `order_items` VALUES ('243', '152', '1', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', '1dhrbqt7ubpn9gdjmuapu6vldm', '2026-03-30 18:18:13', '2026-03-30 18:18:13', '2026-03-30 18:18:13');
-INSERT INTO `order_items` VALUES ('245', '152', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', 'Ít  cay, Không rau thơm', NULL, '0', 'draft', NULL, NULL, '2026-03-30 18:20:37', '2026-03-30 18:20:37');
-INSERT INTO `order_items` VALUES ('246', '153', '13', '55', 'Gỏi cuốn tôm thịt', '85000', '2', 'Không rau thơm, Ít  cay', NULL, '0', 'draft', NULL, NULL, '2026-03-30 18:55:36', '2026-03-30 18:55:38');
-INSERT INTO `order_items` VALUES ('247', '156', '19', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', '0nndmj2il1b7ic0b2hacsfthae', '2026-03-30 19:34:43', '2026-03-30 19:34:43', '2026-03-30 19:34:43');
-INSERT INTO `order_items` VALUES ('248', '156', '19', '61', 'Gỏi ngó sen tôm thịt', '125000', '5', '', NULL, '0', '', '0nndmj2il1b7ic0b2hacsfthae', '2026-03-30 19:36:27', '2026-03-30 19:36:27', '2026-03-30 19:36:27');
-INSERT INTO `order_items` VALUES ('249', '156', '19', '61', 'Gỏi ngó sen tôm thịt', '125000', '1', '', NULL, '0', '', '0nndmj2il1b7ic0b2hacsfthae', '2026-03-30 19:39:47', '2026-03-30 19:39:47', '2026-03-30 19:39:47');
-INSERT INTO `order_items` VALUES ('250', '156', '19', '62', 'Gỏi đu đủ bò khô', '95000', '1', '', NULL, '0', '', '0nndmj2il1b7ic0b2hacsfthae', '2026-03-30 19:41:37', '2026-03-30 19:41:37', '2026-03-30 19:41:37');
 INSERT INTO `order_items` VALUES ('251', '157', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '2', '', NULL, '0', 'draft', NULL, NULL, '2026-03-30 19:52:04', '2026-03-30 19:52:04');
+INSERT INTO `order_items` VALUES ('254', '157', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', 'Không rau thơm / No herbs, Ít  cay / mildly spicy', NULL, '0', 'draft', NULL, NULL, '2026-03-30 21:20:04', '2026-03-30 21:20:04');
+INSERT INTO `order_items` VALUES ('260', '157', '1', '55', 'Gỏi cuốn tôm thịt', '85000', '1', 'Không ớt', NULL, '0', 'draft', NULL, NULL, '2026-03-31 13:30:28', '2026-03-31 13:30:28');
+INSERT INTO `order_items` VALUES ('283', '178', '1', '89', 'Sò huyết nướng mỡ hành', '165000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-04-01 14:18:45', '2026-04-01 14:18:48');
+INSERT INTO `order_items` VALUES ('284', '178', '1', '90', 'Cua rang me', '450000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-04-01 14:18:45', '2026-04-01 14:18:48');
+INSERT INTO `order_items` VALUES ('285', '179', '6', '89', 'Sò huyết nướng mỡ hành', '165000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-04-01 14:19:35', '2026-04-01 14:19:39');
+INSERT INTO `order_items` VALUES ('286', '179', '6', '90', 'Cua rang me', '450000', '1', '', NULL, '0', 'confirmed', NULL, NULL, '2026-04-01 14:19:35', '2026-04-01 14:19:39');
 
 DROP TABLE IF EXISTS `order_notifications`;
 CREATE TABLE `order_notifications` (
@@ -422,7 +318,7 @@ CREATE TABLE `order_notifications` (
   KEY `idx_notification_created` (`created_at`),
   CONSTRAINT `fk_notification_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_notification_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=219 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu trữ thông báo order cho waiter';
+) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Lưu trữ thông báo order cho waiter';
 
 INSERT INTO `order_notifications` VALUES ('1', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:07:47');
 INSERT INTO `order_notifications` VALUES ('2', NULL, '2', 'scan_qr', 'Bàn A.02: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.02', '1', '2026-03-18 09:43:59', '3', '2026-03-17 19:08:13');
@@ -455,32 +351,6 @@ INSERT INTO `order_notifications` VALUES ('60', NULL, '14', 'scan_qr', 'Bàn C.0
 INSERT INTO `order_notifications` VALUES ('62', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 18:36:54', '3', '2026-03-18 15:40:34');
 INSERT INTO `order_notifications` VALUES ('63', NULL, '23', 'scan_qr', 'Bàn VIP 3.1: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn VIP 3.1', '1', '2026-03-18 18:37:49', '3', '2026-03-18 18:37:27');
 INSERT INTO `order_notifications` VALUES ('66', NULL, '1', 'scan_qr', 'Bàn A.01: Khách đang xem menu', 'Khách vừa quét mã QR tại bàn A.01', '1', '2026-03-18 20:28:35', '3', '2026-03-18 20:28:18');
-INSERT INTO `order_notifications` VALUES ('173', '145', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-26 10:16:18', '3', '2026-03-26 10:15:15');
-INSERT INTO `order_notifications` VALUES ('174', '145', '1', 'order_item', 'Bàn A.01: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-26 10:16:18', '3', '2026-03-26 10:16:05');
-INSERT INTO `order_notifications` VALUES ('179', '147', '3', 'scan_qr', 'Khách xem menu', 'Bàn A.03 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 11:55:40');
-INSERT INTO `order_notifications` VALUES ('180', '147', '3', 'scan_qr', 'Khách xem menu', 'Bàn A.03 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 11:59:41');
-INSERT INTO `order_notifications` VALUES ('181', '147', '3', 'order_item', 'Bàn A.03: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 11:59:45');
-INSERT INTO `order_notifications` VALUES ('183', '149', '4', 'scan_qr', 'Khách xem menu', 'Bàn A.04 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 12:06:17');
-INSERT INTO `order_notifications` VALUES ('184', '149', '4', 'order_item', 'Bàn A.04: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 12:06:25');
-INSERT INTO `order_notifications` VALUES ('185', '149', '4', 'scan_qr', 'Khách xem menu', 'Bàn A.04 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:53:55', '3', '2026-03-26 12:06:28');
-INSERT INTO `order_notifications` VALUES ('186', '150', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:57:56', '3', '2026-03-30 16:57:19');
-INSERT INTO `order_notifications` VALUES ('187', '150', '1', 'order_item', 'Bàn A.01: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 16:57:56', '3', '2026-03-30 16:57:29');
-INSERT INTO `order_notifications` VALUES ('188', '150', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 16:58:09', '3', '2026-03-30 16:57:59');
-INSERT INTO `order_notifications` VALUES ('189', '150', '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-30 16:58:08', '3', '2026-03-30 16:58:02');
-INSERT INTO `order_notifications` VALUES ('190', '151', '2', 'scan_qr', 'Khách xem menu', 'Bàn A.02 vừa quét mã xem thực đơn.', '1', '2026-03-30 17:22:52', '1', '2026-03-30 17:21:58');
-INSERT INTO `order_notifications` VALUES ('191', '151', '2', 'order_item', 'Bàn A.02: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 17:22:51', '1', '2026-03-30 17:22:31');
-INSERT INTO `order_notifications` VALUES ('192', '151', '2', 'scan_qr', 'Khách xem menu', 'Bàn A.02 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 17:26:43');
-INSERT INTO `order_notifications` VALUES ('193', '151', '2', 'support_request', 'Bàn 2: Cần hỗ trợ', 'Khách tại bàn 2 đang gọi nhân viên.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 17:26:48');
-INSERT INTO `order_notifications` VALUES ('194', '152', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:10:22');
-INSERT INTO `order_notifications` VALUES ('195', '152', '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:11:11');
-INSERT INTO `order_notifications` VALUES ('196', '152', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:16:25');
-INSERT INTO `order_notifications` VALUES ('197', '152', '1', 'order_item', 'Bàn A.01: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:18:13');
-INSERT INTO `order_notifications` VALUES ('198', '152', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:18:49');
-INSERT INTO `order_notifications` VALUES ('199', '152', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:19:06');
-INSERT INTO `order_notifications` VALUES ('200', '152', '1', 'support_request', 'Bàn 1: Cần hỗ trợ', 'Khách tại bàn 1 đang gọi nhân viên.', '1', '2026-03-30 18:23:07', '3', '2026-03-30 18:19:11');
-INSERT INTO `order_notifications` VALUES ('201', '154', '15', 'scan_qr', 'Khách xem menu', 'Bàn C.03 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 18:57:11');
-INSERT INTO `order_notifications` VALUES ('202', '154', '15', 'scan_qr', 'Khách xem menu', 'Bàn C.03 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 19:31:23');
-INSERT INTO `order_notifications` VALUES ('203', '154', '15', 'scan_qr', 'Khách xem menu', 'Bàn C.03 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 19:32:02');
 INSERT INTO `order_notifications` VALUES ('204', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 19:34:10');
 INSERT INTO `order_notifications` VALUES ('205', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 19:34:33');
 INSERT INTO `order_notifications` VALUES ('206', '156', '19', 'order_item', 'Bàn VIP 1.1: Thêm món mới', 'Khách đã gửi thêm món qua QR.', '1', '2026-03-30 19:39:31', '3', '2026-03-30 19:34:43');
@@ -495,7 +365,18 @@ INSERT INTO `order_notifications` VALUES ('214', '156', '19', 'order_item', '➕
 INSERT INTO `order_notifications` VALUES ('215', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:45:50', '3', '2026-03-30 19:41:30');
 INSERT INTO `order_notifications` VALUES ('216', '156', '19', 'order_item', '➕ GỌI THÊM: VIP 1.1', 'Khách tại VIP 1.1 vừa gọi thêm món mới.', '1', '2026-03-30 19:45:49', '3', '2026-03-30 19:41:37');
 INSERT INTO `order_notifications` VALUES ('217', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 19:45:48', '3', '2026-03-30 19:45:18');
-INSERT INTO `order_notifications` VALUES ('218', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '0', NULL, NULL, '2026-03-30 19:50:48');
+INSERT INTO `order_notifications` VALUES ('218', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 20:12:58', '3', '2026-03-30 19:50:48');
+INSERT INTO `order_notifications` VALUES ('219', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 20:12:57', '3', '2026-03-30 20:04:28');
+INSERT INTO `order_notifications` VALUES ('220', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 20:12:54', '3', '2026-03-30 20:10:44');
+INSERT INTO `order_notifications` VALUES ('221', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-30 20:12:51', '3', '2026-03-30 20:12:20');
+INSERT INTO `order_notifications` VALUES ('222', '156', '19', 'scan_qr', 'Khách xem menu', 'Bàn VIP 1.1 vừa quét mã xem thực đơn.', '1', '2026-03-31 13:55:00', '3', '2026-03-30 20:29:38');
+INSERT INTO `order_notifications` VALUES ('237', '163', '7', 'scan_qr', 'Khách xem menu', 'Bàn B.01 vừa quét mã xem thực đơn.', '1', '2026-03-31 13:54:58', '3', '2026-03-30 21:24:15');
+INSERT INTO `order_notifications` VALUES ('238', '163', '7', 'scan_qr', 'Khách xem menu', 'Bàn B.01 vừa quét mã xem thực đơn.', '1', '2026-03-31 13:54:58', '3', '2026-03-30 21:24:23');
+INSERT INTO `order_notifications` VALUES ('239', '163', '7', 'scan_qr', 'Khách xem menu', 'Bàn B.01 vừa quét mã xem thực đơn.', '1', '2026-03-31 13:54:58', '3', '2026-03-30 21:24:41');
+INSERT INTO `order_notifications` VALUES ('294', '177', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-04-01 14:17:02', '3', '2026-04-01 14:15:10');
+INSERT INTO `order_notifications` VALUES ('295', '180', '1', 'scan_qr', 'Khách xem menu', 'Bàn A.01 vừa quét mã xem thực đơn.', '1', '2026-04-07 09:08:01', '3', '2026-04-01 19:15:30');
+INSERT INTO `order_notifications` VALUES ('296', '181', '3', 'scan_qr', 'Khách xem menu', 'Bàn A.03 vừa quét mã xem thực đơn.', '1', '2026-04-07 09:10:31', '1', '2026-04-07 09:10:12');
+INSERT INTO `order_notifications` VALUES ('297', '182', '34', 'scan_qr', 'Khách xem menu', 'Bàn 701 vừa quét mã xem thực đơn.', '0', NULL, NULL, '2026-04-07 16:17:52');
 
 DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
@@ -526,19 +407,19 @@ CREATE TABLE `orders` (
   KEY `idx_orders_session` (`session_id`),
   CONSTRAINT `fk_orders_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `fk_orders_waiter` FOREIGN KEY (`waiter_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=183 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `orders` VALUES ('145', '1', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-26 10:15:15', '2026-03-30 16:53:39', '2026-03-26 10:15:15', '2026-03-30 16:53:39', '0c1a5978a93d82e89fcdecf7c585d454');
-INSERT INTO `orders` VALUES ('147', '3', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-26 11:55:40', '2026-03-30 16:53:39', '2026-03-26 11:55:40', '2026-03-30 16:53:39', '7ecb2d6c50dd1f8cf68db7ffff5925c7');
-INSERT INTO `orders` VALUES ('149', '4', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-26 12:06:17', '2026-03-30 16:53:39', '2026-03-26 12:06:17', '2026-03-30 16:53:39', '96dac248d1978a9b64e2c7e869894e28');
-INSERT INTO `orders` VALUES ('150', '1', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '1', 'cash', 'paid', '2026-03-30 16:57:19', '2026-03-30 18:10:19', '2026-03-30 16:57:19', '2026-03-30 18:23:36', '7f9fb71cf27751377d0a53273a0171fb');
-INSERT INTO `orders` VALUES ('151', '2', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-30 17:21:58', '2026-03-30 19:45:56', '2026-03-30 17:21:58', '2026-03-30 19:45:56', 'eb6068249e487caaf6bd26a65a3965fc');
-INSERT INTO `orders` VALUES ('152', '1', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'paid', '2026-03-30 18:10:22', '2026-03-30 19:46:08', '2026-03-30 18:10:22', '2026-03-30 19:46:08', '46b415770bd53a52af777f0d2cc7df7d');
-INSERT INTO `orders` VALUES ('153', '13', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-03-30 18:55:20', '2026-03-30 19:46:18', '2026-03-30 18:55:20', '2026-03-30 19:46:18', NULL);
-INSERT INTO `orders` VALUES ('154', '15', NULL, NULL, '1', 'Hệ thống tự động huỷ do không đặt món sau 5 phút', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'pending', '2026-03-30 18:57:11', '2026-03-30 19:33:24', '2026-03-30 18:57:11', '2026-03-30 19:33:24', '4446a93760258fbc01102af7a7e6a122');
-INSERT INTO `orders` VALUES ('155', '15', '1', '0', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'canceled', '2026-03-30 19:33:42', '2026-03-30 19:46:34', '2026-03-30 19:33:42', '2026-03-30 19:46:34', NULL);
-INSERT INTO `orders` VALUES ('156', '19', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'open', 'customer_qr', '0', 'cash', 'pending', '2026-03-30 19:34:10', NULL, '2026-03-30 19:34:10', '2026-03-30 19:34:10', '499754bf90238de6f2ead2fa53be94b4');
-INSERT INTO `orders` VALUES ('157', '1', '3', '1', '1', '', NULL, '1', 'open', 'waiter', '0', 'cash', 'pending', '2026-03-30 19:51:57', NULL, '2026-03-30 19:51:57', '2026-03-30 19:51:57', NULL);
+INSERT INTO `orders` VALUES ('156', '19', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '1', 'cash', 'canceled', '2026-03-30 19:34:10', '2026-04-01 13:59:31', '2026-03-30 19:34:10', '2026-04-01 14:07:32', '499754bf90238de6f2ead2fa53be94b4');
+INSERT INTO `orders` VALUES ('157', '1', '3', '1', '1', '', NULL, '1', 'closed', 'waiter', '1', 'cash', 'paid', '2026-03-30 19:51:57', '2026-04-01 13:58:14', '2026-03-30 19:51:57', '2026-04-01 14:07:31', NULL);
+INSERT INTO `orders` VALUES ('161', '6', '3', '1', '3', '', NULL, '1', 'closed', 'waiter', '1', 'cash', 'canceled', '2026-03-30 21:08:51', '2026-04-01 13:59:14', '2026-03-30 21:08:51', '2026-04-01 14:07:30', NULL);
+INSERT INTO `orders` VALUES ('163', '7', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '1', 'cash', 'canceled', '2026-03-30 21:24:15', '2026-04-01 13:59:06', '2026-03-30 21:24:15', '2026-04-01 14:07:29', 'f21c8cb97942b488132de0911a44c83b');
+INSERT INTO `orders` VALUES ('176', '93', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '1', 'cash', 'canceled', '2026-04-01 14:01:53', '2026-04-01 14:12:05', '2026-04-01 14:01:53', '2026-04-01 14:12:05', NULL);
+INSERT INTO `orders` VALUES ('177', '1', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'canceled', '2026-04-01 14:15:10', '2026-04-01 14:16:58', '2026-04-01 14:15:10', '2026-04-01 14:16:58', '3a8ed76dbc292e63902c5fd15739ca41');
+INSERT INTO `orders` VALUES ('178', '1', '3', '1', '1', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-04-01 14:18:45', '2026-04-01 14:19:07', '2026-04-01 14:18:45', '2026-04-01 14:19:07', NULL);
+INSERT INTO `orders` VALUES ('179', '6', '3', '1', '2', '', NULL, '1', 'closed', 'waiter', '0', 'cash', 'paid', '2026-04-01 14:19:27', '2026-04-01 14:21:57', '2026-04-01 14:19:27', '2026-04-01 14:21:57', NULL);
+INSERT INTO `orders` VALUES ('180', '1', '3', '1', '2', '', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'canceled', '2026-04-01 14:23:51', '2026-04-07 16:11:03', '2026-04-01 14:23:51', '2026-04-07 16:11:03', '3a8ed76dbc292e63902c5fd15739ca41');
+INSERT INTO `orders` VALUES ('181', '3', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'closed', 'customer_qr', '0', 'cash', 'canceled', '2026-04-07 09:10:12', '2026-04-07 09:11:06', '2026-04-07 09:10:12', '2026-04-07 09:11:06', '4a31121867c453ac350d04e9dddddeaa');
+INSERT INTO `orders` VALUES ('182', '34', NULL, NULL, '1', 'Khách quét QR mở bàn', NULL, '1', 'open', 'customer_qr', '0', 'cash', 'pending', '2026-04-07 16:17:52', NULL, '2026-04-07 16:17:52', '2026-04-07 16:17:52', '87bbd3a55599f403665adf8a3c44c812');
 
 DROP TABLE IF EXISTS `qr_tables`;
 CREATE TABLE `qr_tables` (
@@ -739,10 +620,11 @@ CREATE TABLE `shifts` (
   `end_time` time NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `shifts` VALUES ('1', 'Ca Sáng', '06:00:00', '14:00:00', '2026-03-07 18:08:32');
-INSERT INTO `shifts` VALUES ('2', 'Ca Chiều', '14:00:00', '22:00:00', '2026-03-07 18:08:32');
+INSERT INTO `shifts` VALUES ('3', 'Ca Sáng', '06:00:00', '14:00:00', '2026-04-07 09:07:03');
+INSERT INTO `shifts` VALUES ('4', 'Ca Chiều', '14:00:00', '22:00:00', '2026-04-07 09:07:03');
+INSERT INTO `shifts` VALUES ('5', 'Ca Tối', '22:00:00', '06:00:00', '2026-04-07 09:07:03');
 
 DROP TABLE IF EXISTS `support_requests`;
 CREATE TABLE `support_requests` (
@@ -755,7 +637,7 @@ CREATE TABLE `support_requests` (
   PRIMARY KEY (`id`),
   KEY `fk_support_table` (`table_id`),
   CONSTRAINT `fk_support_table` FOREIGN KEY (`table_id`) REFERENCES `tables` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `support_requests` VALUES ('1', '1', '', 'pending', '2026-03-17 13:52:40', '2026-03-17 13:52:40');
 INSERT INTO `support_requests` VALUES ('2', '21', '', 'pending', '2026-03-17 14:04:55', '2026-03-17 14:04:55');
@@ -782,6 +664,15 @@ INSERT INTO `support_requests` VALUES ('22', '1', 'scan_qr', 'pending', '2026-03
 INSERT INTO `support_requests` VALUES ('23', '1', 'scan_qr', 'pending', '2026-03-30 18:20:32', '2026-03-30 18:20:32');
 INSERT INTO `support_requests` VALUES ('24', '13', 'scan_qr', 'pending', '2026-03-30 18:55:22', '2026-03-30 18:55:22');
 INSERT INTO `support_requests` VALUES ('25', '1', 'scan_qr', 'pending', '2026-03-30 19:51:52', '2026-03-30 19:51:52');
+INSERT INTO `support_requests` VALUES ('26', '1', 'scan_qr', 'pending', '2026-03-30 20:05:47', '2026-03-30 20:05:47');
+INSERT INTO `support_requests` VALUES ('27', '1', 'scan_qr', 'pending', '2026-03-30 20:30:42', '2026-03-30 20:30:42');
+INSERT INTO `support_requests` VALUES ('28', '7', 'scan_qr', 'pending', '2026-03-30 20:51:29', '2026-03-30 20:51:29');
+INSERT INTO `support_requests` VALUES ('29', '1', 'scan_qr', 'pending', '2026-03-30 21:16:05', '2026-03-30 21:16:05');
+INSERT INTO `support_requests` VALUES ('30', '1', 'scan_qr', 'pending', '2026-03-30 21:19:59', '2026-03-30 21:19:59');
+INSERT INTO `support_requests` VALUES ('31', '1', 'scan_qr', 'pending', '2026-03-31 13:30:15', '2026-03-31 13:30:15');
+INSERT INTO `support_requests` VALUES ('32', '2', 'scan_qr', 'pending', '2026-03-31 13:32:15', '2026-03-31 13:32:15');
+INSERT INTO `support_requests` VALUES ('33', '2', 'scan_qr', 'pending', '2026-03-31 14:03:07', '2026-03-31 14:03:07');
+INSERT INTO `support_requests` VALUES ('34', '93', 'scan_qr', 'pending', '2026-04-01 14:01:57', '2026-04-01 14:01:57');
 
 DROP TABLE IF EXISTS `table_status_history`;
 CREATE TABLE `table_status_history` (
@@ -823,16 +714,16 @@ CREATE TABLE `tables` (
   CONSTRAINT `fk_tables_parent_new` FOREIGN KEY (`parent_id`) REFERENCES `tables` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=157 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `tables` VALUES ('1', NULL, 'table', 'A.01', 'A1', '4', 'occupied', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-03-30 19:51:57');
-INSERT INTO `tables` VALUES ('2', NULL, 'table', 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-30 19:45:56');
-INSERT INTO `tables` VALUES ('3', NULL, 'table', 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('4', NULL, 'table', 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('5', NULL, 'table', 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('6', NULL, 'table', 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('7', NULL, 'table', 'B.01', 'B1', '4', 'available', '0', '0', '7', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
+INSERT INTO `tables` VALUES ('1', NULL, 'table', 'A.01', 'A1', '4', 'available', '0', '0', '1', '1', '2026-03-07 18:20:45', '2026-04-07 16:11:03');
+INSERT INTO `tables` VALUES ('2', NULL, 'table', 'A.02', 'A1', '4', 'available', '0', '0', '2', '1', '2026-03-07 18:20:45', '2026-03-31 14:50:43');
+INSERT INTO `tables` VALUES ('3', NULL, 'table', 'A.03', 'A1', '4', 'available', '0', '0', '3', '1', '2026-03-07 18:20:45', '2026-04-07 09:11:06');
+INSERT INTO `tables` VALUES ('4', NULL, 'table', 'A.04', 'A1', '4', 'available', '0', '0', '4', '1', '2026-03-07 18:20:45', '2026-03-31 14:50:43');
+INSERT INTO `tables` VALUES ('5', NULL, 'table', 'A.05', 'A1', '4', 'available', '0', '0', '5', '1', '2026-03-07 18:20:45', '2026-03-31 14:50:43');
+INSERT INTO `tables` VALUES ('6', NULL, 'table', 'A.06', 'A1', '4', 'available', '0', '0', '6', '1', '2026-03-07 18:20:45', '2026-04-01 14:21:57');
+INSERT INTO `tables` VALUES ('7', NULL, 'table', 'B.01', 'B1', '4', 'available', '0', '0', '7', '1', '2026-03-07 18:20:45', '2026-04-01 13:59:06');
 INSERT INTO `tables` VALUES ('8', NULL, 'table', 'B.02', 'B1', '4', 'available', '0', '0', '8', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('9', NULL, 'table', 'B.03', 'B1', '4', 'available', '0', '0', '9', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
-INSERT INTO `tables` VALUES ('10', NULL, 'table', 'B.04', 'B1', '4', 'available', '0', '0', '10', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
+INSERT INTO `tables` VALUES ('9', NULL, 'table', 'B.03', 'B1', '4', 'available', '0', '0', '9', '1', '2026-03-07 18:20:45', '2026-03-30 21:39:48');
+INSERT INTO `tables` VALUES ('10', NULL, 'table', 'B.04', 'B1', '4', 'available', '0', '0', '10', '1', '2026-03-07 18:20:45', '2026-03-30 22:00:27');
 INSERT INTO `tables` VALUES ('11', NULL, 'table', 'B.05', 'B1', '4', 'available', '0', '0', '11', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
 INSERT INTO `tables` VALUES ('12', NULL, 'table', 'B.06', 'B1', '4', 'available', '0', '0', '12', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:08');
 INSERT INTO `tables` VALUES ('13', NULL, 'table', 'C.01', 'C1', '4', 'available', '0', '0', '13', '1', '2026-03-07 18:20:45', '2026-03-30 19:46:18');
@@ -841,8 +732,8 @@ INSERT INTO `tables` VALUES ('15', NULL, 'table', 'C.03', 'C1', '4', 'available'
 INSERT INTO `tables` VALUES ('16', NULL, 'table', 'C.04', 'C1', '4', 'available', '0', '0', '16', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('17', NULL, 'table', 'C.05', 'C1', '4', 'available', '0', '0', '17', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('18', NULL, 'table', 'C.06', 'C1', '4', 'available', '0', '0', '18', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
-INSERT INTO `tables` VALUES ('19', NULL, 'table', 'VIP 1.1', 'VIP 1', '8', 'occupied', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-03-30 19:34:10');
-INSERT INTO `tables` VALUES ('20', NULL, 'table', 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
+INSERT INTO `tables` VALUES ('19', NULL, 'table', 'VIP 1.1', 'VIP 1', '8', 'available', '0', '0', '19', '1', '2026-03-07 18:20:45', '2026-04-01 13:59:31');
+INSERT INTO `tables` VALUES ('20', NULL, 'table', 'VIP 1.2', 'VIP 1', '8', 'available', '0', '0', '20', '1', '2026-03-07 18:20:45', '2026-03-30 22:01:31');
 INSERT INTO `tables` VALUES ('21', NULL, 'table', 'VIP 2.1', 'VIP 2', '8', 'available', '0', '0', '21', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('22', NULL, 'table', 'VIP 2.2', 'VIP 2', '8', 'available', '0', '0', '22', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('23', NULL, 'table', 'VIP 3.1', 'VIP 3', '8', 'available', '0', '0', '23', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
@@ -855,7 +746,7 @@ INSERT INTO `tables` VALUES ('29', NULL, 'table', 'Âu 03', 'Âu', '4', 'availab
 INSERT INTO `tables` VALUES ('30', NULL, 'table', 'Âu 04', 'Âu', '4', 'available', '0', '0', '30', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('31', NULL, 'table', 'Âu 05', 'Âu', '4', 'available', '0', '0', '31', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
 INSERT INTO `tables` VALUES ('32', NULL, 'table', 'Âu 06', 'Âu', '4', 'available', '0', '0', '32', '1', '2026-03-07 18:20:45', '2026-03-26 09:51:30');
-INSERT INTO `tables` VALUES ('34', NULL, 'room', '701', 'Tầng 7', '3', 'available', '0', '0', '701', '1', '2026-03-21 18:15:32', '2026-03-26 11:55:28');
+INSERT INTO `tables` VALUES ('34', NULL, 'room', '701', 'Tầng 7', '3', 'occupied', '0', '0', '701', '1', '2026-03-21 18:15:32', '2026-04-07 16:17:52');
 INSERT INTO `tables` VALUES ('35', NULL, 'room', '702', 'Tầng 7', '3', 'available', '0', '0', '702', '1', '2026-03-21 18:15:32', '2026-03-21 18:15:32');
 INSERT INTO `tables` VALUES ('36', NULL, 'room', '703', 'Tầng 7', '3', 'available', '0', '0', '703', '1', '2026-03-21 18:15:32', '2026-03-23 14:48:57');
 INSERT INTO `tables` VALUES ('37', NULL, 'room', '704', 'Tầng 7', '3', 'available', '0', '0', '704', '1', '2026-03-21 18:15:32', '2026-03-21 18:15:32');
@@ -914,7 +805,7 @@ INSERT INTO `tables` VALUES ('89', NULL, 'room', '920', 'Tầng 9', '3', 'availa
 INSERT INTO `tables` VALUES ('90', NULL, 'room', '921', 'Tầng 9', '3', 'available', '0', '0', '921', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
 INSERT INTO `tables` VALUES ('91', NULL, 'room', '922', 'Tầng 9', '3', 'available', '0', '0', '922', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
 INSERT INTO `tables` VALUES ('92', NULL, 'room', '923', 'Tầng 9', '3', 'available', '0', '0', '923', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
-INSERT INTO `tables` VALUES ('93', NULL, 'room', '1001', 'Tầng 10', '3', 'available', '0', '0', '1001', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
+INSERT INTO `tables` VALUES ('93', NULL, 'room', '1001', 'Tầng 10', '3', 'available', '0', '0', '1001', '1', '2026-03-21 18:15:33', '2026-04-01 14:12:05');
 INSERT INTO `tables` VALUES ('94', NULL, 'room', '1002', 'Tầng 10', '3', 'available', '0', '0', '1002', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
 INSERT INTO `tables` VALUES ('95', NULL, 'room', '1003', 'Tầng 10', '3', 'available', '0', '0', '1003', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
 INSERT INTO `tables` VALUES ('96', NULL, 'room', '1004', 'Tầng 10', '3', 'available', '0', '0', '1004', '1', '2026-03-21 18:15:33', '2026-03-21 18:15:33');
@@ -993,8 +884,6 @@ CREATE TABLE `user_shifts` (
   CONSTRAINT `fk_user_shifts_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `user_shifts` VALUES ('1', '3', '1', '2026-03-26', NULL, '2026-03-26 09:20:56');
-INSERT INTO `user_shifts` VALUES ('2', '4', '2', '2026-03-26', NULL, '2026-03-26 09:21:12');
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
