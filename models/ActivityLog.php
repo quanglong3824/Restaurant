@@ -127,11 +127,11 @@ class ActivityLog extends Model
 
         // Filter by date range
         if (!empty($filters['from'])) {
-            $where[] = "DATE(created_at) >= ?";
+            $where[] = "DATE(al.created_at) >= ?";
             $params[] = $filters['from'];
         }
         if (!empty($filters['to'])) {
-            $where[] = "DATE(created_at) <= ?";
+            $where[] = "DATE(al.created_at) <= ?";
             $params[] = $filters['to'];
         }
 
@@ -206,11 +206,11 @@ class ActivityLog extends Model
             $params = [];
 
             if (!empty($filters['from'])) {
-                $where[] = "DATE(created_at) >= ?";
+                $where[] = "DATE(al.created_at) >= ?";
                 $params[] = $filters['from'];
             }
             if (!empty($filters['to'])) {
-                $where[] = "DATE(created_at) <= ?";
+                $where[] = "DATE(al.created_at) <= ?";
                 $params[] = $filters['to'];
             }
             if (!empty($filters['action'])) {
