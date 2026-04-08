@@ -34,7 +34,8 @@ class MenuItem extends Model
         $where = "WHERE i.is_active = 1";
         $params = [];
         if ($serviceType) {
-            $where .= " AND i.service_type IN (?, 'both')";
+            // Also match empty string for backward compatibility with legacy data
+            $where .= " AND (i.service_type IN (?, 'both') OR i.service_type = '')";
             $params[] = $serviceType;
         }
 
@@ -76,7 +77,8 @@ class MenuItem extends Model
             $params[] = $type;
         }
         if ($serviceType) {
-            $where .= " AND i.service_type IN (?, 'both')";
+            // Also match empty string for backward compatibility with legacy data
+            $where .= " AND (i.service_type IN (?, 'both') OR i.service_type = '')";
             $params[] = $serviceType;
         }
 
