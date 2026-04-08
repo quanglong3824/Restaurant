@@ -1,0 +1,571 @@
+/* ============================================================
+   menu/customer-extras.css — Customer Menu Additional Styles
+   Aurora Restaurant
+   ============================================================ */
+
+/* ── Location Overlay ───────────────────────────────────── */
+.loc-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10000;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.99));
+    backdrop-filter: blur(18px);
+    color: #fff;
+}
+
+.loc-card {
+    background: #1e293b;
+    padding: 36px 28px;
+    border-radius: 28px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.loc-icon-ring {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1.5px solid var(--gold, #d4af37);
+    color: var(--gold, #d4af37);
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.loc-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    margin: 0 0 4px;
+    color: #fff;
+}
+
+.loc-sub {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--gold, #d4af37);
+    margin: 0 0 18px;
+}
+
+.loc-dist-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold, #d4af37);
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    margin-bottom: 16px;
+    animation: pulseSubtle 2s infinite;
+}
+
+.loc-dist-badge.err {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulseSubtle {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
+}
+
+.loc-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 20px;
+    text-align: left;
+}
+
+.loc-benefits li {
+    font-size: 0.83rem;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loc-benefits i {
+    color: var(--gold, #d4af37);
+    font-size: 0.9rem;
+}
+
+.loc-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.loc-hint {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 10px;
+}
+
+.btn-loc-start {
+    width: 100%;
+    background: linear-gradient(135deg, #d4af37, #b8860b);
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.btn-loc-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(212, 175, 55, 0.35);
+}
+
+.btn-loc-start:active {
+    transform: scale(0.98);
+}
+
+.loc-privacy {
+    font-size: 0.68rem;
+    color: #475569;
+    margin: 0;
+}
+
+/* ── Context Banner ─────────────────────────────────────── */
+.ctx-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    margin: 12px 16px 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 1.5px solid;
+}
+
+.ctx-banner i {
+    font-size: 1rem;
+}
+
+/* ── Type Tab Bar ───────────────────────────────────────── */
+.type-tab-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    overflow-x: auto;
+    background: #fff;
+    scrollbar-width: none;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.type-tab-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.type-tab {
+    white-space: nowrap;
+    padding: 7px 18px;
+    border-radius: 50px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.type-tab:hover {
+    border-color: var(--gold, #c5a059);
+    color: var(--gold, #c5a059);
+}
+
+.type-tab.active {
+    background: var(--gold, #c5a059);
+    color: #fff;
+    border-color: var(--gold, #c5a059);
+    box-shadow: 0 3px 10px rgba(197, 160, 89, 0.3);
+}
+
+/* ── Item Tags ──────────────────────────────────────────── */
+.item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.item-tag {
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.item-tag.bestseller { background: #ef4444; }
+.item-tag.new { background: #8b5cf6; }
+.item-tag.spicy { background: #f97316; }
+.item-tag.vegetarian { background: #16a34a; }
+.item-tag.recommended { background: #0ea5e9; }
+
+/* ── Unavailable Overlay ───────────────────────────────── */
+.item-unavailable {
+    opacity: 0.5;
+    pointer-events: none;
+    position: relative;
+}
+
+.item-unavailable::after {
+    content: 'Hết hàng';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: inherit;
+    font-weight: 800;
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+/* ── Empty State ────────────────────────────────────────── */
+.menu-empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: #94a3b8;
+}
+
+.menu-empty-state i {
+    font-size: 3rem;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* ── Bill Items ─────────────────────────────────────────── */
+.bill-items-container {
+    max-height: 40vh;
+    overflow-y: auto;
+}
+
+.bill-item {
+    padding: 12px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.bill-item:last-child {
+    border-bottom: none;
+}
+
+.bill-item-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.bill-qty {
+    color: var(--gold-dark, #a68341);
+    min-width: 28px;
+    font-size: 0.9rem;
+}
+
+.bill-name {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.bill-price {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.bill-item-status {
+    font-size: 0.7rem;
+    margin-top: 3px;
+    padding-left: 38px;
+    font-weight: 600;
+}
+
+.bill-item-status.confirmed { color: #10b981; }
+.bill-item-status.pending { color: #f59e0b; }
+.bill-item-status.draft { color: #94a3b8; }
+
+/* ── Bill Summary ───────────────────────────────────────── */
+.bill-summary {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-top: 12px;
+}
+
+.bill-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bill-total-row span {
+    color: #64748b;
+    font-weight: 600;
+}
+
+.bill-total-row strong {
+    font-size: 1.3rem;
+    color: var(--gold-dark, #a68341);
+    font-weight: 800;
+}
+
+/* ── Glow Payment Button ────────────────────────────────── */
+.glow-payment {
+    background: var(--gold, #c5a059) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.7);
+    animation: pulseGold 2s infinite;
+}
+
+@keyframes pulseGold {
+    0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
+    70% { box-shadow: 0 0 0 14px rgba(197, 160, 89, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+}
+
+/* ── Utility Classes ────────────────────────────────────── */
+.w-100 { width: 100%; }
+.mb-2 { margin-bottom: 0.5rem; }
+.me-2 { margin-right: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold, #c5a059), var(--gold-dark, #a68341));
+    color: #fff;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
+}
+
+.btn-gold:active {
+    transform: scale(0.98);
+}
+
+.btn-ghost {
+    background: #fff;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+    background: #f8fafc;
+}
+
+.btn-ghost:active {
+    background: #f8fafc;
+}
+
+.btn-ghost.small {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+/* ── Opt Chip Premium ───────────────────────────────────── */
+.opt-chip-premium {
+    padding: 6px 14px;
+    background: #f8fafc;
+    color: #475569;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.opt-chip-premium:hover {
+    border-color: var(--gold, #c5a059);
+    color: var(--gold, #c5a059);
+}
+
+.opt-chip-premium.active {
+    background: rgba(197, 160, 89, 0.12);
+    color: var(--gold-dark, #a68341);
+    border-color: var(--gold, #c5a059);
+    transform: scale(1.03);
+}
+
+/* ── Modal Close Circle ─────────────────────────────────── */
+.modal-close-circle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-close-circle:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.1);
+}
+
+/* ── Modal Premium ──────────────────────────────────────── */
+.modal-premium {
+    border-radius: 24px 24px 0 0;
+}
+
+.modal-premium .item-detail-img {
+    width: 100%;
+    height: 240px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* ── Qty Control Premium ───────────────────────────────── */
+.qty-control-premium {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 16px;
+    gap: 30px;
+    margin-bottom: 15px;
+}
+
+.qty-control-premium button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: white;
+    color: var(--gold-dark, #a68341);
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.qty-control-premium button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.qty-control-premium span {
+    font-size: 1.4rem;
+    font-weight: 800;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* ── Note Input Box ────────────────────────────────────── */
+.note-input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.note-input-box i {
+    color: #94a3b8;
+}
+
+.note-input-box input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+/* ── Order Notes Box ───────────────────────────────────── */
+.order-notes-box textarea {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    height: 80px;
+    resize: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+.order-notes-box textarea:focus {
+    outline: none;
+    border-color: var(--gold, #c5a059);
+    box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+}
+
+/* ── Border Utilities ───────────────────────────────────── */
+.border-0 { border: none !important; }

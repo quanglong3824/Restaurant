@@ -42,6 +42,8 @@ class AdminRealtimeController extends Controller
             'view' => 'admin/realtime/index',
             'pageTitle' => 'Quản lý Thời gian thực',
             'pageSubtitle' => 'Theo dõi tình trạng các bàn đang phục vụ',
+            'pageCSS' => 'admin/realtime',
+            'pageJS' => 'admin/realtime',
             'orders' => $orders,
             'counts' => $this->tableModel->countByStatus(),
         ]);
@@ -113,6 +115,8 @@ class AdminRealtimeController extends Controller
             'view' => 'admin/realtime/qr_sessions',
             'pageTitle' => 'Giám sát Phiên QR',
             'pageSubtitle' => 'Danh sách thiết bị khách đang quét nhiều bàn',
+            'pageCSS' => 'admin/realtime',
+            'pageJS' => 'admin/realtime',
             'sessions' => $sessions
         ]);
     }

@@ -97,6 +97,8 @@ class AdminActivityController extends Controller
             'view' => 'admin/activity/index',
             'pageTitle' => 'Nhật Ký Hoạt Động',
             'pageSubtitle' => 'Theo dõi toàn bộ hoạt động trong hệ thống',
+            'pageCSS' => 'admin/activity',
+            'pageJS' => 'admin/activity',
             'logs' => $logs,
             'filters' => $filters,
             'pagination' => [

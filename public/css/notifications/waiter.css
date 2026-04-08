@@ -1,0 +1,257 @@
+/**
+ * Notifications Waiter Styles - Aurora Restaurant
+ * Waiter notification panel styles
+ */
+
+/* ── Notification Card ───────────────────────────────────── */
+.notification-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.notification-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.notification-card.unread {
+    border-left: 4px solid #d4af37;
+    background: #fffef5;
+}
+
+.notification-card.read {
+    opacity: 0.85;
+    border-left: 4px solid #cbd5e1;
+}
+
+/* ── Card Header ─────────────────────────────────────────── */
+.notification-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.card-type-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-type-tag.new-order {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.card-type-tag.call-waiter {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.card-type-tag.payment {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.card-type-tag.merge-table {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.card-table-tag {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Card Body ──────────────────────────────────────────── */
+.notification-card-body {
+    font-size: 0.9rem;
+    color: #1e293b;
+    line-height: 1.5;
+}
+
+.notification-timestamp {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 8px;
+    display: block;
+}
+
+/* ── Card Actions ───────────────────────────────────────── */
+.notification-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.btn-notification {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-notification-primary {
+    background: #1e293b;
+    color: #fff;
+}
+
+.btn-notification-primary:hover {
+    background: #0f172a;
+}
+
+.btn-notification-secondary {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.btn-notification-secondary:hover {
+    background: #e2e8f0;
+}
+
+/* ── Pagination ─────────────────────────────────────────── */
+.pagination-scroller {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+}
+
+.pagination-luxury {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pag-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pag-btn:hover:not(:disabled) {
+    background: #d4af37;
+    color: #fff;
+    border-color: #d4af37;
+}
+
+.pag-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pag-numbers {
+    padding: 0 15px;
+    font-weight: 700;
+    color: #d4af37;
+    font-size: 0.9rem;
+}
+
+/* ── Empty State ────────────────────────────────────────── */
+.notification-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #94a3b8;
+}
+
+.notification-empty i {
+    font-size: 3rem;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.notification-empty p {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* ── Toast Notification ─────────────────────────────────── */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    animation: slideUp 0.3s ease;
+    white-space: nowrap;
+}
+
+.toast-notification.success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-notification.error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-notification.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .notification-card-actions {
+        flex-direction: column;
+    }
+    
+    .pagination-luxury {
+        gap: 4px;
+    }
+    
+    .pag-btn {
+        width: 32px;
+        height: 32px;
+    }
+}

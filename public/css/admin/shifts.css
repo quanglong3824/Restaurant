@@ -1,0 +1,429 @@
+/**
+ * Shifts Admin Styles - Aurora Restaurant
+ */
+
+/* ── Content Layout ────────────────────────────────────── */
+.content-with-aside {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.content-with-aside--sm {
+    grid-template-columns: 1fr 380px;
+}
+
+@media (max-width: 1024px) {
+    .content-with-aside {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Sticky Aside ──────────────────────────────────────── */
+.sticky-aside {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+}
+
+/* ── Flash Alert ───────────────────────────────────────── */
+.shift-flash {
+    margin-bottom: 1rem;
+    padding: 0.85rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.93rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.shift-flash-success {
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    color: #16a34a;
+}
+
+.shift-flash-warning {
+    background: rgba(250, 204, 21, 0.12);
+    border: 1px solid rgba(250, 204, 21, 0.35);
+    color: #a16207;
+}
+
+.shift-flash-danger {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #dc2626;
+}
+
+/* ── Card Header Date ──────────────────────────────────── */
+.card-header-date {
+    font-size: 0.82rem;
+    color: var(--text-muted, #64748b);
+    margin-top: 0.15rem;
+}
+
+/* ── Table Styles ──────────────────────────────────────── */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrap th {
+    text-align: left;
+    padding: 12px;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 800;
+}
+
+.table-wrap td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table-wrap tr:hover {
+    background: #f8fafc;
+}
+
+/* ── Shift Row ─────────────────────────────────────────── */
+.shift-row {
+    background: rgba(212, 175, 55, 0.04);
+}
+
+/* ── Shift Name ────────────────────────────────────────── */
+.shift-name {
+    font-weight: 600;
+    color: var(--text-primary, #1e293b);
+}
+
+/* ── Shift Time ────────────────────────────────────────── */
+.shift-time {
+    font-size: 0.78rem;
+    color: var(--text-muted, #64748b);
+    margin-top: 0.2rem;
+}
+
+/* ── Badge ─────────────────────────────────────────────── */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+}
+
+.badge-gold {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.badge-blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* ── Empty State ───────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--text-muted, #64748b);
+}
+
+.empty-state-icon {
+    font-size: 1.8rem;
+    opacity: 0.3;
+    display: block;
+    margin-bottom: 0.6rem;
+}
+
+/* ── Duration Badge ────────────────────────────────────── */
+.duration-badge {
+    background: rgba(212, 175, 55, 0.12);
+    color: #d4af37;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ── Summary Bar ───────────────────────────────────────── */
+.summary-bar {
+    padding: 0.75rem 1.2rem;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+    font-size: 0.82rem;
+    color: var(--text-muted, #64748b);
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* ── Pagination ────────────────────────────────────────── */
+.pagination-container {
+    padding: 0 1.2rem;
+}
+
+.pagination-margin {
+    margin-top: -1rem;
+}
+
+/* ── Today Badge ───────────────────────────────────────── */
+.today-badge {
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+    font-size: 0.72rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 5px;
+    margin-left: 0.4rem;
+}
+
+/* ── Preset Button ─────────────────────────────────────── */
+.btn-preset-shift {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    margin: 0.3rem 0;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-primary, #1e293b);
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.btn-preset-shift:hover {
+    background: rgba(212, 175, 55, 0.08);
+    border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* ── Shift Preview ─────────────────────────────────────── */
+.shift-preview {
+    display: none;
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted, #64748b);
+}
+
+/* ── Modal Styles ──────────────────────────────────────── */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    max-width: 420px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.modal-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ── Form Group ────────────────────────────────────────── */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+/* ── Buttons ───────────────────────────────────────────── */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #fcd34d 100%);
+    color: #fff;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-danger-outline {
+    background: transparent;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.btn-danger-outline:hover {
+    background: #fee2e2;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* ── New Utility Classes ───────────────────────────────── */
+.flex-col-gap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.th-action-center {
+    width: 80px;
+    text-align: center;
+}
+
+.td-center {
+    text-align: center;
+}
+
+.card-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.text-primary {
+    color: var(--text-primary) !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.small {
+    font-size: 0.87rem;
+}
+
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+.card-body-flex {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card-mt {
+    margin-top: 1rem;
+}
+
+.card-title-sm {
+    font-size: 0.88rem;
+}
+
+.card-body-padding {
+    padding: 0.5rem 0.8rem 1rem;
+}
+
+.preset-name {
+    font-weight: 500;
+}
+
+.preset-time {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .content-with-aside {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-bar {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

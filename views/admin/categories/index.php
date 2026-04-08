@@ -10,7 +10,7 @@
         
         <!-- Pagination Top -->
         <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
-        <div style="margin-bottom: 1rem;">
+        <div class="pagination-margin-bottom">
             <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/categories', array_filter(['search' => $_GET['search'] ?? '', 'type' => $_GET['type'] ?? ''])) ?>
         </div>
         <?php endif; ?>
@@ -24,15 +24,14 @@
                         <th>Tên EN</th>
                         <th>Thứ tự</th>
                         <th>Trạng thái</th>
-                        <th style="width:120px"></th>
+                        <th class="action-col"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($categories as $cat): ?>
                         <tr>
                             <td>
-                                <i class="fas <?= e($cat['icon'] ?? 'fa-utensils') ?>"
-                                    style="color:var(--gold);font-size:1.1rem;"></i>
+                                <i class="fas <?= e($cat['icon'] ?? 'fa-utensils') ?> category-icon"></i>
                             </td>
                             <td>
                                 <?php 
@@ -41,7 +40,7 @@
                                 ?>
                             </td>
                             <td><strong><?= e($cat['name']) ?></strong></td>
-                            <td style="color:#9ca3af;"><?= e($cat['name_en'] ?? '') ?></td>
+                            <td class="text-muted"><?= e($cat['name_en'] ?? '') ?></td>
                             <td><?= $cat['sort_order'] ?></td>
                             <td>
                                 <span class="badge <?= $cat['is_active'] ? 'badge-success' : 'badge-danger' ?>">
@@ -49,13 +48,13 @@
                                 </span>
                             </td>
                             <td>
-                                <div style="display:flex;gap:.4rem;">
+                                <div class="action-buttons-row">
                                     <a href="<?= BASE_URL ?>/admin/categories/edit?id=<?= $cat['id'] ?>"
                                         class="btn btn-outline btn-sm" title="Sửa">
                                         <i class="fas fa-pen"></i>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/categories/delete"
-                                        style="display:inline;">
+                                        class="delete-form-inline">
                                         <input type="hidden" name="id" value="<?= $cat['id'] ?>">
                                         <button type="submit" class="btn btn-danger-outline btn-sm"
                                             data-confirm="Xóa danh mục '<?= e($cat['name']) ?>'?" title="Xóa">
@@ -68,7 +67,7 @@
                     <?php endforeach; ?>
                     <?php if (empty($categories)): ?>
                         <tr>
-                            <td colspan="6" style="text-align:center;padding:2rem;color:#9ca3af;">
+                            <td colspan="6" class="empty-state">
                                 Chưa có danh mục nào.
                             </td>
                         </tr>
@@ -169,7 +168,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Thứ tự</label>
-                    <input type="number" name="sort_order" class="form-control" value="0" min="0" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    <input type="number" name="sort_order" class="form-control form-control-readonly" value="0" min="0" readonly>
                     <p class="form-hint">Thứ tự sẽ tự động gán khi lưu (số lớn nhất + 1).</p>
                 </div>
                 <button type="submit" class="btn btn-gold btn-block">

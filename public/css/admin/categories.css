@@ -1,0 +1,102 @@
+/**
+ * Categories Admin Styles - Aurora Restaurant
+ */
+
+/* ── Content Layout ── */
+.content-with-aside {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.content-with-aside--sm {
+    grid-template-columns: 1fr 380px;
+}
+
+@media (max-width: 1024px) {
+    .content-with-aside {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Sticky Aside ── */
+.sticky-aside {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+}
+
+/* ── Table Styles ───────────────────────────────────────── */
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrap th {
+    text-align: left;
+    padding: 12px;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+    font-weight: 800;
+}
+
+.table-wrap td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table-wrap tr:hover {
+    background: #f8fafc;
+}
+
+/* ── Action Column ─────────────────────────────────────── */
+.action-col {
+    width: 120px;
+}
+
+/* ── Icon Styles ───────────────────────────────────────── */
+.category-icon {
+    color: var(--gold, #d4af37);
+    font-size: 1.1rem;
+}
+
+/* ── Text Muted ────────────────────────────────────────── */
+.text-muted {
+    color: #9ca3af;
+}
+
+/* ── Empty State ───────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #9ca3af;
+}
+
+/* ── Action Buttons Row ───────────────────────────────── */
+.action-buttons-row {
+    display: flex;
+    gap: 0.4rem;
+}
+
+/* ── Delete Form Inline ───────────────────────────────── */
+.delete-form-inline {
+    display: inline;
+}
+
+/* ── Form Control Readonly ────────────────────────────── */
+.form-control-readonly {
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+/* ── Pagination Margin ───────────────────────────────── */
+.pagination-margin-bottom {
+    margin-bottom: 1rem;
+}

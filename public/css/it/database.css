@@ -1,0 +1,453 @@
+/**
+ * IT Database Management Styles - Aurora Restaurant
+ * Database backup, cleanup and management interface
+ */
+
+/* ── Flash Message ───────────────────────────────────── */
+.db-flash {
+    margin-bottom: 1.25rem;
+    padding: 0.9rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.db-flash-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #16a34a;
+}
+
+.db-flash-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #dc2626;
+}
+
+.db-flash-icon {
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+/* ── Card Body ───────────────────────────────────────── */
+.db-card-body {
+    padding: 2rem;
+}
+
+.db-info-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.db-info-col {
+    flex: 1;
+    min-width: 280px;
+}
+
+.db-info-col-bordered {
+    flex: 1;
+    min-width: 280px;
+    border-left: 1px solid var(--border-color);
+    padding-left: 2rem;
+}
+
+.db-info-title {
+    margin-bottom: 1rem;
+    color: var(--gold);
+}
+
+.db-info-title-danger {
+    margin-bottom: 1rem;
+    color: var(--danger, #ef4444);
+}
+
+.db-info-text {
+    color: var(--text-muted);
+    line-height: 1.65;
+    font-size: 0.9rem;
+}
+
+/* ── Backup List Card ────────────────────────────────── */
+.db-card-spaced {
+    margin-top: 1.5rem;
+}
+
+.db-table-wrap {
+    overflow-x: auto;
+}
+
+.db-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.db-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.db-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.db-table .text-center {
+    text-align: center;
+}
+
+.db-table .empty-cell {
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+/* ── Cleanup Section ─────────────────────────────────── */
+.db-cleanup-card {
+    margin-top: 1.5rem;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.db-cleanup-header {
+    background: rgba(239, 68, 68, 0.05);
+    padding: 1.25rem;
+}
+
+.db-cleanup-title {
+    color: #dc2626;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.db-cleanup-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.db-cleanup-count {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.db-it-badge {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+    padding: 0.3rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.db-cleanup-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ── Warning Box ─────────────────────────────────────── */
+.db-warning-box {
+    background: rgba(250, 204, 21, 0.08);
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.87rem;
+    color: #92400e;
+}
+
+.db-warning-icon {
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+    color: #d97706;
+}
+
+/* ── Cleanup Grid ────────────────────────────────────── */
+.db-cleanup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+/* ── Cleanup Mode Card ───────────────────────────────── */
+.db-mode-card {
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.db-mode-card-orange {
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.db-mode-card-indigo {
+    border: 1px solid var(--border-color);
+}
+
+.db-mode-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.db-mode-header-orange {
+    background: rgba(249, 115, 22, 0.07);
+    border-bottom: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.db-mode-header-indigo {
+    background: rgba(99, 102, 241, 0.06);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.db-mode-header-red {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.db-mode-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.db-mode-title-red {
+    color: #dc2626;
+}
+
+.db-mode-title-orange {
+    color: #ea580c;
+}
+
+.db-mode-title-indigo {
+    color: #4f46e5;
+}
+
+.db-mode-icon {
+    margin-right: 0.4rem;
+}
+
+.db-mode-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.db-mode-body {
+    padding: 1rem 1.25rem;
+}
+
+/* ── Stats Chips ─────────────────────────────────────── */
+.db-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.db-stat-chip {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+    color: #dc2626;
+}
+
+.db-stat-chip-green {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #16a34a;
+}
+
+.db-stat-chip-orange {
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    color: #ea580c;
+}
+
+/* ── Cleanup Buttons ─────────────────────────────────── */
+.db-cleanup-btn {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 0.65rem;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.db-cleanup-btn-orange {
+    background: #ea580c;
+}
+
+/* ── Cleanup Table ───────────────────────────────────── */
+.db-cleanup-table-wrap {
+    overflow-x: auto;
+}
+
+.db-cleanup-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.87rem;
+}
+
+.db-cleanup-table thead tr {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.db-cleanup-table th {
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.db-cleanup-table th.text-right {
+    text-align: right;
+}
+
+.db-cleanup-table th.text-center {
+    text-align: center;
+}
+
+.db-cleanup-table th.width-limit {
+    width: 100px;
+}
+
+.db-cleanup-table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.db-cleanup-table td {
+    padding: 0.65rem 0.8rem;
+}
+
+.db-cleanup-table code {
+    font-size: 0.78rem;
+    background: rgba(99, 102, 241, 0.08);
+    color: #4f46e5;
+    padding: 0.15rem 0.4rem;
+    border-radius: 5px;
+}
+
+.db-cleanup-table .table-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+.db-cleanup-table .cond-code {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.db-cleanup-table .count-cell {
+    text-align: right;
+    font-weight: 700;
+}
+
+.db-cleanup-table .count-cell.has-data {
+    color: #dc2626;
+}
+
+.db-cleanup-table .empty-text {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* ── System Info Table ───────────────────────────────── */
+.db-info-table td {
+    font-weight: 600;
+}
+
+.db-info-table td:first-child {
+    width: 220px;
+}
+
+/* ── Modal ───────────────────────────────────────────── */
+.db-modal {
+    display: none;
+}
+
+.db-modal-content {
+    max-width: 440px;
+}
+
+.db-modal-header {
+    background: rgba(239, 68, 68, 0.06);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.db-modal-title {
+    color: #dc2626;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.db-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.db-modal-info {
+    background: rgba(239, 68, 68, 0.07);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+}
+
+.db-modal-input {
+    font-family: monospace;
+    letter-spacing: 0.05em;
+}
+
+.db-modal-submit {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+/* ── Utilities ───────────────────────────────────────── */
+.text-danger {
+    color: #dc2626 !important;
+}
+
+.text-success {
+    color: #16a34a !important;
+}
+
+.text-orange {
+    color: #ea580c !important;
+}
+
+.text-indigo {
+    color: #4f46e5 !important;
+}

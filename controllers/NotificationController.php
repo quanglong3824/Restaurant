@@ -25,23 +25,50 @@ class NotificationController extends Controller
         $this->view('layouts/waiter', [
             'view' => 'notifications/waiter',
             'pageTitle' => 'Trung tâm điều hành',
+            'pageCSS' => 'notifications/waiter',
+            'pageJS' => 'notifications/waiter',
         ]);
     }
 
-    /** API: Poll for notifications */
+    /** API: Data endpoint for waiter notifications page */
+    public function data(): void
+    {
+        try {
+            $page = max(1, (int)($this->input('page', 1)));
+            $limit = 15;
+            $filter = 'all';
+            $status = '';
+
+            $notifications = $this->notifModel->getPaged($page, $limit, $filter, $status);
+            $totalCount = $this->notifModel->countAll($filter, $status);
+            $unreadCount = $this->notifModel->countUnread();
+            
+            $this->json([
+                'ok' => true,
+                'notifications' => $notifications,
+                'pagination' => [
+                    'page' => $page,
+                    'totalPages' => max(1, ceil($totalCount / $limit))
+                ],
+                'unreadCount' => $unreadCount
+            ]);
+        } catch (\Throwable $e) {
+            $this->json(['ok' => false, 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    /** API: Poll for notifications (legacy) */
     public function poll(): void
     {
         try {
             $page = max(1, (int)($this->input('page', 1)));
             $limit = max(1, (int)($this->input('limit', 15)));
             $filter = $this->input('filter', 'all');
-            $status = $this->input('status', ''); // 'unread', 'read', or ''
+            $status = $this->input('status', '');
 
-            // Lấy danh sách thông báo phân trang (hỗ trợ cả status filter)
             $notifications = $this->notifModel->getPaged($page, $limit, $filter, $status);
             $totalCount = $this->notifModel->countAll($filter, $status);
             
-            // Lấy thêm stats (unread count) để cập nhật badge
             $stats = [
                 'unread'     => $this->notifModel->countUnread(),
                 'payment'    => $this->notifModel->countUnreadByType('payment_request'),
@@ -65,7 +92,7 @@ class NotificationController extends Controller
         }
     }
 
-    /** API: Đánh dấu đã đọc/xử lý */
+    /** POST /notifications/waiter/mark-read — Mark notification as read */
     public function markRead(): void
     {
         $id = (int)($this->input('id', 0));
@@ -73,10 +100,18 @@ class NotificationController extends Controller
 
         if ($id > 0) {
             $this->notifModel->markAsRead($id, $userId);
-        } else {
-            $this->notifModel->markAllAsRead($userId);
         }
 
+        $this->json(['ok' => true]);
+    }
+
+    /** POST /notifications/waiter/dismiss — Dismiss notification */
+    public function dismiss(): void
+    {
+        $id = (int)($this->input('id', 0));
+        if ($id > 0) {
+            $this->notifModel->dismiss($id);
+        }
         $this->json(['ok' => true]);
     }
 

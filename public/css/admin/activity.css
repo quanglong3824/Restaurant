@@ -1,0 +1,405 @@
+/**
+ * Activity Logs Styles - Aurora Restaurant
+ */
+
+/* ── Page Layout ───────────────────────────────────────── */
+.activity-logs-page {
+    padding: 1.5rem;
+}
+
+/* ── Stats Cards ───────────────────────────────────────── */
+.activity-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.stat-card.danger {
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.stat-card.warning {
+    border-color: #fef3c7;
+    background: #fffbeb;
+}
+
+.stat-card.info {
+    border-color: #dbeafe;
+    background: #eff6ff;
+}
+
+.stat-card-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.stat-card-sub {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+}
+
+/* ── Filters ───────────────────────────────────────────── */
+.activity-filters {
+    margin-bottom: 1.5rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: #fff;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: auto;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #fcd34d 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.btn-ghost {
+    background: #f1f5f9;
+    color: #64748b;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+    background: #e2e8f0;
+}
+
+/* ── Activity Logs Table ───────────────────────────────── */
+.activity-logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.activity-logs-table thead {
+    background: #f8fafc;
+}
+
+.activity-logs-table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 800;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.activity-logs-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.activity-logs-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* ── Action Badge ──────────────────────────────────────── */
+.action-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 4px 10px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* ── Entity Badge ──────────────────────────────────────── */
+.entity-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.entity-badge i {
+    color: #64748b;
+}
+
+/* ── Level Badge ───────────────────────────────────────── */
+.level-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.level-badge.info {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.level-badge.notice {
+    background: #cffafe;
+    color: #0e7490;
+}
+
+.level-badge.warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.level-badge.error {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.level-badge.critical {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+/* ── Metadata Toggle ───────────────────────────────────── */
+.metadata-toggle {
+    cursor: pointer;
+    color: #94a3b8;
+    transition: transform 0.2s;
+}
+
+.metadata-toggle:hover {
+    color: #d4af37;
+}
+
+.metadata-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+.metadata-content {
+    display: none;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.metadata-content.show {
+    display: block;
+}
+
+/* ── Entity Logs Modal ────────────────────────────────── */
+.entity-logs-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.entity-logs-modal.active {
+    display: flex;
+}
+
+.entity-logs-card {
+    background: #fff;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.entity-logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.entity-logs-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.entity-logs-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0.25rem;
+}
+
+.entity-logs-body {
+    padding: 1.25rem;
+}
+
+.activity-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #94a3b8;
+}
+
+.activity-loading i {
+    font-size: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Log Time ──────────────────────────────────────────── */
+.log-time-main {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.log-time-sub {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+/* ── Entity ID ─────────────────────────────────────────── */
+.entity-id {
+    color: #cbd5e1;
+}
+
+/* ── Entity Label ──────────────────────────────────────── */
+.entity-label {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+}
+
+/* ── User Name/Role ────────────────────────────────────── */
+.user-name {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.user-role {
+    font-size: 0.65rem;
+    color: #94a3b8;
+}
+
+/* ── User System ───────────────────────────────────────── */
+.user-system {
+    color: #94a3b8;
+}
+
+/* ── IP Address ────────────────────────────────────────── */
+.ip-address {
+    font-family: monospace;
+    font-size: 0.75rem;
+}
+
+/* ── Empty State ───────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #94a3b8;
+}
+
+.empty-state-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .activity-logs-table {
+        font-size: 0.8rem;
+    }
+}

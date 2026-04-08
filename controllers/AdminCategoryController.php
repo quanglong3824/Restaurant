@@ -42,6 +42,7 @@ class AdminCategoryController extends Controller
             'view' => 'admin/categories/index',
             'pageTitle' => 'Danh Mục Món',
             'pageSubtitle' => $total . ' danh mục',
+            'pageCSS' => 'admin/categories',
             'categories' => $categories,
             'menuTypes' => $menuTypes,
             'editItem' => null,
@@ -116,6 +117,7 @@ class AdminCategoryController extends Controller
             'view' => 'admin/categories/index',
             'pageTitle' => 'Danh Mục Món',
             'pageSubtitle' => count($categories) . ' danh mục',
+            'pageCSS' => 'admin/categories',
             'categories' => $categories,
             'menuTypes' => $menuTypes,
             'editItem' => $item,   // truyền item đang edit

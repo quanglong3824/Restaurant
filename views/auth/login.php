@@ -59,9 +59,9 @@
                         <button type="button" class="user-chip" data-username="<?= e($w['username']) ?>"
                             data-role="<?= e($w['role']) ?>">
                             <?php if ($w['role'] === 'admin'): ?>
-                                <i class="fas fa-user-shield" style="margin-right:5px; color:var(--gold);"></i>
+                                <i class="fas fa-user-shield user-chip__icon user-chip__icon--gold" aria-hidden="true"></i>
                             <?php elseif ($w['role'] === 'it'): ?>
-                                <i class="fas fa-user-gear" style="margin-right:5px;"></i>
+                                <i class="fas fa-user-gear user-chip__icon" aria-hidden="true"></i>
                             <?php endif; ?>
                             <?= e($w['name']) ?>
                         </button>
@@ -70,15 +70,15 @@
             </div>
 
             <!-- ── Step 2: Chọn ca trực ── -->
-            <div id="shiftSection" class="u-hidden" style="margin-top: 1.5rem;">
+            <div id="shiftSection" class="u-hidden section-spaced">
                 <p class="field-label">
                     <i class="fas fa-clock" aria-hidden="true"></i>
                     2. Chọn ca trực
                 </p>
                 <div class="shift-grid">
                     <?php if (empty($shifts)): ?>
-                        <p style="color:#ff6b6b; font-size:0.85rem; text-align:center; padding:0.75rem;">
-                            <i class="fas fa-exclamation-triangle"></i>
+                        <p class="empty-message">
+                            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
                             Chưa có ca trực nào. Vui lòng liên hệ Admin để tạo ca trực.
                         </p>
                     <?php else: ?>
@@ -94,7 +94,7 @@
             </div>
 
             <!-- ── Step 3: Nhập PIN ── -->
-            <div id="pinSection" class="u-hidden" style="margin-top: 1.5rem;">
+            <div id="pinSection" class="u-hidden section-spaced">
                 <p class="field-label">
                     <i class="fas fa-lock" aria-hidden="true"></i>
                     3. Nhập PIN (4 số)
