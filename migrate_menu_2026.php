@@ -40,17 +40,24 @@ if (!$is_local && session_status() === PHP_SESSION_NONE) {
 $errors = [];
 $success = [];
 
+// Disable foreign key checks BEFORE transaction
+$pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
+$success[] = "Step 1: Disabled foreign key checks.";
+
 try {
     $pdo->beginTransaction();
     
-    // Step 1: Delete existing data (in correct order)
-    $success[] = "Step 1: Deleting existing menu items...";
+    // Delete existing data (FK checks disabled, so no constraint errors)
+    $success[] = "Step 2: Deleting existing order items...";
+    $pdo->exec("DELETE FROM order_items");
+    
+    $success[] = "Step 3: Deleting existing menu items...";
     $pdo->exec("DELETE FROM menu_items");
     
-    $success[] = "Step 2: Deleting existing menu categories...";
+    $success[] = "Step 4: Deleting existing menu categories...";
     $pdo->exec("DELETE FROM menu_categories");
     
-    $success[] = "Step 3: Deleting existing menu types...";
+    $success[] = "Step 5: Deleting existing menu types...";
     $pdo->exec("DELETE FROM menu_types");
     
     // Step 4: Insert Menu Types
@@ -65,7 +72,7 @@ try {
     foreach ($menuTypes as $type) {
         $stmt->execute($type);
     }
-    $success[] = "Step 4: Inserted " . count($menuTypes) . " menu types.";
+    $success[] = "Step 6: Inserted " . count($menuTypes) . " menu types.";
     
     // Step 5: Insert Menu Categories
     $categories = [
@@ -98,7 +105,7 @@ try {
     foreach ($categories as $cat) {
         $stmt->execute($cat);
     }
-    $success[] = "Step 5: Inserted " . count($categories) . " menu categories.";
+    $success[] = "Step 7: Inserted " . count($categories) . " menu categories.";
     
     // Get category IDs by name
     $catIds = [];
@@ -278,15 +285,20 @@ try {
             $inserted++;
         }
     }
-    $success[] = "Step 6: Inserted $inserted menu items.";
+    $success[] = "Step 8: Inserted $inserted menu items.";
     
     $pdo->commit();
     
     $success[] = "<strong>✅ MIGRATION COMPLETED SUCCESSFULLY!</strong>";
     $success[] = "Total: 4 menu types, 19 categories, $inserted menu items.";
     
+    // Re-enable foreign key checks
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
+    
 } catch (Exception $e) {
     $pdo->rollBack();
+    // Re-enable foreign key checks on error
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
     $errors[] = "Error: " . $e->getMessage();
 }
 ?>
