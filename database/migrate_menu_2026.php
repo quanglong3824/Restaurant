@@ -6,10 +6,16 @@
  * IMPORTANT: Delete this file after running for security!
  */
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Only allow local access or authenticated admin
 $allowed_ips = ['127.0.0.1', '::1', 'localhost'];
 $is_local = in_array($_SERVER['REMOTE_ADDR'] ?? '', $allowed_ips);
 
+// Load config
+require_once __DIR__ . '/../config/constants.php';
 require_once __DIR__ . '/../config/database.php';
 
 if (!$is_local && session_status() === PHP_SESSION_NONE) {
@@ -20,7 +26,11 @@ if (!$is_local && session_status() === PHP_SESSION_NONE) {
     }
 }
 
-$pdo = getDB();
+try {
+    $pdo = getDB();
+} catch (PDOException $e) {
+    die('Database connection failed: ' . $e->getMessage());
+}
 $errors = [];
 $success = [];
 
@@ -63,7 +73,7 @@ try {
         // Món Âu
         ['Súp Âu', 'Soup', 'europe', 'fa-bowl-food', 1],
         ['Xà Lách', 'Salad', 'europe', 'fa-leaf', 2],
-        ['Mì Ý', 'Spaghetti', 'europe', 'fa-spaghety-monster', 3],
+['Mì Ý', 'Spaghetti', 'europe', 'fa-utensils', 3],
         ['Sandwich', 'Sandwich', 'europe', 'fa-bread-slice', 4],
         ['Món Chính', 'Main Course', 'europe', 'fa-drumstick-bite', 5],
         ['Tráng Miệng', 'Dessert', 'europe', 'fa-ice-cream', 6],
