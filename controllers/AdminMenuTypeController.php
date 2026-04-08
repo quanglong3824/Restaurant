@@ -67,6 +67,15 @@ class AdminMenuTypeController extends Controller
             $this->redirect('/admin/menu-types');
         }
 
+        // Auto calculate sort_order: max + 1
+        $allTypes = $this->model->getAll();
+        $maxSort = 0;
+        foreach ($allTypes as $type) {
+            if ((int)($type['sort_order'] ?? 0) > $maxSort) {
+                $maxSort = (int)($type['sort_order'] ?? 0);
+            }
+        }
+
         $data = [
             'name' => $name,
             'name_en' => trim((string) $this->input('name_en', '')) ?: null,
@@ -74,7 +83,7 @@ class AdminMenuTypeController extends Controller
             'description' => trim((string) $this->input('description', '')) ?: null,
             'color' => $this->input('color', '#0ea5e9'),
             'icon' => $this->input('icon', 'fa-utensils'),
-            'sort_order' => (int) $this->input('sort_order', 0),
+            'sort_order' => $maxSort + 1,
         ];
         
         $id = $this->model->create($data);

@@ -85,7 +85,10 @@ $isEdit = !empty($item);
             <div class="form-group">
                 <label class="form-label">Thứ tự hiển thị</label>
                 <input type="number" name="sort_order" class="form-control" min="0"
-                    value="<?= $isEdit ? $item['sort_order'] : '0' ?>">
+                    value="<?= $isEdit ? $item['sort_order'] : '0' ?>" <?= !$isEdit ? 'readonly style="background:#f1f5f9;cursor:not-allowed;"' : '' ?>>
+                <?php if (!$isEdit): ?>
+                <p class="form-hint">Thứ tự sẽ tự động gán khi lưu (số lớn nhất + 1).</p>
+                <?php endif; ?>
             </div>
 
             <div class="form-group col-span-2">

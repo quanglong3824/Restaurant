@@ -65,12 +65,21 @@ class AdminCategoryController extends Controller
             $this->redirect('/admin/categories');
         }
 
+        // Auto calculate sort_order: max + 1
+        $allCategories = $this->model->getAll();
+        $maxSort = 0;
+        foreach ($allCategories as $cat) {
+            if ((int)($cat['sort_order'] ?? 0) > $maxSort) {
+                $maxSort = (int)($cat['sort_order'] ?? 0);
+            }
+        }
+
         $data = [
             'name' => $name,
             'name_en' => trim((string) $this->input('name_en', '')) ?: null,
             'menu_type' => $this->input('menu_type', 'asia'),
             'icon' => $this->input('icon', 'fa-utensils'),
-            'sort_order' => (int) $this->input('sort_order', 0),
+            'sort_order' => $maxSort + 1,
         ];
         
         $id = $this->model->create($data);

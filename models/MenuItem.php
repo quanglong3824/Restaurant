@@ -5,6 +5,18 @@
 
 class MenuItem extends Model
 {
+    /** Kiểm tra cột có tồn tại trong bảng không */
+    private function hasColumn(string $column): bool
+    {
+        try {
+            $db = getDB();
+            $result = $db->query("SHOW COLUMNS FROM menu_items LIKE '{$column}'")->fetch();
+            return (bool) $result;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     /** Tất cả món kể cả inactive (admin) */
     public function getAll(): array
     {
@@ -26,14 +38,28 @@ class MenuItem extends Model
             $params[] = $serviceType;
         }
 
-        return $this->findAll(
-            "SELECT i.*, c.name AS category_name, c.menu_type
-             FROM menu_items i
-             LEFT JOIN menu_categories c ON c.id = i.category_id
-             $where
-             ORDER BY c.sort_order, i.sort_order, i.name",
-             $params
-        );
+        // Kiểm tra cột menu_type có tồn tại không
+        $hasMenuType = $this->hasColumn('menu_type');
+        
+        if ($hasMenuType) {
+            return $this->findAll(
+                "SELECT i.*, c.name AS category_name, c.menu_type
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 $where
+                 ORDER BY c.sort_order, i.sort_order, i.name",
+                $params
+            );
+        } else {
+            return $this->findAll(
+                "SELECT i.*, c.name AS category_name
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 $where
+                 ORDER BY c.sort_order, i.sort_order, i.name",
+                $params
+            );
+        }
     }
 
     /** Món đang hiển thị, kèm category (waiter), lọc theo menu_type */
@@ -41,7 +67,11 @@ class MenuItem extends Model
     {
         $where = "WHERE i.is_active = 1";
         $params = [];
-        if ($type) {
+        
+        // Kiểm tra cột menu_type có tồn tại không
+        $hasMenuType = $this->hasColumn('menu_type');
+        
+        if ($type && $hasMenuType) {
             $where .= " AND c.menu_type = ?";
             $params[] = $type;
         }
@@ -50,14 +80,25 @@ class MenuItem extends Model
             $params[] = $serviceType;
         }
 
-        return $this->findAll(
-            "SELECT i.*, c.name AS category_name, c.menu_type
-             FROM menu_items i
-             LEFT JOIN menu_categories c ON c.id = i.category_id
-             $where
-             ORDER BY c.sort_order, i.sort_order, i.name",
-            $params
-        );
+        if ($hasMenuType) {
+            return $this->findAll(
+                "SELECT i.*, c.name AS category_name, c.menu_type
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 $where
+                 ORDER BY c.sort_order, i.sort_order, i.name",
+                $params
+            );
+        } else {
+            return $this->findAll(
+                "SELECT i.*, c.name AS category_name
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 $where
+                 ORDER BY c.sort_order, i.sort_order, i.name",
+                $params
+            );
+        }
     }
 
     /** Nhóm theo category cho waiter menu, có lọc type */
@@ -74,65 +115,133 @@ class MenuItem extends Model
 
     public function findById(int $id): ?array
     {
-        return $this->findOne(
-            "SELECT i.*, c.name AS category_name, c.menu_type
-             FROM menu_items i
-             LEFT JOIN menu_categories c ON c.id = i.category_id
-             WHERE i.id = ?",
-            [$id]
-        );
+        // Kiểm tra cột menu_type có tồn tại không
+        $hasMenuType = $this->hasColumn('menu_type');
+        
+        if ($hasMenuType) {
+            return $this->findOne(
+                "SELECT i.*, c.name AS category_name, c.menu_type
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 WHERE i.id = ?",
+                [$id]
+            );
+        } else {
+            return $this->findOne(
+                "SELECT i.*, c.name AS category_name
+                 FROM menu_items i
+                 LEFT JOIN menu_categories c ON c.id = i.category_id
+                 WHERE i.id = ?",
+                [$id]
+            );
+        }
     }
 
     public function create(array $data): int
     {
-        $this->execute(
-            "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock, menu_type)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [
-                $data['category_id'],
-                $data['name'],
-                $data['name_en'] ?? null,
-                $data['description'] ?? null,
-                $data['price'],
-                $data['image'] ?? null,
-                $data['tags'] ?? null,
-                $data['note_options'] ?? null,
-                $data['note_options_en'] ?? null,
-                $data['sort_order'] ?? 0,
-                $data['service_type'] ?? 'both',
-                $data['stock'] ?? -1,
-                $data['menu_type'] ?? 'asia',
-            ]
-        );
+        // Kiểm tra cột menu_type có tồn tại không
+        $hasMenuType = $this->hasColumn('menu_type');
+        
+        if ($hasMenuType) {
+            $this->execute(
+                "INSERT INTO menu_items
+                 (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock, menu_type)
+                 VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $data['category_id'],
+                    $data['name'],
+                    $data['name_en'] ?? null,
+                    $data['description'] ?? null,
+                    $data['price'],
+                    $data['image'] ?? null,
+                    $data['tags'] ?? null,
+                    $data['note_options'] ?? null,
+                    $data['note_options_en'] ?? null,
+                    $data['sort_order'] ?? 0,
+                    $data['service_type'] ?? 'both',
+                    $data['stock'] ?? -1,
+                    $data['menu_type'] ?? 'asia',
+                ]
+            );
+        } else {
+            // Fallback khi cột menu_type chưa tồn tại
+            $this->execute(
+                "INSERT INTO menu_items
+                 (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock)
+                 VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $data['category_id'],
+                    $data['name'],
+                    $data['name_en'] ?? null,
+                    $data['description'] ?? null,
+                    $data['price'],
+                    $data['image'] ?? null,
+                    $data['tags'] ?? null,
+                    $data['note_options'] ?? null,
+                    $data['note_options_en'] ?? null,
+                    $data['sort_order'] ?? 0,
+                    $data['service_type'] ?? 'both',
+                    $data['stock'] ?? -1,
+                ]
+            );
+        }
         return (int) $this->lastInsertId();
     }
 
     public function update(int $id, array $data): void
     {
-        $this->execute(
-            "UPDATE menu_items
-             SET category_id = ?, name = ?, name_en = ?, description = ?,
-                 price = ?, tags = ?, note_options = ?, note_options_en = ?,
-                 sort_order = ?, is_active = ?, service_type = ?, stock = ?, menu_type = ?
-             WHERE id = ?",
-            [
-                $data['category_id'],
-                $data['name'],
-                $data['name_en'] ?? null,
-                $data['description'] ?? null,
-                $data['price'],
-                $data['tags'] ?? null,
-                $data['note_options'] ?? null,
-                $data['note_options_en'] ?? null,
-                $data['sort_order'] ?? 0,
-                $data['is_active'] ?? 1,
-                $data['service_type'] ?? 'both',
-                $data['stock'] ?? -1,
-                $data['menu_type'] ?? 'asia',
-                $id,
-            ]
-        );
+        // Kiểm tra cột menu_type có tồn tại không
+        $hasMenuType = $this->hasColumn('menu_type');
+        
+        if ($hasMenuType) {
+            $this->execute(
+                "UPDATE menu_items
+                 SET category_id = ?, name = ?, name_en = ?, description = ?,
+                     price = ?, tags = ?, note_options = ?, note_options_en = ?,
+                     sort_order = ?, is_active = ?, service_type = ?, stock = ?, menu_type = ?
+                 WHERE id = ?",
+                [
+                    $data['category_id'],
+                    $data['name'],
+                    $data['name_en'] ?? null,
+                    $data['description'] ?? null,
+                    $data['price'],
+                    $data['tags'] ?? null,
+                    $data['note_options'] ?? null,
+                    $data['note_options_en'] ?? null,
+                    $data['sort_order'] ?? 0,
+                    $data['is_active'] ?? 1,
+                    $data['service_type'] ?? 'both',
+                    $data['stock'] ?? -1,
+                    $data['menu_type'] ?? 'asia',
+                    $id,
+                ]
+            );
+        } else {
+            // Fallback khi cột menu_type chưa tồn tại
+            $this->execute(
+                "UPDATE menu_items
+                 SET category_id = ?, name = ?, name_en = ?, description = ?,
+                     price = ?, tags = ?, note_options = ?, note_options_en = ?,
+                     sort_order = ?, is_active = ?, service_type = ?, stock = ?
+                 WHERE id = ?",
+                [
+                    $data['category_id'],
+                    $data['name'],
+                    $data['name_en'] ?? null,
+                    $data['description'] ?? null,
+                    $data['price'],
+                    $data['tags'] ?? null,
+                    $data['note_options'] ?? null,
+                    $data['note_options_en'] ?? null,
+                    $data['sort_order'] ?? 0,
+                    $data['is_active'] ?? 1,
+                    $data['service_type'] ?? 'both',
+                    $data['stock'] ?? -1,
+                    $id,
+                ]
+            );
+        }
     }
 
     public function updateImage(int $id, string $image): void

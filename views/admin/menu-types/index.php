@@ -175,7 +175,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Thứ tự</label>
-                    <input type="number" name="sort_order" class="form-control" value="0" min="0">
+                    <input type="number" name="sort_order" class="form-control" value="0" min="0" readonly style="background:#f1f5f9;cursor:not-allowed;">
+                    <p class="form-hint">Thứ tự sẽ tự động gán khi lưu (số lớn nhất + 1).</p>
                 </div>
                 <button type="submit" class="btn btn-gold btn-block">
                     <i class="fas fa-save"></i> Lưu loại menu

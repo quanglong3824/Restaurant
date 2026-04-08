@@ -76,6 +76,16 @@ class AdminMenuController extends Controller
 
         $data = $this->collectFormData();
 
+        // Auto calculate sort_order: max + 1
+        $allItems = $this->itemModel->getAll();
+        $maxSort = 0;
+        foreach ($allItems as $item) {
+            if ((int)($item['sort_order'] ?? 0) > $maxSort) {
+                $maxSort = (int)($item['sort_order'] ?? 0);
+            }
+        }
+        $data['sort_order'] = $maxSort + 1;
+
         if (!empty($_FILES['image']['name'])) {
             $uploaded = uploadMenuImage($_FILES['image']);
             if ($uploaded)

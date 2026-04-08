@@ -51,9 +51,13 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- Cập nhật bảng menu_items: Thêm cột menu_type
 -- ============================================================
 
--- Thêm cột menu_type vào bảng menu_items nếu chưa có
+-- Kiểm tra và thêm cột menu_type vào bảng menu_items nếu chưa có
+-- Lưu ý: Chạy lệnh này trong MySQL client hoặc phpMyAdmin
+-- Nếu cột đã tồn tại, MySQL sẽ báo lỗi, có thể bỏ qua
+
+-- Cách 1: Thêm cột trực tiếp (nếu chưa có)
 ALTER TABLE `menu_items` 
-  ADD COLUMN IF NOT EXISTS `menu_type` varchar(50) DEFAULT 'asia' COMMENT 'Tham chiếu đến type_key trong menu_types' AFTER category_id;
+  ADD COLUMN `menu_type` varchar(50) DEFAULT 'asia' COMMENT 'Tham chiếu đến type_key trong menu_types' AFTER category_id;
 
 -- Cập nhật menu_type cho các món hiện có dựa theo category
 UPDATE menu_items i
