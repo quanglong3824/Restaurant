@@ -145,7 +145,7 @@ class AdminMenuTypeController extends Controller
 
         // Kiểm tra type_key đã tồn tại (trừ current id)
         $existing = $this->model->findByKey($typeKey);
-        if ($existing && $existing['id'] !== $id) {
+        if ($existing && (int)$existing['id'] !== $id) {
             $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Mã loại menu đã tồn tại.'];
             $this->redirect('/admin/menu-types');
         }

@@ -104,11 +104,13 @@
                 <div class="form-group">
                     <label class="form-label">Phân loại Menu</label>
                     <select name="menu_type" class="form-control">
-                        <option value="asia" <?= $editItem['menu_type'] === 'asia' ? 'selected' : '' ?>>Á</option>
-                        <option value="europe" <?= $editItem['menu_type'] === 'europe' ? 'selected' : '' ?>>Âu</option>
-                        <option value="alacarte" <?= $editItem['menu_type'] === 'alacarte' ? 'selected' : '' ?>>Ala Carte</option>
-                        <option value="other" <?= $editItem['menu_type'] === 'other' ? 'selected' : '' ?>>Khác</option>
+                        <?php foreach ($menuTypes ?? [] as $type): ?>
+                        <option value="<?= e($type['type_key']) ?>" <?= $editItem['menu_type'] === $type['type_key'] ? 'selected' : '' ?>>
+                            <?= e($type['name']) ?>
+                        </option>
+                        <?php endforeach; ?>
                     </select>
+                    <p class="form-hint"><a href="<?= BASE_URL ?>/admin/menu-types" target="_blank">Quản lý các loại menu tại đây</a></p>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>
@@ -151,11 +153,13 @@
                 <div class="form-group">
                     <label class="form-label">Phân loại Menu</label>
                     <select name="menu_type" class="form-control">
-                        <option value="asia">Á</option>
-                        <option value="europe">Âu</option>
-                        <option value="alacarte">Ala Carte</option>
-                        <option value="other">Khác</option>
+                        <?php foreach ($menuTypes ?? [] as $type): ?>
+                        <option value="<?= e($type['type_key']) ?>">
+                            <?= e($type['name']) ?>
+                        </option>
+                        <?php endforeach; ?>
                     </select>
+                    <p class="form-hint"><a href="<?= BASE_URL ?>/admin/menu-types" target="_blank">Quản lý các loại menu tại đây</a></p>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>

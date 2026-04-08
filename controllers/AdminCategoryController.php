@@ -4,16 +4,19 @@
 // ============================================================
 
 require_once BASE_PATH . '/models/MenuCategory.php';
+require_once BASE_PATH . '/models/MenuType.php';
 require_once BASE_PATH . '/models/ActivityLog.php';
 
 class AdminCategoryController extends Controller
 {
     private MenuCategory $model;
+    private MenuType $typeModel;
     private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->model = new MenuCategory();
+        $this->typeModel = new MenuType();
         $this->activityLog = new ActivityLog();
     }
 
@@ -32,11 +35,15 @@ class AdminCategoryController extends Controller
         $categories = array_slice($allCategories, $offset, $limit);
         $totalPages = ceil($total / $limit);
         
+        // Lấy danh sách loại menu từ bảng menu_types
+        $menuTypes = $this->typeModel->getActive();
+        
         $this->view('layouts/admin', [
             'view' => 'admin/categories/index',
             'pageTitle' => 'Danh Mục Món',
             'pageSubtitle' => $total . ' danh mục',
             'categories' => $categories,
+            'menuTypes' => $menuTypes,
             'editItem' => null,
             'pagination' => [
                 'page' => $page,
@@ -94,11 +101,14 @@ class AdminCategoryController extends Controller
         }
 
         $categories = $this->model->getAll();
+        $menuTypes = $this->typeModel->getActive();
+        
         $this->view('layouts/admin', [
             'view' => 'admin/categories/index',
             'pageTitle' => 'Danh Mục Món',
             'pageSubtitle' => count($categories) . ' danh mục',
             'categories' => $categories,
+            'menuTypes' => $menuTypes,
             'editItem' => $item,   // truyền item đang edit
         ]);
     }
