@@ -75,7 +75,7 @@ class MenuItem extends Model
     public function findById(int $id): ?array
     {
         return $this->findOne(
-            "SELECT i.*, c.name AS category_name
+            "SELECT i.*, c.name AS category_name, c.menu_type
              FROM menu_items i
              LEFT JOIN menu_categories c ON c.id = i.category_id
              WHERE i.id = ?",
@@ -87,8 +87,8 @@ class MenuItem extends Model
     {
         $this->execute(
             "INSERT INTO menu_items
-             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock)
-             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?)",
+             (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock, menu_type)
+             VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 $data['category_id'],
                 $data['name'],
@@ -102,6 +102,7 @@ class MenuItem extends Model
                 $data['sort_order'] ?? 0,
                 $data['service_type'] ?? 'both',
                 $data['stock'] ?? -1,
+                $data['menu_type'] ?? 'asia',
             ]
         );
         return (int) $this->lastInsertId();
@@ -113,7 +114,7 @@ class MenuItem extends Model
             "UPDATE menu_items
              SET category_id = ?, name = ?, name_en = ?, description = ?,
                  price = ?, tags = ?, note_options = ?, note_options_en = ?,
-                 sort_order = ?, is_active = ?, service_type = ?, stock = ?
+                 sort_order = ?, is_active = ?, service_type = ?, stock = ?, menu_type = ?
              WHERE id = ?",
             [
                 $data['category_id'],
@@ -128,6 +129,7 @@ class MenuItem extends Model
                 $data['is_active'] ?? 1,
                 $data['service_type'] ?? 'both',
                 $data['stock'] ?? -1,
+                $data['menu_type'] ?? 'asia',
                 $id,
             ]
         );

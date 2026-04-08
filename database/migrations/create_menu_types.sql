@@ -47,6 +47,20 @@ ALTER TABLE `menu_categories`
 -- 4. Bật lại FK check
 SET FOREIGN_KEY_CHECKS = 1;
 
+-- ============================================================
+-- Cập nhật bảng menu_items: Thêm cột menu_type
+-- ============================================================
+
+-- Thêm cột menu_type vào bảng menu_items nếu chưa có
+ALTER TABLE `menu_items` 
+  ADD COLUMN IF NOT EXISTS `menu_type` varchar(50) DEFAULT 'asia' COMMENT 'Tham chiếu đến type_key trong menu_types' AFTER category_id;
+
+-- Cập nhật menu_type cho các món hiện có dựa theo category
+UPDATE menu_items i
+JOIN menu_categories c ON c.id = i.category_id
+SET i.menu_type = c.menu_type
+WHERE i.menu_type IS NULL OR i.menu_type = 'asia';
+
 -- Ghi chú: 
 -- Bây giờ menu_type là VARCHAR, có thể thêm/xóa loại menu động từ bảng menu_types
 -- Dữ liệu cũ vẫn được giữ nguyên trong menu_categories_backup

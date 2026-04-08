@@ -5,18 +5,21 @@
 
 require_once BASE_PATH . '/models/MenuItem.php';
 require_once BASE_PATH . '/models/MenuCategory.php';
+require_once BASE_PATH . '/models/MenuType.php';
 require_once BASE_PATH . '/models/ActivityLog.php';
 
 class AdminMenuController extends Controller
 {
     private MenuItem $itemModel;
     private MenuCategory $categoryModel;
+    private MenuType $typeModel;
     private ActivityLog $activityLog;
 
     public function __construct()
     {
         $this->itemModel = new MenuItem();
         $this->categoryModel = new MenuCategory();
+        $this->typeModel = new MenuType();
         $this->activityLog = new ActivityLog();
     }
 
@@ -56,10 +59,12 @@ class AdminMenuController extends Controller
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
         $categories = $this->categoryModel->getActive();
+        $menuTypes = $this->typeModel->getActive();
         $this->view('layouts/admin', [
             'view' => 'admin/menu/form',
             'pageTitle' => 'Thêm Món',
             'categories' => $categories,
+            'menuTypes' => $menuTypes,
             'item' => null,
         ]);
     }
@@ -104,10 +109,12 @@ class AdminMenuController extends Controller
             $this->redirect('/admin/menu');
 
         $categories = $this->categoryModel->getActive();
+        $menuTypes = $this->typeModel->getActive();
         $this->view('layouts/admin', [
             'view' => 'admin/menu/form',
             'pageTitle' => 'Sửa Món',
             'categories' => $categories,
+            'menuTypes' => $menuTypes,
             'item' => $item,
         ]);
     }
@@ -249,6 +256,7 @@ class AdminMenuController extends Controller
             'sort_order'      => (int) $this->input('sort_order', 0),
             'is_active'       => (int) $this->input('is_active', 1),
             'service_type'    => trim((string) $this->input('service_type', 'both')),
+            'menu_type'       => trim((string) $this->input('menu_type', 'asia')),
         ];
     }
 

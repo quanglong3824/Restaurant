@@ -35,6 +35,21 @@ $isEdit = !empty($item);
             </div>
 
             <div class="form-group">
+                <label class="form-label">Phân loại Menu <span style="color:var(--danger)">*</span></label>
+                <select name="menu_type" class="form-control" required>
+                    <?php 
+                    $currentType = $isEdit && isset($item['menu_type']) ? $item['menu_type'] : 'asia';
+                    foreach ($menuTypes as $type): 
+                    ?>
+                        <option value="<?= e($type['type_key']) ?>" <?= $currentType === $type['type_key'] ? 'selected' : '' ?>>
+                            <?= e($type['name']) ?> <?= $type['name_en'] ? '(' . e($type['name_en']) . ')' : '' ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="form-hint"><a href="<?= BASE_URL ?>/admin/menu-types" target="_blank">Quản lý các loại menu</a></p>
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">Phục vụ cho</label>
                 <select name="service_type" class="form-control">
                     <option value="both" <?= ($isEdit && isset($item['service_type']) && $item['service_type'] === 'both') ? 'selected' : '' ?>>Cả hai (Nhà hàng & Lưu trú)</option>
