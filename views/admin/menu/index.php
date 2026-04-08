@@ -1,12 +1,11 @@
 <?php // views/admin/menu/index.php ?>
 
 <?php
-// Đếm nhanh theo service_type để hiển thị badge
-$countAll        = count($items);
-// Nhà hàng = restaurant + both (vì both cũng phục vụ tại nhà hàng)
-$countRestaurant = count(array_filter($items, fn($i) => in_array($i['service_type'] ?? 'both', ['restaurant', 'both'])));
-$countRoom       = count(array_filter($items, fn($i) => in_array($i['service_type'] ?? 'both', ['room_service', 'both'])));
-$countBoth       = count(array_filter($items, fn($i) => ($i['service_type'] ?? 'both') === 'both'));
+// Use filter counts from controller (computed from ALL items)
+$totalAll = $pagination['total'] ?? count($items);
+$countRestaurant = $filterCounts['restaurant'] ?? 0;
+$countRoom = $filterCounts['room_service'] ?? 0;
+$countBoth = $filterCounts['both'] ?? 0;
 ?>
 
 <div class="card">

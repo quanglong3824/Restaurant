@@ -41,12 +41,22 @@ class AdminMenuController extends Controller
         $items = array_slice($allItems, $offset, $limit);
         $categories = $this->categoryModel->getAll();
 
+        // Count filter totals from ALL items (not just current page)
+        $countRestaurant = count(array_filter($allItems, fn($i) => in_array($i['service_type'] ?? 'both', ['restaurant', 'both'])));
+        $countRoom = count(array_filter($allItems, fn($i) => in_array($i['service_type'] ?? 'both', ['room_service', 'both'])));
+        $countBoth = count(array_filter($allItems, fn($i) => ($i['service_type'] ?? 'both') === 'both'));
+
         $this->view('layouts/admin', [
             'view' => 'admin/menu/index',
             'pageTitle' => 'Quản lý Món ăn',
             'pageSubtitle' => $total . ' món',
             'items' => $items,
             'categories' => $categories,
+            'filterCounts' => [
+                'restaurant' => $countRestaurant,
+                'room_service' => $countRoom,
+                'both' => $countBoth,
+            ],
             'pagination' => [
                 'page' => $page,
                 'limit' => $limit,
