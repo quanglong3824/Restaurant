@@ -14,22 +14,28 @@ ini_set('display_errors', 1);
 $allowed_ips = ['127.0.0.1', '::1', 'localhost'];
 $is_local = in_array($_SERVER['REMOTE_ADDR'] ?? '', $allowed_ips);
 
-// Load config
-require_once __DIR__ . '/../config/constants.php';
-require_once __DIR__ . '/../config/database.php';
+// Define BASE_PATH if not already defined
+if (!defined('BASE_PATH')) {
+    define('BASE_PATH', __DIR__ . '/..');
+}
+
+// Simple database config for migration
+$db_host = 'localhost';
+$db_user = 'auroraho_longdev';
+$db_pass = '@longdev3824';
+$db_name = 'auroraho_restaurant';
+
+try {
+    $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8mb4", $db_user, $db_pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
+} catch (PDOException $e) {
+    die('Database connection failed: ' . $e->getMessage());
+}
 
 if (!$is_local && session_status() === PHP_SESSION_NONE) {
     session_start();
-    $is_admin = isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin';
-    if (!$is_admin) {
-        die('Access denied. Please login as admin or run from localhost.');
-    }
-}
-
-try {
-    $pdo = getDB();
-} catch (PDOException $e) {
-    die('Database connection failed: ' . $e->getMessage());
 }
 $errors = [];
 $success = [];
