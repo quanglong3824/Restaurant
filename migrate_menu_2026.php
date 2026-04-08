@@ -264,7 +264,8 @@ try {
         ['Trà', 'Trà Lài', 'Jasmine Tea', 'Trà lài', 'Jasmine tea', 50000, '', '', '', ''],
     ];
     
-    $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, name_en, description, description_en, price, image, is_available, service_type, tags, note_options, note_options_en) VALUES (?, ?, ?, ?, ?, ?, NULL, 1, ?, ?, ?, ?)");
+    // Note: database schema does NOT have description_en column
+    $stmt = $pdo->prepare("INSERT INTO menu_items (category_id, name, name_en, description, price, image, is_available, service_type, tags, note_options, note_options_en) VALUES (?, ?, ?, ?, ?, NULL, 1, ?, ?, ?, ?)");
     
     $inserted = 0;
     foreach ($items as $item) {
@@ -275,7 +276,6 @@ try {
                 $item[1], // name
                 $item[2], // name_en
                 $item[3], // description
-                $item[4], // description_en
                 $item[5], // price
                 $item[6] !== '' ? $item[6] : '', // tags
                 $item[7] !== '' ? $item[7] : 'restaurant', // service_type
