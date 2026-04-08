@@ -22,17 +22,17 @@ $countBoth       = count(array_filter($items, fn($i) => ($i['service_type'] ?? '
                 <span id="countBadge" style="font-size:.75rem;font-weight:600;background:var(--gold);color:#fff;padding:.15rem .65rem;border-radius:20px;margin-left:.5rem;vertical-align:middle;"><?= $countAll ?> món</span>
             </h2>
             <div style="display:flex;gap:.5rem;">
-                <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline <?= !isset($_GET['type']) || $_GET['type'] === '' ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline <?= !isset($_GET['type']) || $_GET['type'] === '' ? 'active' : '' ?>" style="text-decoration:none;">
                     <i class="fas fa-utensils"></i> Món Lẻ
                 </a>
-                <a href="<?= BASE_URL ?>/admin/menu/sets" class="btn btn-outline <?= isset($_GET['type']) && $_GET['type'] === 'sets' ? 'active' : '' ?>">
+                <a href="<?= BASE_URL ?>/admin/menu/sets" class="btn btn-outline <?= isset($_GET['type']) && $_GET['type'] === 'sets' ? 'active' : '' ?>" style="text-decoration:none;">
                     <i class="fas fa-layer-group"></i> Set & Combo
                 </a>
-                <a href="<?= BASE_URL ?>/admin/menu/create" class="btn btn-gold">
+                <a href="<?= BASE_URL ?>/admin/menu/create" class="btn btn-gold" style="text-decoration:none;">
                     <i class="fas fa-plus"></i> Thêm món
                 </a>
                 <?php if (Auth::check() && Auth::user()['role'] === ROLE_IT): ?>
-                <a href="<?= BASE_URL ?>/admin/menu/clear" class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;" title="Xóa dữ liệu thực đơn (IT only)">
+                <a href="<?= BASE_URL ?>/admin/menu/clear" class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;text-decoration:none;" title="Xóa dữ liệu thực đơn (IT only)">
                     <i class="fas fa-trash-alt"></i> Xóa dữ liệu
                 </a>
                 <?php endif; ?>
