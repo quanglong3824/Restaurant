@@ -210,6 +210,60 @@ $countBoth       = count(array_filter($items, fn($i) => ($i['service_type'] ?? '
                 <i class="fas fa-rotate-left me-1"></i> Xóa bộ lọc
             </button>
         </div>
+
+        <!-- Pagination -->
+        <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:1rem;border-top:2px solid var(--border-color);margin-top:1rem;">
+            <span style="color:#64748b;font-size:.85rem;">
+                Trang <strong><?= $pagination['page'] ?>/<?= $pagination['totalPages'] ?></strong> 
+                (<?= $pagination['total'] ?> món)
+            </span>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                <?php
+                $currentPage = $pagination['page'];
+                $totalPages = $pagination['totalPages'];
+                
+                // First page
+                if ($currentPage > 1):
+                ?>
+                <a href="?page=1" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
+                <?php endif; ?>
+                
+                <!-- Previous page -->
+                <?php if ($currentPage > 1): ?>
+                <a href="?page=<?= $currentPage - 1 ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
+                <?php endif; ?>
+                
+                <!-- Page numbers -->
+                <?php
+                $startPage = max(1, $currentPage - 2);
+                $endPage = min($totalPages, $currentPage + 2);
+                
+                if ($startPage > 1):
+                ?>
+                <span class="btn btn-outline btn-sm" style="cursor:default;">...</span>
+                <?php endif; ?>
+                
+                <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                <a href="?page=<?= $i ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($endPage < $totalPages): ?>
+                <span class="btn btn-outline btn-sm" style="cursor:default;">...</span>
+                <?php endif; ?>
+                
+                <!-- Next page -->
+                <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?= $currentPage + 1 ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
+                <?php endif; ?>
+                
+                <!-- Last page -->
+                <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?= $totalPages ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 

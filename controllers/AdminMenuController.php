@@ -28,10 +28,17 @@ class AdminMenuController extends Controller
     {
         Auth::requireRole(ROLE_ADMIN, ROLE_IT);
 
-        // Show all items (no pagination) for better management
+        // Pagination settings
+        $page = max(1, (int) $this->input('page', 1));
+        $limit = 20; // Items per page
+        
         $allItems = $this->itemModel->getAll();
         $total = count($allItems);
-        $items = $allItems; // Show all items
+        $totalPages = ceil($total / $limit);
+        $offset = ($page - 1) * $limit;
+        
+        // Slice items for current page
+        $items = array_slice($allItems, $offset, $limit);
         $categories = $this->categoryModel->getAll();
 
         $this->view('layouts/admin', [
@@ -40,6 +47,12 @@ class AdminMenuController extends Controller
             'pageSubtitle' => $total . ' món',
             'items' => $items,
             'categories' => $categories,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'totalPages' => $totalPages,
+            ],
         ]);
     }
 
