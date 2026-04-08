@@ -90,6 +90,14 @@ $router->post('/admin/menu/toggle', 'AdminMenuController', 'toggle');
 $router->get('/admin/menu/clear', 'AdminMenuController', 'clearPage');
 $router->post('/admin/menu/clear', 'AdminMenuController', 'clear');
 
+// ── Admin: Menu Types (Phân loại menu) ────────────────────
+$router->get('/admin/menu-types', 'AdminMenuTypeController', 'index');
+$router->post('/admin/menu-types/store', 'AdminMenuTypeController', 'store');
+$router->get('/admin/menu-types/edit', 'AdminMenuTypeController', 'edit');
+$router->post('/admin/menu-types/update', 'AdminMenuTypeController', 'update');
+$router->post('/admin/menu-types/delete', 'AdminMenuTypeController', 'delete');
+$router->post('/admin/menu-types/toggle', 'AdminMenuTypeController', 'toggle');
+
 // ── Admin: Menu Sets (À la carte) ─────────────────────────
 $router->get('/admin/menu/sets', 'AdminMenuSetController', 'index');
 $router->post('/admin/menu/sets/store', 'AdminMenuSetController', 'store');

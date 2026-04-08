@@ -84,6 +84,10 @@
                         <i class="fas fa-layer-group"></i>
                         <span>Set & Combo</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/admin/menu-types" class="nav-item <?= activeClass('/admin/menu-types') ?>">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Phân loại menu</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/admin/categories" class="nav-item <?= activeClass('/admin/categories') ?>">
                         <i class="fas fa-tags"></i>
                         <span>Danh mục món</span>
