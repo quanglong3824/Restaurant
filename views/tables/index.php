@@ -275,8 +275,8 @@ if (!function_exists('renderTableCard')) {
         <div class="modal-header"><h3>Đang phục vụ <span id="modalOccupiedTableName" class="text-gold"></span></h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <div class="modal-body py-4"><div class="d-grid gap-3">
             <a id="viewOrderBtn" href="#" class="btn btn-gold py-3" style="text-decoration: none;"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
-            <div class="d-flex gap-2"><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">CHUYỂN</button><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">GHÉP</button></div>
-            <div class="d-flex gap-2"><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleUnmergeTableClick()" id="unmergeTableBtn" style="display:none;">HỦY GHÉP</button><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">TÁCH BÀN</button></div>
+            <div class="d-flex gap-3"><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">CHUYỂN</button><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">GHÉP</button></div>
+            <div class="d-flex gap-3"><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleUnmergeTableClick()" id="unmergeTableBtn" style="display:none;">HỦY GHÉP</button><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">TÁCH BÀN</button></div>
         </div></div>
     </div>
 </div>

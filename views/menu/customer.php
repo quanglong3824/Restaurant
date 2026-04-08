@@ -33,6 +33,19 @@ if ($hasItems) {
 <!-- ══════════════════════════════════════════════════════
      OVERLAYS: Location Check & Out-of-range
 ═══════════════════════════════════════════════════════ -->
+<script>
+// Send location data to server for persistent storage
+(function sendLocationToServer() {
+    var locationData = localStorage.getItem('qr_location_' + CUSTOMER_CONFIG.tableId);
+    if (locationData) {
+        fetch('<?= BASE_URL ?>/qr/menu/location', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'location_data=' + encodeURIComponent(locationData) + '&table_id=' + <?= $table['id'] ?>
+        }).catch(function(){});
+    }
+})();
+</script>
 <div id="frozenOverlay" class="loc-overlay" style="display:none;">
     <div class="loc-card" style="--card-accent:#ef4444;">
         <div class="loc-icon-ring" style="color:#ef4444;">

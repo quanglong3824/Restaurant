@@ -150,6 +150,7 @@ $router->get('/admin/activity/export', 'AdminActivityController', 'export');
 // ── QR Ordering: Customer ──────────────────────────────────
 $router->get('/q', 'QrMenuController', 'shortLink');
 $router->get('/qr/menu', 'QrMenuController', 'index');
+$router->post('/qr/menu/location', 'QrMenuController', 'saveLocation');
 $router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
 $router->post('/qr/cart/update', 'QrMenuController', 'updateCart');
 $router->post('/qr/cart/remove', 'QrMenuController', 'removeFromCart');
@@ -158,6 +159,7 @@ $router->post('/qr/session/clear', 'QrOrderController', 'clearSession');
 $router->get('/qr/order/status', 'QrOrderController', 'status');
 $router->get('/qr/order/poll-status', 'QrOrderController', 'pollStatus');
 $router->get('/qr/order/history', 'QrOrderController', 'history');
+$router->get('/qr/order/customer-history', 'QrOrderController', 'customerHistory');
 $router->get('/qr/sessions', 'QrMenuController', 'sessions');
 $router->get('/qr/thank-you', 'QrOrderController', 'thankYou');
 $router->post('/qr/support/call-waiter', 'QrSupportController', 'callWaiter');

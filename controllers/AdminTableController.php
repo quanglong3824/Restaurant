@@ -32,28 +32,27 @@ class AdminTableController extends Controller
         $qrModel = new QrTable();
         $qrModel->cleanupInvalidTokens();
 
-        $page = max(1, (int) $this->input('page', 1));
-        $limit = 15;
-        
+        // Lấy tất cả bàn/phòng và nhóm theo khu vực (floor/area)
         $allTables = $this->model->getAllForAdminByType($type);
-        $total = count($allTables);
-        $offset = ($page - 1) * $limit;
         
-        $tables = array_slice($allTables, $offset, $limit);
+        // Group by area (floor)
+        $groupedTables = [];
+        foreach ($allTables as $t) {
+            $area = $t['area'] ?: 'Chưa phân khu';
+            if (!isset($groupedTables[$area])) {
+                $groupedTables[$area] = [];
+            }
+            $groupedTables[$area][] = $t;
+        }
         
         $this->view('layouts/admin', [
             'view' => 'admin/tables/index',
             'pageTitle' => $type === 'room' ? 'Quản lý Phòng Lưu Trú' : 'Quản lý Bàn',
-            'pageSubtitle' => $total . ($type === 'room' ? ' phòng' : ' bàn'),
-            'tables' => $tables,
+            'pageSubtitle' => count($allTables) . ($type === 'room' ? ' phòng' : ' bàn'),
+            'tables' => $allTables,
+            'groupedTables' => $groupedTables,
             'type' => $type,
             'editItem' => null,
-            'pagination' => [
-                'page' => $page,
-                'limit' => $limit,
-                'total' => $total,
-                'totalPages' => ceil($total / $limit),
-            ],
         ]);
     }
 

@@ -4,12 +4,12 @@
     <!-- Tabs -->
     <div class="tabs-container" style="grid-column: 1 / -1; margin-bottom: 1rem;">
         <div class="tabs" style="display: flex; gap: 1rem; border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">
-            <a href="<?= BASE_URL ?>/admin/tables?type=table" class="tab-item <?= $type === 'table' ? 'active' : '' ?>" 
-               style="text-decoration: none; color: <?= $type === 'table' ? 'var(--gold)' : '#666' ?>; font-weight: bold; padding: 0.5rem 1rem; border-bottom: 3px solid <?= $type === 'table' ? 'var(--gold)' : 'transparent' ?>;">
+            <a href="<?= BASE_URL ?>/admin/tables?type=table" class="tab-item <?= $type === 'table' ? 'active' : '' ?>"
+                style="text-decoration: none; color: <?= $type === 'table' ? 'var(--gold)' : '#666' ?>; font-weight: bold; padding: 0.5rem 1rem; border-bottom: 3px solid <?= $type === 'table' ? 'var(--gold)' : 'transparent' ?>;">
                 <i class="fas fa-chair"></i> Bàn Nhà Hàng
             </a>
             <a href="<?= BASE_URL ?>/admin/tables?type=room" class="tab-item <?= $type === 'room' ? 'active' : '' ?>"
-               style="text-decoration: none; color: <?= $type === 'room' ? 'var(--gold)' : '#666' ?>; font-weight: bold; padding: 0.5rem 1rem; border-bottom: 3px solid <?= $type === 'room' ? 'var(--gold)' : 'transparent' ?>;">
+                style="text-decoration: none; color: <?= $type === 'room' ? 'var(--gold)' : '#666' ?>; font-weight: bold; padding: 0.5rem 1rem; border-bottom: 3px solid <?= $type === 'room' ? 'var(--gold)' : 'transparent' ?>;">
                 <i class="fas fa-bed"></i> Khách Lưu Trú (Phòng)
             </a>
         </div>
@@ -18,16 +18,11 @@
     <!-- Table list -->
     <div class="card">
         <div class="card-header">
-            <h2><i class="fas <?= $type === 'room' ? 'fa-bed' : 'fa-chair' ?>"></i> Danh sách <?= $type === 'room' ? 'Phòng' : 'Bàn' ?></h2>
+            <h2><i class="fas <?= $type === 'room' ? 'fa-bed' : 'fa-chair' ?>"></i> Danh sách
+                <?= $type === 'room' ? 'Phòng' : 'Bàn' ?></h2>
             <span class="badge badge-gold"><?= count($tables) ?> <?= $type === 'room' ? 'phòng' : 'bàn' ?></span>
         </div>
-        
-        <!-- Pagination Top -->
-        <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
-        <div style="width:100%;">
-            <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/tables', array_filter(['type' => $type])) ?>
-        </div>
-        <?php endif; ?>
+
         <div class="table-wrap">
             <table>
                 <thead>
@@ -41,45 +36,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                    // Group tables by area for admin view
-                    $groupedAdminTables = [];
-                    foreach ($tables as $t) {
-                        $areaName = $t['area'] ?: 'Chưa phân khu';
-                        if (!isset($groupedAdminTables[$areaName])) {
-                            $groupedAdminTables[$areaName] = [];
-                        }
-                        $groupedAdminTables[$areaName][] = $t;
-                    }
-                    ?>
-                    
-                    <?php if (empty($groupedAdminTables)): ?>
+                    <?php if (empty($groupedTables)): ?>
                         <tr>
                             <td colspan="6" style="text-align:center;padding:2rem;color:#9ca3af;">
                                 Chưa có <?= $type === 'room' ? 'phòng' : 'bàn' ?> nào.
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php foreach ($groupedAdminTables as $area => $areaTables): ?>
+                        <?php foreach ($groupedTables as $area => $areaTables): ?>
                             <!-- Group Header Row -->
                             <tr style="background-color: #f8fafc;">
                                 <td colspan="6" style="padding: 1rem; border-left: 4px solid var(--gold);">
-                                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--gold-dark); display: flex; align-items: center; gap: 0.5rem;">
-                                        <i class="fas fa-layer-group"></i> 
+                                    <h3
+                                        style="margin: 0; font-size: 1.1rem; color: var(--gold-dark); display: flex; align-items: center; gap: 0.5rem;">
+                                        <i class="fas fa-layer-group"></i>
                                         Khu vực: <?= e($area) ?>
                                         <span class="badge badge-outline" style="font-size: 0.75rem; margin-left: auto;">
-                                            <?= count($areaTables) ?> <?= $type === 'room' ? 'phòng' : 'bàn' ?>
+                                            <?= count($areaTables) ?>         <?= $type === 'room' ? 'phòng' : 'bàn' ?>
                                         </span>
                                     </h3>
                                 </td>
                             </tr>
-                            
+
                             <!-- Items in Group -->
                             <?php foreach ($areaTables as $t): ?>
                                 <tr>
                                     <td><strong><?= e($t['name']) ?></strong></td>
                                     <td class="table-hide-sm"><?= e($t['area'] ?? '—') ?></td>
-                                    <td class="table-hide-sm"><?= $t['capacity'] ?> <?= $type === 'room' ? 'người' : 'người' ?></td>
+                                    <td class="table-hide-sm"><?= $t['capacity'] ?>             <?= $type === 'room' ? 'người' : 'người' ?></td>
                                     <td>
                                         <?php if ($t['status'] === 'occupied'): ?>
                                             <span class="badge badge-danger">
@@ -87,7 +71,8 @@
                                             </span>
                                         <?php else: ?>
                                             <span class="badge badge-success">
-                                                <i class="fas fa-circle" style="font-size:.5rem"></i> <?= $type === 'room' ? 'Sẵn sàng' : 'Trống' ?>
+                                                <i class="fas fa-circle" style="font-size:.5rem"></i>
+                                                <?= $type === 'room' ? 'Sẵn sàng' : 'Trống' ?>
                                             </span>
                                         <?php endif; ?>
                                     </td>
@@ -100,13 +85,15 @@
                                         <div style="display:flex;gap:.4rem;">
                                             <!-- QR Button -->
                                             <button type="button" class="btn btn-outline btn-sm btn-qr" data-id="<?= $t['id'] ?>"
-                                                data-name="<?= e($t['name']) ?>" data-token="<?= e($t['qr_token'] ?? '') ?>" title="Tạo QR">
+                                                data-name="<?= e($t['name']) ?>" data-token="<?= e($t['qr_token'] ?? '') ?>"
+                                                title="Tạo QR">
                                                 <i class="fas fa-qrcode"></i>
                                             </button>
 
                                             <!-- Reset QR Button -->
-                                            <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);" title="Tạo/Reset mã QR"
-                                                onclick="confirmResetQR(<?= $t['id'] ?>, '<?= e($t['name']) ?>', <?= (int)$t['is_printed'] ?>, <?= (int)$t['scan_count'] ?>, <?= (int)$t['items_count'] ?>)">
+                                            <button type="button" class="btn btn-outline btn-sm" style="color:var(--warning);"
+                                                title="Tạo/Reset mã QR"
+                                                onclick="confirmResetQR(<?= $t['id'] ?>, '<?= e($t['name']) ?>', <?= (int) $t['is_printed'] ?>, <?= (int) $t['scan_count'] ?>, <?= (int) $t['items_count'] ?>)">
                                                 <i class="fas fa-sync-alt"></i>
                                             </button>
 
@@ -119,7 +106,8 @@
                                                     style="display:inline;">
                                                     <input type="hidden" name="id" value="<?= $t['id'] ?>">
                                                     <button type="submit" class="btn btn-danger-outline btn-sm"
-                                                        data-confirm="Xóa <?= $type === 'room' ? 'phòng' : 'bàn' ?> '<?= e($t['name']) ?>'?" title="Xóa">
+                                                        data-confirm="Xóa <?= $type === 'room' ? 'phòng' : 'bàn' ?> '<?= e($t['name']) ?>'?"
+                                                        title="Xóa">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -161,8 +149,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Sức chứa (người)</label>
-                    <input type="number" name="capacity" class="form-control" min="1" max="<?= $type === 'room' ? '3' : '20' ?>"
-                        value="<?= (int) $editItem['capacity'] ?>">
+                    <input type="number" name="capacity" class="form-control" min="1"
+                        max="<?= $type === 'room' ? '3' : '20' ?>" value="<?= (int) $editItem['capacity'] ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Thứ tự hiển thị</label>
@@ -190,15 +178,18 @@
                 <input type="hidden" name="type" value="<?= $type ?>">
                 <div class="form-group">
                     <label class="form-label"><?= $type === 'room' ? 'Số phòng' : 'Tên bàn' ?> *</label>
-                    <input type="text" name="name" class="form-control" required placeholder="VD: <?= $type === 'room' ? '701' : 'Bàn 01' ?>">
+                    <input type="text" name="name" class="form-control" required
+                        placeholder="VD: <?= $type === 'room' ? '701' : 'Bàn 01' ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Khu vực</label>
-                    <input type="text" name="area" class="form-control" placeholder="VD: <?= $type === 'room' ? 'Tầng 7' : 'Tầng 1, Sân vườn...' ?>">
+                    <input type="text" name="area" class="form-control"
+                        placeholder="VD: <?= $type === 'room' ? 'Tầng 7' : 'Tầng 1, Sân vườn...' ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Sức chứa (người)</label>
-                    <input type="number" name="capacity" class="form-control" min="1" max="<?= $type === 'room' ? '3' : '20' ?>" value="<?= $type === 'room' ? '3' : '4' ?>">
+                    <input type="number" name="capacity" class="form-control" min="1"
+                        max="<?= $type === 'room' ? '3' : '20' ?>" value="<?= $type === 'room' ? '3' : '4' ?>">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Thứ tự hiển thị</label>
@@ -221,25 +212,30 @@
         </div>
         <div class="modal-body" id="printableQrArea">
             <div class="qr-print-header" style="display:none; text-align:center; margin-bottom:20px;">
-                <h1 style="font-family:'Playfair Display', serif; color:#D4AF37; margin:0; font-size:28px;">AURORA HOTEL PLAZA</h1>
+                <h1 style="font-family:'Playfair Display', serif; color:#D4AF37; margin:0; font-size:28px;">AURORA HOTEL
+                    PLAZA</h1>
                 <p style="margin:5px 0 15px; font-size:14px; letter-spacing:2px; color:#666;">RESTAURANT & BAR</p>
-                <div style="border-top:1px solid #D4AF37; border-bottom:1px solid #D4AF37; padding:10px 0; margin:10px 0;">
+                <div
+                    style="border-top:1px solid #D4AF37; border-bottom:1px solid #D4AF37; padding:10px 0; margin:10px 0;">
                     <h2 id="qrTableDisplay" style="margin:0; font-size:24px; color:#1a1a1a;">BÀN 01</h2>
                 </div>
             </div>
-            
-            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 1.5rem; padding:15px; background:#fff; border-radius:12px; position: relative;">
+
+            <div id="qrcode"
+                style="display: flex; justify-content: center; margin-bottom: 1.5rem; padding:15px; background:#fff; border-radius:12px; position: relative;">
                 <div id="qrcode-canvas"></div>
                 <img src="<?= BASE_URL ?>/public/src/logo/favicon.png" class="qr-logo-modal" alt="Logo">
             </div>
-            
+
             <div class="qr-print-footer" style="display:none; text-align:center; margin-top:15px;">
                 <p style="font-weight:600; margin-bottom:5px;">QUÉT MÃ ĐỂ ĐẶT MÓN</p>
                 <p style="font-size:12px; color:#888;">Cảm ơn Quý khách / Thank you!</p>
             </div>
 
-            <p id="qrUrl" style="font-size: 0.75rem; color: #999; word-break: break-all; margin-bottom: 1.5rem; font-family:monospace;"></p>
-            
+            <p id="qrUrl"
+                style="font-size: 0.75rem; color: #999; word-break: break-all; margin-bottom: 1.5rem; font-family:monospace;">
+            </p>
+
             <div style="display: flex; gap: 0.75rem; justify-content: center;" class="no-print">
                 <button type="button" class="btn btn-gold" onclick="printQR()">
                     <i class="fas fa-print"></i> In QR
@@ -277,8 +273,15 @@
     }
 
     @keyframes modalFadeIn {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .modal-header {
@@ -302,7 +305,9 @@
         transition: 0.2s;
     }
 
-    .close-modal:hover { background: #e5e7eb; }
+    .close-modal:hover {
+        background: #e5e7eb;
+    }
 
     .qr-logo-modal {
         position: absolute;
@@ -315,7 +320,7 @@
         padding: 5px;
         border-radius: 12px;
         border: 1px solid #eee;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         z-index: 10;
     }
 
@@ -326,16 +331,64 @@
     }
 
     @media print {
-        body * { visibility: hidden; }
-        #qrModal, #qrModal * { visibility: visible; }
-        .modal { position: absolute; left: 0; top: 0; background: #fff; padding: 0; }
-        .modal-content { box-shadow: none; margin: 0; border: none; width: 100%; max-width: none; }
-        .no-print, .modal-header, #qrUrl { display: none !important; }
-        .qr-print-header, .qr-print-footer { display: block !important; }
-        #printableQrArea { padding: 40px !important; }
-        #qrcode { margin: 0 auto !important; padding: 0 !important; border: none !important; }
-        .qr-logo-modal { width: 80px; height: 80px; } /* Larger logo for print */
-        #qrcode-canvas img { width: 450px !important; height: 450px !important; border: none !important; padding: 0 !important; }
+        body * {
+            visibility: hidden;
+        }
+
+        #qrModal,
+        #qrModal * {
+            visibility: visible;
+        }
+
+        .modal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #fff;
+            padding: 0;
+        }
+
+        .modal-content {
+            box-shadow: none;
+            margin: 0;
+            border: none;
+            width: 100%;
+            max-width: none;
+        }
+
+        .no-print,
+        .modal-header,
+        #qrUrl {
+            display: none !important;
+        }
+
+        .qr-print-header,
+        .qr-print-footer {
+            display: block !important;
+        }
+
+        #printableQrArea {
+            padding: 40px !important;
+        }
+
+        #qrcode {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+
+        .qr-logo-modal {
+            width: 80px;
+            height: 80px;
+        }
+
+        /* Larger logo for print */
+        #qrcode-canvas img {
+            width: 450px !important;
+            height: 450px !important;
+            border: none !important;
+            padding: 0 !important;
+        }
     }
 </style>
 
@@ -353,7 +406,7 @@
                 const tableId = btn.dataset.id;
                 const tableName = btn.dataset.name;
                 const token = btn.dataset.token;
-                
+
                 if (!token) {
                     if (confirm('Bàn/Phòng này chưa có mã QR định danh. Bạn có muốn hệ thống tự động tạo mã ngay bây giờ?')) {
                         const form = document.createElement('form');
@@ -431,7 +484,7 @@
                 return;
             }
         } else if (scanCount > 0) {
-             if (!confirm(`Mã QR này đã được quét ${scanCount} lần.\n\nBạn có chắc chắn muốn reset không?`)) {
+            if (!confirm(`Mã QR này đã được quét ${scanCount} lần.\n\nBạn có chắc chắn muốn reset không?`)) {
                 return;
             }
         } else {

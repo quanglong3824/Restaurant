@@ -264,15 +264,33 @@ class QrMenuController extends Controller
 
         $sessionId = session_id();
         
+        // Get location data from request (sent via JS)
+        $locationData = $_POST['location_data'] ?? $_GET['location_data'] ?? null;
+        
+        // Also store location in a long-term cookie (1 year)
+        if (!empty($locationData)) {
+            setcookie('qr_location_data', $locationData, [
+                'expires' => time() + (365 * 86400), // 1 year
+                'path' => '/',
+                'samesite' => 'Lax',
+                'secure' => isset($_SERVER['HTTPS'])
+            ]);
+        } else {
+            // Try to get from existing cookie
+            $locationData = $_COOKIE['qr_location_data'] ?? null;
+        }
+        
         // Always call create() which uses ON DUPLICATE KEY UPDATE internally
         // to handle existing/expired/inactive sessions gracefully
         $this->sessionModel->create([
             'session_id' => $sessionId,
-            'table_id' => $tableId
+            'table_id' => $tableId,
+            'location_data' => $locationData
         ]);
 
         $_SESSION['customer_table_id'] = $tableId;
         $_SESSION['qr_token'] = $token;
+        $_SESSION['location_data'] = $locationData;
     }
 
     /** Add item to cart (temporary session or draft order) */
@@ -286,6 +304,22 @@ class QrMenuController extends Controller
         $note = $_POST['note'] ?? '';
 
         $this->json(['success' => true, 'message' => 'Đã thêm vào giỏ hàng']);
+    }
+
+    /** POST endpoint to save location data */
+    public function saveLocation(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $tableId = (int)($_POST['table_id'] ?? 0);
+        $locationData = $_POST['location_data'] ?? null;
+        
+        if ($tableId && $locationData) {
+            $sessionId = session_id();
+            $this->sessionModel->updateLocation($sessionId, $locationData);
+        }
+        
+        $this->json(['success' => true]);
     }
 
     private function requireCustomer(): void

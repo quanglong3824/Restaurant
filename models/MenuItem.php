@@ -146,7 +146,7 @@ class MenuItem extends Model
             $this->execute(
                 "INSERT INTO menu_items
                  (category_id, name, name_en, description, price, image, is_available, is_active, tags, note_options, note_options_en, sort_order, service_type, stock, menu_type)
-                 VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?, ?)",
+                 VALUES (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?)",
                 [
                     $data['category_id'],
                     $data['name'],

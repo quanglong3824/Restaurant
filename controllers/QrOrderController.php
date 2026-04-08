@@ -235,6 +235,57 @@ class QrOrderController extends Controller
         ]);
     }
 
+    /** View customer order history with detailed items */
+    public function customerHistory(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $tableId = $_SESSION['customer_table_id'] ?? null;
+        $token = $_GET['token'] ?? '';
+        
+        if (!$tableId) {
+            $this->view('layouts/public', [
+                'view' => 'menu/no_session',
+                'pageTitle' => 'Không tìm thấy phiên làm việc',
+                'isCustomer' => true
+            ]);
+            return;
+        }
+        
+        $table = $this->tableModel->findById($tableId);
+        $isRoomService = $table && $table['type'] === 'room';
+        
+        // Get all orders for this table with items
+        $allOrders = $this->orderModel->getHistoryByTable($tableId, 50);
+        
+        // Enrich orders with items
+        $enrichedOrders = [];
+        $currentOrderId = null;
+        
+        // Find current open order
+        $openOrder = $this->orderModel->findOpenOrderByTable($tableId);
+        if ($openOrder) {
+            $currentOrderId = $openOrder['id'];
+        }
+        
+        foreach ($allOrders as $order) {
+            $order['items'] = $this->orderModel->getItems($order['id']);
+            $order['total_formatted'] = formatPrice($order['total']);
+            $enrichedOrders[] = $order;
+        }
+        
+        $this->view('layouts/public', [
+            'view' => 'orders/customer_history',
+            'pageTitle' => 'Lịch sử gọi món',
+            'table' => $table,
+            'orders' => $enrichedOrders,
+            'currentOrderId' => $currentOrderId,
+            'token' => $token,
+            'isRoomService' => $isRoomService,
+            'isCustomer' => true
+        ]);
+    }
+
     /** View Thank You after payment */
     public function thankYou(): void
     {
