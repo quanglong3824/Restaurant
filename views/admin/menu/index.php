@@ -3,8 +3,9 @@
 <?php
 // Đếm nhanh theo service_type để hiển thị badge
 $countAll        = count($items);
-$countRestaurant = count(array_filter($items, fn($i) => ($i['service_type'] ?? 'both') === 'restaurant'));
-$countRoom       = count(array_filter($items, fn($i) => ($i['service_type'] ?? 'both') === 'room_service'));
+// Nhà hàng = restaurant + both (vì both cũng phục vụ tại nhà hàng)
+$countRestaurant = count(array_filter($items, fn($i) => in_array($i['service_type'] ?? 'both', ['restaurant', 'both'])));
+$countRoom       = count(array_filter($items, fn($i) => in_array($i['service_type'] ?? 'both', ['room_service', 'both'])));
 $countBoth       = count(array_filter($items, fn($i) => ($i['service_type'] ?? 'both') === 'both'));
 ?>
 
