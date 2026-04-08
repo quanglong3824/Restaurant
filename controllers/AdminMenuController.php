@@ -273,4 +273,112 @@ class AdminMenuController extends Controller
             }
         }
     }
+
+    /** GET /admin/menu/clear — Clear menu data page */
+    public function clearPage(): void
+    {
+        Auth::requireRole(ROLE_IT);
+
+        // Count current data
+        $db = getDB();
+        $itemsCount = (int) $db->query("SELECT COUNT(*) FROM menu_items")->fetchColumn();
+        $categoriesCount = (int) $db->query("SELECT COUNT(*) FROM menu_categories")->fetchColumn();
+        $setsCount = (int) $db->query("SELECT COUNT(*) FROM menu_sets")->fetchColumn();
+        $setItemsCount = (int) $db->query("SELECT COUNT(*) FROM menu_set_items")->fetchColumn();
+
+        $this->view('layouts/admin', [
+            'view' => 'admin/menu/clear',
+            'pageTitle' => 'Xóa dữ liệu thực đơn',
+            'counts' => [
+                'items' => $itemsCount,
+                'categories' => $categoriesCount,
+                'sets' => $setsCount,
+                'setItems' => $setItemsCount,
+            ],
+        ]);
+    }
+
+    /** POST /admin/menu/clear — Clear menu data */
+    public function clear(): void
+    {
+        Auth::requireRole(ROLE_IT);
+
+        $type = $this->input('type', 'all'); // all, items, categories, sets
+        $confirm = $this->input('confirm', '');
+
+        if ($confirm !== 'YES_CLEAR_ALL') {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Vui lòng xác nhận xóa dữ liệu.'];
+            $this->redirect('/admin/menu/clear');
+            return;
+        }
+
+        try {
+            $db = getDB();
+            $db->beginTransaction();
+
+            $deleted = [
+                'items' => 0,
+                'categories' => 0,
+                'sets' => 0,
+                'setItems' => 0,
+            ];
+
+            if ($type === 'all' || $type === 'items') {
+                // Xóa các món ăn (không có FK ràng buộc)
+                $stmt = $db->prepare("DELETE FROM menu_items");
+                $stmt->execute();
+                $deleted['items'] = $stmt->rowCount();
+
+                // Xóa các mục trong menu_set_items
+                $stmt = $db->prepare("DELETE FROM menu_set_items");
+                $stmt->execute();
+                $deleted['setItems'] = $stmt->rowCount();
+            }
+
+            if ($type === 'all' || $type === 'categories') {
+                // Xóa danh mục
+                $stmt = $db->prepare("DELETE FROM menu_categories");
+                $stmt->execute();
+                $deleted['categories'] = $stmt->rowCount();
+            }
+
+            if ($type === 'all' || $type === 'sets') {
+                // Xóa set combo
+                $stmt = $db->prepare("DELETE FROM menu_sets");
+                $stmt->execute();
+                $deleted['sets'] = $stmt->rowCount();
+            }
+
+            $db->commit();
+
+            // Log activity
+            $this->activityLog->log(
+                ActivityLog::ACTION_DELETE,
+                'menu_clear',
+                0,
+                [
+                    'type' => $type,
+                    'deleted' => $deleted,
+                    'user_id' => Auth::user()['id'],
+                ],
+                ActivityLog::LEVEL_WARNING
+            );
+
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => sprintf(
+                    'Đã xóa thành công: %d món, %d danh mục, %d set, %d món trong set',
+                    $deleted['items'],
+                    $deleted['categories'],
+                    $deleted['sets'],
+                    $deleted['setItems']
+                ),
+            ];
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi khi xóa: ' . $e->getMessage()];
+        }
+
+        $this->redirect('/admin/menu/clear');
+    }
 }

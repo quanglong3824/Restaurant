@@ -86,6 +86,9 @@ $router->get('/admin/menu/edit', 'AdminMenuController', 'edit');
 $router->post('/admin/menu/update', 'AdminMenuController', 'update');
 $router->post('/admin/menu/delete', 'AdminMenuController', 'delete');
 $router->post('/admin/menu/toggle', 'AdminMenuController', 'toggle');
+// Clear menu data (IT only)
+$router->get('/admin/menu/clear', 'AdminMenuController', 'clearPage');
+$router->post('/admin/menu/clear', 'AdminMenuController', 'clear');
 
 // ── Admin: Menu Sets (À la carte) ─────────────────────────
 $router->get('/admin/menu/sets', 'AdminMenuSetController', 'index');
