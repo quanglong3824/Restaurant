@@ -14,24 +14,17 @@ $currentStatus = $currentFilters['status'] ?? '';
 $currentSearch = $currentFilters['search'] ?? '';
 $currentPage = $pagination['page'] ?? 1;
 
-// Helper function to build URL with filters
-function buildMenuUrl($params = []) {
-    global $currentFilters;
-    $defaults = [
-        'service' => $currentFilters['service'] ?? '',
-        'category' => $currentFilters['category'] ?? '',
-        'status' => $currentFilters['status'] ?? '',
-        'search' => $currentFilters['search'] ?? '',
-        'page' => 1, // Default to page 1 when changing filters
-    ];
-    $params = array_merge($defaults, $params);
+// Helper function to build URL with filters using current filter variables
+function buildMenuUrl($service, $category, $status, $search, $page = 1) {
+    $params = array_filter([
+        'service' => $service,
+        'category' => $category,
+        'status' => $status,
+        'search' => $search,
+        'page' => $page > 1 ? $page : null,
+    ], fn($v) => $v !== '' && $v !== null);
     
-    // Remove page parameter if it's 1 to keep URLs clean
-    if (isset($params['page']) && $params['page'] == 1) {
-        unset($params['page']);
-    }
-    
-    $query = http_build_query(array_filter($params, fn($v) => $v !== ''));
+    $query = http_build_query($params);
     return BASE_URL . '/admin/menu' . ($query ? '?' . $query : '');
 }
 ?>
@@ -63,16 +56,16 @@ function buildMenuUrl($params = []) {
 
         <!-- ── STAT CHIPS ─────────────────────────────────────── -->
         <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-            <a href="<?= buildMenuUrl(['service' => '', 'page' => 1]) ?>" class="stat-chip <?= $currentService === '' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === '' ? 'active' : '' ?>">
                 <i class="fas fa-border-all"></i> Tất cả <span class="chip-count"><?= $countAll ?></span>
             </a>
-            <a href="<?= buildMenuUrl(['service' => 'restaurant', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'restaurant' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('restaurant', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'restaurant' ? 'active' : '' ?>">
                 <i class="fas fa-utensils"></i> Nhà hàng <span class="chip-count"><?= $countRestaurant ?></span>
             </a>
-            <a href="<?= buildMenuUrl(['service' => 'room_service', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'room_service' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('room_service', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'room_service' ? 'active' : '' ?>">
                 <i class="fas fa-bed"></i> Room Service <span class="chip-count"><?= $countRoom ?></span>
             </a>
-            <a href="<?= buildMenuUrl(['service' => 'both', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'both' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('both', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'both' ? 'active' : '' ?>">
                 <i class="fas fa-arrows-left-right"></i> Cả hai <span class="chip-count"><?= $countBoth ?></span>
             </a>
         </div>
@@ -259,12 +252,12 @@ function buildMenuUrl($params = []) {
                 // First page
                 if ($currentPage > 1):
                 ?>
-                <a href="<?= buildMenuUrl(['page' => 1]) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
                 <?php endif; ?>
                 
                 <!-- Previous page -->
                 <?php if ($currentPage > 1): ?>
-                <a href="<?= buildMenuUrl(['page' => $currentPage - 1]) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage - 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
                 <?php endif; ?>
                 
                 <!-- Page numbers -->
@@ -278,7 +271,7 @@ function buildMenuUrl($params = []) {
                 <?php endif; ?>
                 
                 <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                <a href="<?= buildMenuUrl(['page' => $i]) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $i) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
                 <?php endfor; ?>
                 
                 <?php if ($endPage < $totalPages): ?>
@@ -287,12 +280,12 @@ function buildMenuUrl($params = []) {
                 
                 <!-- Next page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="<?= buildMenuUrl(['page' => $currentPage + 1]) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage + 1) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
                 <?php endif; ?>
                 
                 <!-- Last page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="<?= buildMenuUrl(['page' => $totalPages]) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $totalPages) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
                 <?php endif; ?>
             </div>
         </div>
