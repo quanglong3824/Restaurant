@@ -165,6 +165,11 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
             <!-- Current page hidden input to preserve pagination -->
             <input type="hidden" name="page" value="<?= $currentPage ?>">
             
+            <!-- Filter Button -->
+            <button type="submit" class="btn btn-gold btn-sm" title="Áp dụng bộ lọc">
+                <i class="fas fa-filter"></i> Lọc
+            </button>
+            
             <!-- Reset -->
             <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline btn-sm" title="Xóa bộ lọc">
                 <i class="fas fa-rotate-left"></i> Đặt lại
