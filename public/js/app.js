@@ -34,55 +34,6 @@ console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b
         if (e.key === 'Escape') closeSidebar();
     });
 
-    // ── Sidebar Dropdown Navigation ─────────────────────────
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const targetId = this.dataset.target;
-            const dropdown = document.getElementById(targetId);
-            
-            if (dropdown) {
-                // Toggle current dropdown
-                const isOpen = dropdown.classList.contains('is-open');
-                
-                // Close all other dropdowns
-                dropdownToggles.forEach(otherToggle => {
-                    if (otherToggle !== this) {
-                        const otherDropdown = document.getElementById(otherToggle.dataset.target);
-                        if (otherDropdown) {
-                            otherDropdown.classList.remove('is-open');
-                            otherToggle.classList.remove('is-open');
-                        }
-                    }
-                });
-                
-                // Toggle current
-                if (!isOpen) {
-                    dropdown.classList.add('is-open');
-                    this.classList.add('is-open');
-                } else {
-                    dropdown.classList.remove('is-open');
-                    this.classList.remove('is-open');
-                }
-            }
-        });
-    });
-
-    // Close all dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.nav-section')) {
-            dropdownToggles.forEach(toggle => {
-                const dropdown = document.getElementById(toggle.dataset.target);
-                if (dropdown) {
-                    dropdown.classList.remove('is-open');
-                    toggle.classList.remove('is-open');
-                }
-            });
-        }
-    });
-
     // ── Modal helpers ────────────────────────────────────────
     function openModal(id) {
         const el = document.getElementById(id);
