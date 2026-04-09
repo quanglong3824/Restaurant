@@ -420,11 +420,12 @@ if ($hasItems) {
     }
     
     .fab-main-label {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         font-weight: 800;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
         margin-top: -2px;
         text-transform: uppercase;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
     
     .fab-main:hover {
@@ -509,12 +510,17 @@ if ($hasItems) {
     }
     
     .fab-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: var(--text-dark);
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #1e293b;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
         white-space: nowrap;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.9);
+        padding: 3px 8px;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     
     .fab-tooltip {
@@ -561,7 +567,8 @@ if ($hasItems) {
         }
         
         .fab-label {
-            font-size: 0.65rem;
+            font-size: 0.68rem;
+            padding: 2px 6px;
         }
     }
     </style>
@@ -668,7 +675,7 @@ if ($hasItems) {
                 <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>">
                     <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
                 </button>
-                <span class="fab-label"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+                <span class="fab-label" data-vi="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
                 <span class="fab-tooltip"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
             </div>
             <div class="fab-item-wrapper">
@@ -678,14 +685,14 @@ if ($hasItems) {
                         <span class="fab-status-dot"></span>
                     <?php endif; ?>
                 </button>
-                <span class="fab-label"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+                <span class="fab-label" data-vi="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
                 <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
             </div>
             <div class="fab-item-wrapper">
                 <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
                     <i class="fas fa-sync-alt"></i>
                 </button>
-                <span class="fab-label">Làm mới</span>
+                <span class="fab-label" data-vi="Làm mới" data-en="Refresh">Làm mới</span>
                 <span class="fab-tooltip">Làm mới</span>
             </div>
         </div>
@@ -1028,6 +1035,12 @@ function applyLanguage(lang) {
     if (viewCartBtn) {
         viewCartBtn.innerHTML = lang === 'vi' ? 'XEM GIỎ <i class="fas fa-chevron-right"></i>' : 'VIEW <i class="fas fa-chevron-right"></i>';
     }
+    
+    // Update FAB labels
+    document.querySelectorAll('.fab-label').forEach(label => {
+        const text = lang === 'vi' ? label.getAttribute('data-vi') : label.getAttribute('data-en');
+        if (text) label.textContent = text;
+    });
 }
 
 // Apply language on page load
