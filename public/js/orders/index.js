@@ -309,6 +309,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
         });
     });
+
+    // Fix: Khi vào trang từ đường vòng (customer QR), ẩn nút xác nhận món nếu không còn draft items
+    // Kiểm tra xem còn món draft nào không bằng cách tìm section-label có text "CHỜ XÁC NHẬN"
+    setTimeout(() => {
+        let hasDraftSection = false;
+        document.querySelectorAll('.section-label').forEach(label => {
+            if (label.textContent.includes('CHỜ XÁC NHẬN')) hasDraftSection = true;
+        });
+        
+        const confirmBtn = document.querySelector('form[action$="/orders/confirm"] button[type="submit"]');
+        
+        // Nếu không còn section "CHỜ XÁC NHẬN" thì ẩn nút confirm
+        if (!hasDraftSection && confirmBtn) {
+            const confirmForm = confirmBtn.closest('form');
+            if (confirmForm) confirmForm.style.display = 'none';
+        }
+    }, 300);
 });
 
 // Show alert
