@@ -114,7 +114,7 @@
         }
         
         .header-right .logo {
-            width: 80px;
+            width: 120px;
             height: auto;
         }
         
@@ -128,19 +128,10 @@
             border-bottom: 1px dashed #ccc;
         }
         
-        /* Invoice label */
-        .invoice-label {
-            font-size: 10pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin: 5px 0;
-            text-align: center;
-        }
-        
         /* Title */
         .title-section {
             text-align: center;
-            margin: 8px 0;
+            margin: 15px 0 10px;
         }
         
         .title-vi {
@@ -292,20 +283,10 @@
         
         /* Footer - Compact */
         .footer {
-            margin-top: 10px;
+            margin-top: 20px;
             text-align: center;
-            font-size: 8pt;
-            font-style: italic;
-            border-top: 1px dashed #ccc;
-            padding-top: 8px;
-        }
-        
-        .footer .restaurant-name {
             font-size: 9pt;
-            font-weight: bold;
-            font-style: normal;
-            text-transform: uppercase;
-            margin-bottom: 3px;
+            font-style: italic;
         }
         
         /* Page break prevention */
@@ -342,19 +323,10 @@
             </div>
         </div>
         
-        <!-- Invoice Label -->
-        <div class="invoice-label">HÓA ĐƠN</div>
-        
         <!-- Title -->
         <div class="title-section">
             <div class="title-vi">BẢNG KÊ CHI TIẾT</div>
             <div class="title-en">GUEST CHECK</div>
-        </div>
-        
-        <!-- Meta Info -->
-        <div class="meta-info">
-            <span>Date: <?= date('d/m/Y') ?> &nbsp;&nbsp; Time: <?= date('H:i') ?></span>
-            <span>Table: <?= e($tableDisplayName) ?></span>
         </div>
         
         <!-- Items Table -->
@@ -363,8 +335,8 @@
                 <tr>
                     <th class="col-name">Tên hàng hóa dịch vụ<br>(Selling items)</th>
                     <th class="col-qty">SL<br>Q.ty</th>
-                    <th class="col-price">Đơn Giá<br>Price</th>
-                    <th class="col-total">Thành Tiền<br>Amount</th>
+                    <th class="col-price">Đơn Giá<br>Price (VND)</th>
+                    <th class="col-total">Thành Tiền<br>Amount (VND)</th>
                 </tr>
             </thead>
             <tbody>
@@ -380,8 +352,8 @@
                             <?php endif; ?>
                         </td>
                         <td class="col-qty"><?= $item['quantity'] ?></td>
-                        <td class="col-price"><?= number_format($item['item_price'], 0, ',', '.') ?></td>
-                        <td class="col-total"><?= number_format($item['item_price'] * $item['quantity'], 0, ',', '.') ?>
+                        <td class="col-price"><?= number_format($item['item_price'], 0, ',', '.') ?> VND</td>
+                        <td class="col-total"><?= number_format($item['item_price'] * $item['quantity'], 0, ',', '.') ?> VND
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -392,15 +364,15 @@
         <div class="totals-section">
             <div class="totals-row">
                 <span class="totals-label">Sub amount :</span>
-                <span class="totals-value"><?= number_format($subtotal, 0, ',', '.') ?></span>
+                <span class="totals-value"><?= number_format($subtotal, 0, ',', '.') ?> VND</span>
             </div>
             <div class="totals-row">
                 <span class="totals-label">VAT :</span>
-                <span class="totals-value"><?= number_format($vat, 0, ',', '.') ?></span>
+                <span class="totals-value"><?= number_format($vat, 0, ',', '.') ?> VND</span>
             </div>
             <div class="totals-row total">
                 <span class="totals-label">Total amount :</span>
-                <span class="totals-value"><?= number_format($total, 0, ',', '.') ?></span>
+                <span class="totals-value"><?= number_format($total, 0, ',', '.') ?> VND</span>
             </div>
         </div>
         
@@ -428,8 +400,8 @@
         
         <!-- Footer -->
         <div class="footer">
-            <div class="restaurant-name">AURORA RESTAURANT</div>
-            <p>Hoá đơn được in từ Aurora Restaurant</p>
+            <p>Thank you and see you again!</p>
+            <p>Cảm ơn quý khách và hẹn gặp lại!</p>
         </div>
     </div>
     
