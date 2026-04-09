@@ -2,7 +2,7 @@
 // views/admin/menu/form.php — Add / Edit menu item
 $isEdit = !empty($item);
 ?>
-<div class="card card-max-w-md">
+<div class="card" style="max-width:700px;">
     <div class="card-header">
         <h2>
             <i class="fas fa-<?= $isEdit ? 'pen' : 'plus' ?>"></i>
@@ -23,7 +23,7 @@ $isEdit = !empty($item);
         <div class="form-grid-2">
 
             <div class="form-group">
-                <label class="form-label">Danh mục <span class="text-danger">*</span></label>
+                <label class="form-label">Danh mục <span style="color:var(--danger)">*</span></label>
                 <select name="category_id" class="form-control" required>
                     <option value="">-- Chọn danh mục --</option>
                     <?php foreach ($categories as $cat): ?>
@@ -35,7 +35,7 @@ $isEdit = !empty($item);
             </div>
 
             <div class="form-group">
-                <label class="form-label">Phân loại Menu <span class="text-danger">*</span></label>
+                <label class="form-label">Phân loại Menu <span style="color:var(--danger)">*</span></label>
                 <select name="menu_type" class="form-control" required>
                     <?php 
                     $currentType = $isEdit && isset($item['menu_type']) ? $item['menu_type'] : 'asia';
@@ -59,7 +59,7 @@ $isEdit = !empty($item);
             </div>
 
             <div class="form-group">
-                <label class="form-label">Tên món (VI) <span class="text-danger">*</span></label>
+                <label class="form-label">Tên món (VI) <span style="color:var(--danger)">*</span></label>
                 <input type="text" name="name" class="form-control" required
                     value="<?= $isEdit ? e($item['name']) : '' ?>" placeholder="VD: Bò lúc lắc">
             </div>
@@ -77,15 +77,15 @@ $isEdit = !empty($item);
             </div>
 
             <div class="form-group">
-                <label class="form-label">Giá (VND) <span class="text-danger">*</span></label>
+                <label class="form-label">Giá (VND) <span style="color:var(--danger)">*</span></label>
                 <input type="number" name="price" class="form-control" required min="0" step="1000"
                     value="<?= $isEdit ? $item['price'] : '' ?>" placeholder="VD: 150000">
             </div>
 
             <div class="form-group">
                 <label class="form-label">Thứ tự hiển thị</label>
-                <input type="number" name="sort_order" class="form-control form-control-readonly" min="0"
-                    value="<?= $isEdit ? $item['sort_order'] : '0' ?>" <?= !$isEdit ? 'readonly' : '' ?>>
+                <input type="number" name="sort_order" class="form-control" min="0"
+                    value="<?= $isEdit ? $item['sort_order'] : '0' ?>" <?= !$isEdit ? 'readonly style="background:#f1f5f9;cursor:not-allowed;"' : '' ?>>
                 <?php if (!$isEdit): ?>
                 <p class="form-hint">Thứ tự sẽ tự động gán khi lưu (số lớn nhất + 1).</p>
                 <?php endif; ?>
@@ -93,14 +93,14 @@ $isEdit = !empty($item);
 
             <div class="form-group col-span-2">
                 <label class="form-label">Tags hiển thị</label>
-                <div class="tags-row">
+                <div style="display:flex;gap:.85rem;flex-wrap:wrap;padding:.5rem 0;">
                     <?php
                     $allTags = ['bestseller', 'new', 'spicy', 'vegetarian', 'recommended'];
                     $rawTags = $isEdit ? array_map('trim', explode(',', $item['tags'] ?? '')) : [];
                     $activeTags = array_filter($rawTags, fn($t) => $t && strpos($t, 'opt:') !== 0);
                     foreach ($allTags as $tag):
                         ?>
-                        <label class="tag-label">
+                        <label style="display:flex;align-items:center;gap:.4rem;font-size:.875rem;cursor:pointer;">
                             <input type="checkbox" name="tags[]" value="<?= $tag ?>" <?= in_array($tag, $activeTags) ? 'checked' : '' ?>>
                             <?= ucfirst($tag) ?>
                         </label>
@@ -113,10 +113,10 @@ $isEdit = !empty($item);
             ═══════════════════════════════════════════════════ -->
             <div class="form-group col-span-2">
                 <label class="form-label">
-                    <i class="fas fa-tags me-1 text-gold" aria-hidden="true"></i>
+                    <i class="fas fa-tags me-1" style="color:var(--gold);"></i>
                     Tùy chọn ghi chú nhanh (Tiếng Việt)
                 </label>
-                <p class="form-hint form-hint-spaced">
+                <p class="form-hint" style="margin-bottom:.6rem;">
                     Nhập từng tùy chọn, nhấn <kbd>Enter</kbd> hoặc <kbd>,</kbd> để thêm. Click <strong>×</strong> để xóa chip.
                 </p>
                 <!-- Hidden input lưu giá trị CSV -->
@@ -134,10 +134,10 @@ $isEdit = !empty($item);
             ═══════════════════════════════════════════════════ -->
             <div class="form-group col-span-2">
                 <label class="form-label">
-                    <i class="fas fa-tags me-1 text-gold" aria-hidden="true"></i>
+                    <i class="fas fa-tags me-1" style="color:var(--gold);"></i>
                     Tùy chọn ghi chú nhanh (Tiếng Anh)
                 </label>
-                <p class="form-hint form-hint-spaced">
+                <p class="form-hint" style="margin-bottom:.6rem;">
                     Tương ứng theo thứ tự với Tiếng Việt. Dùng khi khách xem menu ở chế độ EN.
                 </p>
                 <input type="hidden" name="note_options_en" id="noteOptsCsvEN"
@@ -157,9 +157,9 @@ $isEdit = !empty($item);
             <div class="form-group col-span-2">
                 <label class="form-label">Ảnh chính (Ảnh đại diện món)</label>
                 <?php if ($isEdit && $item['image']): ?>
-                    <div class="image-preview mb-2">
+                    <div style="margin-bottom:.5rem;">
                         <img src="<?= BASE_URL ?>/public/uploads/<?= e($item['image']) ?>"
-                            class="image-thumbnail" alt="Ảnh hiện tại">
+                            style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--border-gold);">
                     </div>
                 <?php endif; ?>
                 <input type="file" name="image" class="form-control" accept="image/*">
@@ -184,7 +184,7 @@ $isEdit = !empty($item);
 
         </div><!-- /form-grid-2 -->
 
-        <div class="form-actions mt-4">
+        <div style="display:flex;gap:.75rem;margin-top:1rem;">
             <button type="submit" class="btn btn-gold btn-lg">
                 <i class="fas fa-save"></i>
                 <?= $isEdit ? 'Lưu thay đổi' : 'Thêm món' ?>
@@ -195,7 +195,77 @@ $isEdit = !empty($item);
     </form>
 </div>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/admin/menu-form.css">
+<style>
+/* ── Chip Builder ─────────────────────────────────────────────────── */
+.chip-builder {
+    border: 1.5px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    padding: .5rem .65rem;
+    min-height: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    align-items: center;
+    cursor: text;
+    background: var(--card-bg, #fff);
+    transition: border-color .2s;
+}
+.chip-builder:focus-within {
+    border-color: var(--gold, #d4af37);
+    box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+}
+.chips-row {
+    display: contents; /* chips sit inline with input */
+}
+.note-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    background: rgba(212,175,55,.15);
+    border: 1.5px solid var(--gold, #d4af37);
+    color: var(--gold-dark, #785e0a);
+    border-radius: 20px;
+    padding: .22rem .65rem;
+    font-size: .8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    animation: chipIn .15s ease;
+}
+@keyframes chipIn {
+    from { transform: scale(.8); opacity: 0; }
+    to   { transform: scale(1);  opacity: 1; }
+}
+.note-chip .chip-del {
+    background: none;
+    border: none;
+    color: var(--gold-dark, #785e0a);
+    cursor: pointer;
+    padding: 0;
+    font-size: .75rem;
+    line-height: 1;
+    opacity: .7;
+    transition: opacity .15s;
+}
+.note-chip .chip-del:hover { opacity: 1; }
+.chip-input {
+    border: none !important;
+    outline: none !important;
+    flex: 1;
+    min-width: 160px;
+    font-size: .875rem;
+    background: transparent;
+    padding: .2rem 0;
+    color: var(--text-primary, #1e293b);
+}
+kbd {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .75rem;
+    font-family: monospace;
+}
+</style>
 
 <script>
 /* ── Chip Builder Logic ──────────────────────────────────────────── */

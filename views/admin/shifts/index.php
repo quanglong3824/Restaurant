@@ -7,7 +7,7 @@ if ($flash) unset($_SESSION['flash']);
 ?>
 
 <?php if ($flash): ?>
-<div class="shift-flash shift-flash-<?= $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger') ?>">
+<div class="alert alert-<?= $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger') ?>" style="margin-bottom:1rem;padding:.85rem 1.2rem;border-radius:10px;font-size:.93rem;display:flex;align-items:center;gap:.7rem;background:<?= $flash['type']==='success'?'rgba(34,197,94,.12)':($flash['type']==='warning'?'rgba(250,204,21,.12)':'rgba(239,68,68,.12)') ?>;border:1px solid <?= $flash['type']==='success'?'rgba(34,197,94,.35)':($flash['type']==='warning'?'rgba(250,204,21,.35)':'rgba(239,68,68,.35)') ?>;color:<?= $flash['type']==='success'?'#16a34a':($flash['type']==='warning'?'#a16207':'#dc2626') ?>;">
     <i class="fas fa-<?= $flash['type']==='success'?'check-circle':($flash['type']==='warning'?'exclamation-triangle':'times-circle') ?>"></i>
     <?= e($flash['message']) ?>
 </div>
@@ -16,15 +16,15 @@ if ($flash) unset($_SESSION['flash']);
 <div class="content-with-aside content-with-aside--sm">
 
     <!-- ═══════════════════════════════ MAIN COLUMN ═══════ -->
-    <div class="flex-col-gap">
+    <div style="display:flex;flex-direction:column;gap:1.25rem;">
 
         <!-- ── Phân công hôm nay ─────────────────────────── -->
         <div class="card">
             <div class="card-header">
                 <div>
                     <h2><i class="fas fa-calendar-check"></i> Phân công hôm nay</h2>
-                    <p class="card-header-date">
-                        <i class="fas fa-calendar-alt"></i>
+                    <p style="font-size:.82rem;color:var(--text-muted);margin-top:.15rem;">
+                        <i class="fas fa-calendar-alt" style="margin-right:.35rem;"></i>
                         <?= date('l, d/m/Y', strtotime($today)) ?>
                     </p>
                 </div>
@@ -36,16 +36,16 @@ if ($flash) unset($_SESSION['flash']);
                 <table>
                     <thead>
                         <tr>
-                            <th><i class="fas fa-clock"></i>Ca trực</th>
-                            <th><i class="fas fa-user"></i>Nhân viên</th>
-                            <th class="th-action-center">Thao tác</th>
+                            <th><i class="fas fa-clock" style="margin-right:.4rem;opacity:.6;"></i>Ca trực</th>
+                            <th><i class="fas fa-user" style="margin-right:.4rem;opacity:.6;"></i>Nhân viên</th>
+                            <th style="width:80px;text-align:center;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($assignments)): ?>
                         <tr>
-                            <td colspan="3" class="empty-state">
-                                <i class="fas fa-user-slash empty-state-icon"></i>
+                            <td colspan="3" style="text-align:center;padding:2.5rem 1rem;color:var(--text-muted);">
+                                <i class="fas fa-user-slash" style="font-size:1.8rem;opacity:.3;display:block;margin-bottom:.6rem;"></i>
                                 Chưa có nhân viên nào được phân công hôm nay.
                             </td>
                         </tr>
@@ -59,21 +59,21 @@ if ($flash) unset($_SESSION['flash']);
                             ?>
                             <?php foreach ($grouped as $shiftName => $members): ?>
                             <?php $first = $members[0]; ?>
-                            <tr class="shift-row">
+                            <tr style="background:rgba(var(--gold-rgb,212,175,55),.04);">
                                 <td rowspan="<?= count($members) ?>">
-                                    <div class="shift-name"><?= e($shiftName) ?></div>
-                                    <div class="shift-time">
+                                    <div style="font-weight:600;color:var(--text-primary);"><?= e($shiftName) ?></div>
+                                    <div style="font-size:.78rem;color:var(--text-muted);margin-top:.2rem;">
                                         <i class="fas fa-clock"></i>
                                         <?= date('H:i', strtotime($first['start_time'])) ?> – <?= date('H:i', strtotime($first['end_time'])) ?>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge badge-<?= $first['user_role'] === 'admin' ? 'gold' : 'blue' ?>">
+                                    <span class="badge badge-<?= $first['user_role'] === 'admin' ? 'gold' : 'blue' ?>" style="font-size:.75rem;padding:.2rem .55rem;border-radius:6px;">
                                         <?= e(roleLabel($first['user_role'])) ?>
                                     </span>
                                     <?= e($first['user_name']) ?>
                                 </td>
-                                <td class="td-center">
+                                <td style="text-align:center;">
                                     <form method="POST" action="<?= BASE_URL ?>/admin/shifts/remove_assign" onsubmit="return confirm('Hủy phân công <?= e($first['user_name']) ?> khỏi ca này?');">
                                         <input type="hidden" name="id" value="<?= $first['id'] ?>">
                                         <button type="submit" class="btn btn-danger-outline btn-sm" title="Hủy phân công"><i class="fas fa-trash"></i></button>
@@ -83,12 +83,12 @@ if ($flash) unset($_SESSION['flash']);
                             <?php for ($i = 1; $i < count($members); $i++): $m = $members[$i]; ?>
                             <tr>
                                 <td>
-                                    <span class="badge badge-<?= $m['user_role'] === 'admin' ? 'gold' : 'blue' ?>">
+                                    <span class="badge badge-<?= $m['user_role'] === 'admin' ? 'gold' : 'blue' ?>" style="font-size:.75rem;padding:.2rem .55rem;border-radius:6px;">
                                         <?= e(roleLabel($m['user_role'])) ?>
                                     </span>
                                     <?= e($m['user_name']) ?>
                                 </td>
-                                <td class="td-center">
+                                <td style="text-align:center;">
                                     <form method="POST" action="<?= BASE_URL ?>/admin/shifts/remove_assign" onsubmit="return confirm('Hủy phân công <?= e($m['user_name']) ?> khỏi ca này?');">
                                         <input type="hidden" name="id" value="<?= $m['id'] ?>">
                                         <button type="submit" class="btn btn-danger-outline btn-sm" title="Hủy phân công"><i class="fas fa-trash"></i></button>
@@ -103,9 +103,9 @@ if ($flash) unset($_SESSION['flash']);
             </div>
             <!-- Tổng kết -->
             <?php if (!empty($assignments)): ?>
-            <div class="summary-bar">
-                <span><i class="fas fa-users"></i><?= count($assignments) ?> nhân viên</span>
-                <span><i class="fas fa-layer-group"></i><?= count($grouped) ?> ca</span>
+            <div style="padding:.75rem 1.2rem;border-top:1px solid var(--border-color);font-size:.82rem;color:var(--text-muted);display:flex;gap:1.5rem;">
+                <span><i class="fas fa-users" style="margin-right:.35rem;"></i><?= count($assignments) ?> nhân viên</span>
+                <span><i class="fas fa-layer-group" style="margin-right:.35rem;"></i><?= count($grouped) ?> ca</span>
             </div>
             <?php endif; ?>
         </div>
@@ -114,12 +114,12 @@ if ($flash) unset($_SESSION['flash']);
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-cog"></i> Cấu hình Ca trực</h2>
-                <span class="card-subtitle"><?= count($shifts) ?> ca đang hoạt động</span>
+                <span style="font-size:.8rem;color:var(--text-muted);"><?= count($shifts) ?> ca đang hoạt động</span>
             </div>
             
             <!-- Pagination for shifts -->
             <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
-            <div class="pagination-container">
+            <div style="padding: 0 1.2rem;">
                 <?= renderPagination($pagination['page'], $pagination['totalPages'], BASE_URL . '/admin/shifts', []) ?>
             </div>
             <?php endif; ?>
@@ -132,14 +132,14 @@ if ($flash) unset($_SESSION['flash']);
                             <th>Bắt đầu</th>
                             <th>Kết thúc</th>
                             <th>Thời lượng</th>
-                            <th class="th-action-center">Xóa</th>
+                            <th style="width:80px;text-align:center;">Xóa</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($shifts)): ?>
                         <tr>
-                            <td colspan="5" class="empty-state">
-                                <i class="fas fa-clock empty-state-icon"></i>
+                            <td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                                <i class="fas fa-clock" style="font-size:1.5rem;opacity:.3;display:block;margin-bottom:.5rem;"></i>
                                 Chưa cấu hình ca trực nào.
                             </td>
                         </tr>
@@ -156,20 +156,20 @@ if ($flash) unset($_SESSION['flash']);
                             ?>
                             <tr>
                                 <td>
-                                    <strong class="text-primary"><?= e($s['name']) ?></strong>
+                                    <strong style="color:var(--text-primary);"><?= e($s['name']) ?></strong>
                                 </td>
                                 <td>
-                                    <span class="tabular-nums"><?= date('H:i', $start) ?></span>
+                                    <span style="font-variant-numeric:tabular-nums;"><?= date('H:i', $start) ?></span>
                                 </td>
                                 <td>
-                                    <span class="tabular-nums"><?= date('H:i', $end) ?></span>
+                                    <span style="font-variant-numeric:tabular-nums;"><?= date('H:i', $end) ?></span>
                                 </td>
                                 <td>
-                                    <span class="duration-badge">
+                                    <span style="background:rgba(var(--gold-rgb,212,175,55),.12);color:var(--gold,#d4af37);padding:.15rem .5rem;border-radius:6px;font-size:.8rem;font-weight:600;">
                                         <?= $duration ?>
                                     </span>
                                 </td>
-                                <td class="td-center">
+                                <td style="text-align:center;">
                                     <form method="POST" action="<?= BASE_URL ?>/admin/shifts/delete" onsubmit="return confirm('Xóa ca «<?= e($s['name']) ?>»?\nTất cả phân công liên quan cũng sẽ bị xóa.');">
                                         <input type="hidden" name="id" value="<?= $s['id'] ?>">
                                         <button type="submit" class="btn btn-danger-outline btn-sm" title="Xóa ca này"><i class="fas fa-trash"></i></button>
@@ -185,7 +185,7 @@ if ($flash) unset($_SESSION['flash']);
 
         <!-- Assignment Pagination Bottom -->
         <?php if (isset($assignmentPagination) && $assignmentPagination['totalPages'] > 1): ?>
-        <div class="pagination-margin">
+        <div style="margin-top: -1rem;">
             <?= renderPagination($assignmentPagination['page'], $assignmentPagination['totalPages'], BASE_URL . '/admin/shifts', ['assign_page' => '']) ?>
         </div>
         <?php endif; ?>
@@ -211,11 +211,11 @@ if ($flash) unset($_SESSION['flash']);
                             <td>
                                 <strong><?= date('d/m/Y', strtotime($h['work_date'])) ?></strong>
                                 <?php if ($h['work_date'] === $today): ?>
-                                <span class="today-badge">Hôm nay</span>
+                                <span style="background:rgba(34,197,94,.15);color:#16a34a;font-size:.72rem;padding:.1rem .45rem;border-radius:5px;margin-left:.4rem;">Hôm nay</span>
                                 <?php endif; ?>
                             </td>
                             <td><?= $h['total_assignments'] ?> người</td>
-                            <td class="text-muted small"><?= e($h['staff_names']) ?></td>
+                            <td style="color:var(--text-muted);font-size:.87rem;"><?= e($h['staff_names']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -233,24 +233,24 @@ if ($flash) unset($_SESSION['flash']);
                 <h2><i class="fas fa-plus-circle"></i> Thêm Ca Mới</h2>
             </div>
             <form method="POST" action="<?= BASE_URL ?>/admin/shifts/store" id="form-add-shift">
-                <div class="card-body-flex">
+                <div style="padding:1.2rem;display:flex;flex-direction:column;gap:1rem;">
                     <div class="form-group">
-                        <label class="form-label">Tên Ca <span class="text-danger">*</span></label>
+                        <label class="form-label">Tên Ca <span style="color:#ef4444;">*</span></label>
                         <input type="text" name="name" id="shift-name" class="form-control"
                                placeholder="VD: Ca Sáng, Ca Tối..." required maxlength="50">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Giờ bắt đầu <span class="text-danger">*</span></label>
+                        <label class="form-label">Giờ bắt đầu <span style="color:#ef4444;">*</span></label>
                         <input type="time" name="start_time" id="shift-start" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Giờ kết thúc <span class="text-danger">*</span></label>
+                        <label class="form-label">Giờ kết thúc <span style="color:#ef4444;">*</span></label>
                         <input type="time" name="end_time" id="shift-end" class="form-control" required>
                     </div>
                     <!-- Preview thời lượng -->
-                    <div id="shift-preview" class="shift-preview">
-                        <i class="fas fa-info-circle"></i>
-                        Thời lượng: <strong id="shift-duration" class="text-primary"></strong>
+                    <div id="shift-preview" style="display:none;background:rgba(var(--gold-rgb,212,175,55),.08);border:1px solid rgba(var(--gold-rgb,212,175,55),.25);border-radius:10px;padding:.75rem 1rem;font-size:.85rem;color:var(--text-muted);">
+                        <i class="fas fa-info-circle" style="margin-right:.4rem;"></i>
+                        Thời lượng: <strong id="shift-duration" style="color:var(--text-primary);"></strong>
                     </div>
                     <button type="submit" class="btn btn-gold btn-block" id="btn-save-shift">
                         <i class="fas fa-save"></i> Lưu ca trực
@@ -260,11 +260,11 @@ if ($flash) unset($_SESSION['flash']);
         </div>
 
         <!-- Gợi ý ca phổ biến -->
-        <div class="card card-mt">
-            <div class="card-header">
-                <h2 class="card-title-sm"><i class="fas fa-lightbulb"></i> Ca phổ biến</h2>
+        <div class="card" style="margin-top:1rem;">
+            <div class="card-header" style="padding:.9rem 1.2rem;">
+                <h2 style="font-size:.88rem;"><i class="fas fa-lightbulb"></i> Ca phổ biến</h2>
             </div>
-            <div class="card-body-padding">
+            <div style="padding:.5rem .8rem 1rem;">
                 <?php
                 $presets = [
                     ['Ca Sáng',  '06:00', '14:00'],
@@ -274,9 +274,10 @@ if ($flash) unset($_SESSION['flash']);
                 ];
                 ?>
                 <?php foreach ($presets as $p): ?>
-                <button type="button" class="btn-preset-shift" onclick="applyPreset('<?= $p[0] ?>', '<?= $p[1] ?>', '<?= $p[2] ?>')">
-                    <span class="preset-name"><?= $p[0] ?></span>
-                    <span class="preset-time"><?= $p[1] ?> – <?= $p[2] ?></span>
+                <button type="button" class="btn-preset-shift" onclick="applyPreset('<?= $p[0] ?>', '<?= $p[1] ?>', '<?= $p[2] ?>')"
+                        style="display:flex;justify-content:space-between;align-items:center;width:100%;padding:.55rem .85rem;margin:.3rem 0;border:1px solid var(--border-color);border-radius:8px;background:transparent;cursor:pointer;font-size:.85rem;color:var(--text-primary);text-align:left;transition:all .2s;">
+                    <span style="font-weight:500;"><?= $p[0] ?></span>
+                    <span style="color:var(--text-muted);font-size:.78rem;"><?= $p[1] ?> – <?= $p[2] ?></span>
                 </button>
                 <?php endforeach; ?>
             </div>
@@ -287,12 +288,12 @@ if ($flash) unset($_SESSION['flash']);
 
 <!-- ══════════════════════ Modal Gán Nhân Viên ═══════════════════════ -->
 <div class="modal-backdrop" id="modalAssign">
-    <div class="modal">
+    <div class="modal" style="max-width:420px;">
         <div class="modal-header">
-            <h3><i class="fas fa-user-plus"></i>Gán nhân viên vào ca</h3>
+            <h3><i class="fas fa-user-plus" style="margin-right:.5rem;"></i>Gán nhân viên vào ca</h3>
             <button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button>
         </div>
-        <form method="POST" action="<?= BASE_URL ?>/admin/shifts/assign" class="modal-body">
+        <form method="POST" action="<?= BASE_URL ?>/admin/shifts/assign" class="modal-body" style="display:flex;flex-direction:column;gap:1rem;">
             <div class="form-group">
                 <label class="form-label">Ngày làm việc</label>
                 <input type="date" name="work_date" class="form-control"
@@ -327,7 +328,7 @@ if ($flash) unset($_SESSION['flash']);
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button type="submit" class="btn btn-gold btn-block btn-lg"
+            <button type="submit" class="btn btn-gold btn-block btn-lg" style="margin-top:.5rem;"
                     <?= empty($shifts) ? 'disabled' : '' ?>>
                 <i class="fas fa-check"></i> Xác nhận phân công
             </button>

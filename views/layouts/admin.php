@@ -168,6 +168,21 @@
 
     </aside>
 
+    <style>
+        .sidebar-footer {
+            padding: 5px 0;
+            text-align: center;
+            opacity: 0.5;
+        }
+        .sidebar-footer p {
+            margin: 0;
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: #cbd5e1;
+            letter-spacing: 0.5px;
+        }
+    </style>
+
     <!-- Main Content -->
     <div class="admin-body">
 

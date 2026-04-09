@@ -50,8 +50,6 @@ class AdminMenuController extends Controller
             'view' => 'admin/menu/index',
             'pageTitle' => 'Quản lý Món ăn',
             'pageSubtitle' => $total . ' món',
-            'pageCSS' => 'admin/menu',
-            'pageJS' => 'admin/menu',
             'items' => $items,
             'categories' => $categories,
             'filterCounts' => [

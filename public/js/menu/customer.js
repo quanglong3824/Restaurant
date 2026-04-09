@@ -1,334 +1,876 @@
+console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b;color:#d4af37;padding:5px;border-radius:5px 0 0 5px;font-weight:bold", "background:#d4af37;color:#1e293b;padding:5px;border-radius:0 5px 5px 0;font-weight:bold");
+
 /**
- * Customer Menu JavaScript - Aurora Restaurant
- * Digital Menu for Customers
+ * Customer Menu JS — Aurora Restaurant
  */
 
-(function() {
-    'use strict';
+let cart = [];
+let currentItem = null;
 
-    // State
-    var cart = [];
-    var currentDetailItem = null;
-    var detailQty = 1;
-    var detailNote = '';
-    var selectedOptions = [];
+/** Đọc giá trị cookie theo tên */
+function _getCookie(name) {
+    const m = document.cookie.match('(?:^|; )' + name.replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1') + '=([^;]*)');
+    return m ? decodeURIComponent(m[1]) : null;
+}
 
-    /**
-     * Show item detail modal
-     */
-    window.showItemDetail = function(item) {
-        currentDetailItem = item;
-        detailQty = 1;
-        detailNote = '';
-        selectedOptions = [];
+document.addEventListener('DOMContentLoaded', () => {
+    createLocationIndicator();
+    checkLocation();
+    startLocationWatcher();
+    loadCart();
+    setupCategoryNav();
+    setupSearch();
+    updateCartUI();
+    
+    // Automatically show bill if coming from status page's 'Check Bill' button
+    if (CUSTOMER_CONFIG.showBill && typeof showBillTam === 'function') {
+        setTimeout(() => showBillTam(), 800);
+    }
+});
 
-        document.getElementById('detailName').textContent = item.name;
-        document.getElementById('detailNameEn').textContent = item.name_en || '';
-        document.getElementById('detailPrice').textContent = formatPrice(item.price);
-        document.getElementById('detailDesc').textContent = item.description || '';
-        document.getElementById('detailQty').textContent = '1';
-        document.getElementById('detailNote').value = '';
+// ── Location Status Indicator ────────────────────────────
+function createLocationIndicator() {
+    if (document.getElementById('locStatusIndicator')) return;
+    
+    const indicator = document.createElement('div');
+    indicator.id = 'locStatusIndicator';
+    indicator.innerHTML = `
+        <div class="loc-dot"></div>
+        <span class="loc-label">Định vị</span>
+    `;
+    document.body.appendChild(indicator);
 
-        // Set background image
-        var imgBox = document.getElementById('detailImg');
-        if (item.image) {
-            imgBox.style.backgroundImage = "url('" + CUSTOMER_CONFIG.baseUrl + "/public/uploads/" + item.image + "')";
-        } else {
-            imgBox.style.backgroundImage = 'none';
-            imgBox.style.background = '#f1f5f9';
+    // Add styles
+    const style = document.createElement('style');
+    style.id = 'locIndicatorStyles';
+    style.textContent = `
+        #locStatusIndicator {
+            position: fixed;
+            bottom: 90px;
+            left: 12px;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px 6px 8px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
+        #locStatusIndicator:active { transform: scale(0.95); }
+        #locStatusIndicator .loc-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        #locStatusIndicator .loc-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        #locStatusIndicator.loc-granted .loc-dot {
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+            animation: locPulse 2s infinite;
+        }
+        #locStatusIndicator.loc-granted .loc-label { color: #10b981; }
+        #locStatusIndicator.loc-denied .loc-dot {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+        #locStatusIndicator.loc-denied .loc-label { color: #ef4444; }
+        #locStatusIndicator.loc-checking .loc-dot {
+            background: #f59e0b;
+            animation: locBlink 1s infinite;
+        }
+        @keyframes locPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+        @keyframes locBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    `;
+    document.head.appendChild(style);
 
-        // Show options if available
-        var optsWrap = document.getElementById('detailOptsWrap');
-        if (item.note_options) {
-            var options = (item.note_options || '').split(',').map(function(o) { return o.trim(); }).filter(Boolean);
-            var optionsEn = (item.note_options_en || '').split(',').map(function(o) { return o.trim(); }).filter(Boolean);
-            var container = document.getElementById('detailOptsContainer');
-            container.innerHTML = '';
-            
-            options.forEach(function(opt, idx) {
-                var chip = document.createElement('span');
-                chip.className = 'opt-chip-premium';
-                chip.textContent = optionsEn[idx] || opt;
-                chip.dataset.option = opt;
-                chip.onclick = function() {
-                    this.classList.toggle('active');
-                    if (this.classList.contains('active')) {
-                        selectedOptions.push(opt);
-                    } else {
-                        selectedOptions = selectedOptions.filter(function(o) { return o !== opt; });
+    // Kiểm tra trạng thái ban đầu
+    updateLocationIndicator('checking', 'Đang kiểm tra...');
+    
+    // Click vào indicator để xem chi tiết
+    indicator.addEventListener('click', () => {
+        const isVerified = localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true';
+        if (isVerified) {
+            showToast('✅ Vị trí đã xác thực. Bạn đang trong khu vực nhà hàng.');
+        } else {
+            showToast('⚠️ Chưa xác thực vị trí. Vui lòng bấm nút xác thực.');
+        }
+    });
+}
+
+function updateLocationIndicator(status, label) {
+    const el = document.getElementById('locStatusIndicator');
+    if (!el) return;
+    el.className = ''; // reset
+    el.classList.add(`loc-${status}`);
+    const labelEl = el.querySelector('.loc-label');
+    if (labelEl) labelEl.textContent = label || 'Định vị';
+}
+
+let locationWatcher = null;
+async function startLocationWatcher() {
+    // Only monitor if already verified and wrapper is visible
+    if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') return;
+    if (!navigator.geolocation) return;
+
+    // Kiểm tra quyền trước khi gọi watchPosition để tránh popup lặp
+    try {
+        if (navigator.permissions) {
+            const permStatus = await navigator.permissions.query({ name: 'geolocation' });
+            if (permStatus.state === 'denied') {
+                console.warn('Geolocation permission denied, skipping watcher');
+                updateLocationIndicator('denied', 'Bị từ chối');
+                return;
+            }
+            if (permStatus.state === 'granted') {
+                updateLocationIndicator('granted', 'Đã xác thực');
+            }
+            // Listen for permission changes
+            permStatus.onchange = () => {
+                if (permStatus.state === 'denied') {
+                    updateLocationIndicator('denied', 'Bị từ chối');
+                    if (locationWatcher !== null) {
+                        navigator.geolocation.clearWatch(locationWatcher);
+                        locationWatcher = null;
                     }
-                };
-                container.appendChild(chip);
-            });
-            optsWrap.style.display = 'block';
-        } else {
-            optsWrap.style.display = 'none';
+                } else if (permStatus.state === 'granted') {
+                    updateLocationIndicator('granted', 'Đã xác thực');
+                }
+            };
         }
-
-        document.getElementById('itemDetailModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    };
-
-    /**
-     * Close item detail modal
-     */
-    window.closeItemDetail = function() {
-        document.getElementById('itemDetailModal').classList.add('hidden');
-        document.body.style.overflow = '';
-        currentDetailItem = null;
-    };
-
-    /**
-     * Change detail quantity
-     */
-    window.changeDetailQty = function(delta) {
-        detailQty = Math.max(1, detailQty + delta);
-        document.getElementById('detailQty').textContent = detailQty;
-    };
-
-    /**
-     * Add item from detail modal
-     */
-    window.addFromDetail = function() {
-        if (!currentDetailItem) return;
-        
-        detailNote = document.getElementById('detailNote').value.trim();
-        
-        addToCart({
-            id: currentDetailItem.id,
-            name: currentDetailItem.name,
-            price: currentDetailItem.price,
-            quantity: detailQty,
-            note: detailNote,
-            options: selectedOptions.join(', ')
-        });
-
-        closeItemDetail();
-        updateCartDisplay();
-    };
-
-    /**
-     * Quick add item
-     */
-    window.quickAdd = function(id, name, price) {
-        addToCart({
-            id: id,
-            name: name,
-            price: price,
-            quantity: 1,
-            note: '',
-            options: ''
-        });
-        updateCartDisplay();
-    };
-
-    /**
-     * Add to cart
-     */
-    function addToCart(item) {
-        var existing = cart.find(function(c) { 
-            return c.id === item.id && c.note === item.note && c.options === item.options; 
-        });
-        
-        if (existing) {
-            existing.quantity += item.quantity;
-        } else {
-            cart.push(item);
-        }
+    } catch(e) {
+        // permissions API not supported, proceed anyway
     }
 
-    /**
-     * Remove from cart
-     */
-    window.removeFromCart = function(index) {
-        cart.splice(index, 1);
-        updateCartDisplay();
-    };
+    // Use watchPosition for high efficiency/real-time updates
+    locationWatcher = navigator.geolocation.watchPosition(
+        (position) => {
+            const distance = calculateDistance(
+                position.coords.latitude, 
+                position.coords.longitude, 
+                CUSTOMER_CONFIG.restaurantCoords.lat, 
+                CUSTOMER_CONFIG.restaurantCoords.lng
+            );
 
-    /**
-     * Change cart item quantity
-     */
-    window.changeCartQty = function(index, delta) {
-        if (cart[index]) {
-            cart[index].quantity = Math.max(1, cart[index].quantity + delta);
-            updateCartDisplay();
-        }
-    };
-
-    /**
-     * Update cart display
-     */
-    function updateCartDisplay() {
-        var cartBar = document.getElementById('cartBar');
-        var cartModal = document.getElementById('cartModal');
-        
-        if (cart.length === 0) {
-            cartBar.classList.add('hidden');
-            if (cartModal) cartModal.classList.add('hidden');
-            return;
-        }
-
-        var total = cart.reduce(function(sum, item) { return sum + (item.price * item.quantity); }, 0);
-        var count = cart.reduce(function(sum, item) { return sum + item.quantity; }, 0);
-
-        document.getElementById('cartCount').textContent = count;
-        document.getElementById('cartTotal').textContent = formatPrice(total);
-        document.getElementById('modalCartTotal').textContent = formatPrice(total);
-
-        // Update cart items list
-        var itemsList = document.getElementById('cartItemsList');
-        if (itemsList) {
-            itemsList.innerHTML = cart.map(function(item, idx) {
-                return '<div class="bill-item">' +
-                    '<div class="bill-item-main">' +
-                        '<span class="bill-qty">' + item.quantity + 'x</span>' +
-                        '<span class="bill-name">' + escapeHtml(item.name) + '</span>' +
-                        '<span class="bill-price">' + formatPrice(item.price * item.quantity) + '</span>' +
-                    '</div>' +
-                    (item.note ? '<div style="font-size:.7rem;color:#94a3b8;padding-left:36px;margin-top:2px;"><i class="fas fa-pen" style="font-size:.6rem;"></i> ' + escapeHtml(item.note) + '</div>' : '') +
-                    (item.options ? '<div style="font-size:.7rem;color:#94a3b8;padding-left:36px;margin-top:2px;"><i class="fas fa-tag" style="font-size:.6rem;"></i> ' + escapeHtml(item.options) + '</div>' : '') +
-                    '<div style="display:flex;gap:0.5rem;margin-top:0.5rem;">' +
-                        '<button onclick="changeCartQty(' + idx + ', -1)" style="width:28px;height:28px;border-radius:50%;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;cursor:pointer;"><i class="fas fa-minus" style="font-size:.7rem;"></i></button>' +
-                        '<button onclick="changeCartQty(' + idx + ', 1)" style="width:28px;height:28px;border-radius:50%;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;cursor:pointer;"><i class="fas fa-plus" style="font-size:.7rem;"></i></button>' +
-                        '<button onclick="removeFromCart(' + idx + ')" style="width:28px;height:28px;border-radius:50%;border:1px solid #fee2e2;background:#fee2e2;color:#dc2626;cursor:pointer;"><i class="fas fa-trash" style="font-size:.7rem;"></i></button>' +
-                    '</div>' +
-                '</div>';
-            }).join('');
-        }
-
-        cartBar.classList.remove('hidden');
-    }
-
-    /**
-     * Toggle cart modal
-     */
-    window.toggleCartModal = function() {
-        var modal = document.getElementById('cartModal');
-        modal.classList.toggle('hidden');
-        document.body.style.overflow = modal.classList.contains('hidden') ? '' : 'hidden';
-    };
-
-    /**
-     * Submit order
-     */
-    window.submitOrder = function() {
-        if (cart.length === 0) {
-            alert('Giỏ hàng trống!');
-            return;
-        }
-
-        var btn = document.getElementById('btnSubmitOrder');
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Đang gửi...';
-
-        var notes = document.getElementById('orderNotes').value.trim();
-
-        fetch(CUSTOMER_CONFIG.baseUrl + '/qr/orders/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                table_id: CUSTOMER_CONFIG.tableId,
-                items: JSON.stringify(cart),
-                notes: notes
-            }).toString()
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            if (data.ok) {
-                alert('Đơn hàng đã được gửi thành công!');
-                cart = [];
-                updateCartDisplay();
-                document.getElementById('cartModal').classList.add('hidden');
-                document.getElementById('orderNotes').value = '';
-                window.location.reload();
+            const frozenOverlay = document.getElementById('frozenOverlay');
+            const frozenDistVal = document.getElementById('frozenDistVal');
+            
+            if (distance > CUSTOMER_CONFIG.maxDistance) {
+                // Out of range -> Freeze everything
+                updateLocationIndicator('denied', `Ngoài phạm vi (${Math.round(distance)}m)`);
+                if (frozenOverlay) {
+                    frozenOverlay.style.display = 'flex';
+                    if (frozenDistVal) frozenDistVal.textContent = Math.round(distance);
+                    document.body.style.overflow = 'hidden';
+                }
             } else {
-                alert('Lỗi: ' + (data.message || 'Không thể gửi đơn hàng'));
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> XÁC NHẬN GỌI MÓN';
-            }
-        })
-        .catch(function(err) {
-            alert('Lỗi kết nối: ' + err.message);
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i> XÁC NHẬN GỌI MÓN';
-        });
-    };
-
-    /**
-     * Call waiter / support
-     */
-    window.callWaiter = function(type) {
-        var msg = type === 'payment' ? 'Yêu cầu thanh toán' : (CUSTOMER_CONFIG.isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ');
-        if (!confirm('Bạn có chắc muốn ' + msg + '?')) return;
-
-        fetch(CUSTOMER_CONFIG.baseUrl + '/qr/support/request', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                table_id: CUSTOMER_CONFIG.tableId,
-                type: type
-            }).toString()
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            if (data.ok) {
-                alert('Yêu cầu đã được gửi! Nhân viên sẽ đến ngay.');
-            } else {
-                alert('Lỗi: ' + (data.message || 'Không thể gửi yêu cầu'));
-            }
-        })
-        .catch(function(err) {
-            alert('Lỗi kết nối: ' + err.message);
-        });
-    };
-
-    /**
-     * Format price
-     */
-    function formatPrice(price) {
-        return new Intl.NumberFormat('vi-VN').format(price) + '₫';
-    }
-
-    /**
-     * Escape HTML
-     */
-    function escapeHtml(text) {
-        var div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    /**
-     * Initialize
-     */
-    function init() {
-        // Check if need to show bill on load
-        if (CUSTOMER_CONFIG.showBill && CUSTOMER_CONFIG.hasItems) {
-            setTimeout(function() {
-                window.showBillTam();
-            }, 500);
-        }
-
-        // Close modal on outside click
-        document.querySelectorAll('.modal-backdrop').forEach(function(modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
+                // Back in range -> Unfreeze
+                updateLocationIndicator('granted', `OK (${Math.round(distance)}m)`);
+                if (frozenOverlay) {
+                    frozenOverlay.style.display = 'none';
                     document.body.style.overflow = '';
+                }
+            }
+        },
+        (err) => {
+            console.warn("Location monitoring error:", err.message);
+            if (err.code === err.PERMISSION_DENIED) {
+                updateLocationIndicator('denied', 'Bị từ chối');
+            }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+    );
+}
+
+function checkLocation() {
+    const overlay = document.getElementById('locationOverlay');
+    const wrapper = document.getElementById('menuWrapper');
+    const btn = document.getElementById('btnAllowLocation');
+    const errorEl = document.getElementById('locationError');
+
+    // Skip if already verified in this session
+    if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true') {
+        if (overlay) overlay.style.display = 'none';
+        if (wrapper) wrapper.style.display = 'block';
+        updateLocationIndicator('granted', 'Đã xác thực');
+        return;
+    }
+
+    // Force overlay visible if not verified
+    if (overlay) overlay.style.display = 'flex';
+    if (wrapper) wrapper.style.display = 'none';
+    updateLocationIndicator('checking', 'Chưa xác thực');
+
+    const requestLocation = async (isInitial = false) => {
+        // Only update button state if not an initial silent check
+        if (isInitial !== true) {
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> ĐANG XÁC THỰC...';
+                btn.disabled = true;
+            }
+            if (errorEl) errorEl.style.display = 'none';
+            updateLocationIndicator('checking', 'Đang kiểm tra...');
+        }
+
+        if (!navigator.geolocation) {
+            if (isInitial !== true) showLocError("Trình duyệt không hỗ trợ định vị.");
+            updateLocationIndicator('denied', 'Không hỗ trợ');
+            return;
+        }
+
+        // Kiểm tra quyền trước bằng Permissions API (tránh popup lặp khi reload)
+        if (isInitial === true && navigator.permissions) {
+            try {
+                const perm = await navigator.permissions.query({ name: 'geolocation' });
+                if (perm.state === 'denied') {
+                    // Quyền bị từ chối → không gọi getCurrentPosition (tránh popup)
+                    updateLocationIndicator('denied', 'Bị từ chối');
+                    return;
+                }
+                if (perm.state === 'prompt') {
+                    // Quyền chưa được cấp → không gọi silent check (chờ user bấm nút)
+                    updateLocationIndicator('checking', 'Chờ xác thực');
+                    return;
+                }
+                // perm.state === 'granted' → tiếp tục kiểm tra khoảng cách
+            } catch(e) {
+                // Permissions API không hỗ trợ, tiếp tục bình thường
+            }
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const distance = calculateDistance(
+                    userLat, userLng, 
+                    CUSTOMER_CONFIG.restaurantCoords.lat, 
+                    CUSTOMER_CONFIG.restaurantCoords.lng
+                );
+
+                // Update real-time distance badge
+                const liveDist = document.getElementById('liveDistance');
+                const distVal = document.getElementById('distVal');
+                if (liveDist && distVal) {
+                    distVal.textContent = Math.round(distance);
+                    liveDist.style.display = 'inline-flex';
+                    // Color code based on distance
+                    if (distance > CUSTOMER_CONFIG.maxDistance) {
+                        liveDist.style.background = 'rgba(239, 68, 68, 0.1)';
+                        liveDist.style.color = '#f87171';
+                        liveDist.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                    } else {
+                        liveDist.style.background = 'rgba(16, 185, 129, 0.1)';
+                        liveDist.style.color = '#10b981';
+                        liveDist.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+                    }
+                }
+
+                // If this was an initial check, stop here. 
+                // Wait for user to click button for final gatekeep.
+                if (isInitial === true) return;
+
+
+                if (distance > CUSTOMER_CONFIG.maxDistance) {
+                    showLocError(`Bạn đang ở xa nhà hàng (${Math.round(distance)}m). Vui lòng quét mã tại bàn.`);
+                    updateLocationIndicator('denied', `Xa (${Math.round(distance)}m)`);
+                } else {
+                    // Xác thực thành công — lưu trạng thái + visitor token vào localStorage
+                    localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
+
+                    // Lưu visitor token vào localStorage ĐỊNH DANH TOÀN CỤC THIẾT BỊ
+                    const _vt = _getCookie('qr_visitor_token');
+                    if (_vt) {
+                        localStorage.setItem('qr_global_device_id', _vt);
+                        localStorage.setItem(`qr_vt_${CUSTOMER_CONFIG.tableId}`, _vt);
+                    }
+                    if (btn) {
+                        btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> XÁC THỰC THÀNH CÔNG!';
+                        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    }
+                    updateLocationIndicator('granted', `OK (${Math.round(distance)}m)`);
+                    startLocationWatcher();
+                    setTimeout(() => {
+                        if (overlay) {
+                            overlay.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                            overlay.style.opacity = '0';
+                            setTimeout(() => {
+                                overlay.style.display = 'none';
+                                wrapper.style.display = 'block';
+                            }, 600);
+                        } else {
+                            wrapper.style.display = 'block';
+                        }
+                    }, 500);
+                }
+
+            },
+            (err) => {
+                if (isInitial !== true) {
+                    let msg = "Vui lòng cấp quyền định vị: ";
+                    switch(err.code) {
+                        case err.PERMISSION_DENIED: 
+                            msg = "BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang."; 
+                            updateLocationIndicator('denied', 'Bị từ chối');
+                            break;
+                        case err.POSITION_UNAVAILABLE: 
+                            msg += "Thông tin vị trí không khả dụng."; 
+                            updateLocationIndicator('denied', 'Không có tín hiệu');
+                            break;
+                        case err.TIMEOUT: 
+                            msg += "Hết thời gian yêu cầu vị trí."; 
+                            updateLocationIndicator('denied', 'Hết thời gian');
+                            break;
+                    }
+                    showLocError(msg);
+                }
+            },
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+    };
+
+    // Auto trigger silent check to update distance UI (chỉ khi đã có quyền)
+    setTimeout(() => {
+        if (localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) !== 'true') {
+            requestLocation(true);
+        }
+    }, 800);
+
+    if (btn) {
+        btn.addEventListener('click', () => requestLocation(false));
+    }
+
+    function showLocError(msg) {
+        if (errorEl) {
+            errorEl.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i> ${msg}`;
+            errorEl.style.display = 'block';
+        }
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-location-arrow me-2"></i> THỬ LẠI XÁC THỰC';
+            btn.disabled = false;
+        }
+    }
+}
+
+/**
+ * Calculates distance in meters using Haversine formula
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Earth radius in meters
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+
+function setupCategoryNav() {
+    const pills = document.querySelectorAll('.cat-pill');
+    pills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+            // Smooth scroll to section handled by browser if using href="#id"
+            // But we want to ensure the pills update
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+        });
+    });
+
+    // Intersection Observer to update active category on scroll
+    const sections = document.querySelectorAll('.menu-section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.id.replace('cat-', '');
+                pills.forEach(p => {
+                    if (p.dataset.category === id) {
+                        p.classList.add('active');
+                        // Scroll pill into view horizontally
+                        p.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    } else {
+                        p.classList.remove('active');
+                    }
+                });
+            }
+        });
+    }, { threshold: 0.2 });
+
+    sections.forEach(s => observer.observe(s));
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById('menuSearch');
+    const typeBtns = document.querySelectorAll('.type-btn');
+    const categoryPills = document.querySelectorAll('.cat-pill');
+    
+    if (!searchInput) return;
+
+    const filterMenu = () => {
+        const query = searchInput.value.toLowerCase().trim();
+        const activeType = document.querySelector('.type-btn.active').dataset.type;
+        const cards = document.querySelectorAll('.menu-item-card');
+        
+        cards.forEach(card => {
+            const name = card.dataset.name.toLowerCase();
+            const nameEn = (card.dataset.nameEn || '').toLowerCase();
+            const type = card.dataset.type;
+            
+            const isMatchText = name.includes(query) || nameEn.includes(query);
+            const isMatchType = (activeType === 'all' || type === activeType);
+            
+            card.style.display = (isMatchText && isMatchType) ? 'flex' : 'none';
+        });
+
+        // Hide/Show sections and category pills
+        document.querySelectorAll('.menu-section').forEach(section => {
+            const sectionType = section.dataset.type;
+            const hasVisibleItems = Array.from(section.querySelectorAll('.menu-item-card'))
+                .some(card => card.style.display !== 'none');
+            
+            const shouldShowSection = hasVisibleItems && (activeType === 'all' || sectionType === activeType);
+            section.style.display = shouldShowSection ? 'block' : 'none';
+            
+            // Sync category pills visibility
+            const catId = section.id.replace('cat-', '');
+            categoryPills.forEach(pill => {
+                if (pill.dataset.category === catId) {
+                    pill.style.display = shouldShowSection ? 'inline-block' : 'none';
                 }
             });
         });
+        
+        // Ensure "All" pill is always visible if not searching
+        const allPill = document.querySelector('.cat-pill[data-category="all"]');
+        if (allPill) allPill.style.display = (query === '' && activeType === 'all') ? 'inline-block' : 'none';
+    };
+
+    searchInput.addEventListener('input', filterMenu);
+    
+    typeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterMenu();
+            
+            // Scroll to top of menu when changing type
+            window.scrollTo({ top: document.querySelector('.menu-sections').offsetTop - 100, behavior: 'smooth' });
+        });
+    });
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', '₫');
+}
+
+function loadCart() {
+    const saved = localStorage.getItem(`cart_table_${CUSTOMER_CONFIG.tableId}`);
+    if (saved) {
+        try {
+            cart = JSON.parse(saved);
+        } catch (e) {
+            cart = [];
+        }
+    }
+}
+
+function saveCart() {
+    localStorage.setItem(`cart_table_${CUSTOMER_CONFIG.tableId}`, JSON.stringify(cart));
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const cartBar = document.getElementById('cartBar');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+    
+    const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    if (totalCount > 0) {
+        cartBar.classList.remove('hidden');
+        cartCount.textContent = totalCount;
+        cartTotal.textContent = formatCurrency(totalPrice);
+    } else {
+        cartBar.classList.add('hidden');
     }
 
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+    // Also update modal if open
+    updateCartModal();
+}
+
+function quickAdd(id, name, price) {
+    const existing = cart.find(item => item.id === id && !item.note);
+    if (existing) {
+        existing.quantity++;
     } else {
-        init();
+        cart.push({ id, name, price, quantity: 1, note: '' });
     }
-})();
+    saveCart();
+    showToast(`Đã thêm ${name}`);
+}
+
+function showToast(msg) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `<i class="fas fa-check-circle"></i> <span>${msg}</span>`;
+    document.body.appendChild(toast);
+    
+    // Add CSS for toast if not exists
+    if (!document.getElementById('toastStyles')) {
+        const style = document.createElement('style');
+        style.id = 'toastStyles';
+        style.innerHTML = `
+            .toast-notification {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(15, 23, 42, 0.9);
+                color: white;
+                padding: 12px 25px;
+                border-radius: 50rem;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                animation: toastFadeIn 0.3s forwards, toastFadeOut 0.3s 2.7s forwards;
+                font-weight: 600;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+            @keyframes toastFadeIn { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+            @keyframes toastFadeOut { from { top: 20px; opacity: 1; } to { top: -50px; opacity: 0; } }
+        `;
+        document.head.appendChild(style);
+    }
+
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function showItemDetail(item) {
+    // FALLBACK cực mạnh: Đọc từ JSON, nếu ko có thì móc từ DOM Dataset
+    let rawVi = item.note_options || '';
+    let rawEn = item.note_options_en || '';
+    
+    const card = document.querySelector(`.menu-item-card[data-id="${item.id}"]`);
+    if (card) {
+        if (!rawVi) rawVi = card.dataset.options || '';
+        if (!rawEn) rawEn = card.dataset.optionsEn || '';
+    }
+
+    const optsVi = rawVi.split(',').map(o => o.trim()).filter(Boolean);
+    const optsEn = rawEn.split(',').map(o => o.trim()).filter(Boolean);
+    
+    // Mix song ngữ
+    const isEn = (document.documentElement.lang === 'en');
+    let displayOpts = [];
+    
+    if (isEn && optsEn.length > 0) {
+        displayOpts = optsEn; 
+    } else {
+        optsVi.forEach((val, idx) => {
+            const enVal = optsEn[idx];
+            displayOpts.push(enVal ? `${val} / ${enVal}` : val);
+        });
+    }
+    
+    currentItem = { ...item, quantity: 1, note: '' };
+    document.getElementById('detailName').textContent = item.name;
+    document.getElementById('detailPrice').textContent = formatCurrency(item.price);
+    document.getElementById('detailDesc').textContent = item.description || 'Không có mô tả cho món ăn này.';
+    document.getElementById('detailQty').textContent = '1';
+    document.getElementById('detailNote').value = '';
+    
+    const imgContainer = document.getElementById('detailImg');
+    if (item.image) {
+        imgContainer.style.backgroundImage = `url(${CUSTOMER_CONFIG.baseUrl}/public/uploads/${item.image})`;
+        imgContainer.innerHTML = '';
+    } else {
+        imgContainer.style.backgroundImage = 'none';
+        imgContainer.style.backgroundColor = '#f1f5f9';
+        imgContainer.innerHTML = '<i class="fas fa-utensils" style="font-size:3rem; color:#cbd5e1; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></i>';
+    }
+
+    // Render Options Chips (Trùng tu UI)
+    const optsWrap = document.getElementById('detailOptsWrap');
+    const optsContainer = document.getElementById('detailOptsContainer');
+    optsContainer.innerHTML = '';
+    
+    if (displayOpts.length > 0) {
+        optsWrap.style.display = 'block';
+        displayOpts.forEach((opt) => {
+            const chip = document.createElement('div');
+            // Cập nhật class premium cho chip
+            chip.className = 'opt-chip-premium';
+            chip.innerHTML = `<span>${opt}</span><i class="fas fa-check-circle check-icon"></i>`;
+            
+            chip.onclick = () => {
+                const noteInput = document.getElementById('detailNote');
+                let currentNote = noteInput.value.trim();
+                const optParts = currentNote.split(',').map(p => p.trim()).filter(Boolean);
+                
+                const optIdx = optParts.indexOf(opt);
+                if (optIdx > -1) {
+                    optParts.splice(optIdx, 1);
+                    chip.classList.remove('active');
+                } else {
+                    optParts.push(opt);
+                    chip.classList.add('active');
+                }
+                noteInput.value = optParts.join(', ');
+            };
+            optsContainer.appendChild(chip);
+        });
+    } else {
+        optsWrap.style.display = 'block';
+        optsContainer.innerHTML = '<span style="color:#94a3b8; font-size:0.75rem;"><i class="fas fa-info-circle me-1"></i>Chưa có Tùy chọn cấu hình sẵn cho món này (Thiết lập tại Admin).</span>';
+    }
+
+    updateDetailTotal();
+    document.getElementById('itemDetailModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeItemDetail() {
+    document.getElementById('itemDetailModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function changeDetailQty(delta) {
+    if (!currentItem) return;
+    currentItem.quantity = Math.max(1, currentItem.quantity + delta);
+    document.getElementById('detailQty').textContent = currentItem.quantity;
+    updateDetailTotal();
+}
+
+function updateDetailTotal() {
+    const total = currentItem.price * currentItem.quantity;
+    const btnAdd = document.getElementById('btnAddOrder');
+    if (btnAdd) {
+        btnAdd.innerHTML = `<i class="fas fa-cart-plus me-2"></i> TH\u00caM V\u00c0O \u0110\u01a0N H\u00c0NG — ${formatCurrency(total)}`;
+    }
+}
+
+function addFromDetail() {
+    currentItem.note = document.getElementById('detailNote').value.trim();
+    
+    // Find item with SAME ID and SAME NOTE
+    const existing = cart.find(item => item.id === currentItem.id && item.note === currentItem.note);
+    if (existing) {
+        existing.quantity += currentItem.quantity;
+    } else {
+        cart.push({ ...currentItem });
+    }
+    
+    saveCart();
+    closeItemDetail();
+    showToast(`Đã thêm ${currentItem.name}`);
+}
+
+function toggleCartModal() {
+    const modal = document.getElementById('cartModal');
+    const isHidden = modal.classList.contains('hidden');
+    
+    if (isHidden) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        updateCartModal();
+    } else {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+}
+
+function updateCartModal() {
+    const container = document.getElementById('cartItemsList');
+    const modalTotal = document.getElementById('modalCartTotal');
+    
+    if (cart.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-basket fa-3x text-light mb-3"></i>
+                <p class="text-muted">Giỏ hàng đang trống.</p>
+                <button class="btn-gold mt-3" onclick="toggleCartModal()">TIẾP TỤC CHỌN MÓN</button>
+            </div>
+        `;
+        modalTotal.textContent = '0₫';
+        return;
+    }
+
+    let html = '';
+    let total = 0;
+    
+    cart.forEach((item, index) => {
+        total += item.price * item.quantity;
+        html += `
+            <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--border);">
+                <div style="flex:1;">
+                    <div style="font-weight:700; color:var(--text-dark);">${item.name}</div>
+                    <div style="color:var(--gold-dark); font-weight:600; font-size:0.85rem;">${formatCurrency(item.price)}</div>
+                    ${item.note ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-light); margin-top:4px;">Lưu ý: ${item.note}</div>` : ''}
+                </div>
+                <div class="qty-selector" style="background:#f1f5f9; padding:5px 10px; border-radius:10px; display:flex; align-items:center; gap:15px; scale:0.8;">
+                    <button class="qty-btn" style="width:30px; height:30px; font-size:0.8rem;" onclick="changeCartQty(${index}, -1)"><i class="fas fa-minus"></i></button>
+                    <span class="qty-value" style="font-size:1rem; min-width:20px;">${item.quantity}</span>
+                    <button class="qty-btn" style="width:30px; height:30px; font-size:0.8rem;" onclick="changeCartQty(${index}, 1)"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    modalTotal.textContent = formatCurrency(total);
+}
+
+function changeCartQty(index, delta) {
+    cart[index].quantity += delta;
+    if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+    }
+    saveCart();
+    if (cart.length === 0) {
+        toggleCartModal();
+    }
+}
+
+async function submitOrder() {
+    if (cart.length === 0) return;
+
+    const notes = document.getElementById('orderNotes').value;
+    const btn = document.getElementById('btnSubmitOrder');
+    const originalText = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ĐANG XỬ LÝ...';
+
+    const formData = new FormData();
+    formData.append('cart', JSON.stringify(cart));
+    formData.append('notes', notes);
+
+    try {
+        const response = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/submit`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            cart = [];
+            saveCart();
+            showToast('Xác nhận đặt món thành công!');
+            setTimeout(() => {
+                window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/order/status`;
+            }, 1000);
+        } else {
+            alert(result.error || 'Lỗi gửi order. Vui lòng thử lại.');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Lỗi kết nối máy chủ. Vui lòng kiểm tra mạng.');
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+async function callWaiter(type) {
+    if (!confirm(type === 'payment' ? 'Bạn muốn yêu cầu thanh toán?' : 'Bạn muốn gọi nhân viên phục vụ?')) return;
+
+    try {
+        const url = type === 'payment' ? `${CUSTOMER_CONFIG.baseUrl}/qr/support/request-bill` : `${CUSTOMER_CONFIG.baseUrl}/qr/support/call-waiter`;
+        const response = await fetch(url, { method: 'POST' });
+        
+        const result = await response.json();
+        if (result.success) {
+            showToast(result.message || 'Yêu cầu đã được gửi đến nhân viên!');
+            if (type === 'payment') {
+                showPaymentOverlay();
+            }
+        } else {
+            alert(result.error || 'Gửi yêu cầu thất bại.');
+        }
+    } catch (e) {
+        alert('Lỗi kết nối.');
+    }
+}
+
+function showPaymentOverlay() {
+    let overlay = document.getElementById('paymentLoadingOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'paymentLoadingOverlay';
+        overlay.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); animation:fadeIn 0.3s;';
+        overlay.innerHTML = `
+            <div class="spinner" style="width:50px; height:50px; border-width:4px; border-color:#d4af37 transparent #d4af37 transparent; margin-bottom:20px;"></div>
+            <h3 style="color:#1e293b; font-weight:800; font-family:'Playfair Display', serif; text-align:center;">Đang xử lý Thanh Toán</h3>
+            <p style="color:#64748b; font-size:0.9rem; margin-top:10px; text-align:center; max-width:80%;">Vui lòng chờ nhân viên mang hóa đơn đến bàn. <br>Hệ thống tự động chuyển trang khi hoàn tất!</p>
+        `;
+        document.body.appendChild(overlay);
+    }
+}
+
+// Polling kiểm tra trạng thái bill
+function startStatusPolling() {
+    const checkStatus = async () => {
+        try {
+            const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status`);
+            const data = await res.json();
+            
+            if (data.status === 'completed') {
+                window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/thank-you`;
+            } else if (data.status === 'wait_payment') {
+                showPaymentOverlay();
+            } else if (data.status === 'open' || data.status === 'idle') {
+                const overlay = document.getElementById('paymentLoadingOverlay');
+                if (overlay) overlay.remove();
+            }
+        } catch(e) {}
+    };
+
+    // Chạy ngay lập tức lần đầu khi load trang
+    checkStatus();
+    // Sau đó mới lặp lại mỗi 5s
+    setInterval(checkStatus, 5000);
+}
+
+// Bắt đầu polling ngay khi khởi động trang Khách
+if (window.location.pathname.includes('/qr/')) {
+    startStatusPolling();
+}
+
+// Close modals when clicking backdrop
+document.querySelectorAll('.modal-backdrop').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+});

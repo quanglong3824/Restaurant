@@ -124,6 +124,52 @@ if (!function_exists('renderTableCard')) {
 }
 ?>
 
+<style>
+    .premium-table-card {
+        background: white; border-radius: 18px; padding: 1.25rem; position: relative; overflow: hidden;
+        display: flex; flex-direction: column; justify-content: space-between; min-height: 110px;
+        border: 1px solid #edf2f7; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;
+    }
+    .premium-table-card:active { transform: scale(0.95); }
+    .card-status-bar { position: absolute; top: 0; left: 0; right: 0; height: 6px; background: #e2e8f0; }
+    .is-available .card-status-bar { background: linear-gradient(90deg, #10b981, #34d399); }
+    .is-occupied .card-status-bar { background: linear-gradient(90deg, #ef4444, #f87171); }
+    .is-merged-child .card-status-bar { background: repeating-linear-gradient(45deg, #b89B5e, #b89B5e 10px, #d4af37 10px, #d4af37 20px); }
+    .table-id { font-size: 1.4rem; font-weight: 800; color: #1a202c; margin-bottom: 0.25rem; }
+    .table-info { font-size: 0.7rem; font-weight: 700; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; }
+    .card-icon { position: absolute; bottom: -10px; right: -5px; font-size: 3.5rem; opacity: 0.04; transform: rotate(-15deg); transition: all 0.3s ease; }
+    .is-occupied .card-icon { opacity: 0.08; color: #ef4444; }
+    .master-label { background: var(--gold); color: white; padding: 2px 6px; border-radius: 6px; font-size: 0.6rem; }
+    .premium-tabs { display: flex; background: #f1f5f9; padding: 6px; border-radius: 16px; margin-bottom: 2rem; gap: 6px; }
+    .premium-tab-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 12px; text-decoration: none; color: #64748b; font-weight: 700; font-size: 0.9rem; transition: all 0.3s ease; }
+    .premium-tab-item.active { background: white; color: var(--gold); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .area-section { margin-bottom: 3rem; }
+    .area-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9; }
+    .area-header h2 { font-size: 1.25rem; font-weight: 800; color: #1e293b; margin: 0; }
+    .area-icon { width: 40px; height: 40px; background: #f8fafc; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.1rem; }
+    .interactive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .interactive-area-item { cursor: pointer; }
+    .area-box { background: #f1f5f9; border: 2px solid #e2e8f0; border-radius: 12px; padding: 12px 8px; text-align: center; transition: all 0.2s; }
+    .area-box-name { font-weight: 800; font-size: 0.85rem; color: #1e293b; }
+    .interactive-area-item input:checked + .area-box { background: #fef3c7; border-color: #f59e0b; transform: scale(1.05); }
+    .interactive-area-item.is-merged .area-box { background: #fee2e2; border-color: #fca5a5; }
+    .is-payment-requested { border: 2px solid #f59e0b !important; animation: premium-border-pulse 2s infinite; }
+    @keyframes premium-border-pulse { 0% { border-color: #f59e0b; } 50% { border-color: #fbbf24; } 100% { border-color: #f59e0b; } }
+    .payment-pulse-badge { position: absolute; top: 12px; right: 12px; background: #f59e0b; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 5; font-size: 0.8rem; box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3); }
+    
+    /* Floor Filter Tabs */
+    .floor-filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 4px; scrollbar-width: none; }
+    .floor-filter-tabs::-webkit-scrollbar { display: none; }
+    .floor-tab {
+        white-space: nowrap; padding: 8px 16px; border-radius: 20px;
+        background: white; border: 1px solid #e2e8f0; font-size: 0.8rem;
+        font-weight: 700; color: #64748b; text-decoration: none;
+        transition: all 0.2s; flex-shrink: 0;
+    }
+    .floor-tab:hover { border-color: var(--gold); color: var(--gold); }
+    .floor-tab.active { background: var(--gold); color: white; border-color: var(--gold); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+</style>
 
 <div class="page-content animate-fade-in">
     <nav class="premium-tabs">
@@ -201,19 +247,19 @@ if (!function_exists('renderTableCard')) {
 
 <!-- Modal: Mở bàn -->
 <div class="modal-backdrop" id="modalOpenTable">
-    <div class="modal modal-premium modal-sm">
+    <div class="modal modal-premium" style="max-width: 400px;">
         <div class="modal-header"><h3>Phục vụ <span id="modalTableName" class="text-gold"></span></h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/open" class="modal-body py-3">
             <input type="hidden" name="table_id" id="openTableId">
             <div class="form-group mb-3">
                 <label class="form-label">Số lượng khách</label>
-                <div class="guest-selector-grid" id="guestSelectorGrid">
+                <div class="guest-selector-grid" id="guestSelectorGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
                     <?php 
                     $maxGuests = ($type === 'room') ? 3 : 12;
                     for ($i = 1; $i <= $maxGuests; $i++): ?>
                         <label class="guest-option">
-                            <input type="radio" name="guest_count" value="<?= $i ?>" <?= ($i === 2) ? 'checked' : '' ?> class="u-hidden">
-                            <span class="guest-option-span"><?= $i ?></span>
+                            <input type="radio" name="guest_count" value="<?= $i ?>" <?= ($i === 2) ? 'checked' : '' ?> style="display:none;">
+                            <span style="display:block; padding: 10px; background: #f1f5f9; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800;"><?= $i ?></span>
                         </label>
                     <?php endfor; ?>
                 </div>
@@ -225,19 +271,19 @@ if (!function_exists('renderTableCard')) {
 
 <!-- Modal: Bàn đang bận -->
 <div class="modal-backdrop" id="modalOccupied">
-    <div class="modal modal-premium modal-md">
+    <div class="modal modal-premium" style="max-width: 450px;">
         <div class="modal-header"><h3>Đang phục vụ <span id="modalOccupiedTableName" class="text-gold"></span></h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <div class="modal-body py-4"><div class="d-grid gap-3">
-            <a id="viewOrderBtn" href="#" class="btn btn-gold py-3 btn-no-decoration"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
+            <a id="viewOrderBtn" href="#" class="btn btn-gold py-3" style="text-decoration: none;"><i class="fas fa-file-invoice-dollar me-2"></i> CHI TIẾT & GỌI MÓN</a>
             <div class="d-flex gap-3"><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleTransferClick()">CHUYỂN</button><button type="button" class="btn btn-ghost flex-fill py-3" onclick="handleMergeTableClick()">GHÉP</button></div>
-            <div class="d-flex gap-3"><button type="button" class="btn btn-outline-danger flex-fill py-3 u-hidden" onclick="handleUnmergeTableClick()" id="unmergeTableBtn">HỦY GHÉP</button><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">TÁCH BÀN</button></div>
+            <div class="d-flex gap-3"><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleUnmergeTableClick()" id="unmergeTableBtn" style="display:none;">HỦY GHÉP</button><button type="button" class="btn btn-outline-danger flex-fill py-3" onclick="handleSplitTableClick()">TÁCH BÀN</button></div>
         </div></div>
     </div>
 </div>
 
 <!-- Modal: Chọn bàn đích -->
 <div class="modal-backdrop" id="modalSelectTarget">
-    <div class="modal modal-premium modal-md">
+    <div class="modal modal-premium" style="max-width: 450px;">
         <div class="modal-header"><h3 id="targetModalTitle">Chọn đích</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form id="targetForm" method="POST" class="modal-body">
             <input type="hidden" name="from_table_id" id="sourceTableId">
@@ -255,7 +301,7 @@ if (!function_exists('renderTableCard')) {
 
 <!-- Modal: Ghép Khu Vực -->
 <div class="modal-backdrop" id="modalMergeArea">
-    <div class="modal modal-premium modal-lg">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header"><h3>Ghép Khu Vực</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/merge_areas" class="modal-body">
             <div class="interactive-grid">
@@ -268,7 +314,7 @@ if (!function_exists('renderTableCard')) {
 
 <!-- Modal: Tách Khu Vực -->
 <div class="modal-backdrop" id="modalUnmergeArea">
-    <div class="modal modal-premium modal-lg modal-danger">
+    <div class="modal modal-premium" style="max-width: 500px;">
         <div class="modal-header"><h3 class="text-danger">Tách Khu Vực</h3><button class="modal-close" data-modal-close type="button"><i class="fas fa-times"></i></button></div>
         <form method="POST" action="<?= BASE_URL ?>/tables/unmerge_areas" class="modal-body">
             <div class="interactive-grid">
@@ -279,7 +325,7 @@ if (!function_exists('renderTableCard')) {
     </div>
 </div>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/tables/index.css">
+<link rel="stylesheet" href="<?= asset('public/css/tables.css') ?>">
 
 <script>
 // Định nghĩa các hàm xử lý bàn bên ngoài DOMContentLoaded để đảm bảo handleTableClick được gọi từ HTML onclick
@@ -296,11 +342,11 @@ function handleTableClick(table) {
         let html = '';
         for (let i = 1; i <= maxGuests; i++) {
             const checked = (i === 2) ? 'checked' : '';
-            const activeClass = (i === 2) ? ' active' : '';
+            const bg = (i === 2) ? '#b89B5e' : '#f1f5f9';
             html += `
                 <label class="guest-option">
-                    <input type="radio" name="guest_count" value="${i}" ${checked} class="u-hidden">
-                    <span class="guest-option-span${activeClass}">${i}</span>
+                    <input type="radio" name="guest_count" value="${i}" ${checked} style="display:none;">
+                    <span style="display:block; padding: 10px; background: ${bg}; border-radius: 8px; text-align: center; cursor: pointer; font-weight: 800;">${i}</span>
                 </label>`;
         }
         guestGrid.innerHTML = html;
@@ -308,8 +354,8 @@ function handleTableClick(table) {
         // Re-attach event listeners for the new guest options
         guestGrid.querySelectorAll('input').forEach(input => {
             input.addEventListener('change', function() {
-                guestGrid.querySelectorAll('.guest-option-span').forEach(s => s.classList.remove('active'));
-                if (this.checked) this.nextElementSibling.classList.add('active');
+                guestGrid.querySelectorAll('span').forEach(s => s.style.background = '#f1f5f9');
+                if (this.checked) this.nextElementSibling.style.background = '#b89B5e';
             });
         });
     }
@@ -360,8 +406,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Styling guest options
     document.querySelectorAll('.guest-option input').forEach(input => {
         input.addEventListener('change', function() {
-            document.querySelectorAll('.guest-option-span').forEach(s => s.classList.remove('active'));
-            if (this.checked) this.nextElementSibling.classList.add('active');
+            document.querySelectorAll('.guest-option span').forEach(s => s.style.background = '#f1f5f9');
+            if (this.checked) this.nextElementSibling.style.background = '#b89B5e';
         });
     });
     

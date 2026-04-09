@@ -49,8 +49,6 @@ class AdminTableController extends Controller
             'view' => 'admin/tables/index',
             'pageTitle' => $type === 'room' ? 'Quản lý Phòng Lưu Trú' : 'Quản lý Bàn',
             'pageSubtitle' => count($allTables) . ($type === 'room' ? ' phòng' : ' bàn'),
-            'pageCSS' => 'admin/tables',
-            'pageJS' => 'admin/tables',
             'tables' => $allTables,
             'groupedTables' => $groupedTables,
             'type' => $type,

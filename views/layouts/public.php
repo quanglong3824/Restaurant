@@ -14,9 +14,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="<?= e(APP_NAME) ?>">
 
-    <!-- Layout CSS -->
-    <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/layout/public.css">
-
     <!-- Google Fonts: Outfit & Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +27,25 @@
         const BASE_URL = '<?= BASE_URL ?>';
     </script>
 
+    <style>
+        :root {
+            --gold: #c5a059;
+            --gold-dark: #a68341;
+            --bg: #f8fafc;
+        }
+        body { margin: 0; padding: 0; background: var(--bg); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.5s;
+        }
+        .loading-spinner {
+            width: 50px; height: 50px; border: 3px solid var(--bg);
+            border-top: 3px solid var(--gold); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 
 <body>

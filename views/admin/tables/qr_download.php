@@ -1,6 +1,4 @@
 <?php // views/admin/tables/qr_download.php — Print QR Code ?>
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/admin/qr-download.css">
-
 <div class="qr-print-container">
     <div class="no-print mb-4 d-flex gap-2">
         <button onclick="window.print()" class="btn-gold"><i class="fas fa-print me-1"></i> In mã QR</button>
@@ -39,8 +37,107 @@
             height: 250,
             colorDark : "#000000",
             colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H,
+            correctLevel : QRCode.CorrectLevel.H, // Changed to H (High) for better logo tolerance
             margin: 2
         });
     });
 </script>
+
+<style>
+    .qr-print-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 0;
+    }
+    
+    .qr-card-printable {
+        width: 350px;
+        background: white;
+        padding: 40px;
+        border: 1px solid #eee;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    .qr-card-header {
+        margin-bottom: 30px;
+    }
+    
+    .qr-card-header i {
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 10px;
+    }
+    
+    .qr-card-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin: 0;
+    }
+    
+    .qr-card-header p {
+        font-size: 0.7rem;
+        letter-spacing: 4px;
+        margin: 0;
+        color: var(--text-muted);
+    }
+    
+    .qr-code-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: #fdfdfd;
+        border-radius: 12px;
+        position: relative;
+    }
+
+    .qr-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50px; /* Slightly larger */
+        height: 50px;
+        background: white;
+        padding: 4px;
+        border-radius: 10px;
+        border: 2px solid #eee;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10; /* Ensure it's on top */
+        display: block !important;
+    }
+    
+    .qr-card-footer .table-number {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--gold-dark);
+        margin-bottom: 10px;
+    }
+    
+    .qr-card-footer p {
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .qr-card-footer small {
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white; }
+        .admin-sidebar, .admin-topbar { display: none !important; }
+        .admin-body { margin-left: 0 !important; padding: 0 !important; }
+        .qr-card-printable { 
+            box-shadow: none !important; 
+            border: none !important;
+            width: 100% !important;
+        }
+    }
+</style>

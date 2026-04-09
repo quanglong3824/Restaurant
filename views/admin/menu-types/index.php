@@ -20,23 +20,22 @@
                         <th>Số DM</th>
                         <th>Thứ tự</th>
                         <th>Trạng thái</th>
-                        <th class="action-col"></th>
+                        <th style="width:120px"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($types as $type): ?>
                         <tr>
                             <td>
-                                <i class="fas <?= e($type['icon'] ?? 'fa-utensils') ?> menu-type-icon"
-                                    data-color="<?= e($type['color'] ?? '#0ea5e9') ?>">
-                                </i>
+                                <i class="fas <?= e($type['icon'] ?? 'fa-utensils') ?>"
+                                    style="color:<?= e($type['color'] ?? '#0ea5e9') ?>;font-size:1.1rem;"></i>
                             </td>
                             <td>
-                                <span class="type-color-preview" style="background-color: <?= e($type['color'] ?? '#0ea5e9') ?>;"></span>
+                                <span style="display:inline-block;width:20px;height:20px;border-radius:4px;background:<?= e($type['color'] ?? '#0ea5e9') ?>;border:1px solid #ddd;"></span>
                             </td>
                             <td><strong><?= e($type['name']) ?></strong></td>
-                            <td class="text-muted"><?= e($type['name_en'] ?? '') ?></td>
-                            <td><span class="type-key-badge"><?= e($type['type_key']) ?></span></td>
+                            <td style="color:#9ca3af;"><?= e($type['name_en'] ?? '') ?></td>
+                            <td><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:0.85em;"><?= e($type['type_key']) ?></code></td>
                             <td>
                                 <span class="badge <?= ($categoryCounts[$type['id']] ?? 0) > 0 ? 'badge-info' : 'badge-secondary' ?>">
                                     <?= $categoryCounts[$type['id']] ?? 0 ?>
@@ -49,13 +48,13 @@
                                 </span>
                             </td>
                             <td>
-                                <div class="action-buttons-row">
+                                <div style="display:flex;gap:.4rem;">
                                     <a href="<?= BASE_URL ?>/admin/menu-types/edit?id=<?= $type['id'] ?>"
                                         class="btn btn-outline btn-sm" title="Sửa">
                                         <i class="fas fa-pen"></i>
                                     </a>
                                     <form method="POST" action="<?= BASE_URL ?>/admin/menu-types/delete"
-                                        class="delete-form-inline">
+                                        style="display:inline;">
                                         <input type="hidden" name="id" value="<?= $type['id'] ?>">
                                         <button type="submit" class="btn btn-danger-outline btn-sm"
                                             data-confirm="Xóa loại menu '<?= e($type['name']) ?>'?" title="Xóa">
@@ -68,7 +67,7 @@
                     <?php endforeach; ?>
                     <?php if (empty($types)): ?>
                         <tr>
-                            <td colspan="9" class="empty-state">
+                            <td colspan="9" style="text-align:center;padding:2rem;color:#9ca3af;">
                                 Chưa có loại menu nào.
                             </td>
                         </tr>
@@ -113,7 +112,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Màu sắc</label>
-                    <input type="color" name="color" class="form-control form-control-color" value="<?= e($editItem['color'] ?? '#0ea5e9') ?>">
+                    <input type="color" name="color" class="form-control form-control-color" value="<?= e($editItem['color'] ?? '#0ea5e9') ?>"
+                        style="width:100%;height:40px;cursor:pointer;">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>
@@ -164,7 +164,8 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Màu sắc</label>
-                    <input type="color" name="color" class="form-control form-control-color" value="#0ea5e9">
+                    <input type="color" name="color" class="form-control form-control-color" value="#0ea5e9"
+                        style="width:100%;height:40px;cursor:pointer;">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Icon (Font Awesome)</label>
@@ -174,7 +175,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Thứ tự</label>
-                    <input type="number" name="sort_order" class="form-control form-control-readonly" value="0" min="0" readonly>
+                    <input type="number" name="sort_order" class="form-control" value="0" min="0" readonly style="background:#f1f5f9;cursor:not-allowed;">
                     <p class="form-hint">Thứ tự sẽ tự động gán khi lưu (số lớn nhất + 1).</p>
                 </div>
                 <button type="submit" class="btn btn-gold btn-block">
@@ -185,3 +186,30 @@
     </div>
 
 </div>
+
+<style>
+.content-with-2-col {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .content-with-2-col {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sticky-aside {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+}
+
+.form-control-color {
+    padding: 0.25rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 8px;
+}
+</style>

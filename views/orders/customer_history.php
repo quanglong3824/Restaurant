@@ -89,11 +89,8 @@
     </div>
 </div>
 
-<!-- External CSS -->
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/orders/history.css">
-
 <!-- Order Detail Modal -->
-<div class="modal-backdrop" id="orderDetailModal">
+<div class="modal-backdrop" id="orderDetailModal" style="display:none;">
     <div class="modal modal-bottom modal-premium">
         <div class="modal-header">
             <h3><i class="fas fa-file-invoice me-2"></i> Chi tiết đơn hàng</h3>
@@ -108,6 +105,331 @@
     </div>
 </div>
 
+<style>
+.customer-history-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+    padding-bottom: 2rem;
+}
+
+.history-header-section {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold, #d4af37);
+}
+
+.brand-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-logo h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: #fff;
+    margin: 0;
+    font-weight: 800;
+}
+
+.brand-logo span {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--gold, #d4af37);
+    text-transform: uppercase;
+}
+
+.table-badge {
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 8px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--gold, #d4af37);
+}
+
+.history-content {
+    padding: 1.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 1.5rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #cbd5e1;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state .text-muted {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-back-menu {
+    background: linear-gradient(135deg, var(--gold, #d4af37), var(--gold-dark, #a68341));
+    color: #fff;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-back-menu:active {
+    transform: scale(0.98);
+}
+
+.orders-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.order-timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.order-timeline-item.current .timeline-marker {
+    background: var(--gold, #d4af37);
+    color: #fff;
+    animation: pulse-gold 2s infinite;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+@keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.order-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.order-id {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.order-id .label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.current-badge, .closed-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+.current-badge {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.closed-badge {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.order-time {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.order-items-preview {
+    margin-bottom: 0.75rem;
+}
+
+.preview-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    padding: 4px 0;
+}
+
+.preview-item .qty {
+    font-weight: 700;
+    color: var(--gold, #d4af37);
+    min-width: 28px;
+}
+
+.preview-item .name {
+    color: #1e293b;
+    flex: 1;
+}
+
+.more-items {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.total-amount {
+    display: flex;
+    flex-direction: column;
+}
+
+.total-amount .label {
+    font-size: 0.7rem;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.total-amount .amount {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--gold, #d4af37);
+}
+
+.view-detail-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.order-card:hover .view-detail-btn {
+    background: var(--gold, #d4af37);
+    color: #fff;
+}
+
+.action-buttons {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* Modal styles */
+.modal-premium .order-detail-items {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.order-detail-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.order-detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-qty {
+    width: 32px;
+    height: 32px;
+    background: var(--gold, #d4af37);
+    color: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.detail-info {
+    flex: 1;
+}
+
+.detail-name {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.detail-note {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+.detail-price {
+    font-weight: 700;
+    color: var(--gold, #d4af37);
+    font-size: 0.9rem;
+}
+</style>
 
 <script>
 function showOrderDetail(order) {

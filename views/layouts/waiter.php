@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= asset('public/css/waiter.css') ?>">
     <link rel="stylesheet" href="<?= asset('public/css/layout/waiter-notify.css') ?>">
-    
     <?php if (isset($pageCSS)): ?>
         <link rel="stylesheet" href="<?= asset('public/css/' . e($pageCSS) . '.css') ?>">
     <?php endif; ?>
@@ -79,10 +78,20 @@
 
         <?php require BASE_PATH . "/views/{$view}.php"; ?>
         
-    <div class="waiter-copyright">
-        &copy; 2026 LongDev. v<?= APP_VERSION ?>
-    </div>
-</main>
+        <div class="waiter-copyright">
+            &copy; 2026 LongDev. v<?= APP_VERSION ?>
+        </div>
+    </main>
+
+    <style>
+        .waiter-copyright {
+            text-align: center;
+            padding: 20px 0 100px;
+            font-size: 0.65rem;
+            color: #94a3b8;
+            opacity: 0.6;
+        }
+    </style>
 
     <!-- Bottom Navigation - Modern Rectangular Design -->
     <nav class="waiter-bottomnav" role="navigation" aria-label="Menu chính">

@@ -97,7 +97,7 @@
                                             <span class="item-qty-count"><?= $item['total_qty'] ?> suất</span>
                                         </div>
                                         <div class="progress-bar-bg">
-                                            <div class="progress-bar-fill" data-width="<?= $percent ?>"></div>
+                                            <div class="progress-bar-fill" style="width: <?= $percent ?>%"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -179,5 +179,90 @@
     <?php endif; ?>
 </div>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>/public/css/reports/index.css">
-<script src="<?= BASE_URL ?>/public/js/reports/index.js"></script>
+<style>
+    :root {
+        --rp-bg: #f1f5f9;
+        --rp-card: #ffffff;
+        --rp-border: #e2e8f0;
+        --rp-text: #1e293b;
+        --rp-accent: #3b82f6;
+    }
+
+    .reports-container { color: var(--rp-text); }
+
+    /* ── Filter Bar ────────────────────────────────────────── */
+    .filter-glass-bar {
+        background: #fff; border: 1px solid var(--rp-border);
+        border-radius: 12px; padding: 8px; display: flex; align-items: center;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+    .filter-inputs { display: flex; flex: 1; align-items: center; }
+    .input-group-custom { flex: 1; padding: 0 15px; }
+    .input-group-custom label { display: block; font-size: 0.6rem; font-weight: 800; color: #94a3b8; margin-bottom: 2px; }
+    .input-group-custom input { border: none; font-size: 0.85rem; font-weight: 700; color: var(--rp-text); width: 100%; outline: none; }
+    .input-divider { width: 1px; height: 30px; background: var(--rp-border); }
+    .btn-filter {
+        background: var(--rp-text); color: #fff; border: none; padding: 10px 20px;
+        border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-filter:hover { background: #000; }
+
+    /* ── KPI Cards ────────────────────────────────────────── */
+    .kpi-card {
+        background: #fff; border-radius: 16px; padding: 25px;
+        border: 1px solid var(--rp-border); display: flex; align-items: center;
+        gap: 20px; position: relative; overflow: hidden;
+    }
+    .kpi-icon {
+        width: 50px; height: 50px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .kpi-card.revenue .kpi-icon { background: #eff6ff; color: #3b82f6; }
+    .kpi-card.orders .kpi-icon { background: #f0fdf4; color: #10b981; }
+    .kpi-card.tables .kpi-icon { background: #faf5ff; color: #a855f7; }
+    
+    .kpi-label { font-size: 0.65rem; font-weight: 800; color: #64748b; letter-spacing: 0.5px; }
+    .kpi-value { font-size: 1.5rem; font-weight: 900; margin: 0; color: var(--rp-text); }
+    .kpi-trend { position: absolute; top: 15px; right: 20px; font-size: 0.7rem; font-weight: 700; }
+    .kpi-trend.positive { color: #10b981; }
+
+    /* ── Report Cards ────────────────────────────────────────── */
+    .report-card {
+        background: #fff; border-radius: 16px; border: 1px solid var(--rp-border);
+        height: 100%; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-header-clean { padding: 20px 25px; border-bottom: 1px solid var(--rp-border); }
+    .card-header-clean h3 { font-size: 1rem; font-weight: 800; margin: 0; color: var(--rp-text); }
+    .card-body-clean { padding: 20px 25px; }
+
+    /* ── Top Items Progress ──────────────────────────────────── */
+    .top-item-row-new { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; }
+    .item-rank { 
+        width: 28px; height: 28px; background: #f1f5f9; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.75rem; font-weight: 800; color: #64748b;
+    }
+    .item-info-flex { flex: 1; }
+    .item-name-bold { font-size: 0.85rem; font-weight: 700; color: var(--rp-text); }
+    .item-qty-count { font-size: 0.8rem; font-weight: 800; color: #3b82f6; }
+    .progress-bar-bg { height: 6px; background: #f1f5f9; border-radius: 10px; margin-top: 6px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 10px; }
+
+    /* ── Modern Table ────────────────────────────────────────── */
+    .table-modern { width: 100%; border-collapse: collapse; }
+    .table-modern th { 
+        text-align: left; padding: 12px 0; font-size: 0.65rem; color: #94a3b8; 
+        text-transform: uppercase; border-bottom: 2px solid #f1f5f9;
+    }
+    .table-modern td { padding: 15px 0; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; }
+    
+    .badge-date { background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+    .empty-state { padding: 40px 0; text-align: center; color: #94a3b8; font-style: italic; font-size: 0.9rem; }
+
+    @media (max-width: 768px) {
+        .filter-glass-bar { flex-direction: column; gap: 10px; }
+        .input-divider { display: none; }
+        .btn-filter { width: 100%; }
+    }
+</style>
