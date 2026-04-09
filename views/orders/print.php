@@ -79,20 +79,6 @@
             height: auto;
         }
         
-        .header-right .logo-text {
-            font-family: 'Georgia', serif;
-            font-size: 24pt;
-            font-weight: normal;
-            letter-spacing: 3px;
-            color: #000;
-        }
-        
-        .header-right .logo-sub {
-            font-size: 10pt;
-            letter-spacing: 2px;
-            margin-top: 5px;
-        }
-        
         /* Meta Info */
         .meta-info {
             font-size: 9pt;
@@ -306,9 +292,7 @@
                 </div>
             </div>
             <div class="header-right">
-                <img src="<?= BASE_URL ?>/public/src/logo/logo-dark-ui.png" alt="AURORA" class="logo" onerror="this.style.display='none'">
-                <div class="logo-text">AURORA</div>
-                <div class="logo-sub">HOTEL ■ PLAZA</div>
+                <img src="<?= BASE_URL ?>/public/src/logo/logo-dark-ui.png" alt="AURORA HOTEL PLAZA" class="logo" onerror="this.style.display='none'">
             </div>
         </div>
         
