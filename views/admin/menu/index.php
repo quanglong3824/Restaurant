@@ -1,7 +1,7 @@
 <?php // views/admin/menu/index.php ?>
 
 <?php
-// Use filter counts from controller (computed from filtered items)
+// Use filter counts from controller (computed from all items)
 $countAll = $filterCounts['all'] ?? 0;
 $countRestaurant = $filterCounts['restaurant'] ?? 0;
 $countRoom = $filterCounts['room_service'] ?? 0;
@@ -12,6 +12,7 @@ $currentService = $currentFilters['service'] ?? '';
 $currentCategory = $currentFilters['category'] ?? '';
 $currentStatus = $currentFilters['status'] ?? '';
 $currentSearch = $currentFilters['search'] ?? '';
+$currentPage = $pagination['page'] ?? 1;
 
 // Helper function to build URL with filters
 function buildMenuUrl($params = []) {
@@ -20,9 +21,15 @@ function buildMenuUrl($params = []) {
         'category' => $GLOBALS['currentFilters']['category'] ?? '',
         'status' => $GLOBALS['currentFilters']['status'] ?? '',
         'search' => $GLOBALS['currentFilters']['search'] ?? '',
-        'page' => 1,
+        'page' => 1, // Default to page 1 when changing filters
     ];
     $params = array_merge($defaults, $params);
+    
+    // Remove page parameter if it's 1 to keep URLs clean
+    if (isset($params['page']) && $params['page'] == 1) {
+        unset($params['page']);
+    }
+    
     $query = http_build_query(array_filter($params, fn($v) => $v !== ''));
     return BASE_URL . '/admin/menu' . ($query ? '?' . $query : '');
 }
@@ -105,6 +112,9 @@ function buildMenuUrl($params = []) {
                 </select>
             </div>
 
+            <!-- Current page hidden input to preserve pagination -->
+            <input type="hidden" name="page" value="<?= $currentPage ?>">
+            
             <!-- Reset -->
             <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline btn-sm" title="Xóa bộ lọc">
                 <i class="fas fa-rotate-left"></i> Đặt lại
@@ -198,6 +208,7 @@ function buildMenuUrl($params = []) {
                                 title="<?= $item['is_available'] ? 'Còn hàng — Click để đánh Hết' : 'Hết hàng — Click để Mở lại' ?>">
                                 <?= $item['is_available'] ? 'Còn hàng' : 'Hết hàng' ?>
                             </button>
+                        </td>
                         </td>
                         <td>
                             <div style="display:flex;gap:.35rem;">
@@ -424,21 +435,27 @@ document.getElementById('searchInput').addEventListener('input', function() {
     clearBtn.style.display = this.value ? '' : 'none';
     clearTimeout(_debounceTimer);
     _debounceTimer = setTimeout(() => {
+        // Reset page to 1 when search changes
         document.getElementById('filterForm').submit();
     }, 400);
-});
-
+}
 function clearSearchInput() {
     document.getElementById('searchInput').value = '';
     document.getElementById('clearSearch').style.display = 'none';
+    // Reset page to 1 when clearing search
+    document.querySelector('[name="page"]').value = 1;
     document.getElementById('filterForm').submit();
 }
 
 /* ── Auto submit on filter change ───────────────────────── */
 document.getElementById('catFilter').addEventListener('change', function() {
+    // Reset page to 1 when category changes
+    document.querySelector('[name="page"]').value = 1;
     document.getElementById('filterForm').submit();
 });
- document.getElementById('statusFilter').addEventListener('change', function() {
+document.getElementById('statusFilter').addEventListener('change', function() {
+    // Reset page to 1 when status changes
+    document.querySelector('[name="page"]').value = 1;
     document.getElementById('filterForm').submit();
 });
 
