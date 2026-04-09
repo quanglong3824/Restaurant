@@ -33,6 +33,10 @@ class AdminMenuController extends Controller
         $categoryId = $this->input('category', '');
         $status = $this->input('status', ''); // active, inactive, available, unavailable, ''
         $search = trim($this->input('search', ''));
+        $menuType = $this->input('menu_type', ''); // asia, europe, alacarte, other
+        $tagFilter = $this->input('tag', ''); // bestseller, new, spicy, vegetarian, recommended
+        $stockFilter = $this->input('stock_status', ''); // in_stock, low_stock, out_of_stock
+        $priceRange = $this->input('price_range', ''); // 0-50000, 50000-100000, 100000-200000, 200000+
         
         // Pagination settings
         $page = max(1, (int) $this->input('page', 1));
@@ -48,7 +52,7 @@ class AdminMenuController extends Controller
         $countAll = count($allItems);
         
         // Filter items based on parameters
-        $filteredItems = array_filter($allItems, function($item) use ($serviceType, $categoryId, $status, $search) {
+        $filteredItems = array_filter($allItems, function($item) use ($serviceType, $categoryId, $status, $search, $menuType, $tagFilter, $stockFilter, $priceRange) {
             // Service type filter
             if ($serviceType !== '' && ($item['service_type'] ?? 'both') !== $serviceType) {
                 return false;
@@ -59,12 +63,49 @@ class AdminMenuController extends Controller
                 return false;
             }
             
+            // Menu type filter
+            if ($menuType !== '' && ($item['menu_type'] ?? 'asia') !== $menuType) {
+                return false;
+            }
+            
             // Status filter
             if ($status !== '') {
                 if ($status === 'active' && (int)($item['is_active'] ?? 1) !== 1) return false;
                 if ($status === 'inactive' && (int)($item['is_active'] ?? 1) !== 0) return false;
                 if ($status === 'available' && (int)($item['is_available'] ?? 1) !== 1) return false;
                 if ($status === 'unavailable' && (int)($item['is_available'] ?? 1) !== 0) return false;
+            }
+            
+            // Tag filter
+            if ($tagFilter !== '' && empty($item['tags']) || ($tagFilter !== '' && !str_contains($item['tags'] ?? '', $tagFilter))) {
+                return false;
+            }
+            
+            // Stock status filter
+            if ($stockFilter !== '') {
+                $stock = (int)($item['stock'] ?? -1);
+                if ($stockFilter === 'in_stock' && ($stock <= 0 && $stock !== -1)) return false;
+                if ($stockFilter === 'low_stock' && ($stock < 5 || $stock === -1)) return false;
+                if ($stockFilter === 'out_of_stock' && ($stock > 0 || $stock === -1)) return false;
+            }
+            
+            // Price range filter
+            if ($priceRange !== '') {
+                $price = (float)($item['price'] ?? 0);
+                switch ($priceRange) {
+                    case '0-50000':
+                        if ($price > 50000) return false;
+                        break;
+                    case '50000-100000':
+                        if ($price < 50000 || $price > 100000) return false;
+                        break;
+                    case '100000-200000':
+                        if ($price < 100000 || $price > 200000) return false;
+                        break;
+                    case '200000+':
+                        if ($price <= 200000) return false;
+                        break;
+                }
             }
             
             // Search filter
@@ -108,6 +149,10 @@ class AdminMenuController extends Controller
                 'category' => $categoryId,
                 'status' => $status,
                 'search' => $search,
+                'menu_type' => $menuType,
+                'tag' => $tagFilter,
+                'stock_status' => $stockFilter,
+                'price_range' => $priceRange,
             ],
             'pagination' => [
                 'page' => $page,

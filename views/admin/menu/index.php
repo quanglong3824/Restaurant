@@ -12,15 +12,23 @@ $currentService = $currentFilters['service'] ?? '';
 $currentCategory = $currentFilters['category'] ?? '';
 $currentStatus = $currentFilters['status'] ?? '';
 $currentSearch = $currentFilters['search'] ?? '';
+$currentMenuType = $currentFilters['menu_type'] ?? '';
+$currentTag = $currentFilters['tag'] ?? '';
+$currentStockStatus = $currentFilters['stock_status'] ?? '';
+$currentPriceRange = $currentFilters['price_range'] ?? '';
 $currentPage = $pagination['page'] ?? 1;
 
 // Helper function to build URL with filters using current filter variables
-function buildMenuUrl($service, $category, $status, $search, $page = 1) {
+function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $stockStatus, $priceRange, $page = 1) {
     $params = array_filter([
         'service' => $service,
         'category' => $category,
         'status' => $status,
         'search' => $search,
+        'menu_type' => $menuType,
+        'tag' => $tag,
+        'stock_status' => $stockStatus,
+        'price_range' => $priceRange,
         'page' => $page > 1 ? $page : null,
     ], fn($v) => $v !== '' && $v !== null);
     
@@ -56,16 +64,16 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
 
         <!-- ── STAT CHIPS ─────────────────────────────────────── -->
         <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-            <a href="<?= buildMenuUrl('', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === '' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('', $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="stat-chip <?= $currentService === '' ? 'active' : '' ?>">
                 <i class="fas fa-border-all"></i> Tất cả <span class="chip-count"><?= $countAll ?></span>
             </a>
-            <a href="<?= buildMenuUrl('restaurant', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'restaurant' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('restaurant', $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="stat-chip <?= $currentService === 'restaurant' ? 'active' : '' ?>">
                 <i class="fas fa-utensils"></i> Nhà hàng <span class="chip-count"><?= $countRestaurant ?></span>
             </a>
-            <a href="<?= buildMenuUrl('room_service', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'room_service' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('room_service', $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="stat-chip <?= $currentService === 'room_service' ? 'active' : '' ?>">
                 <i class="fas fa-bed"></i> Room Service <span class="chip-count"><?= $countRoom ?></span>
             </a>
-            <a href="<?= buildMenuUrl('both', $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="stat-chip <?= $currentService === 'both' ? 'active' : '' ?>">
+            <a href="<?= buildMenuUrl('both', $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="stat-chip <?= $currentService === 'both' ? 'active' : '' ?>">
                 <i class="fas fa-arrows-left-right"></i> Cả hai <span class="chip-count"><?= $countBoth ?></span>
             </a>
         </div>
@@ -106,6 +114,54 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
                 </select>
             </div>
 
+            <!-- Menu Type -->
+            <div class="filter-select-wrap">
+                <i class="fas fa-utensils filter-icon"></i>
+                <select name="menu_type" id="menuTypeFilter" class="filter-select">
+                    <option value="">Tất cả loại menu</option>
+                    <option value="asia" <?= $currentMenuType === 'asia' ? 'selected' : '' ?>>Món Á</option>
+                    <option value="europe" <?= $currentMenuType === 'europe' ? 'selected' : '' ?>>Món Âu</option>
+                    <option value="alacarte" <?= $currentMenuType === 'alacarte' ? 'selected' : '' ?>>À la carte</option>
+                    <option value="other" <?= $currentMenuType === 'other' ? 'selected' : '' ?>>Khác</option>
+                </select>
+            </div>
+
+            <!-- Tags -->
+            <div class="filter-select-wrap">
+                <i class="fas fa-tag filter-icon"></i>
+                <select name="tag" id="tagFilter" class="filter-select">
+                    <option value="">Tất cả tags</option>
+                    <option value="bestseller" <?= $currentTag === 'bestseller' ? 'selected' : '' ?>>Bán chạy</option>
+                    <option value="new" <?= $currentTag === 'new' ? 'selected' : '' ?>>Mới</option>
+                    <option value="spicy" <?= $currentTag === 'spicy' ? 'selected' : '' ?>>Cay</option>
+                    <option value="vegetarian" <?= $currentTag === 'vegetarian' ? 'selected' : '' ?>>Chay</option>
+                    <option value="recommended" <?= $currentTag === 'recommended' ? 'selected' : '' ?>>Đề xuất</option>
+                </select>
+            </div>
+
+            <!-- Stock Status -->
+            <div class="filter-select-wrap">
+                <i class="fas fa-boxes filter-icon"></i>
+                <select name="stock_status" id="stockStatusFilter" class="filter-select">
+                    <option value="">Tất cả tồn kho</option>
+                    <option value="in_stock" <?= $currentStockStatus === 'in_stock' ? 'selected' : '' ?>>Còn hàng</option>
+                    <option value="low_stock" <?= $currentStockStatus === 'low_stock' ? 'selected' : '' ?>>Sắp hết</option>
+                    <option value="out_of_stock" <?= $currentStockStatus === 'out_of_stock' ? 'selected' : '' ?>>Hết hàng</option>
+                </select>
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-select-wrap">
+                <i class="fas fa-money-bill-wave filter-icon"></i>
+                <select name="price_range" id="priceRangeFilter" class="filter-select">
+                    <option value="">Tất cả khoảng giá</option>
+                    <option value="0-50000" <?= $currentPriceRange === '0-50000' ? 'selected' : '' ?>>Dưới 50k</option>
+                    <option value="50000-100000" <?= $currentPriceRange === '50000-100000' ? 'selected' : '' ?>>50k - 100k</option>
+                    <option value="100000-200000" <?= $currentPriceRange === '100000-200000' ? 'selected' : '' ?>>100k - 200k</option>
+                    <option value="200000+" <?= $currentPriceRange === '200000+' ? 'selected' : '' ?>>Trên 200k</option>
+                </select>
+            </div>
+
             <!-- Current page hidden input to preserve pagination -->
             <input type="hidden" name="page" value="<?= $currentPage ?>">
             
@@ -131,12 +187,12 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
             // First page
             if ($currentPage > 1):
             ?>
-            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
+            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
             <?php endif; ?>
             
             <!-- Previous page -->
             <?php if ($currentPage > 1): ?>
-            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage - 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
+            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $currentPage - 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
             <?php endif; ?>
             
             <!-- Page numbers -->
@@ -150,7 +206,7 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
             <?php endif; ?>
             
             <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $i) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
+            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $i) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
             <?php endfor; ?>
             
             <?php if ($endPage < $totalPages): ?>
@@ -159,12 +215,12 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
             
             <!-- Next page -->
             <?php if ($currentPage < $totalPages): ?>
-            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage + 1) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
+            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $currentPage + 1) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
             <?php endif; ?>
             
             <!-- Last page -->
             <?php if ($currentPage < $totalPages): ?>
-            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $totalPages) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
+            <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $totalPages) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
             <?php endif; ?>
         </div>
     </div>
@@ -306,12 +362,12 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
                 // First page
                 if ($currentPage > 1):
                 ?>
-                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
                 <?php endif; ?>
                 
                 <!-- Previous page -->
                 <?php if ($currentPage > 1): ?>
-                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage - 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $currentPage - 1) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
                 <?php endif; ?>
                 
                 <!-- Page numbers -->
@@ -325,7 +381,7 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
                 <?php endif; ?>
                 
                 <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $i) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $i) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
                 <?php endfor; ?>
                 
                 <?php if ($endPage < $totalPages): ?>
@@ -334,12 +390,12 @@ function buildMenuUrl($service, $category, $status, $search, $page = 1) {
                 
                 <!-- Next page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentPage + 1) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $currentPage + 1) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
                 <?php endif; ?>
                 
                 <!-- Last page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $totalPages) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
+                <a href="<?= buildMenuUrl($currentService, $currentCategory, $currentStatus, $currentSearch, $currentMenuType, $currentTag, $currentStockStatus, $currentPriceRange, $totalPages) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
                 <?php endif; ?>
             </div>
         </div>
@@ -503,6 +559,26 @@ document.getElementById('catFilter').addEventListener('change', function() {
 });
 document.getElementById('statusFilter').addEventListener('change', function() {
     // Reset page to 1 when status changes
+    document.querySelector('[name="page"]').value = 1;
+    document.getElementById('filterForm').submit();
+});
+document.getElementById('menuTypeFilter').addEventListener('change', function() {
+    // Reset page to 1 when menu type changes
+    document.querySelector('[name="page"]').value = 1;
+    document.getElementById('filterForm').submit();
+});
+document.getElementById('tagFilter').addEventListener('change', function() {
+    // Reset page to 1 when tag changes
+    document.querySelector('[name="page"]').value = 1;
+    document.getElementById('filterForm').submit();
+});
+document.getElementById('stockStatusFilter').addEventListener('change', function() {
+    // Reset page to 1 when stock status changes
+    document.querySelector('[name="page"]').value = 1;
+    document.getElementById('filterForm').submit();
+});
+document.getElementById('priceRangeFilter').addEventListener('change', function() {
+    // Reset page to 1 when price range changes
     document.querySelector('[name="page"]').value = 1;
     document.getElementById('filterForm').submit();
 });
