@@ -230,7 +230,6 @@ class QrMenuController extends Controller
         
         // Lấy tất cả orders của visitor token (cả open và closed)
         $orders = [];
-        $tables = [];
         
         if (!empty($visitorToken)) {
             // Lấy tất cả orders (cả open và closed) từ session_id
@@ -257,17 +256,12 @@ class QrMenuController extends Controller
             } catch (\Throwable $e) {
                 $orders = [];
             }
-            
-            // Lấy danh sách bàn/phòng
-            $tableModel = new Table();
-            $tables = $tableModel->getAll();
         }
         
         $this->view('layouts/public', [
             'view' => 'menu/landing',
             'pageTitle' => 'AURORA HOTEL PLAZA - Restaurant',
             'orders' => $orders,
-            'tables' => $tables,
             'visitorToken' => $visitorToken,
             'isCustomer' => true
         ]);

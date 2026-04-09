@@ -295,57 +295,34 @@ $hasHistory = !empty($orders) && count($orders) > 0;
         }
 
         /* Table Selection */
-        .table-section {
-            padding: 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .table-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .table-card {
-            background: var(--card-bg);
-            border: 2px solid var(--border);
+        /* Info Box */
+        .info-box {
+            background: linear-gradient(135deg, var(--gold-light), rgba(197, 160, 89, 0.05));
+            border: 1px solid var(--gold);
             border-radius: var(--radius);
             padding: 1.5rem;
+            margin-top: 2rem;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .table-card:hover {
-            border-color: var(--gold);
-            background: var(--gold-light);
-            transform: translateY(-4px);
-        }
-
-        .table-card i {
-            font-size: 2rem;
+        .info-box i {
+            font-size: 2.5rem;
             color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .info-box h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
             margin-bottom: 0.5rem;
         }
 
-        .table-card .name {
-            font-weight: 700;
-            color: var(--text-dark);
+        .info-box p {
+            color: var(--text-med);
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
-
-        .table-card .status {
-            font-size: 0.7rem;
-            color: var(--text-light);
-            margin-top: 4px;
-        }
-
-        .table-card.available { border-color: #10b981; }
-        .table-card.available:hover { background: #d1fae5; }
-
-        .table-card.occupied { border-color: #ef4444; }
-        .table-card.occupied:hover { background: #fee2e2; }
 
         /* Modal */
         .modal-backdrop {
@@ -446,8 +423,7 @@ $hasHistory = !empty($orders) && count($orders) > 0;
         @media (max-width: 480px) {
             .hero-logo h1 { font-size: 2rem; }
             .hero-section { min-height: 40vh; padding: 1.5rem; }
-            .history-section, .table-section { padding: 1rem; }
-            .table-grid { grid-template-columns: repeat(2, 1fr); }
+            .history-section { padding: 1rem; }
         }
     </style>
 </head>
@@ -540,24 +516,17 @@ $hasHistory = !empty($orders) && count($orders) > 0;
     </section>
     <?php endif; ?>
 
-    <!-- Table Selection (Optional - if needed) -->
-    <?php if (!empty($tables)): ?>
-    <section class="table-section">
-        <h2 class="section-title">
-            <i class="fas fa-door-open"></i>
-            <span>Chọn Bàn / Phòng</span>
-        </h2>
-        <div class="table-grid">
-            <?php foreach ($tables as $table): ?>
-            <div class="table-card <?= $table['status'] ?>" onclick="selectTable(<?= $table['id'] ?>, '<?= e($table['name']) ?>')">
-                <i class="fas <?= $table['type'] === 'room' ? 'fa-bed' : 'fa-utensils' ?>"></i>
-                <div class="name"><?= e($table['name']) ?></div>
-                <div class="status"><?= $table['status'] === 'available' ? 'Trống' : 'Đã có khách' ?></div>
-            </div>
-            <?php endforeach; ?>
+    <!-- Info Box: Hướng dẫn -->
+    <section class="history-section">
+        <div class="info-box">
+            <i class="fas fa-qrcode"></i>
+            <h3>Đặt Món Tại Bàn</h3>
+            <p>
+                Để đặt món, quý khách vui lòng đến nhà hàng và quét mã QR trên bàn.<br>
+                Hệ thống sẽ tự động nhận diện bàn và phục vụ quý khách tốt nhất.
+            </p>
         </div>
     </section>
-    <?php endif; ?>
 
     <!-- Order Detail Modal -->
     <div class="modal-backdrop" id="orderDetailModal">
@@ -629,16 +598,6 @@ $hasHistory = !empty($orders) && count($orders) > 0;
 
         function formatPrice(amount) {
             return new Intl.NumberFormat('vi-VN').format(amount) + '₫';
-        }
-
-        // Select table
-        function selectTable(tableId, tableName) {
-            // Store table info in localStorage
-            localStorage.setItem('selected_table_id', tableId);
-            localStorage.setItem('selected_table_name', tableName);
-            
-            // Redirect to menu
-            window.location.href = '<?= BASE_URL ?>/qr/menu?table_id=' + tableId;
         }
 
         // Close modal on outside click
