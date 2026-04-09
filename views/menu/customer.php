@@ -396,29 +396,40 @@ if ($hasItems) {
         z-index: 999;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         align-items: flex-end;
     }
     
     .fab-main {
-        width: 60px;
-        height: 60px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--gold), var(--gold-dark));
         color: #fff;
         border: none;
-        box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4);
+        box-shadow: 0 6px 25px rgba(197, 160, 89, 0.5);
         cursor: pointer;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        padding: 0;
+    }
+    
+    .fab-main-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-top: -2px;
+        text-transform: uppercase;
     }
     
     .fab-main:hover {
         transform: scale(1.1);
-        box-shadow: 0 6px 25px rgba(197, 160, 89, 0.5);
+        box-shadow: 0 8px 30px rgba(197, 160, 89, 0.6);
     }
     
     .fab-main.active {
@@ -428,39 +439,47 @@ if ($hasItems) {
     .fab-menu {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 14px;
         max-height: 0;
         overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         opacity: 0;
     }
     
     .fab-menu.show {
-        max-height: 300px;
+        max-height: 350px;
         opacity: 1;
     }
     
+    .fab-item-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+    
     .fab-item {
-        width: 50px;
-        height: 50px;
+        width: 58px;
+        height: 58px;
         border-radius: 50%;
         background: #fff;
         color: var(--gold-dark);
-        border: 2px solid var(--gold);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: 2.5px solid var(--gold);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         transition: all 0.2s;
         position: relative;
     }
     
     .fab-item:hover {
-        transform: scale(1.1);
+        transform: scale(1.15);
         background: var(--gold);
         color: #fff;
+        box-shadow: 0 6px 20px rgba(197, 160, 89, 0.4);
     }
     
     .fab-item.has-items {
@@ -472,22 +491,49 @@ if ($hasItems) {
         50% { box-shadow: 0 4px 25px rgba(197, 160, 89, 0.7); }
     }
     
+    .fab-status-dot {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 10px;
+        height: 10px;
+        background: #ef4444;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        animation: dotPulse 1.5s infinite;
+    }
+    
+    @keyframes dotPulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.8; }
+    }
+    
+    .fab-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+    
     .fab-tooltip {
         position: absolute;
-        right: 60px;
+        right: 70px;
         background: rgba(15, 23, 42, 0.95);
         color: #fff;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 0.75rem;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 0.8rem;
         font-weight: 600;
         white-space: nowrap;
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.2s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     
-    .fab-item:hover .fab-tooltip {
+    .fab-item-wrapper:hover .fab-tooltip {
         opacity: 1;
     }
     
@@ -499,15 +545,23 @@ if ($hasItems) {
         }
         
         .fab-main {
-            width: 55px;
-            height: 55px;
-            font-size: 1.3rem;
+            width: 64px;
+            height: 64px;
+            font-size: 1.4rem;
+        }
+        
+        .fab-main-label {
+            font-size: 0.6rem;
         }
         
         .fab-item {
-            width: 45px;
-            height: 45px;
-            font-size: 1.1rem;
+            width: 52px;
+            height: 52px;
+            font-size: 1.2rem;
+        }
+        
+        .fab-label {
+            font-size: 0.65rem;
         }
     }
     </style>
@@ -607,26 +661,39 @@ if ($hasItems) {
     </main>
 </div>
 
-<!-- ── Floating Action Button ── -->
-<div class="fab-container">
-    <div class="fab-menu" id="fabMenu">
-        <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>">
-            <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
-            <span class="fab-tooltip"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
-        </button>
-        <button class="fab-item <?= $hasItems ? 'has-items' : '' ?>" onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>" title="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
-        </button>
-        <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
-            <i class="fas fa-sync-alt"></i>
-            <span class="fab-tooltip">Làm mới</span>
+    <!-- ── Floating Action Button ── -->
+    <div class="fab-container">
+        <div class="fab-menu" id="fabMenu">
+            <div class="fab-item-wrapper">
+                <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>">
+                    <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
+                </button>
+                <span class="fab-label"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+                <span class="fab-tooltip"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+            </div>
+            <div class="fab-item-wrapper">
+                <button class="fab-item <?= $hasItems ? 'has-items' : '' ?>" onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>" title="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <?php if ($hasItems): ?>
+                        <span class="fab-status-dot"></span>
+                    <?php endif; ?>
+                </button>
+                <span class="fab-label"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+                <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+            </div>
+            <div class="fab-item-wrapper">
+                <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <span class="fab-label">Làm mới</span>
+                <span class="fab-tooltip">Làm mới</span>
+            </div>
+        </div>
+        <button class="fab-main" id="fabMain" onclick="toggleFab()">
+            <i class="fas fa-bars" id="fabIcon"></i>
+            <span class="fab-main-label">MENU</span>
         </button>
     </div>
-    <button class="fab-main" id="fabMain" onclick="toggleFab()">
-        <i class="fas fa-bars" id="fabIcon"></i>
-    </button>
-</div>
 
 <!-- ── Floating Cart Bar ── -->
 <div id="cartBar" class="cart-bar hidden">
