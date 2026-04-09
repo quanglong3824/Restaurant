@@ -723,23 +723,23 @@ if ($hasItems) {
 <div id="cartModal" class="modal-backdrop hidden">
     <div class="modal modal-bottom">
         <div class="modal-header">
-            <h3><i class="fas fa-shopping-cart me-2"></i> Chi tiết đơn hàng</h3>
+            <h3><i class="fas fa-shopping-cart me-2"></i> <span class="lang" data-vi="Chi tiết đơn hàng" data-en="Order Details">Chi tiết đơn hàng</span></h3>
             <button class="modal-close" onclick="toggleCartModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div id="cartItemsList" class="cart-items-container"></div>
             <div class="order-notes-box mt-3" style="margin-top:1rem;">
-                <label style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">GHI CHÚ ĐƠN HÀNG</label>
+                <label class="lang" data-vi="GHI CHÚ ĐƠN HÀNG" data-en="ORDER NOTES" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">GHI CHÚ ĐƠN HÀNG</label>
                 <textarea id="orderNotes" placeholder="VD: Không lấy hành, ít cay..."></textarea>
             </div>
         </div>
         <div class="modal-footer">
             <div class="total-summary">
-                <span>Tổng cộng</span>
+                <span class="lang" data-vi="Tổng cộng" data-en="Total">Tổng cộng</span>
                 <strong id="modalCartTotal">0₫</strong>
             </div>
             <button class="btn-submit-order" id="btnSubmitOrder" onclick="submitOrder()">
-                <i class="fas fa-paper-plane me-2"></i> XÁC NHẬN GỬI BẾP
+                <i class="fas fa-paper-plane me-2"></i> <span class="lang" data-vi="XÁC NHẬN GỬI BẾP" data-en="CONFIRM ORDER">XÁC NHẬN GỬI BẾP</span>
             </button>
         </div>
     </div>
@@ -760,7 +760,7 @@ if ($hasItems) {
                 <p id="detailDesc" class="item-desc" style="margin-top:8px;font-size:.875rem;color:#64748b;line-height:1.5;"></p>
             </div>
             <div id="detailOptsWrap" style="display:none;margin-bottom:1.25rem;">
-                <label style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block;">
+                <label class="lang" data-vi="Tuỳ chọn nhanh" data-en="Quick Options" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block;">
                     Tuỳ chọn nhanh / Quick Options
                 </label>
                 <div id="detailOptsContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
@@ -779,7 +779,7 @@ if ($hasItems) {
         </div>
         <div class="modal-footer">
             <button class="btn-submit-order w-100" id="btnAddOrder" onclick="addFromDetail()">
-                <i class="fas fa-cart-plus me-2"></i> THÊM VÀO ĐƠN HÀNG
+                <i class="fas fa-cart-plus me-2"></i> <span class="lang" data-vi="THÊM VÀO ĐƠN HÀNG" data-en="ADD TO ORDER">THÊM VÀO ĐƠN HÀNG</span>
             </button>
         </div>
     </div>
@@ -789,7 +789,7 @@ if ($hasItems) {
 <div id="billTamModal" class="modal-backdrop hidden">
     <div class="modal modal-bottom modal-premium">
         <div class="modal-header">
-            <h3><i class="fas fa-file-invoice-dollar me-2"></i> Hoá đơn tạm tính</h3>
+            <h3><i class="fas fa-file-invoice-dollar me-2"></i> <span class="lang" data-vi="Hoá đơn tạm tính" data-en="Preliminary Bill">Hoá đơn tạm tính</span></h3>
             <button class="modal-close" onclick="closeBillTam()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -811,30 +811,33 @@ if ($hasItems) {
                             <div class="bill-item-status <?= $oi['status'] ?>">
                                 <?php
                                 $statusTxt = ['confirmed'=>'✅ Đã xác nhận','pending'=>'⏳ Chờ xác nhận','draft'=>'📝 Chờ gửi bếp'];
-                                echo $statusTxt[$oi['status']] ?? $oi['status'];
+                                $statusTxtEn = ['confirmed'=>'✅ Confirmed','pending'=>'⏳ Pending','draft'=>'📝 Draft'];
+                                echo $currentLang === 'en' ? ($statusTxtEn[$oi['status']] ?? $oi['status']) : ($statusTxt[$oi['status']] ?? $oi['status']);
                                 ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
                     <div class="bill-summary">
                         <div class="bill-total-row">
-                            <span>Tổng tiền món</span>
+                            <span class="lang" data-vi="Tổng tiền món" data-en="Subtotal">Tổng tiền món</span>
                             <strong><?= formatPrice($orderTotal) ?></strong>
                         </div>
                     </div>
                 <?php else: ?>
                     <div class="menu-empty-state">
                         <i class="fas fa-receipt"></i>
-                        <p>Bàn chưa có món nào được gọi.</p>
+                        <p class="lang" data-vi="Bàn chưa có món nào được gọi." data-en="No items ordered yet.">Bàn chưa có món nào được gọi.</p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
         <div class="modal-footer" style="display:flex;flex-direction:column;gap:.5rem;">
             <button class="btn-gold w-100" onclick="callWaiter('payment')">
-                <i class="fas fa-hand-holding-usd me-2"></i> YÊU CẦU THANH TOÁN
+                <i class="fas fa-hand-holding-usd me-2"></i> <span class="lang" data-vi="YÊU CẦU THANH TOÁN" data-en="REQUEST PAYMENT">YÊU CẦU THANH TOÁN</span>
             </button>
-            <button class="btn-ghost w-100" onclick="closeBillTam()">TIẾP TỤC ĐẶT MÓN</button>
+            <button class="btn-ghost w-100" onclick="closeBillTam()">
+                <span class="lang" data-vi="TIẾP TỤC ĐẶT MÓN" data-en="CONTINUE ORDERING">TIẾP TỤC ĐẶT MÓN</span>
+            </button>
         </div>
     </div>
 </div>
