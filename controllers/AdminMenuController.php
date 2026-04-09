@@ -253,7 +253,7 @@ class AdminMenuController extends Controller
         $category = $this->input('category', '');
         $status = $this->input('status', '');
         $search = $this->input('search', '');
-        $menuType = $this->input('menu_type', '');
+        // Không lấy menu_type từ form vì đây là loại của món, không phải filter
         $tag = $this->input('tag', '');
         $stockStatus = $this->input('stock_status', '');
         $priceRange = $this->input('price_range', '');
@@ -280,14 +280,13 @@ class AdminMenuController extends Controller
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật món!'];
         
-        // Build redirect URL with filters and page
+        // Build redirect URL with filters and page (không bao gồm menu_type)
         $params = array_filter([
             'page' => $page,
             'service' => $service,
             'category' => $category,
             'status' => $status,
             'search' => $search,
-            'menu_type' => $menuType,
             'tag' => $tag,
             'stock_status' => $stockStatus,
             'price_range' => $priceRange,

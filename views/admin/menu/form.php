@@ -23,7 +23,7 @@ $isEdit = !empty($item);
             <input type="hidden" name="category" value="<?= $_GET['category'] ?? '' ?>">
             <input type="hidden" name="status" value="<?= $_GET['status'] ?? '' ?>">
             <input type="hidden" name="search" value="<?= $_GET['search'] ?? '' ?>">
-            <input type="hidden" name="menu_type" value="<?= $_GET['menu_type'] ?? '' ?>">
+            <!-- Không truyền menu_type từ form vì đây là loại của món, không phải filter -->
             <input type="hidden" name="tag" value="<?= $_GET['tag'] ?? '' ?>">
             <input type="hidden" name="stock_status" value="<?= $_GET['stock_status'] ?? '' ?>">
             <input type="hidden" name="price_range" value="<?= $_GET['price_range'] ?? '' ?>">
@@ -356,5 +356,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fix builder IDs (replace 'Input' → 'Builder' in click handler)
     document.getElementById('optsBuilderVI').addEventListener('click', () => document.getElementById('optsInputVI').focus());
     document.getElementById('optsBuilderEN').addEventListener('click', () => document.getElementById('optsInputEN').focus());
+
+    // Fix: Allow Enter to submit form from select elements
+    document.querySelectorAll('select.form-control').forEach(select => {
+        select.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                // Blur the select to close dropdown
+                select.blur();
+                // Submit the form
+                select.closest('form').submit();
+            }
+        });
+    });
+
+    // Fix: Scroll to top when page loads (fix "cuộn khá sâu" issue)
+    window.scrollTo(0, 0);
+
+    // Fix: Focus first input for better UX
+    const firstInput = document.querySelector('input[name="name"]');
+    if (firstInput) firstInput.focus();
 });
 </script>
