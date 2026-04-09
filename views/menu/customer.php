@@ -312,8 +312,8 @@ if ($hasItems) {
             <span class="ctx-text"><?= $isRoomService ? 'Thực đơn phục vụ tại phòng — Đặt món sẽ được mang đến tận nơi' : 'Thực đơn nhà hàng — Đặt món ngay tại bàn và chờ phục vụ' ?></span>
         </div>
 
-        <!-- Action bar -->
-        <div class="action-bar">
+        <!-- Action bar - Hidden by default, shown via FAB -->
+        <div class="action-bar" id="actionBar" style="display:none;">
             <button class="action-btn" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'">
                 <i class="fas fa-th-list"></i>
                 <span class="lang" data-vi="Bàn của tôi" data-en="My Tables">Bàn của tôi</span>
@@ -386,6 +386,129 @@ if ($hasItems) {
     .lang-toggle-btn:hover {
         background: var(--gold) !important;
         color: #fff !important;
+    }
+    
+    /* Floating Action Button */
+    .fab-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-end;
+    }
+    
+    .fab-main {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .fab-main:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(197, 160, 89, 0.5);
+    }
+    
+    .fab-main.active {
+        transform: rotate(45deg);
+    }
+    
+    .fab-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        opacity: 0;
+    }
+    
+    .fab-menu.show {
+        max-height: 300px;
+        opacity: 1;
+    }
+    
+    .fab-item {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--gold-dark);
+        border: 2px solid var(--gold);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.2s;
+        position: relative;
+    }
+    
+    .fab-item:hover {
+        transform: scale(1.1);
+        background: var(--gold);
+        color: #fff;
+    }
+    
+    .fab-item.has-items {
+        animation: fabPulse 2s infinite;
+    }
+    
+    @keyframes fabPulse {
+        0%, 100% { box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4); }
+        50% { box-shadow: 0 4px 25px rgba(197, 160, 89, 0.7); }
+    }
+    
+    .fab-tooltip {
+        position: absolute;
+        right: 60px;
+        background: rgba(15, 23, 42, 0.95);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+    }
+    
+    .fab-item:hover .fab-tooltip {
+        opacity: 1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 480px) {
+        .fab-container {
+            bottom: 15px;
+            right: 15px;
+        }
+        
+        .fab-main {
+            width: 55px;
+            height: 55px;
+            font-size: 1.3rem;
+        }
+        
+        .fab-item {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+        }
     }
     </style>
 
@@ -482,6 +605,27 @@ if ($hasItems) {
             </button>
         </div>
     </main>
+</div>
+
+<!-- ── Floating Action Button ── -->
+<div class="fab-container">
+    <div class="fab-menu" id="fabMenu">
+        <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>">
+            <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
+            <span class="fab-tooltip"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+        </button>
+        <button class="fab-item <?= $hasItems ? 'has-items' : '' ?>" onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>" title="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+        </button>
+        <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
+            <i class="fas fa-sync-alt"></i>
+            <span class="fab-tooltip">Làm mới</span>
+        </button>
+    </div>
+    <button class="fab-main" id="fabMain" onclick="toggleFab()">
+        <i class="fas fa-bars" id="fabIcon"></i>
+    </button>
 </div>
 
 <!-- ── Floating Cart Bar ── -->
@@ -696,8 +840,30 @@ function clearMenuSearch() {
     if (_searchEl) { _searchEl.value = ''; _filterMenu(); }
 }
 
+/* ── FAB Toggle ── */
+let fabOpen = false;
+function toggleFab() {
+    fabOpen = !fabOpen;
+    const menu = document.getElementById('fabMenu');
+    const icon = document.getElementById('fabIcon');
+    const main = document.getElementById('fabMain');
+    
+    if (fabOpen) {
+        menu.classList.add('show');
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+        main.classList.add('active');
+    } else {
+        menu.classList.remove('show');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+        main.classList.remove('active');
+    }
+}
+
 /* ── Bill modal ── */
 function showBillTam() {
+    toggleFab();
     document.getElementById('billTamModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
