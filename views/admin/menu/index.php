@@ -16,11 +16,12 @@ $currentPage = $pagination['page'] ?? 1;
 
 // Helper function to build URL with filters
 function buildMenuUrl($params = []) {
+    global $currentFilters;
     $defaults = [
-        'service' => $GLOBALS['currentFilters']['service'] ?? '',
-        'category' => $GLOBALS['currentFilters']['category'] ?? '',
-        'status' => $GLOBALS['currentFilters']['status'] ?? '',
-        'search' => $GLOBALS['currentFilters']['search'] ?? '',
+        'service' => $currentFilters['service'] ?? '',
+        'category' => $currentFilters['category'] ?? '',
+        'status' => $currentFilters['status'] ?? '',
+        'search' => $currentFilters['search'] ?? '',
         'page' => 1, // Default to page 1 when changing filters
     ];
     $params = array_merge($defaults, $params);
