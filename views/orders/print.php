@@ -17,6 +17,40 @@
             margin: 10mm;
         }
         
+        /* Remove browser header/footer */
+        @page :first {
+            margin-top: 10mm;
+        }
+        
+        @page :left {
+            margin-left: 10mm;
+        }
+        
+        @page :right {
+            margin-right: 10mm;
+        }
+        
+        body::before, body::after {
+            display: none;
+            content: none;
+        }
+        
+        /* Hide browser headers/footers */
+        @media print {
+            @page {
+                margin: 10mm;
+            }
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            /* Remove default browser headers and footers */
+            html {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 9pt;
@@ -92,6 +126,15 @@
             margin: 5px 0;
             padding: 3px 0;
             border-bottom: 1px dashed #ccc;
+        }
+        
+        /* Invoice label */
+        .invoice-label {
+            font-size: 10pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 5px 0;
+            text-align: center;
         }
         
         /* Title */
@@ -253,6 +296,16 @@
             text-align: center;
             font-size: 8pt;
             font-style: italic;
+            border-top: 1px dashed #ccc;
+            padding-top: 8px;
+        }
+        
+        .footer .restaurant-name {
+            font-size: 9pt;
+            font-weight: bold;
+            font-style: normal;
+            text-transform: uppercase;
+            margin-bottom: 3px;
         }
         
         /* Page break prevention */
@@ -265,15 +318,8 @@
         }
         
         /* Print utilities */
-        @media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            .no-print {
-                display: none;
-            }
+        .no-print {
+            display: none;
         }
     </style>
 </head>
@@ -296,16 +342,19 @@
             </div>
         </div>
         
-        <!-- Meta Info -->
-        <div class="meta-info">
-            <span>Date: <?= date('d/m/Y') ?> &nbsp;&nbsp; Time: <?= date('H:i') ?></span>
-            <span>Table: <?= e($tableDisplayName) ?></span>
-        </div>
+        <!-- Invoice Label -->
+        <div class="invoice-label">HÓA ĐƠN</div>
         
         <!-- Title -->
         <div class="title-section">
             <div class="title-vi">BẢNG KÊ CHI TIẾT</div>
             <div class="title-en">GUEST CHECK</div>
+        </div>
+        
+        <!-- Meta Info -->
+        <div class="meta-info">
+            <span>Date: <?= date('d/m/Y') ?> &nbsp;&nbsp; Time: <?= date('H:i') ?></span>
+            <span>Table: <?= e($tableDisplayName) ?></span>
         </div>
         
         <!-- Items Table -->
@@ -379,7 +428,8 @@
         
         <!-- Footer -->
         <div class="footer">
-            Thank you and see you again! - Cảm ơn quý khách và hẹn gặp lại!
+            <div class="restaurant-name">AURORA RESTAURANT</div>
+            <p>Hoá đơn được in từ Aurora Restaurant</p>
         </div>
     </div>
     
