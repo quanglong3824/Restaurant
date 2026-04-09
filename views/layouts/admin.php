@@ -151,37 +151,30 @@
                 </div>
             <?php endif; ?>
 
-            <div class="nav-section">
-                <div class="nav-section-title">Tài khoản</div>
-                <a href="<?= BASE_URL ?>/auth/logout" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Đăng xuất</span>
-                </a>
-            </div>
-
         </nav>
 
-        <!-- Sidebar Footer (Minimized) -->
+        <!-- Sidebar Footer - User Info & Logout -->
         <div class="sidebar-footer">
-            <p>AURORA v<?= APP_VERSION ?></p>
+            <div class="sidebar-user-card">
+                <div class="sidebar-user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name"><?= e(Auth::user()['name'] ?? 'User') ?></div>
+                    <div class="sidebar-user-role"><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></div>
+                </div>
+            </div>
+            <a href="<?= BASE_URL ?>/auth/logout" class="sidebar-logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+            <div class="sidebar-version">
+                AURORA v<?= APP_VERSION ?>
+            </div>
         </div>
 
     </aside>
 
-    <style>
-        .sidebar-footer {
-            padding: 5px 0;
-            text-align: center;
-            opacity: 0.5;
-        }
-        .sidebar-footer p {
-            margin: 0;
-            font-size: 0.55rem;
-            font-weight: 800;
-            color: #cbd5e1;
-            letter-spacing: 0.5px;
-        }
-    </style>
 
     <!-- Main Content -->
     <div class="admin-body">
