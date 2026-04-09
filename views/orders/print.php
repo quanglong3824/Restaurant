@@ -14,41 +14,40 @@
         
         @page {
             size: A5;
-            margin: 10mm;
+            margin: 15mm;
         }
         
-        /* Remove browser header/footer */
         @page :first {
-            margin-top: 10mm;
+            margin: 15mm;
         }
         
         @page :left {
-            margin-left: 10mm;
+            margin: 15mm;
         }
         
         @page :right {
-            margin-right: 10mm;
+            margin: 15mm;
         }
         
-        body::before, body::after {
-            display: none;
-            content: none;
-        }
-        
-        /* Hide browser headers/footers */
         @media print {
             @page {
-                margin: 10mm;
+                margin: 15mm;
+                size: A5;
             }
             body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            /* Remove default browser headers and footers */
             html {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
+            @top-left { content: none; }
+            @top-center { content: none; }
+            @top-right { content: none; }
+            @bottom-left { content: none; }
+            @bottom-center { content: none; }
+            @bottom-right { content: none; }
         }
         
         body {
