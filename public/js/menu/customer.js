@@ -547,8 +547,9 @@ function showToast(msg) {
             .toast-notification {
                 position: fixed;
                 top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
+                left: 0;
+                right: 0;
+                margin: auto;
                 background: rgba(15, 23, 42, 0.9);
                 color: white;
                 padding: 12px 25px;
@@ -562,6 +563,8 @@ function showToast(msg) {
                 font-weight: 600;
                 font-size: 0.9rem;
                 white-space: nowrap;
+                max-width: -moz-fit-content;
+                max-width: fit-content;
             }
             @keyframes toastFadeIn { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
             @keyframes toastFadeOut { from { top: 20px; opacity: 1; } to { top: -50px; opacity: 0; } }

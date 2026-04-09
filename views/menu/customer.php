@@ -672,7 +672,7 @@ if ($hasItems) {
     <div class="fab-container">
         <div class="fab-menu" id="fabMenu">
             <div class="fab-item-wrapper">
-                <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="Gọi nhân viên">
+                <button class="fab-item" onclick="callWaiter('support')" title="Gọi nhân viên">
                     <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
                 </button>
                 <span class="fab-label" data-vi="Gọi nhân viên" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên</span>
