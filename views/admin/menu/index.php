@@ -1,11 +1,31 @@
 <?php // views/admin/menu/index.php ?>
 
 <?php
-// Use filter counts from controller (computed from ALL items)
-$totalAll = $pagination['total'] ?? count($items);
+// Use filter counts from controller (computed from filtered items)
+$countAll = $filterCounts['all'] ?? 0;
 $countRestaurant = $filterCounts['restaurant'] ?? 0;
 $countRoom = $filterCounts['room_service'] ?? 0;
 $countBoth = $filterCounts['both'] ?? 0;
+
+// Get current filters
+$currentService = $currentFilters['service'] ?? '';
+$currentCategory = $currentFilters['category'] ?? '';
+$currentStatus = $currentFilters['status'] ?? '';
+$currentSearch = $currentFilters['search'] ?? '';
+
+// Helper function to build URL with filters
+function buildMenuUrl($params = []) {
+    $defaults = [
+        'service' => $GLOBALS['currentFilters']['service'] ?? '',
+        'category' => $GLOBALS['currentFilters']['category'] ?? '',
+        'status' => $GLOBALS['currentFilters']['status'] ?? '',
+        'search' => $GLOBALS['currentFilters']['search'] ?? '',
+        'page' => 1,
+    ];
+    $params = array_merge($defaults, $params);
+    $query = http_build_query(array_filter($params, fn($v) => $v !== ''));
+    return BASE_URL . '/admin/menu' . ($query ? '?' . $query : '');
+}
 ?>
 
 <div class="card">
@@ -13,7 +33,7 @@ $countBoth = $filterCounts['both'] ?? 0;
         
         <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:.75rem;">
             <h2 style="margin:0;"><i class="fas fa-utensils"></i> Danh sách Món ăn
-                <span id="countBadge" style="font-size:.75rem;font-weight:600;background:var(--gold);color:#fff;padding:.15rem .65rem;border-radius:20px;margin-left:.5rem;vertical-align:middle;"><?= $countAll ?> món</span>
+                <span id="countBadge" style="font-size:.75rem;font-weight:600;background:var(--gold);color:#fff;padding:.15rem .65rem;border-radius:20px;margin-left:.5rem;vertical-align:middle;"><?= $pagination['total'] ?? 0 ?> món</span>
             </h2>
             <div style="display:flex;gap:.5rem;">
                 <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline <?= !isset($_GET['type']) || $_GET['type'] === '' ? 'active' : '' ?>" style="text-decoration:none;">
@@ -35,27 +55,29 @@ $countBoth = $filterCounts['both'] ?? 0;
 
         <!-- ── STAT CHIPS ─────────────────────────────────────── -->
         <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
-            <button class="stat-chip active" data-service="" onclick="quickFilter(this,'')">
+            <a href="<?= buildMenuUrl(['service' => '', 'page' => 1]) ?>" class="stat-chip <?= $currentService === '' ? 'active' : '' ?>">
                 <i class="fas fa-border-all"></i> Tất cả <span class="chip-count"><?= $countAll ?></span>
-            </button>
-            <button class="stat-chip" data-service="restaurant" onclick="quickFilter(this,'restaurant')">
+            </a>
+            <a href="<?= buildMenuUrl(['service' => 'restaurant', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'restaurant' ? 'active' : '' ?>">
                 <i class="fas fa-utensils"></i> Nhà hàng <span class="chip-count"><?= $countRestaurant ?></span>
-            </button>
-            <button class="stat-chip" data-service="room_service" onclick="quickFilter(this,'room_service')">
+            </a>
+            <a href="<?= buildMenuUrl(['service' => 'room_service', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'room_service' ? 'active' : '' ?>">
                 <i class="fas fa-bed"></i> Room Service <span class="chip-count"><?= $countRoom ?></span>
-            </button>
-            <button class="stat-chip" data-service="both" onclick="quickFilter(this,'both')">
+            </a>
+            <a href="<?= buildMenuUrl(['service' => 'both', 'page' => 1]) ?>" class="stat-chip <?= $currentService === 'both' ? 'active' : '' ?>">
                 <i class="fas fa-arrows-left-right"></i> Cả hai <span class="chip-count"><?= $countBoth ?></span>
-            </button>
+            </a>
         </div>
 
         <!-- ── FILTER BAR ──────────────────────────────────────── -->
-        <div class="filter-bar">
+        <form method="GET" action="<?= BASE_URL ?>/admin/menu" class="filter-bar" id="filterForm">
+            <input type="hidden" name="service" value="<?= e($currentService) ?>">
+            
             <!-- Search -->
             <div class="filter-input-wrap">
                 <i class="fas fa-search filter-icon"></i>
-                <input type="text" id="searchInput" class="filter-input" placeholder="Tìm tên món...">
-                <button id="clearSearch" class="filter-clear" style="display:none;" onclick="clearSearchInput()" title="Xóa">
+                <input type="text" name="search" id="searchInput" class="filter-input" placeholder="Tìm tên món..." value="<?= e($currentSearch) ?>">
+                <button type="button" id="clearSearch" class="filter-clear" style="display:<?= $currentSearch ? '' : 'none' ?>;" onclick="clearSearchInput()" title="Xóa">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -63,10 +85,10 @@ $countBoth = $filterCounts['both'] ?? 0;
             <!-- Category -->
             <div class="filter-select-wrap">
                 <i class="fas fa-folder filter-icon"></i>
-                <select id="catFilter" class="filter-select">
+                <select name="category" id="catFilter" class="filter-select">
                     <option value="">Tất cả danh mục</option>
                     <?php foreach ($categories as $cat): ?>
-                        <option value="<?= $cat['id'] ?>"><?= e($cat['name']) ?></option>
+                        <option value="<?= $cat['id'] ?>" <?= $currentCategory == $cat['id'] ? 'selected' : '' ?>><?= e($cat['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -74,20 +96,20 @@ $countBoth = $filterCounts['both'] ?? 0;
             <!-- Status -->
             <div class="filter-select-wrap">
                 <i class="fas fa-eye filter-icon"></i>
-                <select id="statusFilter" class="filter-select">
+                <select name="status" id="statusFilter" class="filter-select">
                     <option value="">Tất cả trạng thái</option>
-                    <option value="active">Đang hiển thị</option>
-                    <option value="inactive">Đang ẩn</option>
-                    <option value="available">Còn hàng</option>
-                    <option value="unavailable">Hết hàng</option>
+                    <option value="active" <?= $currentStatus === 'active' ? 'selected' : '' ?>>Đang hiển thị</option>
+                    <option value="inactive" <?= $currentStatus === 'inactive' ? 'selected' : '' ?>>Đang ẩn</option>
+                    <option value="available" <?= $currentStatus === 'available' ? 'selected' : '' ?>>Còn hàng</option>
+                    <option value="unavailable" <?= $currentStatus === 'unavailable' ? 'selected' : '' ?>>Hết hàng</option>
                 </select>
             </div>
 
             <!-- Reset -->
-            <button id="resetFilters" class="btn btn-outline btn-sm" onclick="resetAllFilters()" title="Xóa bộ lọc">
+            <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline btn-sm" title="Xóa bộ lọc">
                 <i class="fas fa-rotate-left"></i> Đặt lại
-            </button>
-        </div>
+            </a>
+        </form>
     </div>
 
     <div class="table-wrap">
@@ -205,9 +227,9 @@ $countBoth = $filterCounts['both'] ?? 0;
         <div id="noResultsState" style="display:none;text-align:center;padding:3rem 1rem;color:#9ca3af;">
             <i class="fas fa-search fa-2x" style="opacity:.3;display:block;margin-bottom:.75rem;"></i>
             <p style="font-weight:600;">Không tìm thấy món phù hợp</p>
-            <button onclick="resetAllFilters()" class="btn btn-outline btn-sm" style="margin-top:.5rem;">
-                <i class="fas fa-rotate-left me-1"></i> Xóa bộ lọc
-            </button>
+            <a href="<?= BASE_URL ?>/admin/menu" class="btn btn-outline btn-sm" style="margin-top:.5rem;">
+                <i class="fas fa-rotate-left"></i> Xóa bộ lọc
+            </a>
         </div>
 
         <!-- Pagination -->
@@ -225,12 +247,12 @@ $countBoth = $filterCounts['both'] ?? 0;
                 // First page
                 if ($currentPage > 1):
                 ?>
-                <a href="?page=1" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
+                <a href="<?= buildMenuUrl(['page' => 1]) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angles-left"></i> Đầu</a>
                 <?php endif; ?>
                 
                 <!-- Previous page -->
                 <?php if ($currentPage > 1): ?>
-                <a href="?page=<?= $currentPage - 1 ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
+                <a href="<?= buildMenuUrl(['page' => $currentPage - 1]) ?>" class="btn btn-outline btn-sm"><i class="fas fa-angle-left"></i> Trước</a>
                 <?php endif; ?>
                 
                 <!-- Page numbers -->
@@ -244,7 +266,7 @@ $countBoth = $filterCounts['both'] ?? 0;
                 <?php endif; ?>
                 
                 <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                <a href="?page=<?= $i ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
+                <a href="<?= buildMenuUrl(['page' => $i]) ?>" class="btn btn-sm <?= $i === $currentPage ? 'btn-gold' : 'btn-outline' ?>" style="text-decoration:none;min-width:40px;"><?= $i ?></a>
                 <?php endfor; ?>
                 
                 <?php if ($endPage < $totalPages): ?>
@@ -253,12 +275,12 @@ $countBoth = $filterCounts['both'] ?? 0;
                 
                 <!-- Next page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="?page=<?= $currentPage + 1 ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
+                <a href="<?= buildMenuUrl(['page' => $currentPage + 1]) ?>" class="btn btn-outline btn-sm">Sau <i class="fas fa-angle-right"></i></a>
                 <?php endif; ?>
                 
                 <!-- Last page -->
                 <?php if ($currentPage < $totalPages): ?>
-                <a href="?page=<?= $totalPages ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
+                <a href="<?= buildMenuUrl(['page' => $totalPages]) ?>" class="btn btn-outline btn-sm">Cuối <i class="fas fa-angles-right"></i></a>
                 <?php endif; ?>
             </div>
         </div>
@@ -281,6 +303,7 @@ $countBoth = $filterCounts['both'] ?? 0;
     color: var(--text-secondary, #64748b);
     cursor: pointer;
     transition: all .18s;
+    text-decoration: none;
 }
 .stat-chip:hover { border-color: var(--gold); color: var(--gold); }
 .stat-chip.active {
@@ -394,83 +417,30 @@ $countBoth = $filterCounts['both'] ?? 0;
 </style>
 
 <script>
-let _activeServiceFilter = '';
-
-/* ── Quick Filter (Stat chips) ──────────────────────────── */
-function quickFilter(btn, serviceVal) {
-    document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    _activeServiceFilter = serviceVal;
-    document.getElementById('serviceFilter')?.remove(); // ensure legacy select is gone
-    applyFilters();
-}
-
-/* ── Main filter logic ───────────────────────────────────── */
-function applyFilters() {
-    const search    = document.getElementById('searchInput').value.toLowerCase().trim();
-    const catVal    = document.getElementById('catFilter').value;
-    const statusVal = document.getElementById('statusFilter').value;
-    const svcVal    = _activeServiceFilter;
-
-    let visible = 0;
-    document.querySelectorAll('#menuTable tbody tr[data-cat]').forEach(row => {
-        const nameMatch   = !search  || row.dataset.name.includes(search);
-        const catMatch    = !catVal  || row.dataset.cat === catVal;
-        const svcMatch    = !svcVal  || row.dataset.service === svcVal;
-        let   statusMatch = true;
-        if (statusVal === 'active')      statusMatch = row.dataset.active    === '1';
-        if (statusVal === 'inactive')    statusMatch = row.dataset.active    === '0';
-        if (statusVal === 'available')   statusMatch = row.dataset.available === '1';
-        if (statusVal === 'unavailable') statusMatch = row.dataset.available === '0';
-
-        const show = nameMatch && catMatch && svcMatch && statusMatch;
-        row.style.display = show ? '' : 'none';
-        if (show) visible++;
-    });
-
-    // Update badge count
-    document.getElementById('countBadge').textContent = visible + ' món';
-
-    // No results state
-    const noRes = document.getElementById('noResultsState');
-    const tbody = document.querySelector('#menuTable tbody');
-    if (visible === 0 && document.querySelectorAll('#menuTable tbody tr[data-cat]').length > 0) {
-        tbody.style.display = 'none';
-        noRes.style.display = 'block';
-    } else {
-        tbody.style.display = '';
-        noRes.style.display = 'none';
-    }
-}
-
 /* ── Search with debounce ────────────────────────────────── */
 let _debounceTimer;
 document.getElementById('searchInput').addEventListener('input', function() {
     const clearBtn = document.getElementById('clearSearch');
     clearBtn.style.display = this.value ? '' : 'none';
     clearTimeout(_debounceTimer);
-    _debounceTimer = setTimeout(applyFilters, 220);
+    _debounceTimer = setTimeout(() => {
+        document.getElementById('filterForm').submit();
+    }, 400);
 });
 
 function clearSearchInput() {
     document.getElementById('searchInput').value = '';
     document.getElementById('clearSearch').style.display = 'none';
-    applyFilters();
+    document.getElementById('filterForm').submit();
 }
 
-document.getElementById('catFilter').addEventListener('change', applyFilters);
-document.getElementById('statusFilter').addEventListener('change', applyFilters);
-
-/* ── Reset all ───────────────────────────────────────────── */
-function resetAllFilters() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('clearSearch').style.display = 'none';
-    document.getElementById('catFilter').value = '';
-    document.getElementById('statusFilter').value = '';
-    _activeServiceFilter = '';
-    document.querySelectorAll('.stat-chip').forEach((c,i) => c.classList.toggle('active', i===0));
-    applyFilters();
-}
+/* ── Auto submit on filter change ───────────────────────── */
+document.getElementById('catFilter').addEventListener('change', function() {
+    document.getElementById('filterForm').submit();
+});
+ document.getElementById('statusFilter').addEventListener('change', function() {
+    document.getElementById('filterForm').submit();
+});
 
 /* ── Toggle item ─────────────────────────────────────────── */
 function toggleItem(id, type, btn) {
@@ -495,7 +465,8 @@ function toggleItem(id, type, btn) {
             btn.title = on ? 'Đang hiện — Click để ẩn' : 'Đang ẩn — Click để hiện';
             row.dataset.active = on ? '1' : '0';
         }
-        applyFilters(); // re-count after toggle
+        // Reload page to update counts
+        window.location.reload();
     });
 }
 </script>
