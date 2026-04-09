@@ -221,6 +221,58 @@ class QrMenuController extends Controller
         }
     }
 
+    /** Landing page với lịch sử đơn hàng */
+    public function landing(): void
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $visitorToken = $_COOKIE['qr_visitor_token'] ?? '';
+        
+        // Lấy tất cả orders của visitor token (cả open và closed)
+        $orders = [];
+        $tables = [];
+        
+        if (!empty($visitorToken)) {
+            // Lấy tất cả orders (cả open và closed) từ session_id
+            try {
+                $allOrders = $this->orderModel->findAll(
+                    "SELECT o.*, t.name AS table_name, t.type AS table_type, t.status AS table_status,
+                            (SELECT SUM(oi.item_price * oi.quantity) FROM order_items oi 
+                             WHERE oi.order_id = o.id AND oi.status != 'cancelled') AS total
+                     FROM orders o
+                     JOIN tables t ON t.id = o.table_id
+                     WHERE o.session_id = ?
+                     ORDER BY o.created_at DESC
+                     LIMIT 50",
+                    [$visitorToken]
+                );
+                
+                // Enrich orders với items
+                foreach ($allOrders as &$order) {
+                    $order['items'] = $this->orderModel->getItems($order['id']);
+                    $order['total_formatted'] = formatPrice($order['total']);
+                }
+                
+                $orders = $allOrders;
+            } catch (\Throwable $e) {
+                $orders = [];
+            }
+            
+            // Lấy danh sách bàn/phòng
+            $tableModel = new Table();
+            $tables = $tableModel->getAll();
+        }
+        
+        $this->view('layouts/public', [
+            'view' => 'menu/landing',
+            'pageTitle' => 'AURORA HOTEL PLAZA - Restaurant',
+            'orders' => $orders,
+            'tables' => $tables,
+            'visitorToken' => $visitorToken,
+            'isCustomer' => true
+        ]);
+    }
+
     /** View all active sessions (tables) for this device */
     public function sessions(): void
     {

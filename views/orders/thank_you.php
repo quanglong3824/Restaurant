@@ -24,8 +24,8 @@
         
         <p id="ratingMessage" style="color: var(--gold); font-weight: 700; font-size: 0.9rem; min-height: 20px; margin-bottom: 20px; transition: all 0.3s; opacity: 0; transform: translateY(10px);"></p>
 
-        <button onclick="window.location.href='<?= BASE_URL ?>/'" class="btn-gold" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700; border: none; cursor: pointer;">
-            Trở về Trang chủ
+        <button onclick="window.location.href='<?= BASE_URL ?>/qr/landing'" class="btn-gold" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 12px; font-weight: 700; border: none; cursor: pointer;">
+            <i class="fas fa-home me-2"></i> VỀ TRANG CHỦ
         </button>
     </div>
 </div>

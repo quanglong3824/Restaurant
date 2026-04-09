@@ -149,6 +149,7 @@ $router->get('/admin/activity/export', 'AdminActivityController', 'export');
 
 // ── QR Ordering: Customer ──────────────────────────────────
 $router->get('/q', 'QrMenuController', 'shortLink');
+$router->get('/qr/landing', 'QrMenuController', 'landing');
 $router->get('/qr/menu', 'QrMenuController', 'index');
 $router->post('/qr/menu/location', 'QrMenuController', 'saveLocation');
 $router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
