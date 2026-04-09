@@ -295,40 +295,41 @@ if ($hasItems) {
                 <h1 class="playfair">AURORA</h1>
                 <span><?= $contextLabel ?></span>
             </div>
-            <div class="table-info">
-                <span class="table-label"><?= $isRoomService ? 'PHÒNG' : 'BÀN' ?></span>
-                <span class="table-number"><?= e($table['name']) ?></span>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <button id="langToggle" onclick="toggleLanguage()" style="background:var(--gold-light);border:1px solid var(--gold);border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700;font-size:0.7rem;color:var(--gold-dark);transition:all 0.2s;">
+                    <i class="fas fa-globe me-1"></i><span id="langText">EN</span>
+                </button>
+                <div class="table-info">
+                    <span class="table-label"><?= $isRoomService ? 'PHÒNG' : 'BÀN' ?></span>
+                    <span class="table-number"><?= e($table['name']) ?></span>
+                </div>
             </div>
         </div>
 
         <!-- Context banner -->
         <div class="ctx-banner" style="color:<?= $contextColor ?>;background:<?= $contextColor ?>15;border-color:<?= $contextColor ?>44;">
             <i class="fas <?= $contextIcon ?>"></i>
-            <?php if ($isRoomService): ?>
-                Thực đơn phục vụ tại phòng — Đặt món sẽ được mang đến tận nơi
-            <?php else: ?>
-                Thực đơn nhà hàng — Đặt món ngay tại bàn và chờ phục vụ
-            <?php endif; ?>
+            <span class="ctx-text"><?= $isRoomService ? 'Thực đơn phục vụ tại phòng — Đặt món sẽ được mang đến tận nơi' : 'Thực đơn nhà hàng — Đặt món ngay tại bàn và chờ phục vụ' ?></span>
         </div>
 
         <!-- Action bar -->
         <div class="action-bar">
             <button class="action-btn" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'">
                 <i class="fas fa-th-list"></i>
-                <span>Bàn của tôi</span>
+                <span class="lang" data-vi="Bàn của tôi" data-en="My Tables">Bàn của tôi</span>
             </button>
             <button class="action-btn" onclick="callWaiter('support')">
                 <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
-                <span><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+                <span class="lang" data-vi="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
             </button>
             <button class="action-btn <?= $hasItems ? 'glow-payment' : '' ?>"
                     onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>">
                 <i class="fas fa-file-invoice-dollar"></i>
-                <span><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+                <span class="lang" data-vi="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
             </button>
             <button class="action-btn" onclick="window.location.reload()">
                 <i class="fas fa-sync-alt"></i>
-                <span>Làm mới</span>
+                <span class="lang" data-vi="Làm mới" data-en="Refresh">Làm mới</span>
             </button>
         </div>
     </header>
@@ -337,13 +338,16 @@ if ($hasItems) {
     <?php
     $presentTypes = array_unique(array_column($activeCategories, 'menu_type'));
     $typeLabels = ['asia'=>'Món Á', 'europe'=>'Món Âu', 'alacarte'=>'Alacarte', 'other'=>'Đ.Uống & Khác'];
+    $typeLabelsEn = ['asia'=>'Asian', 'europe'=>'European', 'alacarte'=>'Alacarte', 'other'=>'Beverages & Others'];
     // Chỉ hiển thị tab bar nếu có từ 2 type trở lên
     ?>
     <?php if (count($presentTypes) > 1): ?>
     <div class="type-tab-bar" id="typeTabBar">
-        <button class="type-tab active" data-type="all">TẤT CẢ</button>
+        <button class="type-tab active" data-type="all"><span class="lang" data-vi="TẤT CẢ" data-en="ALL">TẤT CẢ</span></button>
         <?php foreach ($presentTypes as $tp): if (!isset($typeLabels[$tp])) continue; ?>
-            <button class="type-tab" data-type="<?= $tp ?>"><?= strtoupper($typeLabels[$tp]) ?></button>
+            <button class="type-tab" data-type="<?= $tp ?>">
+                <span class="lang" data-vi="<?= strtoupper($typeLabels[$tp]) ?>" data-en="<?= strtoupper($typeLabelsEn[$tp]) ?>"><?= strtoupper($typeLabels[$tp]) ?></span>
+            </button>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
@@ -351,11 +355,16 @@ if ($hasItems) {
     <!-- Category nav sticky -->
     <nav class="category-nav">
         <div class="category-nav-inner">
-            <a href="javascript:void(0)" class="cat-pill active" data-category="all">Tất cả</a>
+            <a href="javascript:void(0)" class="cat-pill active" data-category="all">
+                <span class="lang" data-vi="Tất cả" data-en="All">Tất cả</span>
+            </a>
             <?php foreach ($activeCategories as $cat): ?>
                 <a href="#cat-<?= $cat['id'] ?>" class="cat-pill"
                    data-category="<?= $cat['id'] ?>" data-type="<?= $cat['menu_type'] ?>">
-                    <?= e($cat['name']) ?>
+                    <span class="lang-vi"><?= e($cat['name']) ?></span>
+                    <?php if (!empty($cat['name_en'])): ?>
+                        <span class="lang-en" style="display:none;"><?= e($cat['name_en']) ?></span>
+                    <?php endif; ?>
                 </a>
             <?php endforeach; ?>
         </div>
@@ -371,6 +380,14 @@ if ($hasItems) {
             </button>
         </div>
     </div>
+
+    <style>
+    /* Language toggle styles */
+    .lang-toggle-btn:hover {
+        background: var(--gold) !important;
+        color: #fff !important;
+    }
+    </style>
 
     <!-- Menu Sections -->
     <main class="menu-sections" id="menuSections">
@@ -688,5 +705,108 @@ function closeBillTam() {
     document.getElementById('billTamModal').classList.add('hidden');
     document.body.style.overflow = '';
 }
+
+/* ── Language Toggle VI/EN ── */
+let currentLang = localStorage.getItem('aurora_lang') || 'vi';
+
+function toggleLanguage() {
+    currentLang = currentLang === 'vi' ? 'en' : 'vi';
+    localStorage.setItem('aurora_lang', currentLang);
+    applyLanguage(currentLang);
+}
+
+function applyLanguage(lang) {
+    // Update toggle button text
+    const langText = document.getElementById('langText');
+    if (langText) langText.textContent = lang === 'vi' ? 'EN' : 'VI';
+    
+    // Update elements with class="lang" and data-vi/data-en attributes
+    document.querySelectorAll('.lang').forEach(el => {
+        const text = lang === 'vi' ? el.getAttribute('data-vi') : el.getAttribute('data-en');
+        if (text) el.textContent = text;
+    });
+    
+    // Update category pills
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+        const viEl = pill.querySelector('.lang-vi');
+        const enEl = pill.querySelector('.lang-en');
+        if (viEl && enEl) {
+            viEl.style.display = lang === 'vi' ? '' : 'none';
+            enEl.style.display = lang === 'en' ? '' : 'none';
+        }
+    });
+    
+    // Update section titles
+    document.querySelectorAll('.section-header').forEach(header => {
+        const viTitle = header.querySelector('.section-title');
+        const enTitle = header.querySelector('.section-title-en');
+        if (viTitle && enTitle) {
+            viTitle.style.display = '';
+            enTitle.style.display = lang === 'en' ? '' : 'none';
+        }
+    });
+    
+    // Update item names
+    document.querySelectorAll('.menu-item-card').forEach(card => {
+        const nameEl = card.querySelector('.item-name');
+        const nameEnEl = card.querySelector('.item-name-en');
+        if (nameEnEl) {
+            if (lang === 'en' && nameEnEl.textContent.trim()) {
+                nameEl.style.display = 'none';
+                nameEnEl.style.display = 'block';
+                nameEnEl.style.fontWeight = '700';
+                nameEnEl.style.fontSize = '0.9rem';
+                nameEnEl.style.color = 'var(--text-dark)';
+            } else {
+                nameEl.style.display = '';
+                nameEnEl.style.display = '';
+                nameEnEl.style.fontWeight = '';
+                nameEnEl.style.fontSize = '';
+                nameEnEl.style.color = '';
+            }
+        }
+    });
+    
+    // Update context banner text
+    const ctxText = document.querySelector('.ctx-text');
+    if (ctxText) {
+        if (lang === 'en') {
+            ctxText.textContent = ctxText.getAttribute('data-en') || 'Room service menu — Order will be delivered to your room';
+        } else {
+            const isRoom = <?= $isRoomService ? 'true' : 'false' ?>;
+            ctxText.textContent = isRoom ? 'Thực đơn phục vụ tại phòng — Đặt món sẽ được mang đến tận nơi' : 'Thực đơn nhà hàng — Đặt món ngay tại bàn và chờ phục vụ';
+        }
+    }
+    
+    // Update search placeholder
+    const searchEl = document.getElementById('menuSearch');
+    if (searchEl) {
+        searchEl.placeholder = lang === 'vi' ? 'Tìm món (tên Việt / English)...' : 'Search for dishes (Vietnamese / English)...';
+    }
+    
+    // Update cart label
+    const cartLabel = document.querySelector('.cart-label');
+    if (cartLabel) {
+        cartLabel.textContent = lang === 'vi' ? 'Giỏ hàng của bạn' : 'Your cart';
+    }
+    
+    // Update view cart button
+    const viewCartBtn = document.querySelector('.btn-view-cart');
+    if (viewCartBtn) {
+        viewCartBtn.innerHTML = lang === 'vi' ? 'XEM GIỎ <i class="fas fa-chevron-right"></i>' : 'VIEW <i class="fas fa-chevron-right"></i>';
+    }
+}
+
+// Apply language on page load
+(function initLanguage() {
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            applyLanguage(currentLang);
+        });
+    } else {
+        applyLanguage(currentLang);
+    }
+})();
 </script>
 <script src="<?= BASE_URL ?>/public/js/menu/customer.js?v=<?= time() ?>" defer></script>
