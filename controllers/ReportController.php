@@ -5,7 +5,6 @@
  */
 require_once BASE_PATH . '/models/Order.php';
 require_once BASE_PATH . '/models/MenuItem.php';
-require_once BASE_PATH . '/models/MenuCategory.php';
 
 class ReportController extends Controller
 {
@@ -18,7 +17,6 @@ class ReportController extends Controller
 
         $orderModel = new Order();
         $itemModel = new MenuItem();
-        $categoryModel = new MenuCategory();
 
         // Lấy ngày từ request hoặc mặc định
         $today = date('Y-m-d');
@@ -30,15 +28,6 @@ class ReportController extends Controller
         $daily = $orderModel->getDailyRevenue($from, $to);
         $topItems = $itemModel->getTopItems(10, $from, $to);
         $todayOrders = $orderModel->getByDate($today);
-        
-        // Lấy thống kê theo danh mục (nếu có)
-        $categoryStats = [];
-        try {
-            $categoryStats = $categoryModel->getCategoryStats($from, $to);
-        } catch (Exception $e) {
-            // Bỏ qua nếu method chưa tồn tại
-            $categoryStats = [];
-        }
 
         $this->view('layouts/admin', [
             'view' => 'reports/index',
@@ -48,7 +37,6 @@ class ReportController extends Controller
             'daily' => $daily,
             'topItems' => $topItems,
             'todayOrders' => $todayOrders,
-            'categoryStats' => $categoryStats,
             'from' => $from,
             'to' => $to,
         ]);

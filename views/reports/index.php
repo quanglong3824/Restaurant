@@ -283,7 +283,7 @@
                         <div class="chart-bar-item">
                             <div class="bar-wrapper">
                                 <div class="bar" style="height: <?= $height ?>%">
-                                    <span class="bar-value"><?= formatPrice($d['revenue'] ?? 0, true) ?></span>
+                                    <span class="bar-value"><?= number_format($d['revenue'] ?? 0) ?>₫</span>
                                 </div>
                             </div>
                             <div class="bar-label">
@@ -332,46 +332,6 @@
     </div>
     <?php endif; ?>
 
-    <!-- Category Performance -->
-    <?php if (!empty($categoryStats)): ?>
-    <div class="dashboard-grid">
-        <div class="dashboard-card card-categories">
-            <div class="card-header">
-                <div class="header-left">
-                    <div class="header-icon icon-category">
-                        <i class="fas fa-tags"></i>
-                    </div>
-                    <div class="header-title">
-                        <h3>Doanh Thu Theo Danh Mục</h3>
-                        <span>Phân tích hiệu suất nhóm món</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="category-grid">
-                    <?php 
-                    $totalCatRevenue = array_sum(array_column($categoryStats, 'revenue')) ?: 1;
-                    foreach ($categoryStats as $cat): 
-                        $percent = ($cat['revenue'] / $totalCatRevenue) * 100;
-                    ?>
-                        <div class="category-item">
-                            <div class="category-info">
-                                <span class="category-name"><?= e($cat['category_name']) ?></span>
-                                <span class="category-count"><?= $cat['items_sold'] ?> món</span>
-                            </div>
-                            <div class="category-stats">
-                                <div class="category-revenue"><?= formatPrice($cat['revenue']) ?></div>
-                                <div class="category-bar">
-                                    <div class="category-fill" style="width: <?= $percent ?>%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
 </div>
 
 <!-- CSS Styles -->
