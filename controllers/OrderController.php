@@ -481,6 +481,11 @@ class OrderController extends Controller
             $order['payment_method'] = $this->input('payment_method');
         }
 
+        // Tính subtotal và VAT (8%)
+        $vatRate = 0.08;
+        $subtotal = $total / (1 + $vatRate);
+        $vat = $total - $subtotal;
+
         // Hiển thị view in không qua layout chung
         require_once BASE_PATH . '/views/orders/print.php';
     }
