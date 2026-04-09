@@ -58,56 +58,74 @@
         <nav class="sidebar-nav">
 
             <?php if (Auth::isAdmin()): ?>
+                <!-- VẬN HÀNH -->
                 <div class="nav-section">
-                    <div class="nav-section-title">VẬN HÀNH</div>
-                    <a href="<?= BASE_URL ?>/admin/realtime" class="nav-item <?= activeClass('/admin/realtime') ?>">
-                        <i class="fas fa-satellite-dish"></i>
-                        <span>Giám sát trực tiếp</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/realtime/qr-sessions" class="nav-item <?= activeClass('/admin/realtime/qr-sessions') ?>">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Giám sát phiên QR</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/shifts" class="nav-item <?= activeClass('/admin/shifts') ?>">
-                        <i class="fas fa-user-clock"></i>
-                        <span>Nhân sự & Ca trực</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-van-hanh">
+                        <span>VẬN HÀNH</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-van-hanh">
+                        <a href="<?= BASE_URL ?>/admin/realtime" class="nav-item <?= activeClass('/admin/realtime') ?>">
+                            <i class="fas fa-satellite-dish"></i>
+                            <span>Giám sát trực tiếp</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/realtime/qr-sessions" class="nav-item <?= activeClass('/admin/realtime/qr-sessions') ?>">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Giám sát phiên QR</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/shifts" class="nav-item <?= activeClass('/admin/shifts') ?>">
+                            <i class="fas fa-user-clock"></i>
+                            <span>Nhân sự & Ca trực</span>
+                        </a>
+                    </div>
                 </div>
 
+                <!-- THỰC ĐƠN & BÀN -->
                 <div class="nav-section">
-                    <div class="nav-section-title">THỰC ĐƠN & BÀN</div>
-                    <a href="<?= BASE_URL ?>/admin/menu" class="nav-item <?= activeClass('/admin/menu') ?>">
-                        <i class="fas fa-utensils"></i>
-                        <span>Danh sách món</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>">
-                        <i class="fas fa-layer-group"></i>
-                        <span>Set & Combo</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/menu-types" class="nav-item <?= activeClass('/admin/menu-types') ?>">
-                        <i class="fas fa-layer-group"></i>
-                        <span>Phân loại menu</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/categories" class="nav-item <?= activeClass('/admin/categories') ?>">
-                        <i class="fas fa-tags"></i>
-                        <span>Danh mục món</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/tables" class="nav-item <?= activeClass('/admin/tables') ?>">
-                        <i class="fas fa-table-cells-large"></i>
-                        <span>Sơ đồ bàn ăn</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-menu-ban">
+                        <span>THỰC ĐƠN & BÀN</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-menu-ban">
+                        <a href="<?= BASE_URL ?>/admin/menu" class="nav-item <?= activeClass('/admin/menu') ?>">
+                            <i class="fas fa-utensils"></i>
+                            <span>Danh sách món</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/menu/sets" class="nav-item <?= activeClass('/admin/menu/sets') ?>">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Set & Combo</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/menu-types" class="nav-item <?= activeClass('/admin/menu-types') ?>">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Phân loại menu</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/categories" class="nav-item <?= activeClass('/admin/categories') ?>">
+                            <i class="fas fa-tags"></i>
+                            <span>Danh mục món</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/tables" class="nav-item <?= activeClass('/admin/tables') ?>">
+                            <i class="fas fa-table-cells-large"></i>
+                            <span>Sơ đồ bàn ăn</span>
+                        </a>
+                    </div>
                 </div>
 
+                <!-- CÔNG CỤ -->
                 <div class="nav-section">
-                    <div class="nav-section-title">CÔNG CỤ</div>
-                    <a href="javascript:void(0)" class="nav-item" onclick="testNotifSound()">
-                        <i class="fas fa-volume-up"></i>
-                        <span>Kiểm tra âm thanh</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
-                        <i class="fas fa-database"></i>
-                        <span>Sao lưu dữ liệu</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-cong-cu">
+                        <span>CÔNG CỤ</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-cong-cu">
+                        <a href="javascript:void(0)" class="nav-item" onclick="testNotifSound()">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Kiểm tra âm thanh</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/it/database" class="nav-item <?= activeClass('/it/database') ?>">
+                            <i class="fas fa-database"></i>
+                            <span>Sao lưu dữ liệu</span>
+                        </a>
+                    </div>
                 </div>
 
                 <script>
@@ -120,34 +138,52 @@
                 }
                 </script>
 
+                <!-- DOANH THU -->
                 <div class="nav-section">
-                    <div class="nav-section-title">DOANH THU</div>
-                    <a href="<?= BASE_URL ?>/admin/reports" class="nav-item <?= activeClass('/admin/reports') ?>">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Báo cáo thống kê</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-doanh-thu">
+                        <span>DOANH THU</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-doanh-thu">
+                        <a href="<?= BASE_URL ?>/admin/reports" class="nav-item <?= activeClass('/admin/reports') ?>">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Báo cáo thống kê</span>
+                        </a>
+                    </div>
                 </div>
 
+                <!-- HỆ THỐNG -->
                 <div class="nav-section">
-                    <div class="nav-section-title">HỆ THỐNG</div>
-                    <a href="<?= BASE_URL ?>/admin/activity" class="nav-item <?= activeClass('/admin/activity') ?>">
-                        <i class="fas fa-history"></i>
-                        <span>Nhật ký hoạt động</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-he-thong">
+                        <span>HỆ THỐNG</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-he-thong">
+                        <a href="<?= BASE_URL ?>/admin/activity" class="nav-item <?= activeClass('/admin/activity') ?>">
+                            <i class="fas fa-history"></i>
+                            <span>Nhật ký hoạt động</span>
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
 
             <?php if (Auth::isIT()): ?>
+                <!-- Quản trị IT -->
                 <div class="nav-section">
-                    <div class="nav-section-title">Quản trị IT</div>
-                    <a href="<?= BASE_URL ?>/it/users" class="nav-item <?= activeClass('/it/users') ?>">
-                        <i class="fas fa-users"></i>
-                        <span>Quản lý User</span>
-                    </a>
-                    <a href="<?= BASE_URL ?>/admin/menu/clear" class="nav-item <?= activeClass('/admin/menu/clear') ?>">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Xóa dữ liệu thực đơn</span>
-                    </a>
+                    <div class="nav-section-title nav-dropdown-toggle" data-target="dropdown-it">
+                        <span>Quản trị IT</span>
+                        <i class="fas fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    <div class="nav-dropdown" id="dropdown-it">
+                        <a href="<?= BASE_URL ?>/it/users" class="nav-item <?= activeClass('/it/users') ?>">
+                            <i class="fas fa-users"></i>
+                            <span>Quản lý User</span>
+                        </a>
+                        <a href="<?= BASE_URL ?>/admin/menu/clear" class="nav-item <?= activeClass('/admin/menu/clear') ?>">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Xóa dữ liệu thực đơn</span>
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
 
