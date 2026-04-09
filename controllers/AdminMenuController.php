@@ -42,8 +42,9 @@ class AdminMenuController extends Controller
         $categories = $this->categoryModel->getAll();
 
         // Count filter totals from ALL items (not just current page)
-        $countRestaurant = count(array_filter($allItems, fn($i) => in_array($i['service_type'] ?? 'both', ['restaurant', 'both'])));
-        $countRoom = count(array_filter($allItems, fn($i) => in_array($i['service_type'] ?? 'both', ['room_service', 'both'])));
+        // Each item belongs to exactly ONE service_type: restaurant, room_service, or both
+        $countRestaurant = count(array_filter($allItems, fn($i) => ($i['service_type'] ?? 'both') === 'restaurant'));
+        $countRoom = count(array_filter($allItems, fn($i) => ($i['service_type'] ?? 'both') === 'room_service'));
         $countBoth = count(array_filter($allItems, fn($i) => ($i['service_type'] ?? 'both') === 'both'));
 
         $this->view('layouts/admin', [
