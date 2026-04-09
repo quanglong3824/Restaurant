@@ -29,6 +29,27 @@ class MenuCategory extends Model
         );
     }
 
+    /** Lấy danh mục đang hoạt động có chứa món thuộc menu_type (dựa trên món thực tế) */
+    public function getActiveByItemType(string $type = ''): array
+    {
+        $params = [];
+        $menuTypeCondition = "";
+        
+        if ($type) {
+            $menuTypeCondition = "AND i.menu_type = ?";
+            $params[] = $type;
+        }
+        
+        return $this->findAll(
+            "SELECT DISTINCT c.* 
+             FROM menu_categories c
+             INNER JOIN menu_items i ON i.category_id = c.id
+             WHERE c.is_active = 1 AND i.is_active = 1 {$menuTypeCondition}
+             ORDER BY c.sort_order, c.id ASC",
+            $params
+        );
+    }
+
     public function findById(int $id): ?array
     {
         return $this->findOne("SELECT * FROM menu_categories WHERE id = ?", [$id]);

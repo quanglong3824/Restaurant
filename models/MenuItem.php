@@ -73,7 +73,7 @@ class MenuItem extends Model
         $hasMenuType = $this->hasColumn('menu_type');
         
         if ($type && $hasMenuType) {
-            $where .= " AND c.menu_type = ?";
+            $where .= " AND i.menu_type = ?";
             $params[] = $type;
         }
         if ($serviceType) {

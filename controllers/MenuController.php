@@ -57,9 +57,9 @@ class MenuController extends Controller
         $tableInfo = $tableId ? $tableModel->findById($tableId) : null;
         $serviceType = ($tableInfo && $tableInfo['type'] === 'room') ? 'room_service' : 'restaurant';
 
-        // Lấy categories theo menu type
+        // Lấy categories dựa trên món thực tế thuộc menu_type (không phải dựa trên c.menu_type)
         // Nếu là tab 'sets', chúng ta không cần lấy categories từ menu_items
-        $categories = ($menuType === 'sets') ? [] : $categoryModel->getActiveByType($menuType);
+        $categories = ($menuType === 'sets') ? [] : $categoryModel->getActiveByItemType($menuType);
         $grouped = ($menuType === 'sets') ? [] : $itemModel->getGroupedByCategory($menuType, $serviceType);
 
         // Lấy sets nếu là tab sets
