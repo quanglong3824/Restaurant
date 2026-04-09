@@ -153,9 +153,24 @@
 
         </nav>
 
-        <!-- Sidebar Footer (Minimized) -->
+        <!-- Sidebar Footer - User Info & Logout -->
         <div class="sidebar-footer">
-            <p>AURORA v<?= APP_VERSION ?></p>
+            <div class="sidebar-user-card">
+                <div class="sidebar-user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name"><?= e(Auth::user()['name'] ?? 'User') ?></div>
+                    <div class="sidebar-user-role"><?= e(roleLabel(Auth::user()['role'] ?? '')) ?></div>
+                </div>
+            </div>
+            <a href="<?= BASE_URL ?>/auth/logout" class="sidebar-logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+            <div class="sidebar-version">
+                AURORA v<?= APP_VERSION ?>
+            </div>
         </div>
 
     </aside>
