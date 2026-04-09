@@ -1,7 +1,6 @@
-<?php // views/orders/print.php - A5 Guest Check ?>
+<?php // views/orders/print.php - A5 Guest Check - Single Page ?>
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,274 +11,269 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         @page {
             size: A5;
-            margin: 15mm;
+            margin: 10mm;
         }
-
+        
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-            line-height: 1.4;
+            font-size: 9pt;
+            line-height: 1.3;
             color: #000;
             background: #fff;
         }
-
+        
         .container {
             width: 100%;
             max-width: 148mm;
             margin: 0 auto;
+            padding: 5mm;
         }
-
-        /* Header Section */
+        
+        /* Header Section - Compact */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 8px;
         }
-
+        
         .header-left {
             flex: 1;
-            font-size: 9pt;
-            line-height: 1.5;
+            font-size: 8pt;
+            line-height: 1.4;
         }
-
+        
         .header-left .company-name {
-            font-size: 10pt;
+            font-size: 9pt;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
-
+        
         .header-left .hotel-name {
-            font-size: 10pt;
+            font-size: 9pt;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
-
+        
         .header-left .address {
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
-
+        
         .header-left .contact {
-            margin-bottom: 3px;
+            margin-bottom: 1px;
         }
-
+        
         .header-left .outlet {
-            margin-top: 5px;
+            margin-top: 3px;
+            font-weight: bold;
         }
-
+        
         .header-right {
             text-align: right;
+            margin-left: 10px;
         }
-
+        
         .header-right .logo {
-            width: 120px;
+            width: 80px;
             height: auto;
         }
-
-        /* Meta Info */
+        
+        /* Meta Info - Single line */
         .meta-info {
-            font-size: 9pt;
-            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px dashed #ccc;
         }
-
-        .meta-info span {
-            margin-right: 15px;
-        }
-
-        .meta-info strong {
-            font-weight: bold;
-        }
-
+        
         /* Title */
         .title-section {
             text-align: center;
-            margin: 15px 0 10px;
+            margin: 8px 0;
         }
-
+        
         .title-vi {
-            font-size: 12pt;
+            font-size: 11pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
+        
         .title-en {
-            font-size: 10pt;
+            font-size: 9pt;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        /* Table */
+        
+        /* Table - Compact */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 15px 0;
+            margin: 8px 0;
+            font-size: 8.5pt;
         }
-
+        
         .items-table th,
         .items-table td {
             border: 1px solid #000;
-            padding: 6px 8px;
-            font-size: 10pt;
+            padding: 4px 5px;
         }
-
+        
         .items-table th {
             font-weight: bold;
             text-align: center;
             background: #f5f5f5;
+            font-size: 8pt;
         }
-
+        
         .items-table th.col-name {
             text-align: left;
-            width: 50%;
+            width: 45%;
         }
-
+        
         .items-table th.col-qty {
-            width: 10%;
+            width: 12%;
         }
-
+        
         .items-table th.col-price {
-            width: 20%;
+            width: 21%;
         }
-
+        
         .items-table th.col-total {
-            width: 20%;
+            width: 22%;
         }
-
+        
         .items-table td.col-name {
             text-align: left;
             vertical-align: top;
         }
-
+        
         .items-table td.col-qty,
         .items-table td.col-price,
         .items-table td.col-total {
             text-align: right;
             vertical-align: top;
         }
-
+        
+        .item-name {
+            font-weight: normal;
+        }
+        
         .item-note {
-            font-size: 9pt;
+            font-size: 7.5pt;
             color: #555;
             font-style: italic;
-            margin-top: 3px;
+            margin-top: 2px;
         }
-
-        /* Totals */
+        
+        /* Totals - Compact */
         .totals-section {
-            margin-top: 10px;
+            margin-top: 5px;
+            border: 1px solid #000;
+            padding: 5px;
         }
-
+        
         .totals-row {
             display: flex;
-            justify-content: space-between;
-            padding: 4px 8px;
-            font-size: 10pt;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 2px 0;
+            font-size: 8.5pt;
         }
-
-        .totals-row.subtotal {
-            border-bottom: 1px solid #000;
-        }
-
+        
         .totals-label {
             text-align: right;
-            flex: 1;
-        }
-
-        .totals-value {
-            text-align: right;
+            margin-right: 15px;
             min-width: 100px;
         }
-
+        
+        .totals-value {
+            text-align: right;
+            min-width: 70px;
+        }
+        
         .totals-row.total {
             font-weight: bold;
-            border-top: 2px solid #000;
-            padding-top: 8px;
-            margin-top: 5px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            margin-top: 3px;
         }
-
-        /* Payment Status */
+        
+        /* Payment Status - Compact */
         .payment-status {
-            margin-top: 15px;
-            padding: 8px;
+            margin-top: 8px;
+            padding: 4px;
             border: 1px solid #000;
             text-align: center;
             font-weight: bold;
-            font-size: 10pt;
+            font-size: 9pt;
         }
-
+        
         .payment-status.paid {
             background: #e8f5e9;
         }
-
+        
         .payment-status.unpaid {
             background: #fff3e0;
         }
-
-        /* Signature Section */
+        
+        /* Signature Section - Compact */
         .signature-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
-            font-size: 9pt;
+            margin-top: 15px;
+            font-size: 8pt;
         }
-
+        
         .signature-box {
             width: 45%;
             text-align: center;
         }
-
+        
         .signature-box .label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
-
+        
         .signature-box .space {
-            height: 50px;
+            height: 35px;
         }
-
-        /* Footer */
+        
+        /* Footer - Compact */
         .footer {
-            margin-top: 20px;
+            margin-top: 10px;
             text-align: center;
-            font-size: 9pt;
+            font-size: 8pt;
             font-style: italic;
         }
-
+        
+        /* Page break prevention */
+        .container {
+            page-break-inside: avoid;
+        }
+        
+        .items-table {
+            page-break-inside: avoid;
+        }
+        
         /* Print utilities */
         @media print {
             body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-
+            
             .no-print {
                 display: none;
             }
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .mb-1 {
-            margin-bottom: 5px;
-        }
-
-        .mb-2 {
-            margin-bottom: 10px;
-        }
-
-        .mt-1 {
-            margin-top: 5px;
-        }
-
-        .mt-2 {
-            margin-top: 10px;
         }
     </style>
 </head>
@@ -289,32 +283,31 @@
         <!-- Header with Company Info and Logo -->
         <div class="header">
             <div class="header-left">
-                <div class="company-name">CÔNG TY CỔ PHẦN PHÁT TRIỂN TRI THỨC VIỆT</div>
+                <div class="company-name">CÔNG TY CP PHÁT TRIỂN TRI THỨC VIỆT</div>
                 <div class="hotel-name">AURORA HOTEL & PLAZA</div>
-                <div class="address">253 Phạm Văn Thuận, Khu Phố 2, P.Tam Hiệp, Tỉnh Đồng Nai</div>
+                <div class="address">253 Phạm Văn Thuận, KP 2, P.Tam Hiệp, Biên Hòa, ĐN</div>
                 <div class="contact">Tel:(0251)3918888 - Fax:(0251)3918300</div>
                 <div class="contact">Email:info@aurorahotelplaza.com</div>
-                <div class="outlet">Outlet : Grand Restaurant</div>
-                <div class="meta-info mt-1">
-                    <span>Date : <?= date('d/m/Y') ?></span>
-                    <span>Time : <?= date('H:i') ?></span>
-                </div>
-                <div class="meta-info">
-                    <span>Table: <?= e($tableDisplayName) ?></span>
-                </div>
+                <div class="outlet">Outlet: Grand Restaurant</div>
             </div>
             <div class="header-right">
-                <img src="<?= BASE_URL ?>/public/src/logo/logo-white-ui.png" alt="AURORA HOTEL PLAZA" class="logo"
+                <img src="<?= BASE_URL ?>/public/src/logo/logo-dark-ui.png" alt="AURORA HOTEL PLAZA" class="logo"
                     onerror="this.style.display='none'">
             </div>
         </div>
-
+        
+        <!-- Meta Info -->
+        <div class="meta-info">
+            <span>Date: <?= date('d/m/Y') ?> &nbsp;&nbsp; Time: <?= date('H:i') ?></span>
+            <span>Table: <?= e($tableDisplayName) ?></span>
+        </div>
+        
         <!-- Title -->
         <div class="title-section">
             <div class="title-vi">BẢNG KÊ CHI TIẾT</div>
             <div class="title-en">GUEST CHECK</div>
         </div>
-
+        
         <!-- Items Table -->
         <table class="items-table">
             <thead>
@@ -329,11 +322,11 @@
                 <?php foreach ($items as $item): ?>
                     <tr>
                         <td class="col-name">
-                            <?= e($item['item_name']) ?>
+                            <span class="item-name"><?= e($item['item_name']) ?></span>
                             <?php
                             $note = trim($item['note'] ?? '');
                             if ($note && !preg_match('/^Set:\s*.+$/', $note)):
-                                ?>
+                            ?>
                                 <div class="item-note">↳ <?= e($note) ?></div>
                             <?php endif; ?>
                         </td>
@@ -345,10 +338,10 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-
+        
         <!-- Totals -->
         <div class="totals-section">
-            <div class="totals-row subtotal">
+            <div class="totals-row">
                 <span class="totals-label">Sub amount :</span>
                 <span class="totals-value"><?= number_format($subtotal, 0, ',', '.') ?></span>
             </div>
@@ -361,7 +354,7 @@
                 <span class="totals-value"><?= number_format($total, 0, ',', '.') ?></span>
             </div>
         </div>
-
+        
         <!-- Payment Status -->
         <?php
         $isActuallyPaid = ($order['status'] === 'closed' || !empty($_GET['payment_method']));
@@ -369,7 +362,7 @@
         <div class="payment-status <?= $isActuallyPaid ? 'paid' : 'unpaid' ?>">
             <?= $isActuallyPaid ? 'ĐÃ THANH TOÁN / PAID' : 'CHƯA THANH TOÁN / UNPAID' ?>
         </div>
-
+        
         <!-- Signature Section -->
         <div class="signature-section">
             <div class="signature-box">
@@ -383,14 +376,13 @@
                 <div class="space"></div>
             </div>
         </div>
-
+        
         <!-- Footer -->
         <div class="footer">
-            <p>Thank you and see you again!</p>
-            <p>Cảm ơn quý khách và hẹn gặp lại!</p>
+            Thank you and see you again! - Cảm ơn quý khách và hẹn gặp lại!
         </div>
     </div>
-
+    
     <script>
         // Auto print on load
         window.onload = function () {
