@@ -238,6 +238,7 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
                     <th style="width:56px;">Ảnh</th>
                     <th>Tên món</th>
                     <th>Danh mục</th>
+                    <th>Loại món</th>
                     <th>Phục vụ</th>
                     <th>Giá</th>
                     <th>Tồn kho</th>
@@ -258,6 +259,7 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
                 ?>
                     <tr data-cat="<?= $item['category_id'] ?>"
                         data-service="<?= $st ?>"
+                        data-menu-type="<?= $item['menu_type'] ?? '' ?>"
                         data-name="<?= strtolower(e($item['name'])) ?> <?= strtolower(e($item['name_en'] ?? '')) ?>"
                         data-active="<?= $item['is_active'] ?>"
                         data-available="<?= $item['is_available'] ?>">
@@ -289,6 +291,21 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
                             <?php endif; ?>
                         </td>
                         <td style="font-size:.85rem;color:#64748b;"><?= e($item['category_name'] ?? '') ?></td>
+                        <td>
+                            <?php
+                            $menuTypeLabels = [
+                                'asia' => ['label' => 'Món Á', 'icon' => 'fa-bowl-rice', 'color' => '#dc2626'],
+                                'europe' => ['label' => 'Món Âu', 'icon' => 'fa-wine-glass', 'color' => '#2563eb'],
+                                'alacarte' => ['label' => 'Alacarte', 'icon' => 'fa-utensils', 'color' => '#059669'],
+                                'other' => ['label' => 'Khác', 'icon' => 'fa-circle-question', 'color' => '#7c3aed'],
+                            ];
+                            $mt = $item['menu_type'] ?? 'other';
+                            $mtInfo = $menuTypeLabels[$mt] ?? $menuTypeLabels['other'];
+                            ?>
+                            <span class="menu-type-badge" style="--mt-c:<?= $mtInfo['color'] ?>">
+                                <i class="fas <?= $mtInfo['icon'] ?>"></i> <?= $mtInfo['label'] ?>
+                            </span>
+                        </td>
                         <td>
                             <span class="service-badge" style="--c:<?= $s['color'] ?>">
                                 <i class="fas <?= $s['icon'] ?>"></i> <?= $s['label'] ?>
@@ -335,7 +352,7 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
                     </tr>
                 <?php endforeach; ?>
                 <?php if (empty($items)): ?>
-                    <tr><td colspan="9" style="text-align:center;padding:2.5rem;color:#9ca3af;">
+                    <tr><td colspan="10" style="text-align:center;padding:2.5rem;color:#9ca3af;">
                         <i class="fas fa-utensils fa-2x" style="opacity:.3;display:block;margin-bottom:.75rem;"></i>
                         Chưa có món nào.
                     </td></tr>
@@ -533,6 +550,25 @@ function buildMenuUrl($service, $category, $status, $search, $menuType, $tag, $s
 /* Fallback cho browser cũ không hỗ trợ color-mix */
 @supports not (color: color-mix(in srgb, red, blue)) {
     .service-badge { background: rgba(100,100,100,.1); border-color: rgba(100,100,100,.3); }
+}
+
+/* ── Menu Type Badge ─────────────────────────────────────── */
+.menu-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    background: color-mix(in srgb, var(--mt-c) 12%, transparent);
+    color: var(--mt-c);
+    border: 1.5px solid color-mix(in srgb, var(--mt-c) 35%, transparent);
+    border-radius: 12px;
+    padding: .15rem .5rem;
+    font-size: .68rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+    .menu-type-badge { background: rgba(100,100,100,.1); border-color: rgba(100,100,100,.3); }
 }
 </style>
 
