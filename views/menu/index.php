@@ -245,7 +245,7 @@
                     <?php endif; ?>
 
                     <?php if (!empty($pendingItems)): ?>
-                        <div class="section-label" style="color:var(--warning)"><i class="fas fa-clock"></i> Chờ xác nhận</div>
+                        <div class="section-label" style="color:var(--warning)"><i class="fas fa-clock"></i> Chờ xác nhận món</div>
                         <?php foreach ($pendingItems as $it): ?>
                             <div class="cart-item-row opacity-75">
                                 <div style="flex:1;">
@@ -254,7 +254,7 @@
                                 </div>
                                 <div style="text-align:right;">
                                     <div class="cart-item-price"><?= formatPrice($it['item_price'] * $it['quantity']) ?></div>
-                                    <span class="cart-item-status pending">Chờ NV</span>
+                                    <span class="cart-item-status pending">Chờ xác nhận</span>
                                 </div>
                             </div>
                         <?php endforeach; ?>

@@ -320,7 +320,7 @@ if ($hasItems) {
             </button>
             <button class="action-btn" onclick="callWaiter('support')">
                 <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
-                <span class="lang" data-vi="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+                <span class="lang" data-vi="Gọi nhân viên" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên</span>
             </button>
             <button class="action-btn <?= $hasItems ? 'glow-payment' : '' ?>"
                     onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>">
@@ -672,11 +672,11 @@ if ($hasItems) {
     <div class="fab-container">
         <div class="fab-menu" id="fabMenu">
             <div class="fab-item-wrapper">
-                <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>">
+                <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'" title="Gọi nhân viên">
                     <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
                 </button>
-                <span class="fab-label" data-vi="<?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
-                <span class="fab-tooltip"><?= $isRoomService ? 'Gọi lễ tân' : 'Gọi phục vụ' ?></span>
+                <span class="fab-label" data-vi="Gọi nhân viên" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên</span>
+                <span class="fab-tooltip">Gọi nhân viên</span>
             </div>
             <div class="fab-item-wrapper">
                 <button class="fab-item <?= $hasItems ? 'has-items' : '' ?>" onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>" title="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>">
@@ -739,7 +739,7 @@ if ($hasItems) {
                 <strong id="modalCartTotal">0₫</strong>
             </div>
             <button class="btn-submit-order" id="btnSubmitOrder" onclick="submitOrder()">
-                <i class="fas fa-paper-plane me-2"></i> <span class="lang" data-vi="XÁC NHẬN GỬI BẾP" data-en="CONFIRM ORDER">XÁC NHẬN GỬI BẾP</span>
+                <i class="fas fa-paper-plane me-2"></i> <span class="lang" data-vi="XÁC NHẬN ĐẶT MÓN" data-en="CONFIRM ORDER">XÁC NHẬN ĐẶT MÓN</span>
             </button>
         </div>
     </div>
@@ -810,7 +810,7 @@ if ($hasItems) {
                             <?php endif; ?>
                             <div class="bill-item-status <?= $oi['status'] ?>">
                                 <?php
-                                $statusTxt = ['confirmed'=>'✅ Đã xác nhận','pending'=>'⏳ Chờ xác nhận','draft'=>'📝 Chờ gửi bếp'];
+                                $statusTxt = ['confirmed'=>'✅ Đã xác nhận','pending'=>'⏳ Chờ xác nhận','draft'=>'📝 Chờ xác nhận'];
                                 $statusTxtEn = ['confirmed'=>'✅ Confirmed','pending'=>'⏳ Pending','draft'=>'📝 Draft'];
                                 echo $currentLang === 'en' ? ($statusTxtEn[$oi['status']] ?? $oi['status']) : ($statusTxt[$oi['status']] ?? $oi['status']);
                                 ?>
