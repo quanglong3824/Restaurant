@@ -247,6 +247,17 @@ class AdminMenuController extends Controller
         $id = (int) $this->input('id');
         $data = $this->collectFormData();
 
+        // Giữ lại các tham số filter và pagination
+        $page = $this->input('page', 1);
+        $service = $this->input('service', '');
+        $category = $this->input('category', '');
+        $status = $this->input('status', '');
+        $search = $this->input('search', '');
+        $menuType = $this->input('menu_type', '');
+        $tag = $this->input('tag', '');
+        $stockStatus = $this->input('stock_status', '');
+        $priceRange = $this->input('price_range', '');
+
         if (!empty($_FILES['image']['name'])) {
             $uploaded = uploadMenuImage($_FILES['image']);
             if ($uploaded) {
@@ -268,7 +279,23 @@ class AdminMenuController extends Controller
         );
 
         $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật món!'];
-        $this->redirect('/admin/menu');
+        
+        // Build redirect URL with filters and page
+        $params = array_filter([
+            'page' => $page,
+            'service' => $service,
+            'category' => $category,
+            'status' => $status,
+            'search' => $search,
+            'menu_type' => $menuType,
+            'tag' => $tag,
+            'stock_status' => $stockStatus,
+            'price_range' => $priceRange,
+        ], fn($v) => $v !== '' && $v !== null);
+        
+        $query = http_build_query($params);
+        $redirectUrl = '/admin/menu' . ($query ? '?' . $query : '');
+        $this->redirect($redirectUrl);
     }
 
     /** POST /admin/menu/delete */

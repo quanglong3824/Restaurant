@@ -17,6 +17,16 @@ $isEdit = !empty($item);
         enctype="multipart/form-data">
         <?php if ($isEdit): ?>
             <input type="hidden" name="id" value="<?= $item['id'] ?>">
+            <!-- Giữ lại các tham số filter và pagination khi update -->
+            <input type="hidden" name="page" value="<?= $_GET['page'] ?? 1 ?>">
+            <input type="hidden" name="service" value="<?= $_GET['service'] ?? '' ?>">
+            <input type="hidden" name="category" value="<?= $_GET['category'] ?? '' ?>">
+            <input type="hidden" name="status" value="<?= $_GET['status'] ?? '' ?>">
+            <input type="hidden" name="search" value="<?= $_GET['search'] ?? '' ?>">
+            <input type="hidden" name="menu_type" value="<?= $_GET['menu_type'] ?? '' ?>">
+            <input type="hidden" name="tag" value="<?= $_GET['tag'] ?? '' ?>">
+            <input type="hidden" name="stock_status" value="<?= $_GET['stock_status'] ?? '' ?>">
+            <input type="hidden" name="price_range" value="<?= $_GET['price_range'] ?? '' ?>">
         <?php endif; ?>
 
         <!-- 2-column responsive grid -->
