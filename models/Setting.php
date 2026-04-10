@@ -9,7 +9,7 @@ class Setting extends Model
      */
     public function getAll(): array
     {
-        return $this->execute("SELECT * FROM settings ORDER BY created_at DESC");
+        return $this->findAll("SELECT * FROM settings ORDER BY created_at DESC");
     }
 
     /**
@@ -17,7 +17,7 @@ class Setting extends Model
      */
     public function getValue(string $key, $default = null)
     {
-        $result = $this->execute("SELECT setting_value FROM settings WHERE setting_key = ?", [$key]);
+        $result = $this->findAll("SELECT setting_value FROM settings WHERE setting_key = ?", [$key]);
         if (empty($result)) {
             return $default;
         }
@@ -30,7 +30,7 @@ class Setting extends Model
     public function setValue(string $key, string $value, string $description = ''): bool
     {
         // Kiểm tra xem setting đã tồn tại chưa
-        $existing = $this->execute("SELECT id FROM settings WHERE setting_key = ?", [$key]);
+        $existing = $this->findAll("SELECT id FROM settings WHERE setting_key = ?", [$key]);
         
         if (empty($existing)) {
             // Tạo mới
