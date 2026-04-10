@@ -2,10 +2,166 @@ console.log("%c AURORA POS SYSTEM %c Optimized by LongDev ", "background:#1e293b
 
 /**
  * Customer Menu JS — Aurora Restaurant
+ * Bilingual Support VI/EN
  */
 
 let cart = [];
 let currentItem = null;
+
+// Translation dictionary for notifications and messages
+const MESSAGES = {
+    vi: {
+        devMode: 'DEV MODE: Kiểm tra vị trí đã tắt. Bạn có thể test từ bất kỳ đâu.',
+        locationVerified: '✅ Vị trí đã xác thực. Bạn đang trong khu vực nhà hàng.',
+        locationNotVerified: '⚠️ Chưa xác thực vị trí. Vui lòng bấm nút xác thực.',
+        addedToCart: 'Đã thêm',
+        orderSuccess: 'Xác nhận đặt món thành công!',
+        orderError: 'Lỗi gửi order. Vui lòng thử lại.',
+        networkError: 'Lỗi kết nối máy chủ. Vui lòng kiểm tra mạng.',
+        callWaiterConfirm: 'Bạn muốn gọi nhân viên phục vụ?',
+        callPaymentConfirm: 'Bạn muốn yêu cầu thanh toán?',
+        requestSent: 'Yêu cầu đã được gửi đến nhân viên!',
+        requestError: 'Gửi yêu cầu thất bại.',
+        connectionError: 'Lỗi kết nối.',
+        emptyCart: 'Giỏ hàng đang trống.',
+        continueOrdering: 'TIẾP TỤC CHỌN MÓN',
+        outOfStock: 'Hết hàng',
+        noMenu: 'Chưa có thực đơn',
+        contactStaff: 'Vui lòng liên hệ nhân viên để được hỗ trợ',
+        noResult: 'Không tìm thấy món phù hợp',
+        clearSearch: 'Xoá tìm kiếm',
+        yourCart: 'Giỏ hàng của bạn',
+        viewCart: 'XEM GIỎ',
+        orderNotes: 'GHI CHÚ ĐƠN HÀNG',
+        orderNotesPlaceholder: 'VD: Không lấy hành, ít cay...',
+        total: 'Tổng cộng',
+        confirmOrder: 'XÁC NHẬN ĐẶT MÓN',
+        addToOrder: 'THÊM VÀO ĐƠN HÀNG',
+        processing: 'ĐANG XỬ LÝ...',
+        locationChecking: 'Đang kiểm tra...',
+        locationVerified: 'Đã xác thực',
+        locationDenied: 'Bị từ chối',
+        locationOutOfRange: 'Ngoài phạm vi',
+        locationOK: 'OK',
+        startExperience: 'BẮT ĐẦU TRẢI NGHIỆM',
+        verifying: 'ĐANG XÁC THỰC...',
+        success: 'XÁC THỰC THÀNH CÔNG!',
+        retry: 'THỬ LẠI XÁC THỰC',
+        browserNoSupport: 'Trình duyệt không hỗ trợ định vị.',
+        permissionDenied: 'BẠN ĐÃ TỪ CHỐI ĐỊNH VỊ. Vui lòng cho phép trong Cài đặt và Tải lại trang.',
+        locationUnavailable: 'Thông tin vị trí không khả dụng.',
+        locationTimeout: 'Hết thời gian yêu cầu vị trí.',
+        pleaseAllowLocation: 'Vui lòng cấp quyền định vị: ',
+        youAreFar: 'Bạn đang ở xa nhà hàng',
+        scanAtTable: 'Vui lòng quét mã tại bàn.',
+        meters: 'm',
+        leavingArea: 'BẠN ĐÃ RỜI KHỎI KHU VỰC',
+        menuLocked: 'Thực đơn tạm thời bị khoá để bảo mật đơn hàng',
+        distance: 'Khoảng cách',
+        pleaseReturn: 'Vui lòng quay lại khu vực để tiếp tục',
+        privacyNotice: 'Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi.',
+        forSecurity: 'Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn.',
+        instantConfirm: 'Đơn hàng xác nhận ngay lập tức',
+        noHistory: 'Không lưu lịch sử vị trí',
+        autoDelete: 'Tự động xoá khi rời đi',
+        quickOptions: 'Tuỳ chọn nhanh',
+        noOptions: 'Chưa có Tùy chọn cấu hình sẵn cho món này (Thiết lập tại Admin).',
+        notePlaceholder: 'Ghi chú thêm (No onion, less spicy...)',
+        preliminaryBill: 'Hoá đơn tạm tính',
+        requestPayment: 'YÊU CẦU THANH TOÁN',
+        continueOrdering2: 'TIẾP TỤC ĐẶT MÓN',
+        noItemsOrdered: 'Bàn chưa có món nào được gọi.',
+        subtotal: 'Tổng tiền món',
+        orderDetails: 'Chi tiết đơn hàng',
+        callReception: 'Call Reception',
+        callWaiter: 'Call Waiter',
+        bill: 'Bill',
+        payment: 'Payment',
+        refresh: 'Làm mới',
+        myTables: 'Bàn của tôi'
+    },
+    en: {
+        devMode: 'DEV MODE: Location checking disabled. You can test from anywhere.',
+        locationVerified: '✅ Location verified. You are in the restaurant area.',
+        locationNotVerified: '⚠️ Location not verified. Please press the verify button.',
+        addedToCart: 'Added',
+        orderSuccess: 'Order confirmed successfully!',
+        orderError: 'Order submission error. Please try again.',
+        networkError: 'Connection error. Please check your network.',
+        callWaiterConfirm: 'Do you want to call the waiter?',
+        callPaymentConfirm: 'Do you want to request payment?',
+        requestSent: 'Request sent to staff!',
+        requestError: 'Request failed.',
+        connectionError: 'Connection error.',
+        emptyCart: 'Your cart is empty.',
+        continueOrdering: 'CONTINUE ORDERING',
+        outOfStock: 'Out of stock',
+        noMenu: 'No menu available',
+        contactStaff: 'Please contact staff for assistance',
+        noResult: 'No dishes found matching your search',
+        clearSearch: 'Clear search',
+        yourCart: 'Your cart',
+        viewCart: 'VIEW',
+        orderNotes: 'ORDER NOTES',
+        orderNotesPlaceholder: 'e.g., No onion, less spicy...',
+        total: 'Total',
+        confirmOrder: 'CONFIRM ORDER',
+        addToOrder: 'ADD TO ORDER',
+        processing: 'PROCESSING...',
+        locationChecking: 'Checking...',
+        locationVerified: 'Verified',
+        locationDenied: 'Denied',
+        locationOutOfRange: 'Out of range',
+        locationOK: 'OK',
+        startExperience: 'START EXPERIENCE',
+        verifying: 'VERIFYING...',
+        success: 'VERIFICATION SUCCESSFUL!',
+        retry: 'RETRY VERIFICATION',
+        browserNoSupport: 'Browser does not support geolocation.',
+        permissionDenied: 'LOCATION PERMISSION DENIED. Please allow in Settings and Reload page.',
+        locationUnavailable: 'Location information unavailable.',
+        locationTimeout: 'Location request timeout.',
+        pleaseAllowLocation: 'Please allow geolocation: ',
+        youAreFar: 'You are far from the restaurant',
+        scanAtTable: 'Please scan the code at the table.',
+        meters: 'm',
+        leavingArea: 'YOU HAVE LEFT THE AREA',
+        menuLocked: 'Menu is temporarily locked for order security',
+        distance: 'Distance',
+        pleaseReturn: 'Please return to the area to continue',
+        privacyNotice: 'By continuing, you agree to our privacy policy.',
+        forSecurity: 'For order security and optimal service speed, please confirm your location.',
+        instantConfirm: 'Instant order confirmation',
+        noHistory: 'No location history stored',
+        autoDelete: 'Auto-delete when leaving',
+        quickOptions: 'Quick Options',
+        noOptions: 'No options configured for this item (Set up at Admin).',
+        notePlaceholder: 'Additional notes (No onion, less spicy...)',
+        preliminaryBill: 'Preliminary Bill',
+        requestPayment: 'REQUEST PAYMENT',
+        continueOrdering2: 'CONTINUE ORDERING',
+        noItemsOrdered: 'No items ordered yet.',
+        subtotal: 'Subtotal',
+        orderDetails: 'Order Details',
+        callReception: 'Call Reception',
+        callWaiter: 'Call Waiter',
+        bill: 'Bill',
+        payment: 'Payment',
+        refresh: 'Refresh',
+        myTables: 'My Tables'
+    }
+};
+
+// Get current language
+function getCurrentLang() {
+    return localStorage.getItem('aurora_lang') || 'vi';
+}
+
+// Get message by key
+function t(key) {
+    const lang = getCurrentLang();
+    return MESSAGES[lang][key] || MESSAGES['vi'][key] || key;
+}
 
 /** Đọc giá trị cookie theo tên */
 function _getCookie(name) {
@@ -174,15 +330,15 @@ function createLocationIndicator() {
     document.head.appendChild(style);
 
     // Kiểm tra trạng thái ban đầu
-    updateLocationIndicator('checking', 'Đang kiểm tra...');
+    updateLocationIndicator('checking', t('locationChecking'));
     
     // Click vào indicator để xem chi tiết
     indicator.addEventListener('click', () => {
         const isVerified = localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true';
         if (isVerified) {
-            showToast('✅ Vị trí đã xác thực. Bạn đang trong khu vực nhà hàng.');
+            showToast(t('locationVerified'));
         } else {
-            showToast('⚠️ Chưa xác thực vị trí. Vui lòng bấm nút xác thực.');
+            showToast(t('locationNotVerified'));
         }
     });
 }
@@ -600,7 +756,7 @@ function quickAdd(id, name, price) {
         cart.push({ id, name, price, quantity: 1, note: '' });
     }
     saveCart();
-    showToast(`Đã thêm ${name}`);
+    showToast(`${t('addedToCart')} ${name}`);
 }
 
 function showToast(msg) {
@@ -643,6 +799,25 @@ function showToast(msg) {
     }
 
     setTimeout(() => toast.remove(), 3000);
+}
+
+// Update indicator label on language change
+function updateIndicatorLang() {
+    const indicator = document.getElementById('locStatusIndicator');
+    if (indicator && CUSTOMER_CONFIG.devMode) {
+        const label = indicator.querySelector('.loc-label');
+        if (label) label.textContent = 'DEV MODE';
+    } else if (indicator) {
+        const isVerified = localStorage.getItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`) === 'true';
+        const label = indicator.querySelector('.loc-label');
+        if (label) {
+            if (isVerified) {
+                label.textContent = t('locationVerified');
+            } else {
+                label.textContent = t('locationNotVerified');
+            }
+        }
+    }
 }
 
 function showItemDetail(item) {

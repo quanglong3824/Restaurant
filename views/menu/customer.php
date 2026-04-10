@@ -62,7 +62,6 @@ if ($hasItems) {
 
 <div id="locationOverlay" class="loc-overlay">
     <script>
-        // Dùng PHP render trực tiếp table ID — CUSTOMER_CONFIG chưa khai báo ở đây
         (function(){
             var _tid = <?= (int)$table['id'] ?>;
             var _key = 'locationVerified_table_' + _tid;
@@ -73,24 +72,24 @@ if ($hasItems) {
     </script>
     <div class="loc-card">
         <div class="loc-icon-ring"><i class="fas fa-shield-alt"></i></div>
-        <h3>XÁC NHẬN HIỆN DIỆN</h3>
+        <h3 class="loc-title" data-vi="XÁC NHẬN HIỆN DIỆN" data-en="CONFIRM YOUR PRESENCE">XÁC NHẬN HIỆN DIỆN</h3>
         <p class="loc-sub">AURORA HOTEL PLAZA</p>
         <div id="liveDistance" class="loc-dist-badge" style="display:none;">
             <i class="fas fa-map-marker-alt"></i> <span id="distVal">...</span>m
         </div>
-        <p style="font-size:.875rem;color:#cbd5e1;line-height:1.6;">
+        <p class="loc-desc" data-vi="Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn." data-en="For order security and optimal service speed, please confirm your location.">
             Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn.
         </p>
         <ul class="loc-benefits">
-            <li><i class="fas fa-check-circle"></i> Đơn hàng xác nhận ngay lập tức</li>
-            <li><i class="fas fa-lock"></i> Không lưu lịch sử vị trí</li>
-            <li><i class="fas fa-history"></i> Tự động xoá khi rời đi</li>
+            <li><i class="fas fa-check-circle"></i> <span data-vi="Đơn hàng xác nhận ngay lập tức" data-en="Instant order confirmation">Đơn hàng xác nhận ngay lập tức</span></li>
+            <li><i class="fas fa-lock"></i> <span data-vi="Không lưu lịch sử vị trí" data-en="No location history stored">Không lưu lịch sử vị trí</span></li>
+            <li><i class="fas fa-history"></i> <span data-vi="Tự động xoá khi rời đi" data-en="Auto-delete when leaving">Tự động xoá khi rời đi</span></li>
         </ul>
         <div id="locationError" class="loc-error" style="display:none;"></div>
         <button id="btnAllowLocation" class="btn-loc-start">
-            <i class="fas fa-location-arrow"></i> BẮT ĐẦU TRẢI NGHIỆM
+            <i class="fas fa-location-arrow"></i> <span data-vi="BẮT ĐẦU TRẢI NGHIỆM" data-en="START EXPERIENCE">BẮT ĐẦU TRẢI NGHIỆM</span>
         </button>
-        <p class="loc-privacy">Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi.</p>
+        <p class="loc-privacy" data-vi="Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi." data-en="By continuing, you agree to our privacy policy.">Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi.</p>
     </div>
 </div>
 
@@ -1056,6 +1055,70 @@ function applyLanguage(lang) {
         const text = lang === 'vi' ? label.getAttribute('data-vi') : label.getAttribute('data-en');
         if (text) label.textContent = text;
     });
+    
+    // Update location overlay
+    document.querySelectorAll('#locationOverlay .loc-title, #locationOverlay h3').forEach(el => {
+        const text = lang === 'vi' ? el.getAttribute('data-vi') : el.getAttribute('data-en');
+        if (text) el.textContent = text;
+    });
+    
+    document.querySelectorAll('#locationOverlay .loc-desc').forEach(el => {
+        const text = lang === 'vi' ? el.getAttribute('data-vi') : el.getAttribute('data-en');
+        if (text) el.textContent = text;
+    });
+    
+    document.querySelectorAll('#locationOverlay .loc-benefits span').forEach(el => {
+        const text = lang === 'vi' ? el.getAttribute('data-vi') : el.getAttribute('data-en');
+        if (text) el.textContent = text;
+    });
+    
+    document.querySelectorAll('#locationOverlay .loc-privacy').forEach(el => {
+        const text = lang === 'vi' ? el.getAttribute('data-vi') : el.getAttribute('data-en');
+        if (text) el.textContent = text;
+    });
+    
+    // Update frozen overlay
+    const frozenTitle = document.querySelector('#frozenOverlay h3');
+    if (frozenTitle) {
+        frozenTitle.textContent = lang === 'vi' ? 'BẠN ĐÃ RỜI KHỎI KHU VỰC' : 'YOU HAVE LEFT THE AREA';
+    }
+    
+    const frozenSub = document.querySelector('#frozenOverlay .loc-sub');
+    if (frozenSub) {
+        frozenSub.textContent = lang === 'vi' ? 'Thực đơn tạm thời bị khoá để bảo mật đơn hàng' : 'Menu is temporarily locked for order security';
+    }
+    
+    const frozenHint = document.querySelector('#frozenOverlay .loc-hint');
+    if (frozenHint) {
+        frozenHint.textContent = lang === 'vi' ? 'Vui lòng quay lại khu vực để tiếp tục' : 'Please return to the area to continue';
+    }
+    
+    // Update cart modal empty state
+    const cartEmptyText = document.querySelector('#cartItemsList .text-muted');
+    if (cartEmptyText) {
+        cartEmptyText.textContent = lang === 'vi' ? 'Giỏ hàng đang trống.' : 'Your cart is empty.';
+    }
+    
+    // Update item detail modal
+    const detailDescDefault = document.getElementById('detailDesc');
+    if (detailDescDefault && !currentItem) {
+        detailDescDefault.textContent = lang === 'vi' ? 'Không có mô tả cho món ăn này.' : 'No description for this item.';
+    }
+    
+    const notePlaceholder = document.getElementById('detailNote');
+    if (notePlaceholder) {
+        notePlaceholder.placeholder = lang === 'vi' ? 'Ghi chú thêm (No onion, less spicy...)' : 'Additional notes (No onion, less spicy...)';
+    }
+    
+    const orderNotesLabel = document.querySelector('.order-notes-box label');
+    if (orderNotesLabel) {
+        orderNotesLabel.textContent = lang === 'vi' ? 'GHI CHÚ ĐƠN HÀNG' : 'ORDER NOTES';
+    }
+    
+    const orderNotesTextarea = document.getElementById('orderNotes');
+    if (orderNotesTextarea) {
+        orderNotesTextarea.placeholder = lang === 'vi' ? 'VD: Không lấy hành, ít cay...' : 'e.g., No onion, less spicy...';
+    }
 }
 
 // Apply language on page load
