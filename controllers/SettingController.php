@@ -482,15 +482,28 @@ class SettingController extends Controller
     /** GET /it/settings */
     public function settings(): void
     {
-        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+        try {
+            Auth::requireRole(ROLE_IT, ROLE_ADMIN);
 
-        $settings = $this->settingModel->getAll();
-        $this->view('layouts/admin', [
-            'view' => 'it/settings',
-            'pageTitle' => 'Cài Đặt Hệ Thống',
-            'pageSubtitle' => 'Quản lý các tùy chọn hệ thống',
-            'settings' => $settings,
-        ]);
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            
+            $settings = $this->settingModel->getAll();
+            $this->view('layouts/admin', [
+                'view' => 'it/settings',
+                'pageTitle' => 'Cài Đặt Hệ Thống',
+                'pageSubtitle' => 'Quản lý các tùy chọn hệ thống',
+                'settings' => $settings,
+            ]);
+        } catch (\Throwable $e) {
+            echo "<pre style='background:#1a1a2e;color:#0f0;padding:20px;font-family:monospace;'>";
+            echo "<h2 style='color:#f00;'>LỖI TRANG SETTINGS</h2>";
+            echo "File: " . $e->getFile() . " (dòng " . $e->getLine() . ")\n";
+            echo "Message: " . $e->getMessage() . "\n";
+            echo "Trace:\n" . $e->getTraceAsString() . "\n";
+            echo "</pre>";
+            exit;
+        }
     }
 
     /** POST /it/settings/update */
