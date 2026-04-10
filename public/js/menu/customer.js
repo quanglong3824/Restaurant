@@ -14,9 +14,21 @@ function _getCookie(name) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Skip location features in DEV_MODE
+    if (CUSTOMER_CONFIG.devMode) {
+        console.log("%c DEV MODE: Location checking disabled ", "background:#10b981;color:#fff;padding:5px;border-radius:5px;font-weight:bold");
+        // Auto-verify location and show menu
+        localStorage.setItem(`locationVerified_table_${CUSTOMER_CONFIG.tableId}`, 'true');
+        document.getElementById('locationOverlay')?.style.setProperty('display', 'none');
+        document.getElementById('menuWrapper')?.style.setProperty('display', 'block');
+        document.getElementById('frozenOverlay')?.style.setProperty('display', 'none');
+    }
+    
     createLocationIndicator();
-    checkLocation();
-    startLocationWatcher();
+    if (!CUSTOMER_CONFIG.devMode) {
+        checkLocation();
+        startLocationWatcher();
+    }
     loadCart();
     setupCategoryNav();
     setupSearch();
@@ -31,6 +43,64 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Location Status Indicator ────────────────────────────
 function createLocationIndicator() {
     if (document.getElementById('locStatusIndicator')) return;
+    
+    // In DEV_MODE, show a special indicator
+    if (CUSTOMER_CONFIG.devMode) {
+        const indicator = document.createElement('div');
+        indicator.id = 'locStatusIndicator';
+        indicator.innerHTML = `
+            <div class="loc-dot" style="background:#8b5cf6;box-shadow:0 0 8px rgba(139,92,246,0.6);"></div>
+            <span class="loc-label" style="color:#8b5cf6;">DEV MODE</span>
+        `;
+        document.body.appendChild(indicator);
+        
+        // Add click to show dev info
+        indicator.addEventListener('click', () => {
+            showToast('🔧 DEV MODE: Kiểm tra vị trí đã tắt. Bạn có thể test từ bất kỳ đâu.');
+        });
+        
+        // Add dev mode styles
+        const style = document.createElement('style');
+        style.textContent = `
+            #locStatusIndicator {
+                position: fixed;
+                bottom: 90px;
+                left: 12px;
+                z-index: 9998;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                background: rgba(139, 92, 246, 0.15);
+                backdrop-filter: blur(10px);
+                padding: 6px 12px 6px 8px;
+                border-radius: 50px;
+                box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-family: inherit;
+                border: 1px solid rgba(139, 92, 246, 0.4);
+            }
+            #locStatusIndicator:active { transform: scale(0.95); }
+            #locStatusIndicator .loc-dot {
+                width: 10px; height: 10px;
+                border-radius: 50%;
+                animation: devPulse 2s infinite;
+                flex-shrink: 0;
+            }
+            #locStatusIndicator .loc-label {
+                font-size: 0.7rem;
+                font-weight: 800;
+                white-space: nowrap;
+                letter-spacing: 0.5px;
+            }
+            @keyframes devPulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.3); opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(style);
+        return;
+    }
     
     const indicator = document.createElement('div');
     indicator.id = 'locStatusIndicator';

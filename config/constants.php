@@ -56,3 +56,10 @@ define('RESTAURANT_LAT', 10.957350753989619);
 define('RESTAURANT_LNG', 106.84462256494264);
 define('MAX_ORDER_DISTANCE', 200); // Khoảng cách tối đa (mét) để được xem menu
 
+// ============================================
+// DEVELOPMENT MODE SETTINGS
+// ============================================
+// Set to true to disable location checking for development/testing
+// When true, developers can test the app from anywhere without location restrictions
+define('DEV_MODE', false);
+
