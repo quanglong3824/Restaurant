@@ -1,4 +1,4 @@
--- Aurora Restaurant Database Backup
+/Users/quanglong/Downloads/backup_auroraho_restaurant_20260410_090955.sql-- Aurora Restaurant Database Backup
 -- Generated: 2026-04-09 14:52:49
 
 SET NAMES utf8mb4;
