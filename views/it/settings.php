@@ -49,6 +49,7 @@ foreach ($settings as $s) {
                     
                     <div class="toggle-switch-wrapper">
                         <label class="toggle-switch">
+                            <input type="hidden" name="setting_value" value="0">
                             <input type="checkbox" name="setting_value" value="1" 
                                    <?= ($settingsByKey['dev_mode']['setting_value'] ?? '0') === '1' ? 'checked' : '' ?>>
                             <span class="toggle-slider"></span>
@@ -89,6 +90,7 @@ foreach ($settings as $s) {
                     
                     <div class="toggle-switch-wrapper">
                         <label class="toggle-switch">
+                            <input type="hidden" name="setting_value" value="0">
                             <input type="checkbox" name="setting_value" value="1" 
                                    <?= ($settingsByKey['maintenance_mode']['setting_value'] ?? '0') === '1' ? 'checked' : '' ?>>
                             <span class="toggle-slider"></span>
@@ -128,6 +130,7 @@ foreach ($settings as $s) {
                     
                     <div class="toggle-switch-wrapper">
                         <label class="toggle-switch">
+                            <input type="hidden" name="setting_value" value="0">
                             <input type="checkbox" name="setting_value" value="1" 
                                    <?= ($settingsByKey['auto_print_orders']['setting_value'] ?? '1') === '1' ? 'checked' : '' ?>>
                             <span class="toggle-slider"></span>
@@ -162,6 +165,7 @@ foreach ($settings as $s) {
                     
                     <div class="toggle-switch-wrapper">
                         <label class="toggle-switch">
+                            <input type="hidden" name="setting_value" value="0">
                             <input type="checkbox" name="setting_value" value="1" 
                                    <?= ($settingsByKey['allow_online_payment']['setting_value'] ?? '1') === '1' ? 'checked' : '' ?>>
                             <span class="toggle-slider"></span>
