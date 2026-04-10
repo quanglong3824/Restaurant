@@ -144,6 +144,10 @@
                         <i class="fas fa-users"></i>
                         <span>Quản lý User</span>
                     </a>
+                    <a href="<?= BASE_URL ?>/it/settings" class="nav-item <?= activeClass('/it/settings') ?>">
+                        <i class="fas fa-cog"></i>
+                        <span>Cài đặt hệ thống</span>
+                    </a>
                     <a href="<?= BASE_URL ?>/admin/menu/clear" class="nav-item <?= activeClass('/admin/menu/clear') ?>">
                         <i class="fas fa-trash-alt"></i>
                         <span>Xóa dữ liệu thực đơn</span>

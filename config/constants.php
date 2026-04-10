@@ -61,5 +61,6 @@ define('MAX_ORDER_DISTANCE', 200); // Khoảng cách tối đa (mét) để đư
 // ============================================
 // Set to true to disable location checking for development/testing
 // When true, developers can test the app from anywhere without location restrictions
+// Note: This can be overridden by the 'dev_mode' setting in the database (via IT settings page)
 define('DEV_MODE', false);
 

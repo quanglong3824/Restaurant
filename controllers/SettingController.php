@@ -1,20 +1,23 @@
 <?php
 // ============================================================
-// SettingController — IT: Full User Management
+// SettingController — IT: Settings & User Management
 // ============================================================
 
 require_once BASE_PATH . '/models/User.php';
 require_once BASE_PATH . '/models/ActivityLog.php';
+require_once BASE_PATH . '/models/Setting.php';
 
 class SettingController extends Controller
 {
     private User $userModel;
     private ActivityLog $activityLog;
+    private Setting $settingModel;
 
     public function __construct()
     {
         $this->userModel = new User();
         $this->activityLog = new ActivityLog();
+        $this->settingModel = new Setting();
     }
 
     /** GET /it/users */
@@ -470,5 +473,80 @@ class SettingController extends Controller
         }
 
         $this->redirect('/it/database');
+    }
+
+    // ================================================================
+    // SETTINGS MANAGEMENT
+    // ================================================================
+
+    /** GET /it/settings */
+    public function settings(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+
+        $settings = $this->settingModel->getAll();
+        $this->view('layouts/admin', [
+            'view' => 'it/settings',
+            'pageTitle' => 'Cài Đặt Hệ Thống',
+            'pageSubtitle' => 'Quản lý các tùy chọn hệ thống',
+            'settings' => $settings,
+        ]);
+    }
+
+    /** POST /it/settings/update */
+    public function updateSetting(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+
+        $key = trim($this->input('setting_key', ''));
+        $value = trim($this->input('setting_value', ''));
+        $description = trim($this->input('description', ''));
+
+        if (empty($key)) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Khóa cài đặt không được để trống.'];
+            $this->redirect('/it/settings');
+        }
+
+        $success = $this->settingModel->setValue($key, $value, $description);
+
+        if ($success) {
+            // Log activity
+            $this->activityLog->log(
+                ActivityLog::ACTION_UPDATE,
+                'setting',
+                0,
+                ['key' => $key, 'value' => $value],
+                ActivityLog::LEVEL_INFO
+            );
+
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã cập nhật cài đặt!'];
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi khi cập nhật cài đặt.'];
+        }
+
+        $this->redirect('/it/settings');
+    }
+
+    /** POST /it/settings/reset */
+    public function resetSetting(): void
+    {
+        Auth::requireRole(ROLE_IT, ROLE_ADMIN);
+
+        $key = $this->input('setting_key', '');
+
+        if (empty($key)) {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Khóa cài đặt không được để trống.'];
+            $this->redirect('/it/settings');
+        }
+
+        $success = $this->settingModel->delete($key);
+
+        if ($success) {
+            $_SESSION['flash'] = ['type' => 'success', 'message' => 'Đã đặt lại cài đặt về mặc định!'];
+        } else {
+            $_SESSION['flash'] = ['type' => 'danger', 'message' => 'Lỗi khi đặt lại cài đặt.'];
+        }
+
+        $this->redirect('/it/settings');
     }
 }

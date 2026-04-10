@@ -289,7 +289,7 @@ if ($hasItems) {
     </script>
 
     <!-- DEV MODE Banner -->
-    <?php if (defined('DEV_MODE') && DEV_MODE): ?>
+    <?php if (!empty($devMode)): ?>
     <div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(90deg,#7c3aed,#8b5cf6);color:#fff;text-align:center;padding:8px 16px;font-size:0.75rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 2px 10px rgba(124,58,237,0.4);">
         <i class="fas fa-wrench me-2"></i> DEV MODE — Kiểm tra vị trí đã tắt <i class="fas fa-code ms-2"></i>
     </div>
@@ -883,7 +883,7 @@ const CUSTOMER_CONFIG = {
     restaurantCoords:  { lat: <?= RESTAURANT_LAT ?>, lng: <?= RESTAURANT_LNG ?> },
     maxDistance:       <?= MAX_ORDER_DISTANCE ?>,
     showBill:          <?= isset($_GET['show_bill']) ? 'true' : 'false' ?>,
-    devMode:           <?= defined('DEV_MODE') && DEV_MODE ? 'true' : 'false' ?>
+    devMode:           <?= !empty($devMode) ? 'true' : 'false' ?>
 };
 
 /* ── Type tab filter ── */

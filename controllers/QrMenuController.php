@@ -10,6 +10,7 @@ require_once BASE_PATH . '/models/MenuCategory.php';
 require_once BASE_PATH . '/models/Order.php';
 require_once BASE_PATH . '/models/CustomerSession.php';
 require_once BASE_PATH . '/models/OrderNotification.php';
+require_once BASE_PATH . '/models/Setting.php';
 
 class QrMenuController extends Controller
 {
@@ -20,6 +21,7 @@ class QrMenuController extends Controller
     private Order $orderModel;
     private CustomerSession $sessionModel;
     private OrderNotification $notifModel;
+    private Setting $settingModel;
 
     public function __construct()
     {
@@ -30,6 +32,7 @@ class QrMenuController extends Controller
         $this->orderModel = new Order();
         $this->sessionModel = new CustomerSession();
         $this->notifModel = new OrderNotification();
+        $this->settingModel = new Setting();
     }
 
     /** Handle short QR links: /q?t=TOKEN */
@@ -201,6 +204,9 @@ class QrMenuController extends Controller
                 'message' => "Bàn " . ($table['name'] ?? $tableId) . " vừa quét mã xem thực đơn."
             ]);
             
+            // Lấy giá trị dev_mode từ database
+            $devMode = $this->settingModel->getBoolean('dev_mode', false);
+            
             $this->view('layouts/public', [
                 'view' => 'menu/customer',
                 'pageTitle' => 'Thực đơn ' . ($table['name'] ?? $tableId),
@@ -211,6 +217,7 @@ class QrMenuController extends Controller
                 'orderItems' => $orderItems,
                 'token' => $token,
                 'visitorToken' => $visitorToken,
+                'devMode' => $devMode,
                 'isCustomer' => true
             ]);
         } catch (\Throwable $e) {

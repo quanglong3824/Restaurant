@@ -140,6 +140,11 @@ $router->post('/it/database/cleanup/all', 'SettingController', 'cleanupAll');
 $router->post('/it/database/cleanup/orders', 'SettingController', 'cleanupOrders');
 $router->post('/it/database/cleanup/table', 'SettingController', 'cleanupTable');
 
+// ── IT: Settings Management ───────────────────────────────
+$router->get('/it/settings', 'SettingController', 'settings');
+$router->post('/it/settings/update', 'SettingController', 'updateSetting');
+$router->post('/it/settings/reset', 'SettingController', 'resetSetting');
+
 // ── Admin: Activity Logs ─────────────────────────────────
 $router->get('/admin/activity', 'AdminActivityController', 'index');
 $router->get('/admin/activity/data', 'AdminActivityController', 'data');
