@@ -700,6 +700,13 @@ if ($hasItems) {
                 <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
             </div>
             <div class="fab-item-wrapper">
+                <button class="fab-item" onclick="window.location.href='<?= BASE_URL ?>/qr/landing'" title="Lịch sử / History">
+                    <i class="fas fa-history"></i>
+                </button>
+                <span class="fab-label" data-vi="Lịch sử / History" data-en="History">Lịch sử / History</span>
+                <span class="fab-tooltip">Lịch sử / History</span>
+            </div>
+            <div class="fab-item-wrapper">
                 <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
                     <i class="fas fa-sync-alt"></i>
                 </button>
