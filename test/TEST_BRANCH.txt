@@ -6,5 +6,45 @@ Thông tin:
 - Nhánh: test
 - Ngày tạo: 11/04/2026
 - Mục đích: Test pull từ host
+- URL: https://aurorahotelplaza.com/restaurant/test
 
 File này được tạo để kiểm tra việc push/pull giữa local và remote repository.
+
+## Routes available:
+
+### Auth
+- GET /restaurant/test/auth/login
+- POST /restaurant/test/auth/login
+- GET /restaurant/test/auth/logout
+
+### Home
+- GET /restaurant/test/home
+- GET /restaurant/test/
+
+### Waiter: Tables
+- GET /restaurant/test/tables
+- POST /restaurant/test/tables/open
+- POST /restaurant/test/tables/close
+- POST /restaurant/test/tables/merge
+- POST /restaurant/test/tables/unmerge
+
+### Waiter: Menu
+- GET /restaurant/test/menu
+
+### Waiter: Orders
+- GET /restaurant/test/orders
+- POST /restaurant/test/orders/add
+
+### Admin
+- GET /restaurant/test/admin/realtime
+- GET /restaurant/test/admin/menu
+- GET /restaurant/test/admin/tables
+
+### IT
+- GET /restaurant/test/it/users
+- GET /restaurant/test/it/database
+- GET /restaurant/test/it/settings
+
+### QR Ordering
+- GET /restaurant/test/qr/menu
+- POST /restaurant/test/qr/order/submit
