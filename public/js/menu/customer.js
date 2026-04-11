@@ -1090,7 +1090,7 @@ function showPaymentOverlay() {
 function startStatusPolling() {
     const checkStatus = async () => {
         try {
-            const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status`);
+            const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status?t=${Date.now()}`);
             const data = await res.json();
             
             if (data.status === 'completed') {

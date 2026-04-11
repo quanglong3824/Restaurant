@@ -151,6 +151,23 @@ $t = [
             localStorage.setItem('aurora_lang', newLang);
             window.location.reload();
         }
+
+        function startStatusPolling() {
+            const checkStatus = async () => {
+                try {
+                    const res = await fetch(`${CUSTOMER_CONFIG.baseUrl}/qr/order/poll-status?t=${Date.now()}`);
+                    const data = await res.json();
+                    if (data.status === 'completed') {
+                        window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/thank-you`;
+                    } else if (data.status === 'idle') {
+                        // Bàn đã bị đóng nhưng không khớp session
+                        window.location.href = `${CUSTOMER_CONFIG.baseUrl}/qr/menu?table_id=${CUSTOMER_CONFIG.tableId}`;
+                    }
+                } catch(e) {}
+            };
+            setInterval(checkStatus, 5000);
+        }
+        startStatusPolling();
     </script>
 </body>
 </html>
