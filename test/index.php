@@ -22,165 +22,165 @@ Auth::start();
 $router = new Router();
 
 // ── Auth ──────────────────────────────────────────────────
-$router->get('/auth/login', 'AuthController', 'showLogin');
-$router->post('/auth/login', 'AuthController', 'handleLogin');
-$router->get('/auth/logout', 'AuthController', 'logout');
+$router->get('/test/auth/login', 'AuthController', 'showLogin');
+$router->post('/test/auth/login', 'AuthController', 'handleLogin');
+$router->get('/test/auth/logout', 'AuthController', 'logout');
 
 // ── Home: landing page for iOS Shortcut ──────────────────
-$router->get('/home', 'AuthController', 'landing');
-$router->get('/', 'AuthController', 'home');
+$router->get('/test/home', 'AuthController', 'landing');
+$router->get('/test/', 'AuthController', 'home');
 
 // ── Waiter: Tables ────────────────────────────────────────
-$router->get('/tables', 'TableController', 'index');
-$router->get('/tables/getMergedChildren', 'TableController', 'getMergedChildren');
-$router->post('/tables/open', 'TableController', 'open');
-$router->post('/tables/close', 'TableController', 'close');
-$router->post('/tables/merge', 'TableController', 'merge');
-$router->post('/tables/unmerge', 'TableController', 'unmerge');
-$router->post('/tables/transfer', 'TableController', 'transfer');
+$router->get('/test/tables', 'TableController', 'index');
+$router->get('/test/tables/getMergedChildren', 'TableController', 'getMergedChildren');
+$router->post('/test/tables/open', 'TableController', 'open');
+$router->post('/test/tables/close', 'TableController', 'close');
+$router->post('/test/tables/merge', 'TableController', 'merge');
+$router->post('/test/tables/unmerge', 'TableController', 'unmerge');
+$router->post('/test/tables/transfer', 'TableController', 'transfer');
 // Split/Merge advanced
-$router->post('/tables/split', 'TableController', 'split');
-$router->post('/tables/transfer-item', 'TableController', 'transfer_item');
-$router->get('/tables/get-items-by-table', 'TableController', 'get_items_by_table');
-$router->post('/tables/merge_areas', 'TableController', 'merge_areas');
+$router->post('/test/tables/split', 'TableController', 'split');
+$router->post('/test/tables/transfer-item', 'TableController', 'transfer_item');
+$router->get('/test/tables/get-items-by-table', 'TableController', 'get_items_by_table');
+$router->post('/test/tables/merge_areas', 'TableController', 'merge_areas');
 
-$router->post('/tables/unmerge_areas', 'TableController', 'unmerge_areas');
+$router->post('/test/tables/unmerge_areas', 'TableController', 'unmerge_areas');
 
 // ── Waiter: Menu ─────────────────────────────────────────
-$router->get('/menu', 'MenuController', 'index');
+$router->get('/test/menu', 'MenuController', 'index');
 
 // ── Waiter: Orders ───────────────────────────────────────
-$router->get('/orders', 'OrderController', 'index');
-$router->post('/orders/add', 'OrderController', 'addItem');
-$router->post('/orders/add-set', 'OrderController', 'addSet');
-$router->post('/orders/update', 'OrderController', 'updateItem');
-$router->post('/orders/update-guest-count', 'OrderController', 'updateGuestCount');
-$router->post('/orders/remove', 'OrderController', 'removeItem');
-$router->post('/orders/update-note', 'OrderController', 'updateItemNote');
-$router->post('/orders/confirm', 'OrderController', 'confirmOrder');
-$router->get('/orders/history', 'OrderController', 'history');
-$router->get('/orders/get-detail', 'OrderController', 'getOrderDetail');
-$router->get('/orders/print', 'OrderController', 'print');
+$router->get('/test/orders', 'OrderController', 'index');
+$router->post('/test/orders/add', 'OrderController', 'addItem');
+$router->post('/test/orders/add-set', 'OrderController', 'addSet');
+$router->post('/test/orders/update', 'OrderController', 'updateItem');
+$router->post('/test/orders/update-guest-count', 'OrderController', 'updateGuestCount');
+$router->post('/test/orders/remove', 'OrderController', 'removeItem');
+$router->post('/test/orders/update-note', 'OrderController', 'updateItemNote');
+$router->post('/test/orders/confirm', 'OrderController', 'confirmOrder');
+$router->get('/test/orders/history', 'OrderController', 'history');
+$router->get('/test/orders/get-detail', 'OrderController', 'getOrderDetail');
+$router->get('/test/orders/print', 'OrderController', 'print');
 
 // ── Customer & Waiter: Support & Payment Requests ───────
-$router->post('/support/request', 'SupportController', 'makeRequest');
-$router->get('/support/pending', 'SupportController', 'getPending');
-$router->post('/support/resolve', 'SupportController', 'resolve');
+$router->post('/test/support/request', 'SupportController', 'makeRequest');
+$router->get('/test/support/pending', 'SupportController', 'getPending');
+$router->post('/test/support/resolve', 'SupportController', 'resolve');
 
 // ── Admin: Real-time Monitoring ──────────────────────────
-$router->get('/admin/realtime', 'AdminRealtimeController', 'index');
-$router->get('/admin/realtime/data', 'AdminRealtimeController', 'data');
-$router->post('/admin/realtime/dismiss', 'AdminRealtimeController', 'dismiss');
-$router->get('/admin/realtime/qr-sessions', 'AdminRealtimeController', 'qrSessions');
+$router->get('/test/admin/realtime', 'AdminRealtimeController', 'index');
+$router->get('/test/admin/realtime/data', 'AdminRealtimeController', 'data');
+$router->post('/test/admin/realtime/dismiss', 'AdminRealtimeController', 'dismiss');
+$router->get('/test/admin/realtime/qr-sessions', 'AdminRealtimeController', 'qrSessions');
 
 // ── Admin: Shift Management ───────────────────────────────
-$router->get('/admin/shifts', 'AdminShiftController', 'index');
-$router->post('/admin/shifts/store', 'AdminShiftController', 'store');
-$router->post('/admin/shifts/delete', 'AdminShiftController', 'delete');
-$router->post('/admin/shifts/assign', 'AdminShiftController', 'assign');
-$router->post('/admin/shifts/remove_assign', 'AdminShiftController', 'removeAssign');
-$router->get('/admin/menu', 'AdminMenuController', 'index');
-$router->get('/admin/menu/create', 'AdminMenuController', 'create');
-$router->post('/admin/menu/store', 'AdminMenuController', 'store');
-$router->get('/admin/menu/edit', 'AdminMenuController', 'edit');
-$router->post('/admin/menu/update', 'AdminMenuController', 'update');
-$router->post('/admin/menu/delete', 'AdminMenuController', 'delete');
-$router->post('/admin/menu/toggle', 'AdminMenuController', 'toggle');
+$router->get('/test/admin/shifts', 'AdminShiftController', 'index');
+$router->post('/test/admin/shifts/store', 'AdminShiftController', 'store');
+$router->post('/test/admin/shifts/delete', 'AdminShiftController', 'delete');
+$router->post('/test/admin/shifts/assign', 'AdminShiftController', 'assign');
+$router->post('/test/admin/shifts/remove_assign', 'AdminShiftController', 'removeAssign');
+$router->get('/test/admin/menu', 'AdminMenuController', 'index');
+$router->get('/test/admin/menu/create', 'AdminMenuController', 'create');
+$router->post('/test/admin/menu/store', 'AdminMenuController', 'store');
+$router->get('/test/admin/menu/edit', 'AdminMenuController', 'edit');
+$router->post('/test/admin/menu/update', 'AdminMenuController', 'update');
+$router->post('/test/admin/menu/delete', 'AdminMenuController', 'delete');
+$router->post('/test/admin/menu/toggle', 'AdminMenuController', 'toggle');
 // Clear menu data (IT only)
-$router->get('/admin/menu/clear', 'AdminMenuController', 'clearPage');
-$router->post('/admin/menu/clear', 'AdminMenuController', 'clear');
+$router->get('/test/admin/menu/clear', 'AdminMenuController', 'clearPage');
+$router->post('/test/admin/menu/clear', 'AdminMenuController', 'clear');
 
 // ── Admin: Menu Types (Phân loại menu) ────────────────────
-$router->get('/admin/menu-types', 'AdminMenuTypeController', 'index');
-$router->post('/admin/menu-types/store', 'AdminMenuTypeController', 'store');
-$router->get('/admin/menu-types/edit', 'AdminMenuTypeController', 'edit');
-$router->post('/admin/menu-types/update', 'AdminMenuTypeController', 'update');
-$router->post('/admin/menu-types/delete', 'AdminMenuTypeController', 'delete');
-$router->post('/admin/menu-types/toggle', 'AdminMenuTypeController', 'toggle');
+$router->get('/test/admin/menu-types', 'AdminMenuTypeController', 'index');
+$router->post('/test/admin/menu-types/store', 'AdminMenuTypeController', 'store');
+$router->get('/test/admin/menu-types/edit', 'AdminMenuTypeController', 'edit');
+$router->post('/test/admin/menu-types/update', 'AdminMenuTypeController', 'update');
+$router->post('/test/admin/menu-types/delete', 'AdminMenuTypeController', 'delete');
+$router->post('/test/admin/menu-types/toggle', 'AdminMenuTypeController', 'toggle');
 
 // ── Admin: Menu Sets (À la carte) ─────────────────────────
-$router->get('/admin/menu/sets', 'AdminMenuSetController', 'index');
-$router->post('/admin/menu/sets/store', 'AdminMenuSetController', 'store');
-$router->post('/admin/menu/sets/update', 'AdminMenuSetController', 'update');
-$router->post('/admin/menu/sets/delete', 'AdminMenuSetController', 'delete');
-$router->post('/admin/menu/sets/toggle', 'AdminMenuSetController', 'toggle');
+$router->get('/test/admin/menu/sets', 'AdminMenuSetController', 'index');
+$router->post('/test/admin/menu/sets/store', 'AdminMenuSetController', 'store');
+$router->post('/test/admin/menu/sets/update', 'AdminMenuSetController', 'update');
+$router->post('/test/admin/menu/sets/delete', 'AdminMenuSetController', 'delete');
+$router->post('/test/admin/menu/sets/toggle', 'AdminMenuSetController', 'toggle');
 
 // ── Admin: Categories ─────────────────────────────────────
-$router->get('/admin/categories', 'AdminCategoryController', 'index');
-$router->get('/admin/categories/edit', 'AdminCategoryController', 'edit');
-$router->post('/admin/categories/store', 'AdminCategoryController', 'store');
-$router->post('/admin/categories/update', 'AdminCategoryController', 'update');
-$router->post('/admin/categories/delete', 'AdminCategoryController', 'delete');
+$router->get('/test/admin/categories', 'AdminCategoryController', 'index');
+$router->get('/test/admin/categories/edit', 'AdminCategoryController', 'edit');
+$router->post('/test/admin/categories/store', 'AdminCategoryController', 'store');
+$router->post('/test/admin/categories/update', 'AdminCategoryController', 'update');
+$router->post('/test/admin/categories/delete', 'AdminCategoryController', 'delete');
 
 // ── Admin: Tables Management ──────────────────────────────
-$router->get('/admin/tables', 'AdminTableController', 'index');
-$router->get('/admin/tables/edit', 'AdminTableController', 'edit');
-$router->post('/admin/tables/store', 'AdminTableController', 'store');
-$router->post('/admin/tables/update', 'AdminTableController', 'update');
-$router->post('/admin/tables/delete', 'AdminTableController', 'delete');
+$router->get('/test/admin/tables', 'AdminTableController', 'index');
+$router->get('/test/admin/tables/edit', 'AdminTableController', 'edit');
+$router->post('/test/admin/tables/store', 'AdminTableController', 'store');
+$router->post('/test/admin/tables/update', 'AdminTableController', 'update');
+$router->post('/test/admin/tables/delete', 'AdminTableController', 'delete');
 
 // ── Admin: Reports ────────────────────────────────────────
-$router->get('/admin/reports', 'ReportController', 'index');
+$router->get('/test/admin/reports', 'ReportController', 'index');
 
 // ── IT: User Management ───────────────────────────────────
-$router->get('/it/users', 'SettingController', 'users');
-$router->get('/it/users/edit', 'SettingController', 'editUser');
-$router->post('/it/users/store', 'SettingController', 'storeUser');
-$router->post('/it/users/update', 'SettingController', 'updateUser');
-$router->post('/it/users/delete', 'SettingController', 'deleteUser');
+$router->get('/test/it/users', 'SettingController', 'users');
+$router->get('/test/it/users/edit', 'SettingController', 'editUser');
+$router->post('/test/it/users/store', 'SettingController', 'storeUser');
+$router->post('/test/it/users/update', 'SettingController', 'updateUser');
+$router->post('/test/it/users/delete', 'SettingController', 'deleteUser');
 
 // ── IT: Database Backup ───────────────────────────────────
-$router->get('/it/database', 'SettingController', 'database');
-$router->get('/it/database/backup', 'SettingController', 'backup');
-$router->get('/it/database/download', 'SettingController', 'downloadBackup');
-$router->post('/it/database/delete', 'SettingController', 'deleteBackup');
+$router->get('/test/it/database', 'SettingController', 'database');
+$router->get('/test/it/database/backup', 'SettingController', 'backup');
+$router->get('/test/it/database/download', 'SettingController', 'downloadBackup');
+$router->post('/test/it/database/delete', 'SettingController', 'deleteBackup');
 
 // ── IT: Database Cleanup ──────────────────────────────────
-$router->post('/it/database/cleanup/all', 'SettingController', 'cleanupAll');
-$router->post('/it/database/cleanup/orders', 'SettingController', 'cleanupOrders');
-$router->post('/it/database/cleanup/table', 'SettingController', 'cleanupTable');
+$router->post('/test/it/database/cleanup/all', 'SettingController', 'cleanupAll');
+$router->post('/test/it/database/cleanup/orders', 'SettingController', 'cleanupOrders');
+$router->post('/test/it/database/cleanup/table', 'SettingController', 'cleanupTable');
 
 // ── IT: Settings Management ───────────────────────────────
-$router->get('/it/settings', 'SettingController', 'settings');
-$router->post('/it/settings/update', 'SettingController', 'updateSetting');
-$router->post('/it/settings/reset', 'SettingController', 'resetSetting');
+$router->get('/test/it/settings', 'SettingController', 'settings');
+$router->post('/test/it/settings/update', 'SettingController', 'updateSetting');
+$router->post('/test/it/settings/reset', 'SettingController', 'resetSetting');
 
 // ── Admin: Activity Logs ─────────────────────────────────
-$router->get('/admin/activity', 'AdminActivityController', 'index');
-$router->get('/admin/activity/data', 'AdminActivityController', 'data');
-$router->get('/admin/activity/entityLogs', 'AdminActivityController', 'entityLogs');
-$router->post('/admin/activity/cleanup', 'AdminActivityController', 'cleanup');
-$router->get('/admin/activity/export', 'AdminActivityController', 'export');
+$router->get('/test/admin/activity', 'AdminActivityController', 'index');
+$router->get('/test/admin/activity/data', 'AdminActivityController', 'data');
+$router->get('/test/admin/activity/entityLogs', 'AdminActivityController', 'entityLogs');
+$router->post('/test/admin/activity/cleanup', 'AdminActivityController', 'cleanup');
+$router->get('/test/admin/activity/export', 'AdminActivityController', 'export');
 
 // ── QR Ordering: Customer ──────────────────────────────────
-$router->get('/q', 'QrMenuController', 'shortLink');
-$router->get('/qr/landing', 'QrMenuController', 'landing');
-$router->get('/qr/menu', 'QrMenuController', 'index');
-$router->post('/qr/menu/location', 'QrMenuController', 'saveLocation');
-$router->post('/qr/cart/add', 'QrMenuController', 'addToCart');
-$router->post('/qr/cart/update', 'QrMenuController', 'updateCart');
-$router->post('/qr/cart/remove', 'QrMenuController', 'removeFromCart');
-$router->post('/qr/order/submit', 'QrOrderController', 'submit');
-$router->post('/qr/session/clear', 'QrOrderController', 'clearSession');
-$router->get('/qr/order/status', 'QrOrderController', 'status');
-$router->get('/qr/order/poll-status', 'QrOrderController', 'pollStatus');
-$router->get('/qr/order/history', 'QrOrderController', 'history');
-$router->get('/qr/order/customer-history', 'QrOrderController', 'customerHistory');
-$router->get('/qr/sessions', 'QrMenuController', 'sessions');
-$router->get('/qr/thank-you', 'QrOrderController', 'thankYou');
-$router->post('/qr/support/call-waiter', 'QrSupportController', 'callWaiter');
-$router->post('/qr/support/request-bill', 'QrSupportController', 'requestBill');
+$router->get('/test/q', 'QrMenuController', 'shortLink');
+$router->get('/test/qr/landing', 'QrMenuController', 'landing');
+$router->get('/test/qr/menu', 'QrMenuController', 'index');
+$router->post('/test/qr/menu/location', 'QrMenuController', 'saveLocation');
+$router->post('/test/qr/cart/add', 'QrMenuController', 'addToCart');
+$router->post('/test/qr/cart/update', 'QrMenuController', 'updateCart');
+$router->post('/test/qr/cart/remove', 'QrMenuController', 'removeFromCart');
+$router->post('/test/qr/order/submit', 'QrOrderController', 'submit');
+$router->post('/test/qr/session/clear', 'QrOrderController', 'clearSession');
+$router->get('/test/qr/order/status', 'QrOrderController', 'status');
+$router->get('/test/qr/order/poll-status', 'QrOrderController', 'pollStatus');
+$router->get('/test/qr/order/history', 'QrOrderController', 'history');
+$router->get('/test/qr/order/customer-history', 'QrOrderController', 'customerHistory');
+$router->get('/test/qr/sessions', 'QrMenuController', 'sessions');
+$router->get('/test/qr/thank-you', 'QrOrderController', 'thankYou');
+$router->post('/test/qr/support/call-waiter', 'QrSupportController', 'callWaiter');
+$router->post('/test/qr/support/request-bill', 'QrSupportController', 'requestBill');
 
 // ── QR Ordering: Admin ─────────────────────────────────────
-$router->get('/admin/qr-codes', 'AdminQrController', 'index');
-$router->post('/admin/qr-codes/generate', 'AdminQrController', 'generate');
-$router->get('/admin/qr-codes/download', 'AdminQrController', 'download');
-$router->post('/admin/qr-codes/delete', 'AdminQrController', 'delete');
+$router->get('/test/admin/qr-codes', 'AdminQrController', 'index');
+$router->post('/test/admin/qr-codes/generate', 'AdminQrController', 'generate');
+$router->get('/test/admin/qr-codes/download', 'AdminQrController', 'download');
+$router->post('/test/admin/qr-codes/delete', 'AdminQrController', 'delete');
 
 // ── Notifications: Real-time Polling ───────────────────────
-$router->get('/notifications', 'NotificationController', 'waiterIndex');
-$router->get('/api/notifications/poll', 'NotificationController', 'poll');
-$router->post('/api/notifications/mark-read', 'NotificationController', 'markRead');
-$router->post('/api/notifications/resolve-support', 'NotificationController', 'resolveSupport');
+$router->get('/test/notifications', 'NotificationController', 'waiterIndex');
+$router->get('/test/api/notifications/poll', 'NotificationController', 'poll');
+$router->post('/test/api/notifications/mark-read', 'NotificationController', 'markRead');
+$router->post('/test/api/notifications/resolve-support', 'NotificationController', 'resolveSupport');
 
 $router->dispatch();
