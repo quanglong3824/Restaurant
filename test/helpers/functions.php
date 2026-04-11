@@ -47,7 +47,12 @@ function activeClass(string $path): string
     $lookupPath = rtrim($lookupPath, '/');
     $uri = rtrim($uri, '/');
 
-    return ($uri === $lookupPath) ? 'active' : '';
+    // Also check without /test prefix for backward compatibility
+    $pathWithoutTest = str_replace('/test', '', $path);
+    $lookupPathWithoutTest = $baseUrlPath . '/' . ltrim($pathWithoutTest, '/');
+    $lookupPathWithoutTest = rtrim($lookupPathWithoutTest, '/');
+
+    return ($uri === $lookupPath || $uri === $lookupPathWithoutTest) ? 'active' : '';
 }
 
 /**
