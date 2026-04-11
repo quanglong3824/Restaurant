@@ -95,24 +95,24 @@
 
     <!-- Bottom Navigation - Modern Rectangular Design -->
     <nav class="waiter-bottomnav" role="navigation" aria-label="Menu chính">
-        <a href="<?= BASE_URL ?>/tables" class="bottomnav-item <?= activeClass('/tables') ?>" aria-label="Sơ đồ bàn">
+        <a href="<?= BASE_URL ?>/test/tables" class="bottomnav-item <?= activeClass('/test/tables') ?>" aria-label="Sơ đồ bàn">
             <i class="fas fa-table-cells-large" aria-hidden="true"></i>
             <span>Bàn</span>
         </a>
-        <a href="<?= BASE_URL ?>/menu" class="bottomnav-item <?= activeClass('/menu') ?>" aria-label="Menu">
+        <a href="<?= BASE_URL ?>/test/menu" class="bottomnav-item <?= activeClass('/test/menu') ?>" aria-label="Menu">
             <i class="fas fa-book-open" aria-hidden="true"></i>
             <span>Menu</span>
         </a>
-        <a href="<?= BASE_URL ?>/notifications" class="bottomnav-item <?= activeClass('/notifications') ?>" aria-label="Thông báo">
+        <a href="<?= BASE_URL ?>/test/notifications" class="bottomnav-item <?= activeClass('/test/notifications') ?>" aria-label="Thông báo">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <span class="noti-badge" id="waiterNotiBadge" style="display:none">0</span>
             <span>Thông báo</span>
         </a>
-        <a href="<?= BASE_URL ?>/orders" class="bottomnav-item <?= activeClass('/orders') ?>" aria-label="Order">
+        <a href="<?= BASE_URL ?>/test/orders" class="bottomnav-item <?= activeClass('/test/orders') ?>" aria-label="Order">
             <i class="fas fa-receipt" aria-hidden="true"></i>
             <span>Order</span>
         </a>
-        <a href="<?= BASE_URL ?>/orders/history" class="bottomnav-item <?= activeClass('/orders/history') ?>"
+        <a href="<?= BASE_URL ?>/test/orders/history" class="bottomnav-item <?= activeClass('/test/orders/history') ?>"
             aria-label="Lịch sử">
             <i class="fas fa-history" aria-hidden="true"></i>
             <span>Lịch sử</span>
