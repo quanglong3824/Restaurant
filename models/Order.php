@@ -154,7 +154,7 @@ class Order extends Model
     {
         return $this->findAll(
             "SELECT oi.*, m.image, m.tags AS menu_tags,
-                    m.note_options, m.note_options_en
+                    m.note_options, m.note_options_en, m.name_en AS item_name_en
              FROM order_items oi
              JOIN menu_items m ON m.id = oi.menu_item_id
              WHERE oi.order_id = ?

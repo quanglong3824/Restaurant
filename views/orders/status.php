@@ -85,7 +85,7 @@ $t = [
                                 <div class="item-left">
                                     <span class="item-qty"><?= $t['qty'] ?><?= $it['quantity'] ?></span>
                                     <div class="item-info">
-                                        <span class="item-name"><?= e($it['item_name']) ?></span>
+                                        <span class="item-name"><?= $isEn && !empty($it['item_name_en']) ? e($it['item_name_en']) : e($it['item_name']) ?></span>
                                         <?php if (!empty($it['note'])): ?>
                                             <span class="item-note"><i class="fas fa-pen"></i> <?= e($it['note']) ?></span>
                                         <?php endif; ?>

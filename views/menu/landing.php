@@ -1,6 +1,8 @@
 <?php
 // views/menu/landing.php — Landing Page cho Khách Hàng
 // Hiển thị lịch sử đơn hàng từ cookie bền vững
+$currentLang = $_COOKIE['aurora_lang'] ?? 'vi';
+$isEn = $currentLang === 'en';
 $visitorToken = $_COOKIE['qr_visitor_token'] ?? '';
 $hasHistory = !empty($orders) && count($orders) > 0;
 ?>
@@ -479,7 +481,7 @@ $hasHistory = !empty($orders) && count($orders) > 0;
                     ?>
                         <div class="preview-item">
                             <span class="qty"><?= $item['quantity'] ?>x</span>
-                            <span class="name"><?= e($item['item_name']) ?></span>
+                            <span class="name"><?= $isEn && !empty($item['item_name_en']) ? e($item['item_name_en']) : e($item['item_name']) ?></span>
                         </div>
                     <?php endfor; ?>
                     <?php if ($itemCount > 3): ?>
@@ -572,7 +574,7 @@ $hasHistory = !empty($orders) && count($orders) > 0;
                     html += '<div class="order-detail-item">';
                     html += '<div class="detail-qty">' + item.quantity + '</div>';
                     html += '<div class="detail-info">';
-                    html += '<div class="detail-name">' + item.item_name + '</div>';
+                    html += '<div class="detail-name">' + (<?= $isEn ? 'true' : 'false' ?> && item.item_name_en ? item.item_name_en : item.item_name) + '</div>';
                     if (item.note) {
                         html += '<div class="detail-note"><i class="fas fa-pen"></i> ' + item.note + '</div>';
                     }

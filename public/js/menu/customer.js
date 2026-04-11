@@ -748,12 +748,12 @@ function updateCartUI() {
     updateCartModal();
 }
 
-function quickAdd(id, name, price) {
+function quickAdd(id, name, price, nameEn = "") {
     const existing = cart.find(item => item.id === id && !item.note);
     if (existing) {
         existing.quantity++;
     } else {
-        cart.push({ id, name, price, quantity: 1, note: '' });
+        cart.push({ id, name, nameEn, price, quantity: 1, note: '' });
     }
     saveCart();
     showToast(`${t('addedToCart')} ${name}`);
@@ -848,9 +848,9 @@ function showItemDetail(item) {
     }
     
     currentItem = { ...item, quantity: 1, note: '' };
-    document.getElementById('detailName').textContent = item.name;
+    document.getElementById('detailName').textContent = typeof currentLang !== 'undefined' && currentLang === 'en' && item.name_en ? item.name_en : item.name;
     document.getElementById('detailPrice').textContent = formatCurrency(item.price);
-    document.getElementById('detailDesc').textContent = item.description || 'Không có mô tả cho món ăn này.';
+    document.getElementById('detailDesc').textContent = item.description || (typeof currentLang !== 'undefined' && currentLang === 'en' ? 'No description for this item.' : 'Không có mô tả cho món ăn này.');
     document.getElementById('detailQty').textContent = '1';
     document.getElementById('detailNote').value = '';
     
@@ -974,13 +974,15 @@ function updateCartModal() {
     let total = 0;
     
     cart.forEach((item, index) => {
+        let displayName = typeof currentLang !== 'undefined' && currentLang === 'en' && (item.nameEn || item.name_en) ? (item.nameEn || item.name_en) : item.name;
+        let noteLabel = typeof currentLang !== 'undefined' && currentLang === 'en' ? 'Note' : 'Lưu ý';
         total += item.price * item.quantity;
         html += `
             <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--border);">
                 <div style="flex:1;">
-                    <div style="font-weight:700; color:var(--text-dark);">${item.name}</div>
+                    <div style="font-weight:700; color:var(--text-dark);">${displayName}</div>
                     <div style="color:var(--gold-dark); font-weight:600; font-size:0.85rem;">${formatCurrency(item.price)}</div>
-                    ${item.note ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-light); margin-top:4px;">Lưu ý: ${item.note}</div>` : ''}
+                    ${item.note ? `<div style="font-style:italic; font-size:0.75rem; color:var(--text-light); margin-top:4px;">${noteLabel}: ${item.note}</div>` : ''}
                 </div>
                 <div class="qty-selector" style="background:#f1f5f9; padding:5px 10px; border-radius:10px; display:flex; align-items:center; gap:15px; scale:0.8;">
                     <button class="qty-btn" style="width:30px; height:30px; font-size:0.8rem;" onclick="changeCartQty(${index}, -1)"><i class="fas fa-minus"></i></button>

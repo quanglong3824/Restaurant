@@ -1,6 +1,8 @@
 <?php
 // views/orders/customer_history.php — Customer Order History for Aurora Restaurant
 // Hiển thị lịch sử order cho khách sau khi thanh toán
+$currentLang = $_COOKIE['aurora_lang'] ?? 'vi';
+$isEn = $currentLang === 'en';
 ?>
 <div class="customer-history-wrapper animate-fade-in">
     <div class="history-header-section">
@@ -58,7 +60,7 @@
                                 ?>
                                     <div class="preview-item">
                                         <span class="qty"><?= $item['quantity'] ?>x</span>
-                                        <span class="name"><?= e($item['item_name']) ?></span>
+                                        <span class="name"><?= $isEn && !empty($item['item_name_en']) ? e($item['item_name_en']) : e($item['item_name']) ?></span>
                                     </div>
                                 <?php endfor; ?>
                                 <?php if ($itemCount > 3): ?>
@@ -456,7 +458,7 @@ function showOrderDetail(order) {
             html += '<div class="order-detail-item">';
             html += '<div class="detail-qty">' + item.quantity + '</div>';
             html += '<div class="detail-info">';
-            html += '<div class="detail-name">' + item.item_name + '</div>';
+            html += '<div class="detail-name">' + (<?= $isEn ? 'true' : 'false' ?> && item.item_name_en ? item.item_name_en : item.item_name) + '</div>';
             if (item.note) {
                 html += '<div class="detail-note"><i class="fas fa-pen"></i> ' + item.note + '</div>';
             }

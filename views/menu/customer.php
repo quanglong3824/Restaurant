@@ -1,4 +1,5 @@
 <?php // views/menu/customer.php — Customer Digital Menu
+$currentLang = $_COOKIE['aurora_lang'] ?? 'vi';
 // Xác định ngữ cảnh phục vụ dựa trên type của bàn/phòng
 $isRoomService = isset($table['type']) && $table['type'] === 'room';
 $contextLabel  = $isRoomService ? 'ROOM SERVICE' : 'RESTAURANT';
@@ -646,7 +647,7 @@ if ($hasItems) {
                                 <div class="item-footer">
                                     <?php if (!$isUnavailable): ?>
                                     <button class="btn-add-circle"
-                                            onclick="event.stopPropagation(); quickAdd(<?= $item['id'] ?>, '<?= e($item['name']) ?>', <?= $item['price'] ?>)">
+                                            onclick="event.stopPropagation(); quickAdd(<?= $item['id'] ?>, '<?= e($item['name']) ?>', <?= $item['price'] ?>, '<?= e($item['name_en'] ?? '') ?>')">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                     <?php else: ?>
@@ -810,7 +811,7 @@ if ($hasItems) {
                         <div class="bill-item">
                             <div class="bill-item-main">
                                 <span class="bill-qty"><?= $oi['quantity'] ?>x</span>
-                                <span class="bill-name"><?= e($oi['item_name']) ?></span>
+                                <span class="bill-name lang" data-vi="<?= e($oi['item_name']) ?>" data-en="<?= e(!empty($oi['item_name_en']) ? $oi['item_name_en'] : $oi['item_name']) ?>"><?= e($currentLang === 'en' && !empty($oi['item_name_en']) ? $oi['item_name_en'] : $oi['item_name']) ?></span>
                                 <span class="bill-price"><?= formatPrice($oi['item_price'] * $oi['quantity']) ?></span>
                             </div>
                             <?php if (!empty($oi['note'])): ?>
@@ -966,10 +967,12 @@ let currentLang = localStorage.getItem('aurora_lang') || 'vi';
 function toggleLanguage() {
     currentLang = currentLang === 'vi' ? 'en' : 'vi';
     localStorage.setItem('aurora_lang', currentLang);
+    document.cookie = "aurora_lang=" + currentLang + "; path=/; max-age=31536000";
     applyLanguage(currentLang);
 }
 
 function applyLanguage(lang) {
+    document.documentElement.lang = lang;
     // Update toggle button text
     const langText = document.getElementById('langText');
     if (langText) langText.textContent = lang === 'vi' ? 'EN' : 'VI';
