@@ -1,0 +1,10 @@
+# Nhánh test - Test Branch
+
+Đây là file test để kiểm tra nhánh test của dự án restaurant.
+
+Thông tin:
+- Nhánh: test
+- Ngày tạo: 11/04/2026
+- Mục đích: Test pull từ host
+
+File này được tạo để kiểm tra việc push/pull giữa local và remote repository.
