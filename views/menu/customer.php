@@ -967,7 +967,7 @@ let currentLang = localStorage.getItem('aurora_lang') || 'vi';
 function toggleLanguage() {
     currentLang = currentLang === 'vi' ? 'en' : 'vi';
     localStorage.setItem('aurora_lang', currentLang);
-    document.cookie = "aurora_lang=" + currentLang + "; path=/; max-age=31536000";
+    document.cookie = "aurora_lang=" + currentLang + "; path=/; max-age=31536000; SameSite=Lax";
     applyLanguage(currentLang);
 }
 

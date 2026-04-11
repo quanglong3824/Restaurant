@@ -147,7 +147,7 @@ $t = [
         function toggleStatusLang() {
             const currentLang = '<?= $currentLang ?>';
             const newLang = currentLang === 'vi' ? 'en' : 'vi';
-            document.cookie = 'aurora_lang=' + newLang + '; path=/; max-age=31536000';
+            document.cookie = 'aurora_lang=' + newLang + '; path=/; max-age=31536000; SameSite=Lax';
             localStorage.setItem('aurora_lang', newLang);
             window.location.reload();
         }
