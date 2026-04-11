@@ -6,7 +6,7 @@
     <div class="history-header-section">
         <div class="brand-logo">
             <h1 class="playfair">AURORA</h1>
-            <span>LỊCH SỬ GỌI MÓN</span>
+            <span>LỊCH SỬ GỌI MÓN / ORDER HISTORY</span>
         </div>
         <div class="table-badge">
             <i class="fas <?= $isRoomService ? 'fa-bed' : 'fa-utensils' ?>"></i>
@@ -20,10 +20,10 @@
                 <div class="empty-icon">
                     <i class="fas fa-receipt"></i>
                 </div>
-                <h3>Chưa có lịch sử gọi món</h3>
-                <p class="text-muted">Các đơn hàng đã thanh toán sẽ hiển thị tại đây</p>
+                <h3>Chưa có lịch sử gọi món / No order history</h3>
+                <p class="text-muted">Các đơn hàng đã thanh toán sẽ hiển thị tại đây / Paid orders will be shown here</p>
                 <button class="btn-back-menu" onclick="window.location.href='<?= BASE_URL ?>/qr/menu?table_id=<?= $table['id'] ?>&token=<?= $token ?>'">
-                    <i class="fas fa-arrow-left me-2"></i> QUAY LẠI MENU
+                    <i class="fas fa-arrow-left me-2"></i> QUAY LẠI MENU / BACK TO MENU
                 </button>
             </div>
         <?php else: ?>
@@ -36,11 +36,11 @@
                         <div class="order-card" onclick="showOrderDetail(<?= htmlspecialchars(json_encode($order)) ?>)">
                             <div class="order-header">
                                 <div class="order-id">
-                                    <span class="label">ĐƠN #<?= $order['id'] ?></span>
+                                    <span class="label">ĐƠN / ORDER #<?= $order['id'] ?></span>
                                     <?php if ($order['id'] == $currentOrderId): ?>
-                                        <span class="current-badge">ĐANG MỞ</span>
+                                        <span class="current-badge">ĐANG MỞ / OPEN</span>
                                     <?php else: ?>
-                                        <span class="closed-badge">ĐÃ THANH TOÁN</span>
+                                        <span class="closed-badge">ĐÃ THANH TOÁN / PAID</span>
                                     <?php endif; ?>
                                 </div>
                                 <div class="order-time">
@@ -62,13 +62,13 @@
                                     </div>
                                 <?php endfor; ?>
                                 <?php if ($itemCount > 3): ?>
-                                    <div class="more-items">+<?= $itemCount - 3 ?> món khác</div>
+                                    <div class="more-items">+<?= $itemCount - 3 ?> món khác / other items</div>
                                 <?php endif; ?>
                             </div>
                             
                             <div class="order-footer">
                                 <div class="total-amount">
-                                    <span class="label">Tổng cộng</span>
+                                    <span class="label">Tổng cộng / Total</span>
                                     <span class="amount"><?= formatPrice($order['total']) ?></span>
                                 </div>
                                 <div class="view-detail-btn">
@@ -82,7 +82,7 @@
             
             <div class="action-buttons">
                 <button class="btn-back-menu" onclick="window.location.href='<?= BASE_URL ?>/qr/menu?table_id=<?= $table['id'] ?>&token=<?= $token ?>'">
-                    <i class="fas fa-utensils me-2"></i> TIẾP TỤC ĐẶT MÓN
+                    <i class="fas fa-utensils me-2"></i> TIẾP TỤC ĐẶT MÓN / CONTINUE ORDERING
                 </button>
             </div>
         <?php endif; ?>
@@ -93,14 +93,14 @@
 <div class="modal-backdrop" id="orderDetailModal" style="display:none;">
     <div class="modal modal-bottom modal-premium">
         <div class="modal-header">
-            <h3><i class="fas fa-file-invoice me-2"></i> Chi tiết đơn hàng</h3>
+            <h3><i class="fas fa-file-invoice me-2"></i> Chi tiết đơn hàng / Order Details</h3>
             <button class="modal-close" onclick="closeOrderDetail()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body" id="orderDetailContent">
             <!-- Content will be populated by JS -->
         </div>
         <div class="modal-footer">
-            <button class="btn-sheet-close" onclick="closeOrderDetail()">Đóng</button>
+            <button class="btn-sheet-close" onclick="closeOrderDetail()">Đóng / Close</button>
         </div>
     </div>
 </div>

@@ -6,23 +6,23 @@ $isEn = $currentLang === 'en';
 
 // Text translations
 $t = [
-    'order_sent' => $isEn ? 'Order Sent!' : 'Order đã được gửi!',
-    'wait_message' => $isEn ? 'Please wait for staff confirmation and service.' : 'Vui lòng đợi nhân viên xác nhận và phục vụ.',
-    'order_details' => $isEn ? 'Order Details' : 'Chi tiết Order',
-    'order_number' => $isEn ? 'Order #' : 'Đơn #',
+    'order_sent' => $isEn ? 'Order Sent!' : 'Order đã được gửi! / Order Sent!',
+    'wait_message' => $isEn ? 'Please wait for staff confirmation and service.' : 'Vui lòng đợi nhân viên xác nhận và phục vụ. / Please wait for confirmation.',
+    'order_details' => $isEn ? 'Order Details' : 'Chi tiết Order / Order Details',
+    'order_number' => $isEn ? 'Order #' : 'Đơn / Order #',
     'qty' => $isEn ? 'x' : 'x',
-    'total' => $isEn ? 'Total' : 'Tổng cộng',
-    'add_more' => $isEn ? 'ORDER MORE' : 'GỌI THÊM MÓN',
-    'check_bill' => $isEn ? 'CHECK BILL' : 'KIỂM TRA HÓA ĐƠN',
-    'pending' => $isEn ? 'Pending' : 'Chờ xác nhận',
-    'confirmed' => $isEn ? 'Confirmed' : 'Đã xác nhận',
-    'cooking' => $isEn ? 'Cooking' : 'Đang chế biến',
-    'served' => $isEn ? 'Served' : 'Đã phục vụ',
-    'cancelled' => $isEn ? 'Cancelled' : 'Đã hủy',
-    'thank_you' => $isEn ? 'Thank you for your order!' : 'Cảm ơn bạn đã đặt món!',
-    'preparing' => $isEn ? 'Our kitchen is preparing your dishes' : 'Bếp đang chuẩn bị món cho bạn',
-    'estimated_time' => $isEn ? 'Estimated Time' : 'Thời gian dự kiến',
-    'minutes' => $isEn ? 'min' : 'phút',
+    'total' => $isEn ? 'Total' : 'Tổng cộng / Total',
+    'add_more' => $isEn ? 'ORDER MORE' : 'GỌI THÊM MÓN / ORDER MORE',
+    'check_bill' => $isEn ? 'CHECK BILL' : 'KIỂM TRA HÓA ĐƠN / CHECK BILL',
+    'pending' => $isEn ? 'Pending' : 'Chờ xác nhận / Pending',
+    'confirmed' => $isEn ? 'Confirmed' : 'Đã xác nhận / Confirmed',
+    'cooking' => $isEn ? 'Cooking' : 'Đang chế biến / Cooking',
+    'served' => $isEn ? 'Served' : 'Đã phục vụ / Served',
+    'cancelled' => $isEn ? 'Cancelled' : 'Đã hủy / Cancelled',
+    'thank_you' => $isEn ? 'Thank you for your order!' : 'Cảm ơn bạn đã đặt món! / Thank you!',
+    'preparing' => $isEn ? 'Our kitchen is preparing your dishes' : 'Bếp đang chuẩn bị món cho bạn / Kitchen is preparing your dishes',
+    'estimated_time' => $isEn ? 'Estimated Time' : 'Thời gian dự kiến / Estimated Time',
+    'minutes' => $isEn ? 'min' : 'phút / min',
 ];
 ?>
 <!DOCTYPE html>
@@ -134,7 +134,7 @@ $t = [
         <!-- Location Status Indicator -->
         <div id="locStatusIndicator" class="loc-indicator">
             <div class="loc-dot"></div>
-            <span class="loc-text">Đã xác thực</span>
+            <span class="loc-text">Đã xác thực / Verified</span>
         </div>
     </div>
 

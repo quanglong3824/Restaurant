@@ -72,24 +72,24 @@ if ($hasItems) {
     </script>
     <div class="loc-card">
         <div class="loc-icon-ring"><i class="fas fa-shield-alt"></i></div>
-        <h3 class="loc-title" data-vi="XÁC NHẬN HIỆN DIỆN" data-en="CONFIRM YOUR PRESENCE">XÁC NHẬN HIỆN DIỆN</h3>
+        <h3 class="loc-title" data-vi="XÁC NHẬN HIỆN DIỆN / CONFIRM YOUR PRESENCE" data-en="CONFIRM YOUR PRESENCE">XÁC NHẬN HIỆN DIỆN / CONFIRM YOUR PRESENCE</h3>
         <p class="loc-sub">AURORA HOTEL PLAZA</p>
         <div id="liveDistance" class="loc-dist-badge" style="display:none;">
             <i class="fas fa-map-marker-alt"></i> <span id="distVal">...</span>m
         </div>
-        <p class="loc-desc" data-vi="Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn." data-en="For order security and optimal service speed, please confirm your location.">
-            Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn.
+        <p class="loc-desc" data-vi="Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn. / For order security and optimal service speed, please confirm your location." data-en="For order security and optimal service speed, please confirm your location.">
+            Để bảo mật đơn hàng và tốc độ phục vụ tối ưu, vui lòng xác nhận vị trí của bạn. / For order security and optimal service speed, please confirm your location.
         </p>
         <ul class="loc-benefits">
-            <li><i class="fas fa-check-circle"></i> <span data-vi="Đơn hàng xác nhận ngay lập tức" data-en="Instant order confirmation">Đơn hàng xác nhận ngay lập tức</span></li>
-            <li><i class="fas fa-lock"></i> <span data-vi="Không lưu lịch sử vị trí" data-en="No location history stored">Không lưu lịch sử vị trí</span></li>
-            <li><i class="fas fa-history"></i> <span data-vi="Tự động xoá khi rời đi" data-en="Auto-delete when leaving">Tự động xoá khi rời đi</span></li>
+            <li><i class="fas fa-check-circle"></i> <span data-vi="Đơn hàng xác nhận ngay lập tức / Instant order confirmation" data-en="Instant order confirmation">Đơn hàng xác nhận ngay lập tức / Instant order confirmation</span></li>
+            <li><i class="fas fa-lock"></i> <span data-vi="Không lưu lịch sử vị trí / No location history stored" data-en="No location history stored">Không lưu lịch sử vị trí / No location history stored</span></li>
+            <li><i class="fas fa-history"></i> <span data-vi="Tự động xoá khi rời đi / Auto-delete when leaving" data-en="Auto-delete when leaving">Tự động xoá khi rời đi / Auto-delete when leaving</span></li>
         </ul>
         <div id="locationError" class="loc-error" style="display:none;"></div>
         <button id="btnAllowLocation" class="btn-loc-start">
-            <i class="fas fa-location-arrow"></i> <span data-vi="BẮT ĐẦU TRẢI NGHIỆM" data-en="START EXPERIENCE">BẮT ĐẦU TRẢI NGHIỆM</span>
+            <i class="fas fa-location-arrow"></i> <span data-vi="BẮT ĐẦU TRẢI NGHIỆM / START EXPERIENCE" data-en="START EXPERIENCE">BẮT ĐẦU TRẢI NGHIỆM / START EXPERIENCE</span>
         </button>
-        <p class="loc-privacy" data-vi="Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi." data-en="By continuing, you agree to our privacy policy.">Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi.</p>
+        <p class="loc-privacy" data-vi="Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi. / By continuing, you agree to our privacy policy." data-en="By continuing, you agree to our privacy policy.">Bằng cách tiếp tục, bạn đồng ý với chính sách bảo mật của chúng tôi. / By continuing, you agree to our privacy policy.</p>
     </div>
 </div>
 
@@ -326,20 +326,20 @@ if ($hasItems) {
         <div class="action-bar" id="actionBar" style="display:none;">
             <button class="action-btn" onclick="window.location.href='<?= BASE_URL ?>/qr/sessions'">
                 <i class="fas fa-th-list"></i>
-                <span class="lang" data-vi="Bàn của tôi" data-en="My Tables">Bàn của tôi</span>
+                <span class="lang" data-vi="Bàn của tôi / My Tables" data-en="My Tables">Bàn của tôi / My Tables</span>
             </button>
             <button class="action-btn" onclick="callWaiter('support')">
                 <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
-                <span class="lang" data-vi="Gọi nhân viên" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên</span>
+                <span class="lang" data-vi="Gọi nhân viên / <?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên / <?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?></span>
             </button>
             <button class="action-btn <?= $hasItems ? 'glow-payment' : '' ?>"
                     onclick="<?= $hasItems ? 'showBillTam()' : "callWaiter('payment')" ?>">
                 <i class="fas fa-file-invoice-dollar"></i>
-                <span class="lang" data-vi="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+                <span class="lang" data-vi="<?= $hasItems ? 'Hoá đơn / Bill' : 'Thanh toán / Payment' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn / Bill' : 'Thanh toán / Payment' ?></span>
             </button>
             <button class="action-btn" onclick="window.location.reload()">
                 <i class="fas fa-sync-alt"></i>
-                <span class="lang" data-vi="Làm mới" data-en="Refresh">Làm mới</span>
+                <span class="lang" data-vi="Làm mới / Refresh" data-en="Refresh">Làm mới / Refresh</span>
             </button>
         </div>
     </header>
@@ -353,10 +353,10 @@ if ($hasItems) {
     ?>
     <?php if (count($presentTypes) > 1): ?>
     <div class="type-tab-bar" id="typeTabBar">
-        <button class="type-tab active" data-type="all"><span class="lang" data-vi="TẤT CẢ" data-en="ALL">TẤT CẢ</span></button>
+        <button class="type-tab active" data-type="all"><span class="lang" data-vi="TẤT CẢ / ALL" data-en="ALL">TẤT CẢ / ALL</span></button>
         <?php foreach ($presentTypes as $tp): if (!isset($typeLabels[$tp])) continue; ?>
             <button class="type-tab" data-type="<?= $tp ?>">
-                <span class="lang" data-vi="<?= strtoupper($typeLabels[$tp]) ?>" data-en="<?= strtoupper($typeLabelsEn[$tp]) ?>"><?= strtoupper($typeLabels[$tp]) ?></span>
+                <span class="lang" data-vi="<?= strtoupper($typeLabels[$tp]) ?> / <?= strtoupper($typeLabelsEn[$tp]) ?>" data-en="<?= strtoupper($typeLabelsEn[$tp]) ?>"><?= strtoupper($typeLabels[$tp]) ?> / <?= strtoupper($typeLabelsEn[$tp]) ?></span>
             </button>
         <?php endforeach; ?>
     </div>
@@ -366,7 +366,7 @@ if ($hasItems) {
     <nav class="category-nav">
         <div class="category-nav-inner">
             <a href="javascript:void(0)" class="cat-pill active" data-category="all">
-                <span class="lang" data-vi="Tất cả" data-en="All">Tất cả</span>
+                <span class="lang" data-vi="Tất cả / All" data-en="All">Tất cả / All</span>
             </a>
             <?php foreach ($activeCategories as $cat): ?>
                 <a href="#cat-<?= $cat['id'] ?>" class="cat-pill"
@@ -685,7 +685,7 @@ if ($hasItems) {
                 <button class="fab-item" onclick="callWaiter('support')" title="Gọi nhân viên">
                     <i class="fas fa-<?= $isRoomService ? 'concierge-bell' : 'hand-paper' ?>"></i>
                 </button>
-                <span class="fab-label" data-vi="Gọi nhân viên" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên</span>
+                <span class="fab-label" data-vi="Gọi nhân viên / <?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>" data-en="<?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?>">Gọi nhân viên / <?= $isRoomService ? 'Call Reception' : 'Call Waiter' ?></span>
                 <span class="fab-tooltip">Gọi nhân viên</span>
             </div>
             <div class="fab-item-wrapper">
@@ -695,14 +695,14 @@ if ($hasItems) {
                         <span class="fab-status-dot"></span>
                     <?php endif; ?>
                 </button>
-                <span class="fab-label" data-vi="<?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
+                <span class="fab-label" data-vi="<?= $hasItems ? 'Hoá đơn / Bill' : 'Thanh toán / Payment' ?>" data-en="<?= $hasItems ? 'Bill' : 'Payment' ?>"><?= $hasItems ? 'Hoá đơn / Bill' : 'Thanh toán / Payment' ?></span>
                 <span class="fab-tooltip"><?= $hasItems ? 'Hoá đơn' : 'Thanh toán' ?></span>
             </div>
             <div class="fab-item-wrapper">
                 <button class="fab-item" onclick="window.location.reload()" title="Làm mới">
                     <i class="fas fa-sync-alt"></i>
                 </button>
-                <span class="fab-label" data-vi="Làm mới" data-en="Refresh">Làm mới</span>
+                <span class="fab-label" data-vi="Làm mới / Refresh" data-en="Refresh">Làm mới / Refresh</span>
                 <span class="fab-tooltip">Làm mới</span>
             </div>
         </div>
@@ -733,23 +733,23 @@ if ($hasItems) {
 <div id="cartModal" class="modal-backdrop hidden">
     <div class="modal modal-bottom">
         <div class="modal-header">
-            <h3><i class="fas fa-shopping-cart me-2"></i> <span class="lang" data-vi="Chi tiết đơn hàng" data-en="Order Details">Chi tiết đơn hàng</span></h3>
+            <h3><i class="fas fa-shopping-cart me-2"></i> <span class="lang" data-vi="Chi tiết đơn hàng / Order Details" data-en="Order Details">Chi tiết đơn hàng / Order Details</span></h3>
             <button class="modal-close" onclick="toggleCartModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
             <div id="cartItemsList" class="cart-items-container"></div>
             <div class="order-notes-box mt-3" style="margin-top:1rem;">
-                <label class="lang" data-vi="GHI CHÚ ĐƠN HÀNG" data-en="ORDER NOTES" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">GHI CHÚ ĐƠN HÀNG</label>
+                <label class="lang" data-vi="GHI CHÚ ĐƠN HÀNG / ORDER NOTES" data-en="ORDER NOTES" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">GHI CHÚ ĐƠN HÀNG / ORDER NOTES</label>
                 <textarea id="orderNotes" placeholder="VD: Không lấy hành, ít cay..."></textarea>
             </div>
         </div>
         <div class="modal-footer">
             <div class="total-summary">
-                <span class="lang" data-vi="Tổng cộng" data-en="Total">Tổng cộng</span>
+                <span class="lang" data-vi="Tổng cộng / Total" data-en="Total">Tổng cộng / Total</span>
                 <strong id="modalCartTotal">0₫</strong>
             </div>
             <button class="btn-submit-order" id="btnSubmitOrder" onclick="submitOrder()">
-                <i class="fas fa-paper-plane me-2"></i> <span class="lang" data-vi="XÁC NHẬN ĐẶT MÓN" data-en="CONFIRM ORDER">XÁC NHẬN ĐẶT MÓN</span>
+                <i class="fas fa-paper-plane me-2"></i> <span class="lang" data-vi="XÁC NHẬN ĐẶT MÓN / CONFIRM ORDER" data-en="CONFIRM ORDER">XÁC NHẬN ĐẶT MÓN / CONFIRM ORDER</span>
             </button>
         </div>
     </div>
@@ -770,7 +770,7 @@ if ($hasItems) {
                 <p id="detailDesc" class="item-desc" style="margin-top:8px;font-size:.875rem;color:#64748b;line-height:1.5;"></p>
             </div>
             <div id="detailOptsWrap" style="display:none;margin-bottom:1.25rem;">
-                <label class="lang" data-vi="Tuỳ chọn nhanh" data-en="Quick Options" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block;">
+                <label class="lang" data-vi="Tuỳ chọn nhanh / Quick Options" data-en="Quick Options" style="font-size:.72rem;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:block;">
                     Tuỳ chọn nhanh / Quick Options
                 </label>
                 <div id="detailOptsContainer" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
@@ -789,7 +789,7 @@ if ($hasItems) {
         </div>
         <div class="modal-footer">
             <button class="btn-submit-order w-100" id="btnAddOrder" onclick="addFromDetail()">
-                <i class="fas fa-cart-plus me-2"></i> <span class="lang" data-vi="THÊM VÀO ĐƠN HÀNG" data-en="ADD TO ORDER">THÊM VÀO ĐƠN HÀNG</span>
+                <i class="fas fa-cart-plus me-2"></i> <span class="lang" data-vi="THÊM VÀO ĐƠN HÀNG / ADD TO ORDER" data-en="ADD TO ORDER">THÊM VÀO ĐƠN HÀNG / ADD TO ORDER</span>
             </button>
         </div>
     </div>
@@ -799,7 +799,7 @@ if ($hasItems) {
 <div id="billTamModal" class="modal-backdrop hidden">
     <div class="modal modal-bottom modal-premium">
         <div class="modal-header">
-            <h3><i class="fas fa-file-invoice-dollar me-2"></i> <span class="lang" data-vi="Hoá đơn tạm tính" data-en="Preliminary Bill">Hoá đơn tạm tính</span></h3>
+            <h3><i class="fas fa-file-invoice-dollar me-2"></i> <span class="lang" data-vi="Hoá đơn tạm tính / Preliminary Bill" data-en="Preliminary Bill">Hoá đơn tạm tính / Preliminary Bill</span></h3>
             <button class="modal-close" onclick="closeBillTam()"><i class="fas fa-times"></i></button>
         </div>
         <div class="modal-body">
@@ -829,24 +829,24 @@ if ($hasItems) {
                     <?php endforeach; ?>
                     <div class="bill-summary">
                         <div class="bill-total-row">
-                            <span class="lang" data-vi="Tổng tiền món" data-en="Subtotal">Tổng tiền món</span>
+                            <span class="lang" data-vi="Tổng tiền món / Subtotal" data-en="Subtotal">Tổng tiền món / Subtotal</span>
                             <strong><?= formatPrice($orderTotal) ?></strong>
                         </div>
                     </div>
                 <?php else: ?>
                     <div class="menu-empty-state">
                         <i class="fas fa-receipt"></i>
-                        <p class="lang" data-vi="Bàn chưa có món nào được gọi." data-en="No items ordered yet.">Bàn chưa có món nào được gọi.</p>
+                        <p class="lang" data-vi="Bàn chưa có món nào được gọi. / No items ordered yet." data-en="No items ordered yet.">Bàn chưa có món nào được gọi. / No items ordered yet.</p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
         <div class="modal-footer" style="display:flex;flex-direction:column;gap:.5rem;">
             <button class="btn-gold w-100" onclick="callWaiter('payment')">
-                <i class="fas fa-hand-holding-usd me-2"></i> <span class="lang" data-vi="YÊU CẦU THANH TOÁN" data-en="REQUEST PAYMENT">YÊU CẦU THANH TOÁN</span>
+                <i class="fas fa-hand-holding-usd me-2"></i> <span class="lang" data-vi="YÊU CẦU THANH TOÁN / REQUEST PAYMENT" data-en="REQUEST PAYMENT">YÊU CẦU THANH TOÁN / REQUEST PAYMENT</span>
             </button>
             <button class="btn-ghost w-100" onclick="closeBillTam()">
-                <span class="lang" data-vi="TIẾP TỤC ĐẶT MÓN" data-en="CONTINUE ORDERING">TIẾP TỤC ĐẶT MÓN</span>
+                <span class="lang" data-vi="TIẾP TỤC ĐẶT MÓN / CONTINUE ORDERING" data-en="CONTINUE ORDERING">TIẾP TỤC ĐẶT MÓN / CONTINUE ORDERING</span>
             </button>
         </div>
     </div>
